@@ -24,6 +24,6 @@ params:
     - icon: github
       name: Github
       url: https://github.com/raminala
-    - icon: twitter
+    - icon: linkedin
       name: Twitter
       url: https://twitter.com/gohugoio
