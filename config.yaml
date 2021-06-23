@@ -1,5 +1,5 @@
 baseURL: https://raminala1.netlify.app/
-title: Your title
+title: Ramin Ala
 theme: hugo-theme-m10c
 paginate: 8
 menu:
@@ -16,6 +16,10 @@ menu:
       name: About
       url: /about/
       weight: 3
+    - identifier: Publications
+      name: Publications
+      url: /about/
+      weight: 4
 params:
   author: John Doe
   description: An Electrical engineer with experience in RF and interest in data science.
