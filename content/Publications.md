@@ -1,5 +1,5 @@
 ---
-title: Publications:
+title: Publications
 ---
 
  Evaluation and improvement of the performance of harmonic RADAR transponders
