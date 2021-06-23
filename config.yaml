@@ -18,7 +18,7 @@ menu:
       weight: 3
     - identifier: Publications
       name: Publications
-      url: /about/
+      url: /Publications/
       weight: 4
 params:
   author: John Doe
