@@ -4,7 +4,8 @@ author: ''
 date: '2021-05-25'
 slug: data-wrangling-using-tidyverse
 categories: []
-tags: []
+tags: 
+  - R
 ---
 
 ## Import the Hotels.CSV file

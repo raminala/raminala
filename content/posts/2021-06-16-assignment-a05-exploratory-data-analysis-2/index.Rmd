@@ -9,7 +9,6 @@ categories:
   - ggplot2
 tags:
   - R
-  - go
 ---
 **Ramin Ala**
 

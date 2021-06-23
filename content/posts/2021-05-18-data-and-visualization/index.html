@@ -5,7 +5,8 @@ date: '2021-05-18'
 slug: data-and-visualization
 categories: 
   - ggplot2
-tags: []
+tags: 
+  - R
 ---
 
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
@@ -66,9 +67,6 @@ head(quartet)</code></pre>
 ## 2 II         9   7.50  3.32  2.03 0.816
 ## 3 III        9   7.5   3.32  2.03 0.816
 ## 4 IV         9   7.50  3.32  2.03 0.817</code></pre>
-<p>We visualize all four sets</p>
-<pre class="r"><code>ggplot(quartet, aes(x=x,y=y))+
-  geom_point()+
-  facet_wrap(~set, ncol=4)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>We visualize all four sets
+<img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
