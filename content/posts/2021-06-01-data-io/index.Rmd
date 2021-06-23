@@ -1,0 +1,118 @@
+---
+title: Data IO
+author: ''
+date: '2021-06-01'
+slug: data-io
+categories: []
+tags: []
+---
+
+## Import Nobel.csv file
+
+```{r warning=FALSE, echo=FALSE}
+
+library(tidyverse)
+
+nobel <- read_csv(file = "nobel.csv")
+head(nobel)
+
+```
+
+##Write (generating) a csv file
+
+```{r}
+
+df <- tribble(
+  ~x, ~y,
+  1,  "a",
+  2,  "b",
+  3,  "c"
+)
+write_csv(df, "df.csv")
+
+```
+
+
+
+
+
+
+
+## Dealing with bad variable names
+
+```{r}
+edibnb_badnames <- read_csv("edibnb-badnames.csv")
+
+# to see variables names
+names(edibnb_badnames)
+
+
+edibnb_col_names <- read_csv("edibnb-badnames.csv",
+                    col_names = c("id", "price", 
+                    "neighbourhood", "accommodates",
+                    "bathroom", "bedroom", 
+                    "bed", "review_scores_rating", 
+                    "n_reviews", "url"))
+
+```
+
+## Importing data with snake_case variables
+
+```{r}
+library(janitor)
+edibnb_clean_names <- read_csv("edibnb-badnames.csv") %>%
+  janitor::clean_names()
+names(edibnb_clean_names)
+
+```
+
+## Read df-na.csv
+
+```{r}
+read_csv("df-na.csv")
+
+read_csv("df-na.csv", 
+         na = c("", "NA", ".", "9999", "Not applicable"))
+
+```
+
+## Reading an XLSX file
+
+```{r}
+
+library(readxl)
+fav_food <- read_excel("favourite-food.xlsx",
+                       na = c("N/A", "99999")) %>% # handelling NAs here
+
+# instead of calling library(readxl), we could use:
+# readxl::read_excel("favourite-food.xlsx")
+
+  janitor::clean_names()
+
+# Make age numeric
+
+fav_food <- fav_food %>%
+  mutate(
+    age = if_else(age == "five", "5", age),
+    age = as.numeric(age)
+    )
+
+  
+fav_food
+
+```
+
+## ETL of SES variable (ETL:Extract, transform, load)
+
+```{r}
+
+fav_food %>%
+  count(ses)
+
+fav_food <- fav_food %>%
+  mutate(ses = fct_relevel(ses, "Low", "Middle", "High"))
+fav_food %>%
+  count(ses)
+
+```
+

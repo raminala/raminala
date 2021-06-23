@@ -1,0 +1,219 @@
+---
+title: 'Assignment A02: TIDYVERSE'
+author: ''
+date: '2021-05-26'
+slug: assignment-a02-tidyverse
+categories: []
+tags: []
+---
+
+1. Introduction:
+
+  In this post, the solution for the assignment 02 is provided. I selected "Stroke Prediction Dataset" from https://www.kaggle.com/datasets because I have already had some basic studies on stroke, and I am eager to add more information while doing my assignment.
+  
+  This dataset contains 5110 rows (each row attributes to a patient), and 12 columns (11 variables and 1 column as identity number for each observation/patient).
+  
+  Lets take a look at data:
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+
+library(ggplot2)
+library(tidyverse)
+
+stroke_predic <- read_csv("healthcare-dataset-stroke-data.csv")
+
+head(stroke_predic)
+
+```
+
+This dataset has 11 variables (columns), including:
+
+```{r}
+
+names(stroke_predic)
+
+```
+
+
+
+2. one table and two table verb Functions
+
+## One table verbs
+
+filter():    Extract rows that satisfy specified conditions.
+
+Here, I want to create a new dataset (stroke_suffered) from those who experienced a stroke.
+
+```{r}
+
+library(dplyr)
+
+stroke_suffered <- stroke_predic %>%
+  filter(stroke==1)
+
+ stroke_suffered
+ 
+```
+
+summarize():    Summarize each group to fewer rows.
+
+From previously generated dataset (stroke_suffered), I want to know the average age of those who stroked.
+
+```{r}
+
+stroke_suffered %>%
+  summarize(mean_age=mean(age))
+
+```
+
+
+## two table verb
+
+bind_rows():    bind multiple data frames by row
+
+In order to use this function, I made a new dataframe (my own data that includes one row), and then bind that at the beginning of original dataset.
+
+```{r}
+
+New_observation <- data.frame (
+  id = 12345,
+  gender = "Male",
+  age = 38,
+  hypertension = 0,
+  heart_disease = 0,
+  ever_married = "Yes",
+  work_type="Private",
+  Residence_type="Urban",
+  avg_glucose_level=110,
+  bmi="20",
+  smoking_status="never smoked",
+  stroke=0
+  )
+
+New_observation
+
+
+head(bind_rows(New_observation, stroke_predic))
+
+```
+
+
+
+3. Grouping and Vector functions
+
+## Grouping function
+
+group_by():    Group by one or more variables.
+
+In this exercise, I want to know the average age of those who have hypertension, heart_disease, and stroke. For this purpose, dataset must be grouped first.
+
+```{r message=FALSE}
+
+stroke_predic %>%
+  group_by(hypertension,heart_disease, stroke) %>%
+  summarize(average_age=mean(age))
+
+```
+
+
+
+
+## Vector function
+
+between(): determine if values in a numeric vector fall in specified range.
+
+By using combination of between() and filter() function, I filtered those who have avg_glucose_level between 250 to 300.
+
+```{r}
+
+stroke_predic %>%
+  filter(between(avg_glucose_level,250,300))
+
+
+```
+
+
+n(): return the current group size.
+
+here, I used this vector function to determine the number of observation who had stroke.
+
+
+```{r}
+stroke_predic %>%
+  filter(stroke==1) %>%
+  summarise(n())
+```
+
+
+
+4. Pivoting and Missing Values (tidyr)
+
+
+## Pivoting
+
+pivot_wider(): "widens" data, increasing the number of columns and decreasing the number of rows.
+
+Here, I selected three columns and age group between  to 50 before applying pivot function. Number of rows decrease from 1468 to 21
+
+
+```{r warning=FALSE}
+
+library(tidyr)
+
+ selected_data<- stroke_predic %>%
+ select(age, gender,stroke)  %>%
+   filter(between(age,30,50))
+   
+   selected_data
+   
+  DS_pivot_wider <- selected_data %>%
+    pivot_wider(names_from = stroke, values_from = gender)
+ 
+
+
+DS_pivot_wider
+
+```
+
+
+
+## Missing Values (tidyr)
+
+drop_na(): drop the observations that contains N/A object.
+
+```{r}
+#copy dataset to a new one.
+stroke_predic_with_NA <- stroke_predic
+
+#generate a NA element in the new dataset.
+stroke_predic_with_NA[1,3] = NA
+
+#delete the row with a NA element.
+stroke_predic_drop_NA <- stroke_predic_with_NA %>%
+  drop_na(age)
+#compare number of rows to know if it drops one row
+  nrow(stroke_predic_with_NA)
+  nrow(stroke_predic_drop_NA)
+```
+
+
+fill(): Fill N/A objects with "up" or "down object.
+
+```{r}
+hhh <- stroke_predic_with_NA %>%  
+  fill(age, .direction=c("up"))  #fill with below value
+
+hhh
+```
+
+
+
+5. discussion
+
+  In this assignment, the Stroke Prediction dataset became more understandable by employing the capabilities of two libraries: dplyr and tidyr. The result of this section could be used in visualization using ggplo2. The important skill gained in this assignment is using cheat sheet to apply new functions on a dataset. 
+  
+  There were two challenges for me in this exercise:
+  
+  - I used new machine when I tried to do this exercise (other than what I used always). It took some time for me to figure out how to pull repository from git and use that (because I always pushed to git and did not need to use pull!).
+  
+  - In the selected dataset, bmi variable's class was "character" instead of numeric, I do not know why a numeric variable defined so.

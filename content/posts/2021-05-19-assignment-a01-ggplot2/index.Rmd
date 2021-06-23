@@ -1,0 +1,100 @@
+---
+title: 'Assignment A01: GGPLOT2'
+author: Ramin Ala
+date: '2021-05-19'
+slug: assignment-a01-ggplot2
+categories:
+  - ggplot2
+tags: []
+---
+
+1. Introduction:
+
+  In this post, the solution for assignment 01 is provided. I selected "ChickWeight" dataset because it consists of both Numerical and Categorical data.
+  
+  This data frame has 578 rows and 4 columns from an experiment on the effect of diet on the early growth of chicks. This dataset has two numeric variables:
+  
+  weight: weight of specific chick at specific day (Time), and
+  
+  Time: Number of days  since birth to measurement day, 
+  
+  as well as two ordered and categorical variables:
+  
+  Chick: identifier of chick. from 1 to 48, and
+  
+  Diet: 4 different applied diets.
+  
+  Lets take a look at data:
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+library(ggplot2)
+library(datasets)
+
+head(ChickWeight)
+
+```
+
+2. plots
+
+## categorical
+
+Plot mean of chicks weight at birthday and day 21 in terms of four different diet plans. These plots aresuitable for comparing diet plans.
+
+```{r  warning=FALSE, echo=FALSE, message=FALSE}
+#...
+library(ggplot2)
+library(dplyr)
+
+ChickWeight_reorganized <-  filter(ChickWeight, (Time == 0) | (Time == 21)) %>%
+  group_by(Diet, Time) %>%
+  summarise(Mean = mean(weight))
+
+ChickWeight_reorganized$Time <- as.factor(ChickWeight_reorganized$Time) 
+
+ggplot(ChickWeight_reorganized, aes(x=Diet, y=Mean, fill=Time)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  labs(title="Mean of chick weight", x= "Diat plans", y= "mean of chick weight")
+ 
+ 
+```
+
+```{r  warning=FALSE, echo=FALSE, message=FALSE}
+
+ggplot(ChickWeight, aes(x=Diet)) +
+  geom_bar() +
+  labs(title="number of chicks feed by each diet", x= "Diat plans", y= "number of chicks")
+
+```
+
+
+
+
+## numerical
+
+Plot weight of chicks over time (day 0  to day 21). These plots are categorized in four facets each for one diet. These plots represent the weight gain of every chicks and they provide good information to examine every chicks.
+
+```{r}
+
+# Plot  numerical variables.
+
+ggplot(ChickWeight, aes(Time, weight, color = Diet, group = Chick))+
+  geom_line() + # line plot
+  facet_wrap(~Diet)
+
+```
+```{r}
+
+ggplot(ChickWeight, aes(Time, weight, shape = Diet))+
+  geom_point()+
+  labs(title="Weight in each day", x= "Day", y= "Weight")
+ 
+
+```
+
+
+3. discussion
+
+  From the bar chart, it seems diet 3 results in the heaviest chicks on average on day 21, followed by diet 4, diet 2, and diet 1.Besides, average weight at birthday prove that chicks have approximately the same weight at day 0. Numerical plots show consistent weight gain for all chicks and all diet plans, although some chicks gain little weight (especially one chick in diet plan 2).
+  
+  Categorizing and filtering data were the major issue in this assignment. For those who are new to using R, this would be a challenge.
+  

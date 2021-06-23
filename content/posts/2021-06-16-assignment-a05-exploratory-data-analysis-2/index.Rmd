@@ -1,0 +1,367 @@
+---
+title: 'Assignment A05: Exploratory data analysis-2'
+author: 'Ramin Ala'
+date: '2021-06-16'
+slug: assignment-a05-exploratory-data-analysis-2
+categories:
+  - tidymodels
+  - tidyverse
+  - ggplot2
+tags: []
+---
+**Ramin Ala**
+
+
+
+
+
+```{r packages, message=FALSE, warning=FALSE, echo=FALSE}
+library(tidyverse)
+library(tidymodels) #Interesting collections of models.
+library(ggtext) #similar to ggplot but for text.
+library(knitr)
+library(kableExtra) 
+library(janitor)
+library(gganimate)
+library(gifski)
+```
+
+
+
+---
+
+## Import Data: Energy & Mining
+
+
+```{r, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE}
+
+energy <- read_csv("energy-and-mining.csv", na = c("n/a", "", "NA")) %>%
+  janitor::clean_names() %>%
+filter(country_name =="China" |
+         country_name =="India" |
+         country_name =="United States" |
+         country_name =="Indonesia" |
+         country_name =="Pakistan" |
+         country_name =="Brazil" |
+         country_name =="Nigeria" |
+         country_name =="Bangladesh" |
+         country_name =="Russia" |
+         country_name =="Japan") %>%
+  
+mutate(access_to_electricity_percent_of_population=replace(access_to_electricity_percent_of_population, access_to_electricity_percent_of_population > 100, NA)) %>%
+mutate(renewable_energy_consumption_percent_of_total_final_energy_consumption=replace(renewable_energy_consumption_percent_of_total_final_energy_consumption, renewable_energy_consumption_percent_of_total_final_energy_consumption > 100, NA))
+
+# rename(access_to_electricity_percent_of_population = xxx) 
+ 
+names(energy)
+```
+
+This post consists of an exploratory analysis of a dataset provided by the world bank. It includes `r ncol(energy)` variables and `r nrow(energy)` observations that represent many countries around the world between 1960 to 2017. Variables include varieties of parameters related to welfare and sustainability in examined countries. These variables include but are not limited to access and consumption of different types of energies from different sources.
+
+I primarily selected this dataset because of the availability of a lot of numerical and categorical variables. The problem with that was lack of knowledge about many variables and errors in data like percents more than 100% and lots of 0 and NA in the dataset.
+
+This dataset could be find in the below link:
+
+(https://github.com/ZeningQu/World-Bank-Data-by-Indicators/blob/master/engergy-and-mining/energy-and-mining.csv)
+
+## Initial Analysis Questions
+
+1. **How has energy consumption and access been changed over the years, and in rural/urban areas?**
+
+2. **How does gas prices is changing in populated countries over the years?**
+
+3. **Which countries are more affected due to electrical outages and present the amount of impact?**
+
+4. **How United states is supplying energy to its nation? Which energy type is getting more or less popular?**
+
+5. **To what extent do countries rely on income from metal and ore export?**
+
+---
+
+## 1. Access to electricity (any form)in populated countries and portion of renewable energy
+
+
+
+
+```{r, echo=FALSE, warning=FALSE}
+energy %>%
+  ggplot(aes(access_to_electricity_percent_of_population, renewable_energy_consumption_percent_of_total_final_energy_consumption, color=country_name))+ geom_point()+
+labs(x = "access to electricity (% of population)",
+     y = "renewable energy consumption(% of population)",
+     title="Access to different forms of electricity")
+  
+```
+Below plot shows percentage of people who have access to electricity for the first ten populous countries in the world over the period of 1960 to 2017. This scatter plot shows that countries with higher access to electricity are using less renewable form (like China and United States), but for example Nigeria is receiving its energy mainly from renewable sources, although their access is limited.
+
+---
+
+## 2. How energy access and its type changed over the years
+
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+energy2 <- read_csv("energy-and-mining.csv", na = c("n/a", "", "NA", 0)) %>%
+  janitor::clean_names() %>%
+  filter(between(year,1990,2015)) %>%
+filter(country_name =="China" |
+         country_name =="India" |
+         country_name =="United States" |
+         country_name =="Indonesia" |
+         country_name =="Pakistan" |
+         country_name =="Brazil" |
+         country_name =="Nigeria" |
+         country_name =="Bangladesh" |
+         country_name =="Russia" |
+         country_name =="Japan"|
+         country_name =="Iran, Islamic Rep."|
+         country_name =="Mexico" |
+         country_name =="Germany" |
+         country_name =="New Zealand" |
+         country_name =="Sweden" |
+         country_name =="Turkey" |
+         country_name =="Argentina" |
+         country_name =="Singapore"|
+       country_name =="United Kingdom"|
+         country_name =="Philippines") %>%
+   
+mutate(access_to_electricity_percent_of_population=replace(access_to_electricity_percent_of_population, access_to_electricity_percent_of_population > 100, NA)) %>%
+mutate(renewable_energy_consumption_percent_of_total_final_energy_consumption=replace(renewable_energy_consumption_percent_of_total_final_energy_consumption, renewable_energy_consumption_percent_of_total_final_energy_consumption > 100, NA))
+
+
+ 
+ 
+ energy2 %>%
+  
+  ggplot(aes(access_to_electricity_percent_of_population, renewable_energy_consumption_percent_of_total_final_energy_consumption, color=country_name))+
+  geom_point(size=4)+
+   
+   
+   labs(title = 'Year: {as.integer(frame_time)}', 
+        x = 'access to electricity (%)',
+        y = 'renewable energy portion (%)') +
+  transition_time(year) +
+  ease_aes('linear')+ theme(legend.position="none")
+
+# Save at gif:
+ 
+anim_save("1.gif")
+
+```
+The previous visualization did not show the trend over the years. One method to show this is using an animated plot as below. It shows how mentioned parameters moves over the years from 1990 to 2017 (limited years selected as data was very scarce for 1960 to 1990).This plot show most countries are moving towards providing electricity for 100% of population but in expence of using less renewable form.
+
+---
+
+## 3. Fuel price by countries
+
+```{r, warning=FALSE, echo=FALSE, error=FALSE}
+energy%>%
+  
+mutate(pump_price_for_diesel_fuel_us_per_liter=replace(pump_price_for_diesel_fuel_us_per_liter, pump_price_for_diesel_fuel_us_per_liter == 00, NA)) %>% 
+  ggplot(aes(year, pump_price_for_diesel_fuel_us_per_liter, color=country_name))+ geom_point()+geom_smooth(method = "lm",se=FALSE)+
+  xlim(1990, 2010)+ylim(0, 1.1)+
+  facet_wrap("country_name")+
+  labs(title="change in Fuel price in nine populated countries",
+       x = 'year',
+        y = 'Gas price per Liter (USD)') 
+
+```
+
+Fuel price in these populated countries are represented here as well as a linear regression fitting line. As expected, Fuel price is increasing in all countries. Interesting conclusion from these plots is while gas price was always relatively expensive in Japan, China started with very low price and end up with the most expensive gas price in the examined countries in 2017.
+
+---
+
+## 4. value lost due to electrical outages
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+energy4 <- read_csv("energy-and-mining.csv", na = c("n/a", "", "NA")) %>%
+  janitor::clean_names() %>%
+  select(country_name, year, value_lost_due_to_electrical_outages_percent_of_sales_for_affected_firms) %>%
+filter(between(year,2015,2017)) %>%
+group_by(country_name) %>%
+  summarise(mean_loss=mean(value_lost_due_to_electrical_outages_percent_of_sales_for_affected_firms)) %>%
+    arrange(desc(mean_loss)) %>%
+  slice(1:5) %>%
+  ggplot(aes(country_name,mean_loss)) +
+  geom_col(fill="blue", width=0.5)+
+  labs(title="value lost due to electrical outages in the most affected countries",x = 'country',
+        y = 'value lost due to electrical outages (% of income)')
+
+energy4
+
+
+```
+
+We want to find top 5 countries that have been affected most due to electrical outages in the last three years (2015, 2016, and 2017). From the bar chart it is clear that Sierra Leone's firms had lost more than 5 percent of their revenue due to electrical outrage followd by mainly asian and African countries by nearly three percent.
+
+
+---
+
+## 5. Access to electricity in rural and urban area
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+y1 <- read_csv("energy-and-mining.csv", na = c("n/a", "", "NA"))  %>%
+  janitor::clean_names() %>%
+select("access_to_electricity_rural_percent_of_rural_population", "access_to_electricity_urban_percent_of_urban_population","year") %>%
+  
+mutate(access_to_electricity_rural_percent_of_rural_population=replace(access_to_electricity_rural_percent_of_rural_population, access_to_electricity_rural_percent_of_rural_population > 100, NA))%>%
+  
+mutate(access_to_electricity_urban_percent_of_urban_population=replace(access_to_electricity_urban_percent_of_urban_population, access_to_electricity_urban_percent_of_urban_population > 100, NA))  %>%
+  filter(year=="1991"|year=="1995"|year=="2000"|year=="2005"|year=="2010"|year=="2015")  %>%
+  group_by(year)  %>%
+summarise(rural=mean(access_to_electricity_rural_percent_of_rural_population), urban=mean(access_to_electricity_urban_percent_of_urban_population))  %>%
+  
+ pivot_longer(-year, names_to = "rural_urban", values_to = "percentage")
+
+ y1  %>% ggplot(aes(as.character(year), percentage, fill=as.factor(rural_urban)))+
+  geom_bar(stat="identity", width=0.5,position="dodge")+ylim(0,100)+
+  
+  
+labs(x = "year",
+     y = "percentage of Access to electricity",
+     title="Access to electricity in rural and urban area)",
+     fill = "area of examination")
+
+
+
+```
+
+This part deal with percentage of access to electricity in 5 years with available data (1991, 1995, 2000, 2005, 2010, and 2015) in the rural and urban area. The percentages are the mean of percentage access in all countries around the globe. As expected, access is increasing every year and access is more in urban area, but the gap is reducing.
+
+---
+
+## 6. Oil rents (% of GDP) vs Co2 production and portion of enerty imported
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+y6 <- read_csv("energy-and-mining.csv", na = c("n/a", "", "NA")) %>%
+  janitor::clean_names()  %>%
+  filter(year==2010) %>%
+  select("oil_rents_percent_of_gdp",
+  "energy_imports_net_percent_of_energy_use",
+  "country_name",
+  "co2_emissions_from_gaseous_fuel_consumption_percent_of_total",
+  
+  "co2_emissions_from_liquid_fuel_consumption_kt"
+  
+  ) 
+
+  y6  %>% ggplot(aes(co2_emissions_from_gaseous_fuel_consumption_percent_of_total,
+                     co2_emissions_from_liquid_fuel_consumption_kt,
+              size=oil_rents_percent_of_gdp))+ geom_point(color="red", shape = 21)+
+  
+labs(x = "co2 emissions from gaseous fuel (% of_total)",
+     y = "co2 emissions from liquid fuel consumption(ktone)",
+     title="  Oil rents and polution by country (year: 2010)")+scale_y_log10()
+  
+
+  
+#names(y6)
+```
+
+**Oil rents**, by definition, are the difference between the value of crude oil production at world prices and total costs of production. Countries that exporting oil have a large Oil rents number.  According to plot, high oil rents countries (larger circles in the plot) generally produce more co2 from liquid fuel but they are distributed uniformly in the x-axis.
+
+---
+
+## 7. Percentage of using five sources of energy in the United States
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+energy8 <- read_csv("energy-and-mining.csv", na = c("n/a", "", "NA"))  %>%
+  janitor::clean_names() %>%
+  filter(country_name =="United States")  %>%
+  
+select("electricity_production_from_coal_sources_percent_of_total",
+       "electricity_production_from_hydroelectric_sources_percent_of_total",
+       "electricity_production_from_natural_gas_sources_percent_of_total",
+       "electricity_production_from_nuclear_sources_percent_of_total",
+       "electricity_production_from_oil_sources_percent_of_total",
+       
+       "year") %>%
+  
+  rename("Coal"="electricity_production_from_coal_sources_percent_of_total",
+       "hydroelectric"="electricity_production_from_hydroelectric_sources_percent_of_total",
+       "natural_gas"="electricity_production_from_natural_gas_sources_percent_of_total",
+       "nuclear_sources"="electricity_production_from_nuclear_sources_percent_of_total",
+       "oil_sources"="electricity_production_from_oil_sources_percent_of_total") %>%
+
+  subset(year!=1960 & year!=1970 & year!=1980 & year!=1990 & year!=2017& year!=2016) %>%
+  pivot_longer(-year, names_to = "categories", values_to = "percentage")
+
+energy8  %>%
+  ggplot(aes(year, percentage, color=categories))+
+  geom_line(size=2)+  facet_wrap("categories", dir = "v")+
+  
+  
+labs(x = "year",
+     y = "percentage of usage",
+     title="Five sources of energy in the United States (% of usage)")
+
+
+```
+
+
+
+Five sources of energy (Coal, hydroelectric, natural gas, nuclear sources, and oil sources) accounts for the majority of production of energy. These plots shows the percentage of usage over the years. It is obvious that coal is the main source despite the decline in the recent years. On the other hand, natural gas shows a rapid increase. Hydroelectric shows a steady trend over the examined time.
+
+---
+
+## 8. exports/imports of Ores and metals percent of merchandise exports/imports
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+energy8 <- read_csv("energy-and-mining.csv", na = c("n/a", "", "NA", 0)) %>%
+  janitor::clean_names()  %>%
+select("ores_and_metals_exports_percent_of_merchandise_exports","ores_and_metals_imports_percent_of_merchandise_imports",
+       country_name, year) %>%
+  
+  rename(export="ores_and_metals_exports_percent_of_merchandise_exports",
+         import="ores_and_metals_imports_percent_of_merchandise_imports") %>%
+  
+mutate(export=replace(export, export > 100, NA))%>%
+  filter(country_name =="China" |
+         country_name =="India" |
+         country_name =="United States" |
+         country_name =="Indonesia" |
+         country_name =="Pakistan" |
+         country_name =="Brazil" |
+         country_name =="Nigeria" |
+         country_name =="Russia" |
+         country_name =="Japan"|
+         country_name =="Mexico" |
+         country_name =="Germany" |
+         country_name =="New Zealand" |
+         country_name =="Sweden" |
+         country_name =="Turkey" |
+         country_name =="Argentina" |
+         country_name =="Chile"|
+       country_name =="United Kingdom"|
+         country_name =="Philippines",
+       between(year,2012,2017)) %>%
+  drop_na() %>%
+
+  group_by(country_name) %>%
+  summarize(export_mean=mean(export), import_mean=mean(import)) %>%
+  
+  pivot_longer(-country_name, names_to = "categories", values_to = "percentage")
+  
+
+  
+energy8 %>% ggplot(aes(percentage, country_name, fill=categories))+
+  geom_bar(stat="identity", width=0.5,position="dodge")+
+  
+ 
+  
+labs(x = "export/import (% of total)",
+     y = "country",
+     title="export/import of Ores and metals in 17 countries (% of total export/import)")
+
+
+```
+
+
+This barchart shows the mean of percentage of Ores and metals exports/imports in seventeen countries in average value from 2012 to 2017. Percentage means compared to their total merchandise export/import. From this plot, Chile and Brazil demonstrated to earn a lot of their income from exporting these merchandises. China, on the other hand, is a big importer in the examined countries.
+
+## Summary
+
+In conclusion, people around the globe are getting richer and more comfortable with more access to different sources of energy. However, co2 emission is getting worse and renewable sources of energy are getting less available comparatively. Mining is a major source of income for some countries while others have to spend a lot to import these products.

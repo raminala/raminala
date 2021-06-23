@@ -1,0 +1,87 @@
+---
+title: 'Assignment A05: Exploratory data analysis-2'
+author: 'Ramin Ala'
+date: '2021-06-16'
+slug: assignment-a05-exploratory-data-analysis-2
+categories:
+  - tidymodels
+  - tidyverse
+  - ggplot2
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p><strong>Ramin Ala</strong></p>
+<hr />
+<div id="import-data-energy-mining" class="section level2">
+<h2>Import Data: Energy &amp; Mining</h2>
+<p>This post consists of an exploratory analysis of a dataset provided by the world bank. It includes 53 variables and 513 observations that represent many countries around the world between 1960 to 2017. Variables include varieties of parameters related to welfare and sustainability in examined countries. These variables include but are not limited to access and consumption of different types of energies from different sources.</p>
+<p>I primarily selected this dataset because of the availability of a lot of numerical and categorical variables. The problem with that was lack of knowledge about many variables and errors in data like percents more than 100% and lots of 0 and NA in the dataset.</p>
+<p>This dataset could be find in the below link:</p>
+<p>(<a href="https://github.com/ZeningQu/World-Bank-Data-by-Indicators/blob/master/engergy-and-mining/energy-and-mining.csv" class="uri">https://github.com/ZeningQu/World-Bank-Data-by-Indicators/blob/master/engergy-and-mining/energy-and-mining.csv</a>)</p>
+</div>
+<div id="initial-analysis-questions" class="section level2">
+<h2>Initial Analysis Questions</h2>
+<ol style="list-style-type: decimal">
+<li><p><strong>How has energy consumption and access been changed over the years, and in rural/urban areas?</strong></p></li>
+<li><p><strong>How does gas prices is changing in populated countries over the years?</strong></p></li>
+<li><p><strong>Which countries are more affected due to electrical outages and present the amount of impact?</strong></p></li>
+<li><p><strong>How United states is supplying energy to its nation? Which energy type is getting more or less popular?</strong></p></li>
+<li><p><strong>To what extent do countries rely on income from metal and ore export?</strong></p></li>
+</ol>
+<hr />
+</div>
+<div id="access-to-electricity-any-formin-populated-countries-and-portion-of-renewable-energy" class="section level2">
+<h2>1. Access to electricity (any form)in populated countries and portion of renewable energy</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+Below plot shows percentage of people who have access to electricity for the first ten populous countries in the world over the period of 1960 to 2017. This scatter plot shows that countries with higher access to electricity are using less renewable form (like China and United States), but for example Nigeria is receiving its energy mainly from renewable sources, although their access is limited.</p>
+<hr />
+</div>
+<div id="how-energy-access-and-its-type-changed-over-the-years" class="section level2">
+<h2>2. How energy access and its type changed over the years</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.gif" /><!-- -->
+The previous visualization did not show the trend over the years. One method to show this is using an animated plot as below. It shows how mentioned parameters moves over the years from 1990 to 2017 (limited years selected as data was very scarce for 1960 to 1990).This plot show most countries are moving towards providing electricity for 100% of population but in expence of using less renewable form.</p>
+<hr />
+</div>
+<div id="fuel-price-by-countries" class="section level2">
+<h2>3. Fuel price by countries</h2>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Fuel price in these populated countries are represented here as well as a linear regression fitting line. As expected, Fuel price is increasing in all countries. Interesting conclusion from these plots is while gas price was always relatively expensive in Japan, China started with very low price and end up with the most expensive gas price in the examined countries in 2017.</p>
+<hr />
+</div>
+<div id="value-lost-due-to-electrical-outages" class="section level2">
+<h2>4. value lost due to electrical outages</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>We want to find top 5 countries that have been affected most due to electrical outages in the last three years (2015, 2016, and 2017). From the bar chart it is clear that Sierra Leone’s firms had lost more than 5 percent of their revenue due to electrical outrage followd by mainly asian and African countries by nearly three percent.</p>
+<hr />
+</div>
+<div id="access-to-electricity-in-rural-and-urban-area" class="section level2">
+<h2>5. Access to electricity in rural and urban area</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>This part deal with percentage of access to electricity in 5 years with available data (1991, 1995, 2000, 2005, 2010, and 2015) in the rural and urban area. The percentages are the mean of percentage access in all countries around the globe. As expected, access is increasing every year and access is more in urban area, but the gap is reducing.</p>
+<hr />
+</div>
+<div id="oil-rents-of-gdp-vs-co2-production-and-portion-of-enerty-imported" class="section level2">
+<h2>6. Oil rents (% of GDP) vs Co2 production and portion of enerty imported</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><strong>Oil rents</strong>, by definition, are the difference between the value of crude oil production at world prices and total costs of production. Countries that exporting oil have a large Oil rents number. According to plot, high oil rents countries (larger circles in the plot) generally produce more co2 from liquid fuel but they are distributed uniformly in the x-axis.</p>
+<hr />
+</div>
+<div id="percentage-of-using-five-sources-of-energy-in-the-united-states" class="section level2">
+<h2>7. Percentage of using five sources of energy in the United States</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Five sources of energy (Coal, hydroelectric, natural gas, nuclear sources, and oil sources) accounts for the majority of production of energy. These plots shows the percentage of usage over the years. It is obvious that coal is the main source despite the decline in the recent years. On the other hand, natural gas shows a rapid increase. Hydroelectric shows a steady trend over the examined time.</p>
+<hr />
+</div>
+<div id="exportsimports-of-ores-and-metals-percent-of-merchandise-exportsimports" class="section level2">
+<h2>8. exports/imports of Ores and metals percent of merchandise exports/imports</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>This barchart shows the mean of percentage of Ores and metals exports/imports in seventeen countries in average value from 2012 to 2017. Percentage means compared to their total merchandise export/import. From this plot, Chile and Brazil demonstrated to earn a lot of their income from exporting these merchandises. China, on the other hand, is a big importer in the examined countries.</p>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>In conclusion, people around the globe are getting richer and more comfortable with more access to different sources of energy. However, co2 emission is getting worse and renewable sources of energy are getting less available comparatively. Mining is a major source of income for some countries while others have to spend a lot to import these products.</p>
+</div>
