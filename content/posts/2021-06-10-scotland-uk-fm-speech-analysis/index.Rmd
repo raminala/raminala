@@ -9,7 +9,7 @@ categories:
   - tidyverse
 tags: 
   - R
-  - data visualization
+  - data_visualization
   
 runtime: shiny
 output: html_document

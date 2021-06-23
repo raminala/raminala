@@ -5,9 +5,9 @@ date: '2021-05-18'
 slug: data-visualization-using-ggplot2
 categories:
   - ggplot2
-tags: 
+tags:
   - R
-  - data visualization
+  - data_visualization
 ---
 
 ## Palmer Penguins Data Visualization
@@ -20,7 +20,7 @@ ggplot(penguins,
        shape=island)) +
   geom_point() +
   labs(title = "Bill depth and length",
-       subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo                        Penguins",
+       subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
        x = "Bill depth (mm)",
        y = "Bill length (mm)",
        colour = "Species")+

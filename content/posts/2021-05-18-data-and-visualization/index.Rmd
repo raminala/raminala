@@ -7,7 +7,7 @@ categories:
   - ggplot2
 tags: 
   - R
-  - data visualization
+  - data_visualization
 ---
 
 ##Data Visualization Exercise
