@@ -31,3 +31,6 @@ params:
     - icon: linkedin
       name: Linkedin
       url: https://www.linkedin.com/in/ramin-ala-6645b3188/
+    - icon: twitter
+      name: Twitter
+      url: 
