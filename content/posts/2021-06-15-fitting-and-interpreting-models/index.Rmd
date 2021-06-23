@@ -5,7 +5,8 @@ date: '2021-06-15'
 slug: fitting-and-interpreting-models
 categories:
   - tidymodels
-tags: []
+tags: 
+  - R
 ---
 
 

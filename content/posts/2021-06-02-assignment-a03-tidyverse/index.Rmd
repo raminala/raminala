@@ -4,7 +4,8 @@ author: ''
 date: '2021-06-02'
 slug: assignment-a03-tidyverse
 categories: []
-tags: []
+tags: 
+  - R
 ---
 
 Using lego_sales.csv file, complete the following tasks using tidyverse. Submit the RmD file and link to the post on your website.

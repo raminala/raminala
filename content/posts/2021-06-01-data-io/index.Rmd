@@ -4,7 +4,8 @@ author: ''
 date: '2021-06-01'
 slug: data-io
 categories: []
-tags: []
+tags: 
+  - R
 ---
 
 ## Import Nobel.csv file
