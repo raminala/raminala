@@ -6,6 +6,7 @@ slug: assignment-a03-tidyverse
 categories: []
 tags: 
   - R
+  - data wrangling
 ---
 
 Using lego_sales.csv file, complete the following tasks using tidyverse. Submit the RmD file and link to the post on your website.

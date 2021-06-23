@@ -9,6 +9,7 @@ categories:
   - tidyverse
 tags: 
   - R
+  - data visualization
 ---
 
 

@@ -9,6 +9,7 @@ categories:
   - ggplot2
 tags:
   - R
+  - data wrangling
 ---
 **Ramin Ala**
 

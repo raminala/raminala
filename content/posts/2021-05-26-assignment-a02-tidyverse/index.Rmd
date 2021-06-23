@@ -6,6 +6,7 @@ slug: assignment-a02-tidyverse
 categories: []
 tags: 
   - R
+  - data wrangling
 ---
 
 1. Introduction:
