@@ -315,6 +315,7 @@ linear_reg() %>%
 ## Categorical predictor with 3+ levels
 
 .pull-left-wide[
+
 ```{r echo=FALSE}
 dummy_df <- pp %>% 
   select(school_pntg) %>% 
