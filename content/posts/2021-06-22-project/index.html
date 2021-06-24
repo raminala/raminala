@@ -28,5 +28,14 @@ subset(rh!=-200) %&gt;%
   geom_point()
 DD</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<p><a href="https://github.com/ZeningQu/World-Bank-Data-by-Indicators/tree/master/health" class="uri">https://github.com/ZeningQu/World-Bank-Data-by-Indicators/tree/master/health</a></p>
+<pre class="r"><code>ee &lt;- air %&gt;%
+  select(co_gt,pt08_s1_co) %&gt;%
+subset(co_gt!=-200 &amp; pt08_s1_co!=-200) %&gt;%
+ 
+  ggplot(aes(co_gt,pt08_s1_co))+
+  geom_point()
+
+ee</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><a href="https://archive.ics.uci.edu/ml/datasets/Air+Quality" class="uri">https://archive.ics.uci.edu/ml/datasets/Air+Quality</a></p>
 </div>

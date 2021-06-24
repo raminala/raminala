@@ -54,5 +54,19 @@ DD
 
 
 
+```{r}
+ee <- air %>%
+  select(co_gt,pt08_s1_co) %>%
+subset(co_gt!=-200 & pt08_s1_co!=-200) %>%
+ 
+  ggplot(aes(co_gt,pt08_s1_co))+
+  geom_point()
 
-https://github.com/ZeningQu/World-Bank-Data-by-Indicators/tree/master/health
+ee
+```
+
+
+
+
+
+https://archive.ics.uci.edu/ml/datasets/Air+Quality
