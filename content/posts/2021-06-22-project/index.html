@@ -17,6 +17,16 @@ tags:
 <hr />
 <div id="import-data-energy-mining" class="section level2">
 <h2>Import Data: Energy &amp; Mining</h2>
+<pre><code>##  [1] &quot;date&quot;         &quot;time&quot;         &quot;co_gt&quot;        &quot;pt08_s1_co&quot;   &quot;nmhc_gt&quot;     
+##  [6] &quot;c6h6_gt&quot;      &quot;pt08_s2_nmhc&quot; &quot;n_ox_gt&quot;      &quot;pt08_s3_n_ox&quot; &quot;no2_gt&quot;      
+## [11] &quot;pt08_s4_no2&quot;  &quot;pt08_s5_o3&quot;   &quot;t&quot;            &quot;rh&quot;           &quot;ah&quot;          
+## [16] &quot;x16&quot;          &quot;x17&quot;</code></pre>
+<pre class="r"><code>DD &lt;- air %&gt;%
+subset(rh!=-200) %&gt;%
+ 
+  ggplot(aes(rh,ah))+
+  geom_point()
+DD</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <p><a href="https://github.com/ZeningQu/World-Bank-Data-by-Indicators/tree/master/health" class="uri">https://github.com/ZeningQu/World-Bank-Data-by-Indicators/tree/master/health</a></p>
 </div>
