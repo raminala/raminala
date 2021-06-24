@@ -58,10 +58,13 @@ ee
 ```
 
 ```{r}
-linear_reg() %>%
+fgfg <- linear_reg() %>%
   set_engine("lm") %>%
   fit(co_gt~pt08_s1_co, data = air) %>%
   tidy()
+
+
+fgfg
 ```
 
 

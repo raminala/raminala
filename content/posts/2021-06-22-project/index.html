@@ -32,10 +32,13 @@ subset(co_gt!=-200 &amp; pt08_s1_co!=-200) %&gt;%
 ee</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<pre class="r"><code>linear_reg() %&gt;%
+<pre class="r"><code>fgfg &lt;- linear_reg() %&gt;%
   set_engine(&quot;lm&quot;) %&gt;%
   fit(co_gt~pt08_s1_co, data = air) %&gt;%
-  tidy()</code></pre>
+  tidy()
+
+
+fgfg</code></pre>
 <pre><code>## # A tibble: 2 x 5
 ##   term         estimate std.error statistic  p.value
 ##   &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
