@@ -1,5 +1,5 @@
 .posts-list {
-  padding: 0;
+  padding: 1;
 }
 
 .posts-list-item {
@@ -7,7 +7,7 @@
   padding: 0.4em 0;
 
   &:not(:last-child) {
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+    border-bottom: 2px dashed rgba(255, 255, 255, 1);
   }
 }
 
