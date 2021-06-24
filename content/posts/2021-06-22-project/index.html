@@ -21,21 +21,25 @@ tags:
 ##  [6] &quot;c6h6_gt&quot;      &quot;pt08_s2_nmhc&quot; &quot;n_ox_gt&quot;      &quot;pt08_s3_n_ox&quot; &quot;no2_gt&quot;      
 ## [11] &quot;pt08_s4_no2&quot;  &quot;pt08_s5_o3&quot;   &quot;t&quot;            &quot;rh&quot;           &quot;ah&quot;          
 ## [16] &quot;x16&quot;          &quot;x17&quot;</code></pre>
-<pre class="r"><code>DD &lt;- air %&gt;%
-subset(rh!=-200) %&gt;%
- 
-  ggplot(aes(rh,ah))+
-  geom_point()
-DD</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <pre class="r"><code>ee &lt;- air %&gt;%
   select(co_gt,pt08_s1_co) %&gt;%
 subset(co_gt!=-200 &amp; pt08_s1_co!=-200) %&gt;%
  
   ggplot(aes(co_gt,pt08_s1_co))+
-  geom_point()
+  geom_point()+
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;#8E2C90&quot;)
 
 ee</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>linear_reg() %&gt;%
+  set_engine(&quot;lm&quot;) %&gt;%
+  fit(co_gt~pt08_s1_co, data = air) %&gt;%
+  tidy()</code></pre>
+<pre><code>## # A tibble: 2 x 5
+##   term         estimate std.error statistic  p.value
+##   &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept) -44.4       2.67       -16.6  4.08e-61
+## 2 pt08_s1_co    0.00975   0.00243      4.01 6.15e- 5</code></pre>
 <p><a href="https://archive.ics.uci.edu/ml/datasets/Air+Quality" class="uri">https://archive.ics.uci.edu/ml/datasets/Air+Quality</a></p>
 </div>

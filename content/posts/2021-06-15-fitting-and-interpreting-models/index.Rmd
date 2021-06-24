@@ -111,6 +111,7 @@ linear_reg() %>%
   tidy()
 ```
 
+
 $$\widehat{height}_{i} = 3.62 + 0.781 \times width_{i}$$
 
 ---

@@ -42,15 +42,6 @@ names(air)
 
 
 
-```{r}
-DD <- air %>%
-subset(rh!=-200) %>%
- 
-  ggplot(aes(rh,ah))+
-  geom_point()
-DD
-```
-
 
 
 
@@ -60,13 +51,18 @@ ee <- air %>%
 subset(co_gt!=-200 & pt08_s1_co!=-200) %>%
  
   ggplot(aes(co_gt,pt08_s1_co))+
-  geom_point()
+  geom_point()+
+  geom_smooth(method = "lm", se = FALSE, color = "#8E2C90")
 
 ee
 ```
 
-
-
+```{r}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(co_gt~pt08_s1_co, data = air) %>%
+  tidy()
+```
 
 
 https://archive.ics.uci.edu/ml/datasets/Air+Quality
