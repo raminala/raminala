@@ -97,6 +97,7 @@ linear_reg() %>%
   fit(pt08_s1_co~co_gt, data = air) #in: inches #we want to predict height, using width
 ```
 
+
 $$\widehat{T}_{i} = \beta_0 + \beta_1 \times C_{i}$$
 
 
