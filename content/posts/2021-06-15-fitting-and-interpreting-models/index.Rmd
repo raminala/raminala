@@ -121,11 +121,12 @@ $$\widehat{height}_{i} = 3.62 + 0.781 \times width_{i}$$
 
 .large[$$\widehat{height}_{i} = 3.62 + 0.781 \times width_{i}$$]
 
---
+---
 
 - **Slope:** For each additional inch the painting is wider, the height is expected to be higher, on average, by 0.781 inches.
 
---
+---
+
 - **Intercept:** Paintings that are 0 inches wide are expected to be 3.62 inches high, on average. (Does this make sense?)
 
 ---
@@ -154,10 +155,12 @@ class: middle
 
 $$\hat{y}_{i} = \beta_0 + \beta_1~x_{i}$$
 
---
+---
+
 - Tough luck, you can't have them...
 
---
+---
+
 - So we use sample statistics to estimate them:
 
 $$\hat{y}_{i} = b_0 + b_1~x_{i}$$
@@ -168,7 +171,8 @@ $$\hat{y}_{i} = b_0 + b_1~x_{i}$$
 
 - The regression line minimizes the sum of squared residuals.
 
---
+---
+
 - If $e_i = y_i - \hat{y}_i$, then, the regression line minimizes 
 $\sum_{i = 1}^n e_i^2$.
 
@@ -227,10 +231,13 @@ p +
 
 $$\bar{y} = b_0 + b_1 \bar{x} ~ \rightarrow ~ b_0 = \bar{y} - b_1 \bar{x}$$
 
---
+
+---
+
 - The slope has the same sign as the correlation coefficient: $b_1 = r \frac{s_y}{s_x}$
 
---
+---
+
 - The sum of the residuals is zero: $\sum_{i = 1}^n e_i = 0$
 
 --
