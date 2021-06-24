@@ -31,7 +31,7 @@ library(gifski)
 
 ---
 
-## Import Data: Energy & Mining
+## Import Data: Air Quality
 
 
 ```{r, echo=FALSE, message=FALSE, include=TRUE, warning=FALSE}
@@ -39,11 +39,11 @@ air <- read_csv("AirQualityUCI.csv", na = c("n/a", "", "NA")) %>%
   janitor::clean_names() 
 names(air)
 ```
+This post consists of a bit of data clean up and exploratory analysis of a dataset available in University of californium, Irvine's website. The dataset includes `r ncol(air)` variables and `r nrow(air)` observations that represent some parameters related to air quality. This dataset is selected to perform a basic fitting.
 
+This dataset could be find in the below link:
 
-
-
-
+https://archive.ics.uci.edu/ml/datasets/Air+Quality
 
 ```{r}
 ee <- air %>%
@@ -52,10 +52,59 @@ subset(co_gt!=-200 & pt08_s1_co!=-200) %>%
  
   ggplot(aes(co_gt,pt08_s1_co))+
   geom_point()+
-  geom_smooth(method = "lm", se = FALSE, color = "#8E2C90")
+  labs(x="C",y="T")
 
 ee
 ```
+
+
+## Goal: Predict T (tin oxide content) from C (co content)
+
+
+$$\widehat{T}_{i} = \beta_0 + \beta_1 \times C_{i}$$
+
+## fff
+
+```{r}
+ee <- air %>%
+  select(co_gt,pt08_s1_co) %>%
+subset(co_gt!=-200 & pt08_s1_co!=-200) %>%
+ 
+  ggplot(aes(co_gt,pt08_s1_co))+
+  geom_point()+
+  geom_smooth(method = "lm", se = FALSE, color = "#8E2C90")+
+  labs(x="C",y="T")
+
+ee
+```
+
+## Specify model and Set model fitting *engine*
+
+```{r}
+linear_reg()
+
+linear_reg() %>%
+  set_engine("lm") # lm: linear model
+```
+
+## Fit model & estimate parameters
+
+... using **formula syntax**
+
+```{r fit-model}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(pt08_s1_co~co_gt, data = air) #in: inches #we want to predict height, using width
+```
+
+$$\widehat{T}_{i} = \beta_0 + \beta_1 \times C_{i}$$
+
+
+$$\widehat{T}_{i} = 1055.0067 + 0.1759 \times C_{i}$$
+
+
+
+
 
 ```{r}
 fgfg <- linear_reg() %>%
@@ -66,6 +115,3 @@ fgfg <- linear_reg() %>%
 
 fgfg
 ```
-
-
-https://archive.ics.uci.edu/ml/datasets/Air+Quality

@@ -7,11 +7,11 @@
   padding: 0.4em 0;
 
   &:not(:last-child) {
-    border-bottom: 2px dashed rgba(255, 255, 255, 1);
+    border-bottom: 1px dashed rgba(255, 255, 255, .4);
   }
 }
 
 .posts-list-item-description {
   display: block;
-  font-size: 0.8em;
+  font-size: .8em;
 }
