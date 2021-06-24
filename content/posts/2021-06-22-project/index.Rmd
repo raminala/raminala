@@ -10,3 +10,51 @@ tags:
   - R
 ---
 
+**Ramin Ala**
+
+
+
+
+
+```{r packages, message=FALSE, warning=FALSE, echo=FALSE}
+library(tidyverse)
+library(tidymodels) #Interesting collections of models.
+library(ggtext) #similar to ggplot but for text.
+library(knitr)
+library(kableExtra) 
+library(janitor)
+library(gganimate)
+library(gifski)
+```
+
+
+
+---
+
+## Import Data: Energy & Mining
+
+
+```{r, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE}
+health <- read_csv("health.csv", na = c("n/a", "", "NA"))%>%
+  janitor::clean_names() 
+
+names(health)
+```
+
+
+```{r, echo=FALSE, message=FALSE, include=TRUE, warning=FALSE}
+
+world <- health %>%
+filter(country_name=="World")  %>%
+
+  subset(year!=1960 & year!=1970 & year!=1980 & year!=1990 )%>%
+  ggplot(aes(year,population_total ))+
+  geom_point()
+world
+```
+
+
+
+
+
+https://github.com/ZeningQu/World-Bank-Data-by-Indicators/tree/master/health

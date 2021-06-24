@@ -20,10 +20,11 @@ menu:
       name: Publications
       url: /Publications/
       weight: 4
+    
 params:
   author: John Doe
   description: An Electrical engineer with experience in RF and interest in data science.
-  menu_item_separator: ' - '
+  menu_item_separator: '~'
   social:
     - icon: github
       name: Github
