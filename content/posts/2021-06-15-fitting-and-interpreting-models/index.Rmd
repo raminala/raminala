@@ -55,6 +55,7 @@ ggplot(data = pp, aes(x = Width_in, y = Height_in)) +
 ```
 
 ---
+
 Below image shows different packages that are included in tidymodels.
 
 ```{r out.width="98%", echo=FALSE}
