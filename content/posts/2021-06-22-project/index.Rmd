@@ -110,7 +110,7 @@ gg
 This plot show the average pollution in terms of time of the day. There are two picks in the level of pollutuon. First, 8 Am and the second 7 pm. Both of these hours are rush hours with lots of traffic.
 
 
-## *cccccc*
+## *cc*
 
 
 
