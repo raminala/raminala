@@ -131,7 +131,7 @@ jj <- air %>%
   
   ggplot(aes(no2, nox))+
   geom_point( color="red")+
-   labs(x="no2",y="nox")+geom_smooth()
+   labs(x="no2",y="nox")+geom_smooth(method = "lm", se = FALSE, color = "#8E2C90")
 
 jj
 ```
