@@ -15,44 +15,27 @@ tags:
 
 <p><strong>Ramin Ala</strong></p>
 <hr />
-<div id="import-data-air-quality" class="section level2">
-<h2>Import Data: Air Quality</h2>
-<pre><code>##  [1] &quot;date&quot;         &quot;time&quot;         &quot;co_gt&quot;        &quot;pt08_s1_co&quot;   &quot;nmhc_gt&quot;     
-##  [6] &quot;c6h6_gt&quot;      &quot;pt08_s2_nmhc&quot; &quot;n_ox_gt&quot;      &quot;pt08_s3_n_ox&quot; &quot;no2_gt&quot;      
-## [11] &quot;pt08_s4_no2&quot;  &quot;pt08_s5_o3&quot;   &quot;t&quot;            &quot;rh&quot;           &quot;ah&quot;          
-## [16] &quot;x16&quot;          &quot;x17&quot;</code></pre>
-<p>This post consists of a bit of data clean up and exploratory analysis of a dataset available in University of californium, Irvine’s website. The dataset includes 17 variables and 9471 observations that represent some parameters related to air quality. This dataset is selected to perform a basic fitting.</p>
-<p>This dataset could be find in the below link:</p>
+<div id="data-air-quality-in-an-italian-city" class="section level2">
+<h2>Data: Air Quality in an Italian city</h2>
+<p>This post consists of a bit of data clean up and exploratory analysis of a dataset available in University of californium, Irvine’s website. The dataset includes 15 variables and 827 observations that represent air quality within an Italian city and in a significantly polluted area. level of <strong>CO</strong>, <strong>Non Metanic Hydrocarbons</strong>, <strong>Benzene</strong>, <strong>Total Nitrogen Oxides (NOx)</strong>, and <strong>Nitrogen Dioxide (NO2)</strong> measured. Relative and absolute humidity are among variables.</p>
+<p>This table shows important variables and their definition.</p>
+<p><img src="t.JPG" width="90%" /></p>
+<p>This dataset is available in the below link:</p>
 <p><a href="https://archive.ics.uci.edu/ml/datasets/Air+Quality" class="uri">https://archive.ics.uci.edu/ml/datasets/Air+Quality</a></p>
-<pre class="r"><code>ee &lt;- air %&gt;%
-  select(co_gt,pt08_s1_co) %&gt;%
-subset(co_gt!=-200 &amp; pt08_s1_co!=-200) %&gt;%
- 
-  ggplot(aes(co_gt,pt08_s1_co))+
-  geom_point()+
-  labs(x=&quot;C&quot;,y=&quot;T&quot;)
-
-ee</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<div id="corrolation-between-air-quality-and-temperature" class="section level2">
+<h2>Corrolation between air quality and temperature</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="corrolation-between-air-quality-and-absolute-humidity" class="section level2">
+<h2>Corrolation between air quality and absolute humidity</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+There are different data for relative and absolute humidity. Note absolute humidity is the measure of water vapor (moisture) in the air, regardless of temperature. Relative humidity also measures water vapor but RELATIVE to the temperature of the air.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
 <div id="goal-predict-t-tin-oxide-content-from-c-co-content" class="section level2">
 <h2>Goal: Predict T (tin oxide content) from C (co content)</h2>
 <p><span class="math display">\[\widehat{T}_{i} = \beta_0 + \beta_1 \times C_{i}\]</span></p>
-</div>
-<div id="fff" class="section level2">
-<h2>fff</h2>
-<pre class="r"><code>ee &lt;- air %&gt;%
-  select(co_gt,pt08_s1_co) %&gt;%
-subset(co_gt!=-200 &amp; pt08_s1_co!=-200) %&gt;%
- 
-  ggplot(aes(co_gt,pt08_s1_co))+
-  geom_point()+
-  geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;#8E2C90&quot;)+
-  labs(x=&quot;C&quot;,y=&quot;T&quot;)
-
-ee</code></pre>
-<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 </div>
 <div id="specify-model-and-set-model-fitting-engine" class="section level2">
 <h2>Specify model and Set model fitting <em>engine</em></h2>
@@ -69,29 +52,29 @@ ee</code></pre>
 <p>… using <strong>formula syntax</strong></p>
 <pre class="r"><code>linear_reg() %&gt;%
   set_engine(&quot;lm&quot;) %&gt;%
-  fit(pt08_s1_co~co_gt, data = air) #in: inches #we want to predict height, using width</code></pre>
+  fit(co~no2, data = air) #in: inches #we want to predict height, using width</code></pre>
 <pre><code>## parsnip model object
 ## 
 ## Fit time:  0ms 
 ## 
 ## Call:
-## stats::lm(formula = pt08_s1_co ~ co_gt, data = data)
+## stats::lm(formula = co ~ no2, data = data)
 ## 
 ## Coefficients:
-## (Intercept)        co_gt  
-##   1055.0067       0.1759</code></pre>
+## (Intercept)          no2  
+##      -2.134        0.756</code></pre>
 <p><span class="math display">\[\widehat{T}_{i} = \beta_0 + \beta_1 \times C_{i}\]</span></p>
 <p><span class="math display">\[\widehat{T}_{i} = 1055.0067 + 0.1759 \times C_{i}\]</span></p>
 <pre class="r"><code>fgfg &lt;- linear_reg() %&gt;%
   set_engine(&quot;lm&quot;) %&gt;%
-  fit(co_gt~pt08_s1_co, data = air) %&gt;%
+  fit(co~no2, data = air) %&gt;%
   tidy()
 
 
 fgfg</code></pre>
 <pre><code>## # A tibble: 2 x 5
-##   term         estimate std.error statistic  p.value
-##   &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept) -44.4       2.67       -16.6  4.08e-61
-## 2 pt08_s1_co    0.00975   0.00243      4.01 6.15e- 5</code></pre>
+##   term        estimate std.error statistic p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)   -2.13   14.8        -0.144   0.886
+## 2 no2            0.756   0.00911    83.0     0</code></pre>
 </div>
