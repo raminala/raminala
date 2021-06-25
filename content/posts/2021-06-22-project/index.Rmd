@@ -25,6 +25,11 @@ library(gifski)
 
 ---
 
+## *Introduction*
+
+This post consists of a bit of data clean up and exploratory analysis of a dataset available in University of californium, Irvine's website. 
+
+
 ## *Data: Air Quality in an Italian city*
 
 ```{r, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE}
@@ -35,7 +40,7 @@ subset(co_gt!=-200 & pt08_s1_co!=-200 & nmhc_gt!=-200 & c6h6_gt!=-200 & pt08_s2_
   rename(co=pt08_s1_co, nmhc=pt08_s2_nmhc, nox=pt08_s3_n_ox, no2=pt08_s4_no2, o3=pt08_s5_o3)
 ```
 
-This post consists of a bit of data clean up and exploratory analysis of a dataset available in University of californium, Irvine's website. The dataset includes `r ncol(air)` variables and `r nrow(air)` observations that represent air quality within an Italian city and in a significantly polluted area. level of **CO**, **Non Metanic Hydrocarbons**, **Benzene**, **Total Nitrogen Oxides (NOx)**, and **Nitrogen Dioxide (NO2)** measured. Relative and absolute humidity are among variables.
+The dataset includes `r ncol(air)` variables and `r nrow(air)` observations that represent air quality within an Italian city and in a significantly polluted area. level of **CO**, **Non Metanic Hydrocarbons**, **Benzene**, **Total Nitrogen Oxides (NOx)**, and **Nitrogen Dioxide (NO2)** measured. Relative and absolute humidity are among variables.
 
 This table shows important variables and their definition.
 
@@ -111,22 +116,20 @@ This plot show the average pollution in terms of time of the day. There are two 
 
 
 
-## *Goal: Predict nox from no2*
-
-
-
-
+## *Goal: Predict level of nox pollutant from no2*
 
 ## Specify model and Set model fitting *engine*
 
-```{r,  message=FALSE, warning=FALSE}
+```{r,  echo=FALSE, message=FALSE, warning=FALSE}
 linear_reg()
 
 linear_reg() %>%
   set_engine("lm") # lm: linear model
 ```
 
-```{r}
+## *Actual points and the linear fitting*
+
+```{r,  echo=FALSE, message=FALSE, warning=FALSE}
 jj <- air %>%
   
   ggplot(aes(no2, nox))+
@@ -136,31 +139,19 @@ jj <- air %>%
 jj
 ```
 
+## *Fit model & estimate parameters*
 
-
-
-
-## Fit model & estimate parameters
-
-... using **formula syntax**
-
-```{r fit-model}
+```{r fit-model,  echo=FALSE, message=FALSE, warning=FALSE}
 linear_reg() %>%
   set_engine("lm") %>%
-  fit(co~no2, data = air) #in: inches #we want to predict height, using width
+  fit(nox~no2, data = air) #in: inches #we want to predict height, using width
 ```
 
-
-$$\widehat{T}_{i} = \beta_0 + \beta_1 \times C_{i}$$
-
-
-$$\widehat{T}_{i} = 1055.0067 + 0.1759 \times C_{i}$$
+## *Model output*
 
 
 
-
-
-```{r}
+```{r,  echo=FALSE, message=FALSE, warning=FALSE}
 fgfg <- linear_reg() %>%
   set_engine("lm") %>%
   fit(co~no2, data = air) %>%
@@ -171,7 +162,7 @@ fgfg
 ```
 
 
-
+## *Summary*
 
 
 

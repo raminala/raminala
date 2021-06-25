@@ -15,9 +15,13 @@ tags:
 
 <p><strong>Ramin Ala</strong></p>
 <hr />
+<div id="introduction" class="section level2">
+<h2><em>Introduction</em></h2>
+<p>This post consists of a bit of data clean up and exploratory analysis of a dataset available in University of californium, Irvine’s website.</p>
+</div>
 <div id="data-air-quality-in-an-italian-city" class="section level2">
 <h2><em>Data: Air Quality in an Italian city</em></h2>
-<p>This post consists of a bit of data clean up and exploratory analysis of a dataset available in University of californium, Irvine’s website. The dataset includes 15 variables and 827 observations that represent air quality within an Italian city and in a significantly polluted area. level of <strong>CO</strong>, <strong>Non Metanic Hydrocarbons</strong>, <strong>Benzene</strong>, <strong>Total Nitrogen Oxides (NOx)</strong>, and <strong>Nitrogen Dioxide (NO2)</strong> measured. Relative and absolute humidity are among variables.</p>
+<p>The dataset includes 15 variables and 827 observations that represent air quality within an Italian city and in a significantly polluted area. level of <strong>CO</strong>, <strong>Non Metanic Hydrocarbons</strong>, <strong>Benzene</strong>, <strong>Total Nitrogen Oxides (NOx)</strong>, and <strong>Nitrogen Dioxide (NO2)</strong> measured. Relative and absolute humidity are among variables.</p>
 <p>This table shows important variables and their definition.</p>
 <p><img src="t1.JPG" width="40%" /></p>
 <p>This dataset is available in the below link:</p>
@@ -38,56 +42,41 @@ tags:
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>This plot show the average pollution in terms of time of the day. There are two picks in the level of pollutuon. First, 8 Am and the second 7 pm. Both of these hours are rush hours with lots of traffic. General intuition has always been that there is least air pollution at night because there are fewer cars on the road and fewer factories humming at that time of day.</p>
 </div>
-<div id="goal-predict-nox-from-no2" class="section level2">
-<h2><em>Goal: Predict nox from no2</em></h2>
+<div id="goal-predict-level-of-nox-pollutant-from-no2" class="section level2">
+<h2><em>Goal: Predict level of nox pollutant from no2</em></h2>
 </div>
 <div id="specify-model-and-set-model-fitting-engine" class="section level2">
 <h2>Specify model and Set model fitting <em>engine</em></h2>
-<pre class="r"><code>linear_reg()</code></pre>
 <pre><code>## Linear Regression Model Specification (regression)</code></pre>
-<pre class="r"><code>linear_reg() %&gt;%
-  set_engine(&quot;lm&quot;) # lm: linear model</code></pre>
 <pre><code>## Linear Regression Model Specification (regression)
 ## 
 ## Computational engine: lm</code></pre>
-<pre class="r"><code>jj &lt;- air %&gt;%
-  
-  ggplot(aes(no2, nox))+
-  geom_point( color=&quot;red&quot;)+
-   labs(x=&quot;no2&quot;,y=&quot;nox&quot;)+geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;#8E2C90&quot;)
-
-jj</code></pre>
-<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+</div>
+<div id="actual-points-and-the-linear-fitting" class="section level2">
+<h2><em>Actual points and the linear fitting</em></h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
 <div id="fit-model-estimate-parameters" class="section level2">
-<h2>Fit model &amp; estimate parameters</h2>
-<p>… using <strong>formula syntax</strong></p>
-<pre class="r"><code>linear_reg() %&gt;%
-  set_engine(&quot;lm&quot;) %&gt;%
-  fit(co~no2, data = air) #in: inches #we want to predict height, using width</code></pre>
+<h2><em>Fit model &amp; estimate parameters</em></h2>
 <pre><code>## parsnip model object
 ## 
 ## Fit time:  0ms 
 ## 
 ## Call:
-## stats::lm(formula = co ~ no2, data = data)
+## stats::lm(formula = nox ~ no2, data = data)
 ## 
 ## Coefficients:
 ## (Intercept)          no2  
-##      -2.134        0.756</code></pre>
-<p><span class="math display">\[\widehat{T}_{i} = \beta_0 + \beta_1 \times C_{i}\]</span></p>
-<p><span class="math display">\[\widehat{T}_{i} = 1055.0067 + 0.1759 \times C_{i}\]</span></p>
-<pre class="r"><code>fgfg &lt;- linear_reg() %&gt;%
-  set_engine(&quot;lm&quot;) %&gt;%
-  fit(co~no2, data = air) %&gt;%
-  tidy()
-
-
-fgfg</code></pre>
+##   2202.6401      -0.7743</code></pre>
+</div>
+<div id="model-output" class="section level2">
+<h2><em>Model output</em></h2>
 <pre><code>## # A tibble: 2 x 5
 ##   term        estimate std.error statistic p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
 ## 1 (Intercept)   -2.13   14.8        -0.144   0.886
 ## 2 no2            0.756   0.00911    83.0     0</code></pre>
+</div>
+<div id="summary" class="section level2">
+<h2><em>Summary</em></h2>
 </div>
