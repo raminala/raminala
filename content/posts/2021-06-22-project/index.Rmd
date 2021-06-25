@@ -162,9 +162,15 @@ fgfg
 ```
 
 
+## *Numerical Example*
+**According to available data and linear fitting, What level for Nox is expected if no2 is 2500?**
+
+Nox= -0.7743*no+2202.6401= -0.7743*2500+2202.6401= 266.8901
+
+
 ## *Summary*
 
-
+  According to data visualization in this report, Pollution is a loose function of temperature and humidity but it depends on the time of day. It concluded that level of pollutant is higher at the start and finish of working hours when people are using personal cars to get office/home. Other aspect of this report is prediction of level of nox pollutant when no2 level in known using a simple linear regression.
 
 
 
