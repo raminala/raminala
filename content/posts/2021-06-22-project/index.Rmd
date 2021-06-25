@@ -39,8 +39,9 @@ This post consists of a bit of data clean up and exploratory analysis of a datas
 
 This table shows important variables and their definition.
 
-```{r echo=FALSE, out.width="90%"}
-knitr::include_graphics("t.jpg")
+```{r echo=FALSE, out.width="40%"}
+knitr::include_graphics("t1.jpg",
+  dpi = 30)
 ```
 
 This dataset is available in the below link:
