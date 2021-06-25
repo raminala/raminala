@@ -36,14 +36,10 @@ tags:
 <div id="average-pollution-by-time-of-the-day" class="section level2">
 <h2><em>average pollution by time of the day</em></h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<p>This plot show the average pollution in terms of time of the day. There are two picks in the level of pollutuon. First, 8 Am and the second 7 pm. Both of these hours are rush hours with lots of traffic.</p>
+<p>This plot show the average pollution in terms of time of the day. There are two picks in the level of pollutuon. First, 8 Am and the second 7 pm. Both of these hours are rush hours with lots of traffic. General intuition has always been that there is least air pollution at night because there are fewer cars on the road and fewer factories humming at that time of day.</p>
 </div>
-<div id="cc" class="section level2">
-<h2><em>cc</em></h2>
-</div>
-<div id="goal-predict-t-tin-oxide-content-from-c-co-content" class="section level2">
-<h2>Goal: Predict T (tin oxide content) from C (co content)</h2>
-<p><span class="math display">\[\widehat{T}_{i} = \beta_0 + \beta_1 \times C_{i}\]</span></p>
+<div id="goal-predict-nox-from-no2" class="section level2">
+<h2><em>Goal: Predict nox from no2</em></h2>
 </div>
 <div id="specify-model-and-set-model-fitting-engine" class="section level2">
 <h2>Specify model and Set model fitting <em>engine</em></h2>
@@ -54,6 +50,15 @@ tags:
 <pre><code>## Linear Regression Model Specification (regression)
 ## 
 ## Computational engine: lm</code></pre>
+<pre class="r"><code>jj &lt;- air %&gt;%
+  
+  ggplot(aes(no2, nox))+
+  geom_point( color=&quot;red&quot;)+
+   labs(x=&quot;no2&quot;,y=&quot;nox&quot;)+geom_smooth()
+
+jj</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
 <div id="fit-model-estimate-parameters" class="section level2">
 <h2>Fit model &amp; estimate parameters</h2>

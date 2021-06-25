@@ -101,34 +101,44 @@ gg <- air %>%
   summarise(m=mean(percentage)) %>%
   
   ggplot(aes(m, as.factor(time)))+
-  geom_col(fill="blue")+
+  geom_col(fill="#69b3a2", color="#e9ecef", alpha=0.6)+
    labs(y="Time",x="Average Pullotion")
 gg
 ```
 
 
-This plot show the average pollution in terms of time of the day. There are two picks in the level of pollutuon. First, 8 Am and the second 7 pm. Both of these hours are rush hours with lots of traffic.
-
-
-## *cc*
+This plot show the average pollution in terms of time of the day. There are two picks in the level of pollutuon. First, 8 Am and the second 7 pm. Both of these hours are rush hours with lots of traffic. General intuition has always been that there is least air pollution at night because there are fewer cars on the road and fewer factories humming at that time of day.
 
 
 
+## *Goal: Predict nox from no2*
 
-## Goal: Predict T (tin oxide content) from C (co content)
 
 
-$$\widehat{T}_{i} = \beta_0 + \beta_1 \times C_{i}$$
 
 
 ## Specify model and Set model fitting *engine*
 
-```{r}
+```{r,  message=FALSE, warning=FALSE}
 linear_reg()
 
 linear_reg() %>%
   set_engine("lm") # lm: linear model
 ```
+
+```{r}
+jj <- air %>%
+  
+  ggplot(aes(no2, nox))+
+  geom_point( color="red")+
+   labs(x="no2",y="nox")+geom_smooth()
+
+jj
+```
+
+
+
+
 
 ## Fit model & estimate parameters
 
@@ -159,3 +169,33 @@ fgfg <- linear_reg() %>%
 
 fgfg
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
