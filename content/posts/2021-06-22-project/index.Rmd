@@ -147,7 +147,7 @@ linear_reg() %>%
   fit(nox~no2, data = air) #in: inches #we want to predict height, using width
 ```
 
-## *Model output*
+## *Model outputs*
 
 
 
