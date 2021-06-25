@@ -25,7 +25,7 @@ library(gifski)
 
 ---
 
-## Data: Air Quality in an Italian city
+## *Data: Air Quality in an Italian city*
 
 ```{r, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE}
 air <- read_csv("AirQualityUCI.csv", na = c("n/a", "", "NA")) %>%
@@ -48,53 +48,69 @@ This dataset is available in the below link:
 
 https://archive.ics.uci.edu/ml/datasets/Air+Quality
 
-## Corrolation between air quality and temperature
+## *Corrolation between air quality and temperature*
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 ee <- air %>%
-  subset(select = -c(time,date,ah,rh,co_gt,n_ox_gt,c6h6_gt,no2_gt)) %>%
+  subset(select = -c(time,date,ah,rh,co_gt,n_ox_gt,c6h6_gt,no2_gt, nmhc_gt)) %>%
   pivot_longer(-t, names_to = "categories", values_to = "percentage") %>%
   
   
    ggplot(aes(t, percentage, color=categories))+
   geom_point()+
   geom_smooth(method = "lm", se = FALSE, color = "#8E2C90")+
-  facet_wrap("categories", dir = "v")
-  #labs(x="C",y="T")
+  facet_wrap("categories", dir = "v")+
+  labs(x="Temperature",y="Pullotion in air")
 
 ee
 ```
 
-## Corrolation between air quality and absolute humidity
+It seems that temperature does not have abigh impact on the air quality. However, apart from nox, levels of all other pollutant is slightly increase by increasing temperature.
 
+## *Corrolation between air quality and absolute humidity*
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 ff <- air %>%
-  subset(select = -c(time,date,rh,t,co_gt,n_ox_gt,c6h6_gt,no2_gt)) %>%
+  subset(select = -c(time,date,rh,t,co_gt,n_ox_gt,c6h6_gt,no2_gt, nmhc_gt)) %>%
   pivot_longer(-ah, names_to = "categories", values_to = "percentage") %>%
   
   
    ggplot(aes(ah, percentage, color=categories))+
   geom_point()+
   geom_smooth(method = "lm", se = FALSE, color = "#8E2C90")+
-  facet_wrap("categories", dir = "v")
-  #labs(x="C",y="T")
+  facet_wrap("categories", dir = "v")+
+  labs(x="Absolute humidity",y="Pullotion in air")
 
 ff
 ```
-There are different data for relative and absolute humidity. Note absolute humidity is the measure of water vapor (moisture) in the air, regardless of temperature. Relative humidity also measures water vapor but RELATIVE to the temperature of the air.
+
+There are different data for relative and absolute humidity. Note absolute humidity is the measure of water vapor (moisture) in the air, regardless of temperature. Relative humidity also measures water vapor but RELATIVE to the temperature of the air. Trend of change is interestingly to big extent like temperature.
+
+
+
+## *average pollution by time of the day*
+
+
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-ee <- air  %>%
- 
-  ggplot(aes(no2, nox))+
-  geom_point()+
-  geom_smooth(method = "lm", se = FALSE, color = "#8E2C90")+
-  labs(x="NO2",y="NOx")
-
-ee
+gg <- air %>%
+  subset(select = -c(date,rh, ah,t,co_gt,n_ox_gt,c6h6_gt,no2_gt, nmhc_gt)) %>%
+  pivot_longer(-time, names_to = "categories", values_to = "percentage") %>%
+  group_by(time) %>%
+  summarise(m=mean(percentage)) %>%
+  
+  ggplot(aes(m, as.factor(time)))+
+  geom_col(fill="blue")+
+   labs(y="Time",x="Average Pullotion")
+gg
 ```
+
+
+This plot show the average pollution in terms of time of the day. There are two picks in the level of pollutuon. First, 8 Am and the second 7 pm. Both of these hours are rush hours with lots of traffic.
+
+
+## *cccccc*
 
 
 
