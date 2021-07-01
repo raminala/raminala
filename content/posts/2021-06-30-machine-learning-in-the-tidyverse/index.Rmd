@@ -1,0 +1,63 @@
+---
+title: Machine Learning in the Tidyverse
+author: ''
+date: '2021-06-30'
+slug: []
+categories: []
+tags:
+  - Machine Learning
+---
+
+## Foundations of "tidy" Machine learning
+
+## Nesting your data
+
+```{r, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(gapminder)
+```
+
+
+
+```{r}
+# Explore gapminder
+head(gapminder)
+
+# Prepare the nested dataframe gap_nested
+
+gap_nested <- gapminder %>% 
+  group_by(country) %>% 
+  nest()
+
+# Explore gap_nested
+head(gap_nested)
+```
+
+## 1-3
+
+```{r}
+# Create the unnested dataframe called gap_unnnested
+
+gap_unnested <- gap_nested %>% 
+  unnest(cols = c(data))
+
+# Confirm that your data was not modified  
+identical(gapminder, gap_unnested)
+```
+
+# 1-4
+
+```{r}
+# Extract the data of Algeria
+algeria_df <- gap_nested$data[[1]]
+
+# Calculate the minimum of the population vector
+min(algeria_df$pop)
+
+# Calculate the maximum of the population vector
+max(algeria_df$pop)
+
+# Calculate the mean of the population vector
+mean(algeria_df$pop)
+```
+
