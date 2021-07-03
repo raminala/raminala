@@ -1,0 +1,278 @@
+---
+title: Intermediate Regression in R
+author: ''
+date: '2021-07-02'
+slug: []
+categories: []
+tags:
+  - Regression
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
+## v tibble  3.1.2     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(moderndive)
+library(broom)
+
+taiwan_real_estate &lt;- read_csv(&quot;taiwan_real_estate.csv&quot;)</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   X1 = col_double(),
+##   dist_to_mrt_m = col_double(),
+##   n_convenience = col_double(),
+##   house_age_years = col_character(),
+##   price_twd_msq = col_double()
+## )</code></pre>
+<pre class="r"><code>names(taiwan_real_estate)</code></pre>
+<pre><code>## [1] &quot;X1&quot;              &quot;dist_to_mrt_m&quot;   &quot;n_convenience&quot;   &quot;house_age_years&quot;
+## [5] &quot;price_twd_msq&quot;</code></pre>
+<div id="section" class="section level1">
+<h1>1-2</h1>
+<pre class="r"><code># Fit a linear regr&#39;n of price_twd_msq vs. n_convenience
+mdl_price_vs_conv &lt;- lm(price_twd_msq~n_convenience,taiwan_real_estate)
+
+# See the result
+mdl_price_vs_conv</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price_twd_msq ~ n_convenience, data = taiwan_real_estate)
+## 
+## Coefficients:
+##   (Intercept)  n_convenience  
+##        8.2242         0.7981</code></pre>
+<pre class="r"><code>#---------------------------------------------------------
+
+# Fit a linear regr&#39;n of price_twd_msq vs. house_age_years, no intercept
+mdl_price_vs_age &lt;- lm(price_twd_msq ~ house_age_years + 0, data = taiwan_real_estate)
+
+# See the result
+mdl_price_vs_age</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price_twd_msq ~ house_age_years + 0, data = taiwan_real_estate)
+## 
+## Coefficients:
+##  house_age_years0 to 15  house_age_years15 to 30  house_age_years30 to 45  
+##                  12.637                    9.877                   11.393</code></pre>
+<pre class="r"><code>#---------------------------------------------------------
+
+# Fit a linear regr&#39;n of price_twd_msq vs. n_convenience 
+# plus house_age_years, no intercept
+mdl_price_vs_both &lt;- lm(price_twd_msq ~ house_age_years + n_convenience+0, data = taiwan_real_estate)
+
+# See the result
+mdl_price_vs_both</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price_twd_msq ~ house_age_years + n_convenience + 
+##     0, data = taiwan_real_estate)
+## 
+## Coefficients:
+##  house_age_years0 to 15  house_age_years15 to 30  house_age_years30 to 45  
+##                  9.4133                   7.0852                   7.5110  
+##           n_convenience  
+##                  0.7915</code></pre>
+</div>
+<div id="section-1" class="section level1">
+<h1>1-4</h1>
+<pre class="r"><code># Using taiwan_real_estate, plot price_twd_msq vs. n_convenience
+taiwan_real_estate %&gt;% ggplot(aes(n_convenience, price_twd_msq))+
+  # Add a point layer
+  geom_point() +
+  # Add a smooth trend line using linear regr&#39;n, no ribbon
+  geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>#---------------------------------------------------------
+
+
+# Using taiwan_real_estate, plot price_twd_msq vs. house_age_years
+taiwan_real_estate %&gt;% ggplot(aes(house_age_years, price_twd_msq))+
+  # Add a box plot layer
+  geom_boxplot()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+</div>
+<div id="section-2" class="section level1">
+<h1>1-5</h1>
+<p>When it comes to a linear regression model with a numeric and a categorical explanatory variable, ggplot2 doesn’t have an easy, “out of the box” way to show the predictions. Fortunately, the moderndive package includes an extra geom, geom_parallel_slopes() to make it simple.</p>
+<p>taiwan_real_estate is available; ggplot2 and moderndive are loaded.</p>
+<pre class="r"><code># Using taiwan_real_estate, plot price_twd_msq vs. n_convenience
+# colored by house_age_years
+taiwan_real_estate %&gt;% ggplot(aes(n_convenience, price_twd_msq, color=house_age_years))+
+  # Add a point layer
+  geom_point() +
+  # Add parallel slopes, no ribbon
+  geom_parallel_slopes(se=FALSE)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="section-3" class="section level1">
+<h1>1-7</h1>
+<pre class="r"><code># Make a grid of explanatory data
+explanatory_data &lt;- expand_grid(
+  # Set n_convenience to zero to ten
+ n_convenience = seq(0, 10),
+  # Set house_age_years to the unique values of that variable
+  house_age_years = unique(taiwan_real_estate$house_age_years)
+)
+
+# See the result
+explanatory_data</code></pre>
+<pre><code>## # A tibble: 33 x 2
+##    n_convenience house_age_years
+##            &lt;int&gt; &lt;chr&gt;          
+##  1             0 30 to 45       
+##  2             0 15 to 30       
+##  3             0 0 to 15        
+##  4             1 30 to 45       
+##  5             1 15 to 30       
+##  6             1 0 to 15        
+##  7             2 30 to 45       
+##  8             2 15 to 30       
+##  9             2 0 to 15        
+## 10             3 30 to 45       
+## # ... with 23 more rows</code></pre>
+<pre class="r"><code># Add predictions to the data frame
+prediction_data &lt;- explanatory_data %&gt;% 
+  mutate(prediction_data=predict(
+mdl_price_vs_both, explanatory_data
+)
+  
+  )
+
+# See the result
+prediction_data</code></pre>
+<pre><code>## # A tibble: 33 x 3
+##    n_convenience house_age_years prediction_data
+##            &lt;int&gt; &lt;chr&gt;                     &lt;dbl&gt;
+##  1             0 30 to 45                   7.51
+##  2             0 15 to 30                   7.09
+##  3             0 0 to 15                    9.41
+##  4             1 30 to 45                   8.30
+##  5             1 15 to 30                   7.88
+##  6             1 0 to 15                   10.2 
+##  7             2 30 to 45                   9.09
+##  8             2 15 to 30                   8.67
+##  9             2 0 to 15                   11.0 
+## 10             3 30 to 45                   9.89
+## # ... with 23 more rows</code></pre>
+<pre class="r"><code>#---------------------------------------------------------
+
+taiwan_real_estate %&gt;% 
+  ggplot(aes(n_convenience, price_twd_msq, color = house_age_years)) +
+  geom_point() +
+  geom_parallel_slopes(se = FALSE) #+</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>  # Add points using prediction_data, with size 5 and shape 15
+  #geom_point(data = prediction_data,size = 5, shape = 15)</code></pre>
+</div>
+<div id="manually-calculating-predictions" class="section level1">
+<h1>1-8 Manually calculating predictions</h1>
+<pre class="r"><code># Get the coefficients from mdl_price_vs_both
+coeffs &lt;- coefficients(mdl_price_vs_both)
+
+# Extract the slope coefficient
+slope &lt;- coeffs[1]
+
+# Extract the intercept coefficient for 0 to 15
+intercept_0_15 &lt;- coeffs[2]
+
+# Extract the intercept coefficient for 15 to 30
+intercept_15_30 &lt;- coeffs[3]
+
+# Extract the intercept coefficient for 30 to 45
+intercept_30_45 &lt;- coeffs[4]
+
+
+#---------------------------------------------------------
+
+prediction_data &lt;- explanatory_data %&gt;% 
+  mutate(
+    # Consider the 3 cases to choose the intercept
+    intercept = case_when(
+      house_age_years == &quot;0 to 15&quot; ~ intercept_0_15,
+      house_age_years == &quot;15 to 30&quot; ~ intercept_15_30,
+      house_age_years == &quot;30 to 45&quot; ~ intercept_30_45 
+    ),
+    # Manually calculate the predictions
+    price_twd_msq = intercept + slope * n_convenience
+  )
+
+# See the results
+prediction_data</code></pre>
+<pre><code>## # A tibble: 33 x 4
+##    n_convenience house_age_years intercept price_twd_msq
+##            &lt;int&gt; &lt;chr&gt;               &lt;dbl&gt;         &lt;dbl&gt;
+##  1             0 30 to 45            0.791         0.791
+##  2             0 15 to 30            7.51          7.51 
+##  3             0 0 to 15             7.09          7.09 
+##  4             1 30 to 45            0.791        10.2  
+##  5             1 15 to 30            7.51         16.9  
+##  6             1 0 to 15             7.09         16.5  
+##  7             2 30 to 45            0.791        19.6  
+##  8             2 15 to 30            7.51         26.3  
+##  9             2 0 to 15             7.09         25.9  
+## 10             3 30 to 45            0.791        29.0  
+## # ... with 23 more rows</code></pre>
+</div>
+<div id="comparing-coefficients-of-determination" class="section level1">
+<h1>1-10 Comparing coefficients of determination</h1>
+<p>Recall that the coefficient of determination is a measure of how well the linear regression line fits the observed values. An important motivation for including several explanatory variables in a linear regression is that you can improve the fit compared to considering only a single explanatory variable.</p>
+<p>Here you’ll compare the coefficient of determination for the three Taiwan house price models, to see which gives the best result.</p>
+<pre class="r"><code>mdl_price_vs_conv %&gt;% 
+  # Get the model-level coefficients
+  glance() %&gt;% 
+  # Select the coeffs of determination
+  select(r.squared, adj.r.squared)</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   r.squared adj.r.squared
+##       &lt;dbl&gt;         &lt;dbl&gt;
+## 1     0.326         0.324</code></pre>
+<pre class="r"><code># Get the coeffs of determination for mdl_price_vs_age
+mdl_price_vs_age %&gt;% 
+  glance() %&gt;% 
+  select(r.squared, adj.r.squared)</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   r.squared adj.r.squared
+##       &lt;dbl&gt;         &lt;dbl&gt;
+## 1     0.896         0.895</code></pre>
+<pre class="r"><code># Get the coeffs of determination for mdl_price_vs_both
+mdl_price_vs_both %&gt;% 
+  glance() %&gt;% 
+  select(r.squared, adj.r.squared)</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   r.squared adj.r.squared
+##       &lt;dbl&gt;         &lt;dbl&gt;
+## 1     0.931         0.931</code></pre>
+</div>
+<div id="comparing-residual-standard-error" class="section level1">
+<h1>1-11 Comparing residual standard error</h1>
+<p>The other common metric for assessing model fit is the residual standard error (RSE), which measures the typical size of the residuals.</p>
+<p>In the last exercise you saw how including both explanatory variables into the model increased the coefficient of determination. How do you think using both explanatory variables will change the RSE?</p>
+<pre class="r"><code>mdl_price_vs_conv %&gt;% 
+  # Get the model-level coefficients
+  glance() %&gt;% 
+  # Pull out the RSE
+  pull(sigma)</code></pre>
+<pre><code>## [1] 3.383888</code></pre>
+<pre class="r"><code># Get the RSE for mdl_price_vs_age
+mdl_price_vs_age%&gt;% 
+ glance() %&gt;% 
+  pull(sigma)</code></pre>
+<pre><code>## [1] 3.950184</code></pre>
+<pre class="r"><code># Get the RSE for mdl_price_vs_both
+mdl_price_vs_both%&gt;% 
+ glance() %&gt;% 
+  pull(sigma)</code></pre>
+<pre><code>## [1] 3.21346</code></pre>
+</div>

@@ -1,0 +1,214 @@
+---
+title: Intermediate Regression in R
+author: ''
+date: '2021-07-02'
+slug: []
+categories: []
+tags:
+  - Regression
+---
+
+```{r}
+library(tidyverse)
+library(moderndive)
+library(broom)
+
+taiwan_real_estate <- read_csv("taiwan_real_estate.csv")
+names(taiwan_real_estate)
+```
+
+# 1-2
+
+```{r}
+# Fit a linear regr'n of price_twd_msq vs. n_convenience
+mdl_price_vs_conv <- lm(price_twd_msq~n_convenience,taiwan_real_estate)
+
+# See the result
+mdl_price_vs_conv
+
+#---------------------------------------------------------
+
+# Fit a linear regr'n of price_twd_msq vs. house_age_years, no intercept
+mdl_price_vs_age <- lm(price_twd_msq ~ house_age_years + 0, data = taiwan_real_estate)
+
+# See the result
+mdl_price_vs_age
+
+#---------------------------------------------------------
+
+# Fit a linear regr'n of price_twd_msq vs. n_convenience 
+# plus house_age_years, no intercept
+mdl_price_vs_both <- lm(price_twd_msq ~ house_age_years + n_convenience+0, data = taiwan_real_estate)
+
+# See the result
+mdl_price_vs_both
+```
+
+# 1-4
+
+```{r}
+# Using taiwan_real_estate, plot price_twd_msq vs. n_convenience
+taiwan_real_estate %>% ggplot(aes(n_convenience, price_twd_msq))+
+  # Add a point layer
+  geom_point() +
+  # Add a smooth trend line using linear regr'n, no ribbon
+  geom_smooth(method = "lm", se = FALSE)
+
+#---------------------------------------------------------
+
+
+# Using taiwan_real_estate, plot price_twd_msq vs. house_age_years
+taiwan_real_estate %>% ggplot(aes(house_age_years, price_twd_msq))+
+  # Add a box plot layer
+  geom_boxplot()
+
+
+
+  
+```
+
+# 1-5
+
+When it comes to a linear regression model with a numeric and a categorical explanatory variable, ggplot2 doesn't have an easy, "out of the box" way to show the predictions. Fortunately, the moderndive package includes an extra geom, geom_parallel_slopes() to make it simple.
+
+taiwan_real_estate is available; ggplot2 and moderndive are loaded.
+
+```{r}
+# Using taiwan_real_estate, plot price_twd_msq vs. n_convenience
+# colored by house_age_years
+taiwan_real_estate %>% ggplot(aes(n_convenience, price_twd_msq, color=house_age_years))+
+  # Add a point layer
+  geom_point() +
+  # Add parallel slopes, no ribbon
+  geom_parallel_slopes(se=FALSE)
+
+
+```
+
+# 1-7
+
+```{r}
+# Make a grid of explanatory data
+explanatory_data <- expand_grid(
+  # Set n_convenience to zero to ten
+ n_convenience = seq(0, 10),
+  # Set house_age_years to the unique values of that variable
+  house_age_years = unique(taiwan_real_estate$house_age_years)
+)
+
+# See the result
+explanatory_data
+
+
+# Add predictions to the data frame
+prediction_data <- explanatory_data %>% 
+  mutate(prediction_data=predict(
+mdl_price_vs_both, explanatory_data
+)
+  
+  )
+
+# See the result
+prediction_data
+
+
+#---------------------------------------------------------
+
+taiwan_real_estate %>% 
+  ggplot(aes(n_convenience, price_twd_msq, color = house_age_years)) +
+  geom_point() +
+  geom_parallel_slopes(se = FALSE) #+
+  # Add points using prediction_data, with size 5 and shape 15
+  #geom_point(data = prediction_data,size = 5, shape = 15)
+```
+
+# 1-8 Manually calculating predictions
+
+```{r}
+# Get the coefficients from mdl_price_vs_both
+coeffs <- coefficients(mdl_price_vs_both)
+
+# Extract the slope coefficient
+slope <- coeffs[1]
+
+# Extract the intercept coefficient for 0 to 15
+intercept_0_15 <- coeffs[2]
+
+# Extract the intercept coefficient for 15 to 30
+intercept_15_30 <- coeffs[3]
+
+# Extract the intercept coefficient for 30 to 45
+intercept_30_45 <- coeffs[4]
+
+
+#---------------------------------------------------------
+
+prediction_data <- explanatory_data %>% 
+  mutate(
+    # Consider the 3 cases to choose the intercept
+    intercept = case_when(
+      house_age_years == "0 to 15" ~ intercept_0_15,
+      house_age_years == "15 to 30" ~ intercept_15_30,
+      house_age_years == "30 to 45" ~ intercept_30_45 
+    ),
+    # Manually calculate the predictions
+    price_twd_msq = intercept + slope * n_convenience
+  )
+
+# See the results
+prediction_data
+
+
+```
+
+# 1-10 Comparing coefficients of determination
+
+Recall that the coefficient of determination is a measure of how well the linear regression line fits the observed values. An important motivation for including several explanatory variables in a linear regression is that you can improve the fit compared to considering only a single explanatory variable.
+
+Here you'll compare the coefficient of determination for the three Taiwan house price models, to see which gives the best result.
+
+```{r}
+mdl_price_vs_conv %>% 
+  # Get the model-level coefficients
+  glance() %>% 
+  # Select the coeffs of determination
+  select(r.squared, adj.r.squared)
+
+# Get the coeffs of determination for mdl_price_vs_age
+mdl_price_vs_age %>% 
+  glance() %>% 
+  select(r.squared, adj.r.squared)
+
+# Get the coeffs of determination for mdl_price_vs_both
+mdl_price_vs_both %>% 
+  glance() %>% 
+  select(r.squared, adj.r.squared)
+```
+
+# 1-11 Comparing residual standard error
+
+The other common metric for assessing model fit is the residual standard error (RSE), which measures the typical size of the residuals.
+
+In the last exercise you saw how including both explanatory variables into the model increased the coefficient of determination. How do you think using both explanatory variables will change the RSE?
+
+
+```{r}
+mdl_price_vs_conv %>% 
+  # Get the model-level coefficients
+  glance() %>% 
+  # Pull out the RSE
+  pull(sigma)
+
+# Get the RSE for mdl_price_vs_age
+mdl_price_vs_age%>% 
+ glance() %>% 
+  pull(sigma)
+
+
+# Get the RSE for mdl_price_vs_both
+mdl_price_vs_both%>% 
+ glance() %>% 
+  pull(sigma)
+
+```
+
