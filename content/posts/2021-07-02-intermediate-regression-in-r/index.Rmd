@@ -8,6 +8,10 @@ tags:
   - Regression
 ---
 
+**Standard error: tells us who the estimated average amount differs from the actual value average**
+
+**A low p-value means that, assuming the null hypothesis is true, there is a very low likelihood that this outcome was a result of luck. A high p-value means that, assuming the null hypothesis is true, this outcome was very likely.**
+
 ```{r}
 library(tidyverse)
 library(moderndive)
@@ -214,7 +218,9 @@ mdl_price_vs_both%>%
 
 
 
-# 2-2
+# 2-2 One model per category
+
+The model you ran on the whole dataset fits some parts of the data better than others. It's worth taking a look at what happens when you run a linear model on different parts of the dataset separately, to see if each model agrees or disagrees with the others.
 
 ```{r}
 # From previous step
@@ -240,7 +246,9 @@ mdl_15_to_30
 mdl_30_to_45
 ```
 
-# 2-3
+# 2-3 Predicting multiple models
+
+In order to see what each of the models for individual categories are doing, it's helpful to make predictions from them. The flow is exactly the same as the flow for making predictions on the whole model, though remember that you only have a single explanatory variable in these models (so expand_grid() isn't needed.)
 
 ```{r}
 # From previous step
@@ -259,5 +267,93 @@ prediction_data_15_to_30 <- explanatory_data %>%
 # Same again, with "30 to 45"
 prediction_data_30_to_45 <- explanatory_data %>% 
   mutate(price_twd_msq=predict(mdl_30_to_45,explanatory_data))
+```
+
+
+# 2-4
+
+```{r}
+# Using taiwan_real_estate, plot price vs. no. of conv. stores
+# colored by house age
+ggplot(taiwan_real_estate, aes(n_convenience,price_twd_msq, color=house_age_years)) +
+  # Make it a scatter plot
+  geom_point() +
+  # Add smooth linear regression trend lines, no ribbon
+  geom_smooth(method=lm, se=FALSE)
+```
+
+#2-5 Assessing model performance
+
+To test which approach is best – the whole dataset model or the models for each house age category – you need to calculate some metrics. Here's, you'll compare the coefficient of determination and the residual standard error for each model.
+
+```{r}
+# Get the coeff. of determination for mdl_all_ages
+
+#mdl_all_ages %>% glance() %>% pull(r.squared)
+
+# Get the coeff. of determination for mdl_0_to_15
+mdl_0_to_15 %>%
+glance() %>%
+pull(r.squared)
+
+
+
+# Get the coeff. of determination for mdl_15_to_30
+mdl_15_to_30 %>%
+glance() %>%
+pull(r.squared)
+
+
+# Get the coeff. of determination for mdl_30_to_45
+mdl_30_to_45 %>%
+glance() %>%
+pull(r.squared)
+
+
+#----------------------------------------------------
+
+
+# Get the RSE for mdl_all
+#mdl_all_ages %>%glance() %>%pull(sigma)
+
+# Get the RSE for mdl_0_to_15
+mdl_0_to_15 %>%
+glance() %>%
+pull(sigma)
+
+# Get the RSE for mdl_15_to_30
+mdl_15_to_30 %>%
+glance() %>%
+pull(sigma)
+
+# Get the RSE for mdl_30_to_45
+mdl_30_to_45 %>%
+glance() %>%
+pull(sigma)
+```
+
+#2-7 Specifying an interaction
+
+So far you used a single parallel slopes model, which gave an OK fit for the whole dataset, then three separate models for each house age category, which gave a better fit for each individual category, but was clunky because you had three separate models to work with and explain. Ideally, you'd have a single model that had all the predictive power of the individual models.
+
+Defining this single model is achieved through adding interactions between explanatory variables. R's formula syntax is flexible, and gives you a couple of options, depending on whether you prefer concise code that is quick to type and to read, or explicit code that describes what you are doing in detail.
+
+```{r}
+# Model price vs both with an interaction using "times" syntax
+lm(price_twd_msq ~ n_convenience * house_age_years, data = taiwan_real_estate)
+
+# Model price vs both with an interaction using "colon" syntax
+lm(
+  price_twd_msq ~ n_convenience + house_age_years + n_convenience:house_age_years, 
+  data = taiwan_real_estate
+)
+```
+
+#2-7 Interactions with understandable coeffs
+
+The previous model with the interaction term returned coefficients that were a little tricky to interpret. In order clarify what the model is predicting, you can reformulate the model in a way that returns understandable coefficients. For further clarity, you can compare the results to the models on the separate house age categories (mdl_0_to_15, mdl_15_to_30, and mdl_30_to_45).
+
+```{r}
+
 ```
 

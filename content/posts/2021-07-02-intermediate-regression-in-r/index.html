@@ -11,6 +11,8 @@ tags:
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
+<p><strong>Standard error: tells us who the estimated average amount differs from the actual value average</strong></p>
+<p><strong>A low p-value means that, assuming the null hypothesis is true, there is a very low likelihood that this outcome was a result of luck. A high p-value means that, assuming the null hypothesis is true, this outcome was very likely.</strong></p>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
 <pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
@@ -275,4 +277,160 @@ mdl_price_vs_both%&gt;%
  glance() %&gt;% 
   pull(sigma)</code></pre>
 <pre><code>## [1] 3.21346</code></pre>
+</div>
+<div id="one-model-per-category" class="section level1">
+<h1>2-2 One model per category</h1>
+<p>The model you ran on the whole dataset fits some parts of the data better than others. It’s worth taking a look at what happens when you run a linear model on different parts of the dataset separately, to see if each model agrees or disagrees with the others.</p>
+<pre class="r"><code># From previous step
+taiwan_0_to_15 &lt;- taiwan_real_estate %&gt;%
+  filter(house_age_years == &quot;0 to 15&quot;)
+taiwan_15_to_30 &lt;- taiwan_real_estate %&gt;%
+  filter(house_age_years == &quot;15 to 30&quot;)
+taiwan_30_to_45 &lt;- taiwan_real_estate %&gt;%
+  filter(house_age_years == &quot;30 to 45&quot;)
+
+# Model price vs. no. convenience stores using 0 to 15 data
+mdl_0_to_15 &lt;- lm(price_twd_msq ~ n_convenience, data = taiwan_0_to_15)
+
+# Model price vs. no. convenience stores using 15 to 30 data
+mdl_15_to_30 &lt;- lm(price_twd_msq ~ n_convenience, data = taiwan_15_to_30)
+
+# Model price vs. no. convenience stores using 30 to 45 data
+mdl_30_to_45 &lt;- lm(price_twd_msq ~ n_convenience, data = taiwan_30_to_45)
+
+# See the results
+mdl_0_to_15</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price_twd_msq ~ n_convenience, data = taiwan_0_to_15)
+## 
+## Coefficients:
+##   (Intercept)  n_convenience  
+##        9.2417         0.8336</code></pre>
+<pre class="r"><code>mdl_15_to_30</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price_twd_msq ~ n_convenience, data = taiwan_15_to_30)
+## 
+## Coefficients:
+##   (Intercept)  n_convenience  
+##        6.8719         0.8519</code></pre>
+<pre class="r"><code>mdl_30_to_45</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price_twd_msq ~ n_convenience, data = taiwan_30_to_45)
+## 
+## Coefficients:
+##   (Intercept)  n_convenience  
+##        8.1131         0.6687</code></pre>
+</div>
+<div id="predicting-multiple-models" class="section level1">
+<h1>2-3 Predicting multiple models</h1>
+<p>In order to see what each of the models for individual categories are doing, it’s helpful to make predictions from them. The flow is exactly the same as the flow for making predictions on the whole model, though remember that you only have a single explanatory variable in these models (so expand_grid() isn’t needed.)</p>
+<pre class="r"><code># From previous step
+explanatory_data &lt;- tibble(
+  n_convenience = 0:10
+)
+
+# Add column of predictions using &quot;0 to 15&quot; model and explanatory data 
+prediction_data_0_to_15 &lt;- explanatory_data %&gt;% 
+  mutate(price_twd_msq=predict(mdl_0_to_15,explanatory_data))
+
+# Same again, with &quot;15 to 30&quot;
+prediction_data_15_to_30 &lt;- explanatory_data %&gt;% 
+  mutate(price_twd_msq=predict(mdl_15_to_30,explanatory_data))
+
+# Same again, with &quot;30 to 45&quot;
+prediction_data_30_to_45 &lt;- explanatory_data %&gt;% 
+  mutate(price_twd_msq=predict(mdl_30_to_45,explanatory_data))</code></pre>
+</div>
+<div id="section-4" class="section level1">
+<h1>2-4</h1>
+<pre class="r"><code># Using taiwan_real_estate, plot price vs. no. of conv. stores
+# colored by house age
+ggplot(taiwan_real_estate, aes(n_convenience,price_twd_msq, color=house_age_years)) +
+  # Make it a scatter plot
+  geom_point() +
+  # Add smooth linear regression trend lines, no ribbon
+  geom_smooth(method=lm, se=FALSE)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>#2-5 Assessing model performance</p>
+<p>To test which approach is best – the whole dataset model or the models for each house age category – you need to calculate some metrics. Here’s, you’ll compare the coefficient of determination and the residual standard error for each model.</p>
+<pre class="r"><code># Get the coeff. of determination for mdl_all_ages
+
+#mdl_all_ages %&gt;% glance() %&gt;% pull(r.squared)
+
+# Get the coeff. of determination for mdl_0_to_15
+mdl_0_to_15 %&gt;%
+glance() %&gt;%
+pull(r.squared)</code></pre>
+<pre><code>## [1] 0.3120536</code></pre>
+<pre class="r"><code># Get the coeff. of determination for mdl_15_to_30
+mdl_15_to_30 %&gt;%
+glance() %&gt;%
+pull(r.squared)</code></pre>
+<pre><code>## [1] 0.4424605</code></pre>
+<pre class="r"><code># Get the coeff. of determination for mdl_30_to_45
+mdl_30_to_45 %&gt;%
+glance() %&gt;%
+pull(r.squared)</code></pre>
+<pre><code>## [1] 0.3125713</code></pre>
+<pre class="r"><code>#----------------------------------------------------
+
+
+# Get the RSE for mdl_all
+#mdl_all_ages %&gt;%glance() %&gt;%pull(sigma)
+
+# Get the RSE for mdl_0_to_15
+mdl_0_to_15 %&gt;%
+glance() %&gt;%
+pull(sigma)</code></pre>
+<pre><code>## [1] 3.564127</code></pre>
+<pre class="r"><code># Get the RSE for mdl_15_to_30
+mdl_15_to_30 %&gt;%
+glance() %&gt;%
+pull(sigma)</code></pre>
+<pre><code>## [1] 2.585273</code></pre>
+<pre class="r"><code># Get the RSE for mdl_30_to_45
+mdl_30_to_45 %&gt;%
+glance() %&gt;%
+pull(sigma)</code></pre>
+<pre><code>## [1] 3.239037</code></pre>
+<p>#2-7 Specifying an interaction</p>
+<p>So far you used a single parallel slopes model, which gave an OK fit for the whole dataset, then three separate models for each house age category, which gave a better fit for each individual category, but was clunky because you had three separate models to work with and explain. Ideally, you’d have a single model that had all the predictive power of the individual models.</p>
+<p>Defining this single model is achieved through adding interactions between explanatory variables. R’s formula syntax is flexible, and gives you a couple of options, depending on whether you prefer concise code that is quick to type and to read, or explicit code that describes what you are doing in detail.</p>
+<pre class="r"><code># Model price vs both with an interaction using &quot;times&quot; syntax
+lm(price_twd_msq ~ n_convenience * house_age_years, data = taiwan_real_estate)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price_twd_msq ~ n_convenience * house_age_years, 
+##     data = taiwan_real_estate)
+## 
+## Coefficients:
+##                           (Intercept)                          n_convenience  
+##                               9.24170                                0.83359  
+##               house_age_years15 to 30                house_age_years30 to 45  
+##                              -2.36978                               -1.12858  
+## n_convenience:house_age_years15 to 30  n_convenience:house_age_years30 to 45  
+##                               0.01833                               -0.16489</code></pre>
+<pre class="r"><code># Model price vs both with an interaction using &quot;colon&quot; syntax
+lm(
+  price_twd_msq ~ n_convenience + house_age_years + n_convenience:house_age_years, 
+  data = taiwan_real_estate
+)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price_twd_msq ~ n_convenience + house_age_years + 
+##     n_convenience:house_age_years, data = taiwan_real_estate)
+## 
+## Coefficients:
+##                           (Intercept)                          n_convenience  
+##                               9.24170                                0.83359  
+##               house_age_years15 to 30                house_age_years30 to 45  
+##                              -2.36978                               -1.12858  
+## n_convenience:house_age_years15 to 30  n_convenience:house_age_years30 to 45  
+##                               0.01833                               -0.16489</code></pre>
+<p>#2-7 Interactions with understandable coeffs</p>
+<p>The previous model with the interaction term returned coefficients that were a little tricky to interpret. In order clarify what the model is predicting, you can reformulate the model in a way that returns understandable coefficients. For further clarity, you can compare the results to the models on the separate house age categories (mdl_0_to_15, mdl_15_to_30, and mdl_30_to_45).</p>
 </div>
