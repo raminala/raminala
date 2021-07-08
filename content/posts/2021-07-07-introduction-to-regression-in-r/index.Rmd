@@ -441,3 +441,35 @@ churn %>% ggplot(aes(time_since_first_purchase, has_churned)) +
 
 ```
 
+
+## 4-4 Logistic regression with glm()
+
+Linear regression and logistic regression are special cases of a broader type of models called generalized linear models ("GLMs"). A linear regression makes the assumption that the residuals follow a Gaussian (normal) distribution. By contrast, a logistic regression assumes that residuals follow a binomial distribution.
+
+Here, you'll model how the length of relationship with a customer affects churn.
+
+```{r}
+# Fit a logistic regression of churn vs. 
+# length of relationship using the churn dataset
+mdl_churn_vs_relationship <- glm(has_churned~time_since_first_purchase, data=churn, family = binomial)
+
+# See the result
+mdl_churn_vs_relationship
+```
+
+
+## 4-6 Probabilities
+
+There are four main ways of expressing the prediction from a logistic regression model – we'll look at each of them over the next four exercises. Firstly, since the response variable is either "yes" or "no", you can make a prediction of the probability of a "yes". Here, you'll calculate and visualize these probabilities.
+
+```{r}
+# Fit a logistic regression of churn vs. 
+# length of relationship using the churn dataset
+mdl_churn_vs_relationship <- glm(has_churned~time_since_first_purchase, data=churn, family = binomial)
+
+# See the result
+mdl_churn_vs_relationship
+```
+
+
+
