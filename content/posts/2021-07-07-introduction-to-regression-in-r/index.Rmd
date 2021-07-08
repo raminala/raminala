@@ -21,7 +21,7 @@ sp500_yearly_returns <- read_csv("sp500_yearly_returns.csv")
 
 ad_conversion <- read_csv("ad_conversion.csv")
 
-
+churn <- read_csv("churn.csv")
 
 ```
 
@@ -402,11 +402,42 @@ Recall that autoplot() lets you specify which diagnostic plots you are intereste
 mdl_price_vs_conv is available, and ggplot2 and ggfortify are loaded.
 
 
-## 4-2 Coefficient of determination
+## 4-2 Exploring the explanatory variables
 
-The coefficient of determination is a measure of how well the linear regression line fits the observed values. For simple linear regression, it is equal to the square of the correlation between the explanatory and response variables.
+When the response variable is logical, all the points lie on the y equals zero and y equals one lines, making it difficult to see what is happening. In the video, until you saw the trend line, it wasn't clear how the explanatory variable was distributed on each line. This can be solved with a histogram of the explanatory variable, faceted on the response.
 
 ```{r}
+# Using churn, plot time_since_last_purchase
+ggplot(churn, aes(time_since_last_purchase)) +
+  # as a histogram with binwidth 0.25
+  geom_histogram(binwidth=0.25) +
+  # faceted in a grid with has_churned on each row
+  facet_grid(vars(has_churned))
+
+
+# Redraw the plot with time_since_first_purchase
+
+ggplot(churn, aes(time_since_first_purchase)) +
+  geom_histogram(binwidth=0.25) +
+   facet_grid(vars(has_churned))
+```
+
+
+
+## 4-3 Visualizing linear and logistic models
+
+As with linear regressions, ggplot2 will draw model predictions for a logistic regression without you having to worry about the modeling code yourself. To see how the predictions differ for linear and logistic regressions, try drawing both trend lines side by side. Spoiler: you should see a linear (straight line) trend from the linear model, and a logistic (S-shaped) trend from the logistic model.
+
+```{r}
+# Using churn plot has_churned vs. time_since_first_purchase
+churn %>% ggplot(aes(time_since_first_purchase, has_churned)) +
+  # Make it a scatter plot
+  geom_point() +
+  # Add an lm trend line, no std error ribbon, colored red
+  geom_smooth(method="lm", se=FALSE, color="red")+
+
+# Add a glm trend line, no std error ribbon, binomial family
+  geom_smooth(method = "glm", se = FALSE,method.args = list(family = binomial))
 
 ```
 
