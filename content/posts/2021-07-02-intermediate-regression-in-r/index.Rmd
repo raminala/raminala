@@ -349,11 +349,65 @@ lm(
 )
 ```
 
-#2-7 Interactions with understandable coeffs
+#2-8 Interactions with understandable coeffs
 
 The previous model with the interaction term returned coefficients that were a little tricky to interpret. In order clarify what the model is predicting, you can reformulate the model in a way that returns understandable coefficients. For further clarity, you can compare the results to the models on the separate house age categories (mdl_0_to_15, mdl_15_to_30, and mdl_30_to_45).
 
 ```{r}
+# Model price vs. house age plus an interaction, no intercept
+mdl_readable_inter <- lm(price_twd_msq ~ house_age_years + n_convenience:house_age_years + 0, data = taiwan_real_estate)
 
+# See the result
+mdl_readable_inter
+
+# Get coefficients
+coefficients(mdl_readable_inter)
+```
+
+#2-10 Interactions with understandable coeffs
+
+As with every other regression model you've created, the fun part is making predictions. Fortunately, the code flow for this case is the same as the one without interactions – R can handle calculating the interactions without any extra prompting from you. The only thing you need to remember is the trick for getting combinations of explanatory variables.
+
+```{r}
+# Make a grid of explanatory data
+explanatory_data <- expand_grid(
+  # Set n_convenience to zero to ten
+  n_convenience= seq(0, 10),
+  # Set house_age_years to the unique values of that variable
+  house_age_years = unique(taiwan_real_estate$house_age_years)
+)
+
+# See the result
+explanatory_data
+
+
+
+# From previous step
+explanatory_data <- expand_grid(
+  n_convenience = 0:10,
+  house_age_years = unique(taiwan_real_estate$house_age_years)
+)
+
+# Add predictions to the data frame
+#prediction_data <- explanatory_data %>% 
+#  mutate(
+ #   price_twd_msq = predict(mdl_price_vs_both_inter, explanatory_data) )
+
+# See the result
+prediction_data
+
+
+
+explanatory_data <- expand_grid(
+  n_convenience = 0:10,
+  house_age_years = unique(taiwan_real_estate$house_age_years)
+)
+#prediction_data <- explanatory_data %>%  mutate(price_twd_msq =predict(mdl_price_vs_both_inter, explanatory_data)  )
+
+# 
+ggplot(taiwan_real_estate, aes(n_convenience, price_twd_msq, color = house_age_years)) +
+geom_point() +
+geom_smooth(method = "lm", se = FALSE) +
+geom_point(data = prediction_data, size = 5, shape = 15)
 ```
 

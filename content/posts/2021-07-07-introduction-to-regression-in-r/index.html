@@ -1,0 +1,506 @@
+---
+title: Introduction to Regression in R
+author: ''
+date: '2021-07-07'
+slug: []
+categories: []
+tags:
+  - Regression
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
+## v tibble  3.1.2     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(broom)</code></pre>
+<pre class="r"><code>taiwan_real_estate &lt;- read_csv(&quot;taiwan_real_estate.csv&quot;)</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   X1 = col_double(),
+##   dist_to_mrt_m = col_double(),
+##   n_convenience = col_double(),
+##   house_age_years = col_character(),
+##   price_twd_msq = col_double()
+## )</code></pre>
+<pre class="r"><code>sp500_yearly_returns &lt;- read_csv(&quot;sp500_yearly_returns.csv&quot;)</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   X1 = col_double(),
+##   symbol = col_character(),
+##   return_2018 = col_double(),
+##   return_2019 = col_double()
+## )</code></pre>
+<pre class="r"><code>ad_conversion &lt;- read_csv(&quot;ad_conversion.csv&quot;)</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   X1 = col_double(),
+##   spent_usd = col_double(),
+##   n_impressions = col_double(),
+##   n_clicks = col_double()
+## )</code></pre>
+<div id="visualizing-two-variables" class="section level1">
+<h1>1-3 Visualizing two variables</h1>
+<p>points 50% transparent by setting alpha to 0.5.
+adding a trend line, calculated using a linear regression.</p>
+<pre class="r"><code>taiwan_real_estate %&gt;%
+ggplot(aes(n_convenience, price_twd_msq))+
+geom_point(alpha=0.5)+
+  geom_smooth(method=&quot;lm&quot;, se=FALSE)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="linear-regression-with-lm" class="section level1">
+<h1>1-7 Linear regression with lm()</h1>
+<pre class="r"><code># Run a linear regression of price_twd_msq vs. n_convenience
+lm(price_twd_msq~n_convenience, taiwan_real_estate)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price_twd_msq ~ n_convenience, data = taiwan_real_estate)
+## 
+## Coefficients:
+##   (Intercept)  n_convenience  
+##        8.2242         0.7981</code></pre>
+</div>
+<div id="visualizing-numeric-vs.-categorical" class="section level1">
+<h1>1-9 Visualizing numeric vs. categorical</h1>
+<pre class="r"><code># Using taiwan_real_estate, plot price_twd_msq
+taiwan_real_estate %&gt;% ggplot(aes(price_twd_msq)) +
+  # Make it a histogram with 10 bins
+  geom_histogram(bins=10) +
+  # Facet the plot so each house age group gets its own panel
+  facet_wrap(vars(house_age_years))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="calculating-means-by-category" class="section level1">
+<h1>1-10 Calculating means by category</h1>
+<pre class="r"><code>summary_stats &lt;- taiwan_real_estate %&gt;% 
+  # Group by house age
+  group_by(house_age_years) %&gt;% 
+  # Summarize to calculate the mean house price/area
+  summarise(mean_by_group = mean(price_twd_msq))
+
+# See the result
+summary_stats</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   house_age_years mean_by_group
+##   &lt;chr&gt;                   &lt;dbl&gt;
+## 1 0 to 15                 12.6 
+## 2 15 to 30                 9.88
+## 3 30 to 45                11.4</code></pre>
+</div>
+<div id="lm-with-a-categorical-explanatory-variable" class="section level1">
+<h1>1-11 lm() with a categorical explanatory variable</h1>
+<pre class="r"><code># Run a linear regression of price_twd_msq vs. house_age_years
+mdl_price_vs_age &lt;- lm(price_twd_msq~house_age_years, taiwan_real_estate)
+
+# See the result
+mdl_price_vs_age</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price_twd_msq ~ house_age_years, data = taiwan_real_estate)
+## 
+## Coefficients:
+##             (Intercept)  house_age_years15 to 30  house_age_years30 to 45  
+##                  12.637                   -2.761                   -1.244</code></pre>
+<pre class="r"><code>#---------------------------------
+
+# Update the model formula to remove the intercept
+mdl_price_vs_age_no_intercept &lt;- lm(
+  price_twd_msq ~ house_age_years+0, 
+  data = taiwan_real_estate
+)
+
+# See the result
+mdl_price_vs_age_no_intercept</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price_twd_msq ~ house_age_years + 0, data = taiwan_real_estate)
+## 
+## Coefficients:
+##  house_age_years0 to 15  house_age_years15 to 30  house_age_years30 to 45  
+##                  12.637                    9.877                   11.393</code></pre>
+</div>
+<div id="predicting-house-prices" class="section level1">
+<h1>2-2 Predicting house prices</h1>
+<p>you specify values for each of the explanatory variables, feed them to the model, and you get a prediction for the corresponding response variable. The code flow is as follows:</p>
+<p>explanatory_data &lt;- tibble(
+explanatory_var = some_values
+)
+explanatory_data %&gt;%
+mutate(
+response_var = predict(model, explanatory_data)
+)</p>
+<pre class="r"><code>taiwan_real_estate</code></pre>
+<pre><code>## # A tibble: 414 x 5
+##       X1 dist_to_mrt_m n_convenience house_age_years price_twd_msq
+##    &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;                   &lt;dbl&gt;
+##  1     1          84.9            10 30 to 45                11.5 
+##  2     2         307.              9 15 to 30                12.8 
+##  3     3         562.              5 0 to 15                 14.3 
+##  4     4         562.              5 0 to 15                 16.6 
+##  5     5         391.              5 0 to 15                 13.0 
+##  6     6        2175.              3 0 to 15                  9.71
+##  7     7         623.              7 30 to 45                12.2 
+##  8     8         288.              6 15 to 30                14.1 
+##  9     9        5512.              1 30 to 45                 5.69
+## 10    10        1783.              3 15 to 30                 6.69
+## # ... with 404 more rows</code></pre>
+<pre class="r"><code>mdl_price_vs_conv &lt;- lm(formula = price_twd_msq ~ n_convenience, data = taiwan_real_estate)
+
+
+
+# Create a tibble with n_convenience column from zero to ten
+explanatory_data &lt;- tibble(n_convenience = 0:10)
+explanatory_data</code></pre>
+<pre><code>## # A tibble: 11 x 1
+##    n_convenience
+##            &lt;int&gt;
+##  1             0
+##  2             1
+##  3             2
+##  4             3
+##  5             4
+##  6             5
+##  7             6
+##  8             7
+##  9             8
+## 10             9
+## 11            10</code></pre>
+<pre class="r"><code># Use mdl_price_vs_conv to predict with explanatory_data
+prediction_data &lt;- explanatory_data %&gt;% 
+  mutate(
+    price_twd_msq = predict(mdl_price_vs_conv, explanatory_data)
+  )
+
+# See the result
+prediction_data</code></pre>
+<pre><code>## # A tibble: 11 x 2
+##    n_convenience price_twd_msq
+##            &lt;int&gt;         &lt;dbl&gt;
+##  1             0          8.22
+##  2             1          9.02
+##  3             2          9.82
+##  4             3         10.6 
+##  5             4         11.4 
+##  6             5         12.2 
+##  7             6         13.0 
+##  8             7         13.8 
+##  9             8         14.6 
+## 10             9         15.4 
+## 11            10         16.2</code></pre>
+</div>
+<div id="visualizing-predictions" class="section level1">
+<h1>2-3 Visualizing predictions</h1>
+<pre class="r"><code># Add to the plot
+ggplot(taiwan_real_estate, aes(n_convenience, price_twd_msq)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  # Add a point layer of prediction data, colored yellow
+  geom_point(data = prediction_data,
+color = &quot;yellow&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<div id="extracting-model-elements" class="section level2">
+<h2>2-6 Extracting model elements</h2>
+</div>
+<div id="manually-predicting-house-prices" class="section level2">
+<h2>2-7 Manually predicting house prices</h2>
+<pre class="r"><code># Get the coefficients of mdl_price_vs_conv
+coeffs &lt;- coefficients(mdl_price_vs_conv)
+
+# Get the intercept
+intercept &lt;- coeffs[1]
+
+# Get the slope
+slope &lt;- coeffs[2]
+
+explanatory_data %&gt;% 
+  mutate(
+    # Manually calculate the predictions
+    price_twd_msq = slope*n_convenience+intercept
+  )</code></pre>
+<pre><code>## # A tibble: 11 x 2
+##    n_convenience price_twd_msq
+##            &lt;int&gt;         &lt;dbl&gt;
+##  1             0          8.22
+##  2             1          9.02
+##  3             2          9.82
+##  4             3         10.6 
+##  5             4         11.4 
+##  6             5         12.2 
+##  7             6         13.0 
+##  8             7         13.8 
+##  9             8         14.6 
+## 10             9         15.4 
+## 11            10         16.2</code></pre>
+<pre class="r"><code># Compare to the results from predict()
+predict(mdl_price_vs_conv, explanatory_data)</code></pre>
+<pre><code>##         1         2         3         4         5         6         7         8 
+##  8.224237  9.022317  9.820397 10.618477 11.416556 12.214636 13.012716 13.810795 
+##         9        10        11 
+## 14.608875 15.406955 16.205035</code></pre>
+</div>
+<div id="using-broom" class="section level2">
+<h2>2-8 Using broom</h2>
+<p>Many programming tasks are easier if you keep all your data inside data frames. This is particularly true if you are a tidyverse fan, where dplyr and ggplot2 require you to use data frames. The broom package contains functions that decompose models into three data frames: one for the coefficient-level elements (the coefficients themselves, as well as p-values for each coefficient), the observation-level elements (like fitted values and residuals), and the model-level elements (mostly performance metrics).</p>
+<p>The functions in broom are generic. That is, they work with many model types, not just linear regression model objects. They also work with logistic regression model objects (as you’ll see in Chapter 4), and many other types of model.</p>
+<pre class="r"><code># Get the coefficient-level elements of the model
+tidy(mdl_price_vs_conv)</code></pre>
+<pre><code>## # A tibble: 2 x 5
+##   term          estimate std.error statistic   p.value
+##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)      8.22     0.285       28.9 5.81e-101
+## 2 n_convenience    0.798    0.0565      14.1 3.41e- 37</code></pre>
+<pre class="r"><code># Get the observation-level elements of the model
+augment(mdl_price_vs_conv)</code></pre>
+<pre><code>## # A tibble: 414 x 8
+##    price_twd_msq n_convenience .fitted .resid    .hat .sigma  .cooksd .std.resid
+##            &lt;dbl&gt;         &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;
+##  1         11.5             10   16.2  -4.74  0.0121    3.38  1.22e-2     -1.41 
+##  2         12.8              9   15.4  -2.64  0.00913   3.39  2.83e-3     -0.783
+##  3         14.3              5   12.2   2.10  0.00264   3.39  5.10e-4      0.621
+##  4         16.6              5   12.2   4.37  0.00264   3.38  2.21e-3      1.29 
+##  5         13.0              5   12.2   0.826 0.00264   3.39  7.92e-5      0.244
+##  6          9.71             3   10.6  -0.906 0.00275   3.39  9.91e-5     -0.268
+##  7         12.2              7   13.8  -1.62  0.00477   3.39  5.50e-4     -0.479
+##  8         14.1              6   13.0   1.12  0.00343   3.39  1.88e-4      0.331
+##  9          5.69             1    9.02 -3.33  0.00509   3.38  2.49e-3     -0.988
+## 10          6.69             3   10.6  -3.93  0.00275   3.38  1.87e-3     -1.16 
+## # ... with 404 more rows</code></pre>
+<pre class="r"><code># Get the model-level elements of the model
+glance(mdl_price_vs_conv)</code></pre>
+<pre><code>## # A tibble: 1 x 12
+##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     0.326         0.324  3.38      199. 3.41e-37     1 -1091. 2188. 2200.
+## # ... with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
+</div>
+<div id="plotting-consecutive-portfolio-returns" class="section level2">
+<h2>2-11 Plotting consecutive portfolio returns</h2>
+<p>Regression to the mean is also an important concept in investing. Here you’ll look at the annual returns from investing in companies in the Standard and Poor 500 index (S&amp;P 500), in 2018 and 2019.</p>
+<pre class="r"><code># Using sp500_yearly_returns, plot return_2019 vs. return_2018
+sp500_yearly_returns %&gt;% ggplot(aes(return_2018, return_2019)) +
+  # Make it a scatter plot
+  geom_point() +
+  # Add a line at y = x, colored green, size 1
+  geom_abline(color = &quot;green&quot;, size = 1) +
+  # Add a linear regression trend line, no std. error ribbon
+  geom_smooth(method=&quot;lm&quot;, se=FALSE) +
+  # Fix the coordinate ratio
+  coord_fixed()</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+<div id="modeling-consecutive-returns" class="section level2">
+<h2>2-12 Modeling consecutive returns</h2>
+<p>Let’s quantify the relationship between returns in 2019 and 2018 by running a linear regression and making predictions. By looking at companies with extremely high or extremely low returns in 2018, we can see if their performance was similar in 2019.</p>
+<pre class="r"><code># Run a linear regression on return_2019 vs. return_2018
+# using sp500_yearly_returns
+mdl_returns &lt;- lm(return_2019~return_2018, sp500_yearly_returns)
+
+# See the result
+mdl_returns</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = return_2019 ~ return_2018, data = sp500_yearly_returns)
+## 
+## Coefficients:
+## (Intercept)  return_2018  
+##     0.31127      0.04691</code></pre>
+<pre class="r"><code>#-----------------------------------------
+# Create a data frame with return_2018 at -1, 0, and 1 
+explanatory_data &lt;- tibble(return_2018=-1:1)
+
+
+
+# Use mdl_returns to predict with explanatory_data
+predict(mdl_returns, explanatory_data)</code></pre>
+<pre><code>##         1         2         3 
+## 0.2643603 0.3112714 0.3581826</code></pre>
+</div>
+<div id="transforming-the-explanatory-variable" class="section level2">
+<h2>2-14 Transforming the explanatory variable</h2>
+<p>If there is no straight line relationship between the response variable and the explanatory variable, it is sometimes possible to create one by transforming one or both of the variables. Here, you’ll look at transforming the explanatory variable.</p>
+<p>You’ll take another look at the Taiwan real estate dataset, this time using the distance to the nearest MRT (metro) station as the explanatory variable. You’ll use code to make every commuter’s dream come true: shortening the distance to the metro station by taking the square root. Take that, geography!</p>
+<pre class="r"><code># Run the code to see the plot
+# Edit so x-axis is square root of dist_to_mrt_m
+ggplot(taiwan_real_estate, aes(dist_to_mrt_m, price_twd_msq)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>edit code</p>
+<pre class="r"><code># Run the code to see the plot
+# Edit so x-axis is square root of dist_to_mrt_m
+ggplot(taiwan_real_estate, aes(sqrt(dist_to_mrt_m), price_twd_msq)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<pre class="r"><code># Run a linear regression of price_twd_msq vs. 
+# square root of dist_to_mrt_m using taiwan_real_estate
+mdl_price_vs_dist &lt;- lm(price_twd_msq~sqrt(dist_to_mrt_m), taiwan_real_estate)
+
+# See the result
+mdl_price_vs_dist</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price_twd_msq ~ sqrt(dist_to_mrt_m), data = taiwan_real_estate)
+## 
+## Coefficients:
+##         (Intercept)  sqrt(dist_to_mrt_m)  
+##             16.7098              -0.1828</code></pre>
+<pre class="r"><code># From previous step
+mdl_price_vs_dist &lt;- lm(
+  price_twd_msq ~ sqrt(dist_to_mrt_m), 
+  data = taiwan_real_estate
+)
+
+# Use this explanatory data
+explanatory_data &lt;- tibble(
+  dist_to_mrt_m = seq(0, 80, 10) ^ 2
+)
+
+# Use mdl_price_vs_dist to predict explanatory_data
+prediction_data &lt;- explanatory_data %&gt;%
+mutate(
+  price_twd_msq= predict(mdl_price_vs_dist,explanatory_data)
+
+
+
+)
+# See the result
+prediction_data</code></pre>
+<pre><code>## # A tibble: 9 x 2
+##   dist_to_mrt_m price_twd_msq
+##           &lt;dbl&gt;         &lt;dbl&gt;
+## 1             0         16.7 
+## 2           100         14.9 
+## 3           400         13.1 
+## 4           900         11.2 
+## 5          1600          9.40
+## 6          2500          7.57
+## 7          3600          5.74
+## 8          4900          3.91
+## 9          6400          2.08</code></pre>
+<pre class="r"><code>ggplot(taiwan_real_estate, aes(sqrt(dist_to_mrt_m), price_twd_msq)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  # Add points from prediction_data, colored green, size 5
+  geom_point(data=prediction_data, color = &quot;green&quot;, size= 5)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+</div>
+<div id="ransforming-the-response-variable-too" class="section level2">
+<h2>2-15 ransforming the response variable too</h2>
+<p>The response variable can be transformed too, but this means you need an extra step at the end to undo that transformation. That is, you “back transform” the predictions.</p>
+<p>In the video, you saw the first step of the digital advertising workflow: spending money to buy ads, and counting how many people see them (the “impressions”). The next step is determining how many people click on the advert after seeing it.</p>
+<pre class="r"><code># Run the code to see the plot
+# Edit to raise x, y aesthetics to power 0.25
+ggplot(ad_conversion, aes(n_impressions, n_clicks)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<pre class="r"><code># Run the code to see the plot
+# Edit to raise x, y aesthetics to power 0.25
+ggplot(ad_conversion, aes(n_impressions^0.25, n_clicks^0.25)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<pre class="r"><code># From previous steps
+mdl_click_vs_impression &lt;- lm(
+  I(n_clicks ^ 0.25) ~ I(n_impressions ^ 0.25),
+  data = ad_conversion
+)
+explanatory_data &lt;- tibble(
+  n_impressions = seq(0, 3e6, 5e5)
+)
+prediction_data &lt;- explanatory_data %&gt;% 
+  mutate(
+    n_clicks_025 = predict(mdl_click_vs_impression, explanatory_data),
+    n_clicks = n_clicks_025 ^ 4
+  )
+
+ggplot(ad_conversion, aes(n_impressions ^ 0.25, n_clicks ^ 0.25)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  # Add points from prediction_data, colored green
+  geom_point(data=prediction_data,  color=&quot;green&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+</div>
+<div id="coefficient-of-determination" class="section level2">
+<h2>3-2 Coefficient of determination</h2>
+<p>The coefficient of determination is a measure of how well the linear regression line fits the observed values. For simple linear regression, it is equal to the square of the correlation between the explanatory and response variables.</p>
+<pre class="r"><code># Print a summary of mdl_click_vs_impression
+summary(mdl_click_vs_impression)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = I(n_clicks^0.25) ~ I(n_impressions^0.25), data = ad_conversion)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.57061 -0.13229  0.00582  0.14494  0.46888 
+## 
+## Coefficients:
+##                        Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)           0.0717479  0.0172019   4.171 3.32e-05 ***
+## I(n_impressions^0.25) 0.1115330  0.0008844 126.108  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.1969 on 934 degrees of freedom
+## Multiple R-squared:  0.9445, Adjusted R-squared:  0.9445 
+## F-statistic: 1.59e+04 on 1 and 934 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>#--------------------
+
+# Get coeff of determination for mdl_click_vs_impression_orig
+mdl_click_vs_impression %&gt;% 
+  # Get the model-level details
+  glance() %&gt;%
+ 
+  # Pull out r.squared
+  pull(r.squared)</code></pre>
+<pre><code>## [1] 0.9445273</code></pre>
+</div>
+<div id="residual-standard-error" class="section level2">
+<h2>3-3 Residual standard error</h2>
+<p>Residual standard error (RSE) is a measure of the typical size of the residuals. Equivalently, it’s a measure of how badly wrong you can expect predictions to be. Smaller numbers are better, with zero being a perfect fit to the data.</p>
+<pre class="r"><code># Get RSE for mdl_click_vs_impression
+mdl_click_vs_impression %&gt;% 
+  # Get the model-level details
+  glance() %&gt;% 
+  # Pull out sigma
+  pull(sigma)</code></pre>
+<pre><code>## [1] 0.1969064</code></pre>
+</div>
+<div id="drawing-diagnostic-plots" class="section level2">
+<h2>3-8 Drawing diagnostic plots</h2>
+<p>It’s time for you to draw these diagnostic plots yourself. Let’s go back to the Taiwan real estate dataset and the model of house prices versus number of convenience stores.</p>
+<p>Recall that autoplot() lets you specify which diagnostic plots you are interested in.</p>
+<p>1 residuals vs. fitted values
+2 Q-Q plot
+3 scale-location
+mdl_price_vs_conv is available, and ggplot2 and ggfortify are loaded.</p>
+</div>
+<div id="coefficient-of-determination-1" class="section level2">
+<h2>4-2 Coefficient of determination</h2>
+<p>The coefficient of determination is a measure of how well the linear regression line fits the observed values. For simple linear regression, it is equal to the square of the correlation between the explanatory and response variables.</p>
+</div>
+</div>
