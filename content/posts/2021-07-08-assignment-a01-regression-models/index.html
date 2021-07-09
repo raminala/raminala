@@ -12,10 +12,23 @@ tags:
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
-<pre><code>## [1] &quot;carat&quot;         &quot;colour&quot;        &quot;clarity&quot;       &quot;cut&quot;          
-## [5] &quot;certification&quot; &quot;polish&quot;        &quot;symmetry&quot;      &quot;price&quot;</code></pre>
+<p><strong><em>Ramin Ala</em></strong></p>
+<div id="univariate-analysis" class="section level2">
+<h2>Univariate Analysis</h2>
+</div>
+<div id="metric-data-price-carat" class="section level2">
+<h2>Metric Data: Price, Carat</h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>Carat is the most important parameter in this dataset and it is a determining factor for the price. This claim can be proven from its coefficient in the multiple linear regression model. This figure shows price versus carat along with a regression line.</p>
+</div>
+<div id="price-considering-both-carat-and-clarity" class="section level2">
+<h2>price considering both carat and clarity</h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Clarity is the second important parameter. To get the impression about effect of these two parameters on price, price versus carat with the additional layer of color for clarity is useful.</p>
+</div>
+<div id="non-metric-data-color-cut-certification-polish-symmetry-clarity" class="section level2">
+<h2>Non-Metric Data: Color, Cut, Certification, Polish, Symmetry, Clarity</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <pre><code>## # A tibble: 9 x 2
 ##   clarity price_mean
 ##   &lt;chr&gt;        &lt;dbl&gt;
@@ -28,39 +41,31 @@ tags:
 ## 7 VS2           888.
 ## 8 VVS2          564.
 ## 9 VVS1          547</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<div id="summary-of-findings" class="section level2">
-<h2>Summary of Findings:</h2>
-</div>
-<div id="identify-determinants-of-price" class="section level2">
-<h2>Identify Determinants of Price</h2>
-</div>
-<div id="comments-on-distribution-of-data" class="section level2">
-<h2>Comments on distribution of data</h2>
-</div>
-<div id="univariate-analysis" class="section level2">
-<h2>Univariate Analysis</h2>
-</div>
-<div id="metric-data-price-carat" class="section level2">
-<h2>Metric Data: Price, Carat</h2>
-</div>
-<div id="non-metric-data-color-cut-certification-polish-symmetry-clarity" class="section level2">
-<h2>Non-Metric Data: Color, Cut, Certification, Polish, Symmetry, Clarity</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Bar plot is a easy way to visualize</p>
 </div>
 <div id="bivariate-analysis" class="section level2">
 <h2>Bivariate Analysis:</h2>
 </div>
 <div id="correlation-covariance" class="section level2">
 <h2>Correlation, Covariance</h2>
-<p>These are measures of assosiation.</p>
+<p>These are measures of association.</p>
 </div>
 <div id="regression-model" class="section level2">
 <h2>Regression Model</h2>
 </div>
-<div id="simple-and-multiple-linear-regression" class="section level2">
-<h2>Simple and Multiple Linear Regression</h2>
-<p>A linear model is generated using <strong>lm()</strong> function. Seven variables passes to model and intercept defined as zero. As result, coefficients calculated</p>
+<div id="simple-linear-regression" class="section level2">
+<h2>Simple Linear Regression</h2>
+<pre><code>## # A tibble: 2 x 5
+##   term        estimate std.error statistic   p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)    -200.      43.1     -4.65 4.40e-  6
+## 2 carat          2865.      56.0     51.1  1.02e-186</code></pre>
+</div>
+<div id="multiple-linear-regression" class="section level2">
+<h2>Multiple Linear Regression</h2>
+<p>A linear model is generated using <strong>lm()</strong> function. Seven variables passes to the model and intercept defined as zero (for simplicity). As result, coefficients calculated as below table.</p>
 <pre><code>## # A tibble: 34 x 5
 ##    term    estimate std.error statistic   p.value
 ##    &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
@@ -75,7 +80,16 @@ tags:
 ##  9 colourK   -2419.     151.     -16.1  2.52e- 45
 ## 10 colourL   -2606.     156.     -16.7  5.37e- 48
 ## # ... with 24 more rows</code></pre>
-<p>“carat” “colour” “clarity” “cut” “certification” “polish” “symmetry”</p>
+<hr />
+<p>Prediction is done here base on below parameters:</p>
+<p>carat= 0.9, colour= “J”, clarity= “SI2”, cut= “V”, certification= “GIA”, polish= “G”, symmetry= “V”</p>
 <pre><code>##        1 
 ## 2797.542</code></pre>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>From the exploratory data analysis and linear regression performed in this report, it seems that the offered price ($3100) is 10% higer than the predicted price ($2800).</p>
+<p>From seven explanatory variables, carat is the first determinant followed by clarity and colour. On the other hand, cut has the least effect on the final price.</p>
+<p>The important trend in the dataset could be found with a glance at price-carat plot. That is carat has two ranges: 0.1-.03 and 0.8- 1.6. There are a substential gap between price of these two catagories, the latter is substentially more costly.</p>
+<p>Dataset was very clean dataset with nearly no need for cleaning. For example there were not any NA and outlier data in the dataset.</p>
 </div>

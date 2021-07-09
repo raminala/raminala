@@ -8,6 +8,7 @@ tags:
   - Regression
   - Assignment
 ---
+***Ramin Ala***
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -19,9 +20,16 @@ diamonds <- read_excel("MBA6636_SM21_Professor_Proposes_Data.xlsx") %>%
   janitor::clean_names() %>%
   subset(select = -wholesaler)
 
-names(diamonds)
+#names(diamonds)
 
 ```
+
+
+## Univariate Analysis
+
+## Metric Data: Price, Carat
+
+
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 diamonds %>%
@@ -30,12 +38,29 @@ diamonds %>%
   geom_smooth(method="lm", se= FALSE)
 ```
 
+Carat is the most important parameter in this dataset and it is a determining factor for the price. This claim can be proven from its coefficient in the multiple linear regression model. This figure shows price versus carat along with a regression line.
+
+## price considering both carat and clarity
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+diamonds %>%
+  ggplot(aes(carat, price, color= clarity))+
+  geom_point()
+```
+
+Clarity is the second important parameter. To get the impression about effect of these two parameters on price, price versus carat with the additional layer of color for clarity is useful.
+
+
+
+## Non-Metric Data: Color, Cut, Certification, Polish, Symmetry, Clarity
+
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 diamonds %>%
   group_by(colour) %>%
   summarise(price_mean=mean(price)) %>%
   ggplot(aes(colour,price_mean))+
-  geom_col(fill="blue")
+  geom_col(width = 0.5, fill="blue")+
+  labs(x="Colour", y= "Price mean ($)", title= "Price mean vs Colour")
 ```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -45,8 +70,9 @@ yy <- diamonds %>%
   arrange(desc(price_mean))
 yy
 yy %>%
-  ggplot(aes(factor(clarity),price_mean))+
-  geom_col(fill="yellow")
+  ggplot(aes(clarity,price_mean))+
+  geom_col(width = 0.5, fill="yellow")+
+  labs(x="Clarity", y= "Price mean ($)", title= "Price mean vs Clarity")
 ```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -54,40 +80,36 @@ diamonds %>%
   group_by(cut) %>%
   summarise(price_mean=mean(price)) %>%
   ggplot(aes(cut,price_mean))+
-  geom_col(fill="red")
+  geom_col(width = 0.3, fill="red")+
+  labs(x="Cut", y= "Price mean ($)", title= "Price mean vs Cut")
 ```
 
-
-
-
-
-## Summary of Findings:
-
-## Identify Determinants of Price
-
-
-## Comments on distribution of data
-
-
-## Univariate Analysis
-
-## Metric Data: Price, Carat
-
-
-## Non-Metric Data: Color, Cut, Certification, Polish, Symmetry, Clarity
+Bar plot is a easy way to visualize 
 
 
 ## Bivariate Analysis:
 
 ## Correlation, Covariance
 
-These are measures of assosiation.
+These are measures of association.
 
 ## Regression Model
 
-## Simple and Multiple Linear Regression
+## Simple Linear Regression
 
-A linear model is generated using **lm()** function. Seven variables passes to model and intercept defined as zero. As result, coefficients calculated 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+SLR <- lm(price~ carat, data=diamonds)
+summary(SLR)  %>%
+  tidy()
+
+```
+
+
+
+## Multiple Linear Regression
+
+A linear model is generated using **lm()** function. Seven variables passes to the model and intercept defined as zero (for simplicity). As result, coefficients calculated as below table.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 MLR <- lm(price~ .+0, data=diamonds)
@@ -96,8 +118,11 @@ summary(MLR)  %>%
 
 ```
 
+---
 
- "carat"  "colour"  "clarity"    "cut"   "certification" "polish"  "symmetry" 
+Prediction is done here base on below parameters:
+
+ carat= 0.9, colour= "J", clarity= "SI2", cut= "V", certification= "GIA", polish= "G", symmetry= "V"
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -114,3 +139,12 @@ predict(MLR, explanatory_data)
 ```
 
 
+## Summary
+
+From the exploratory data analysis and linear regression performed in this report, it seems that the offered price ($3100) is 10% higer than the predicted price ($2800).
+
+From seven explanatory variables, carat is the first determinant followed by clarity and colour. On the other hand, cut has the least effect on the final price.
+
+The important trend in the dataset could be found with a glance at price-carat plot. That is carat has two ranges: 0.1-.03 and 0.8- 1.6. There are a substential gap between price of these two catagories, the latter is substentially more costly.
+
+Dataset was very clean dataset with nearly no need for cleaning. For example there were not any NA and outlier data in the dataset.
