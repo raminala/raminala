@@ -6,16 +6,19 @@ slug: []
 categories: []
 tags:
   - Regression
+  - Assignment
 ---
 
 ```{r}
 library(tidyverse)
 library(readxl)
-
+library(tidymodels)
 #diamonds_price <- read_excel("MBA6636_SM21_Professor_Proposes_Data.xlsx", col_names = TRUE, col_types = NULL, na = "", skip = 0)
 
-diamonds <- read_excel("MBA6636_SM21_Professor_Proposes_Data.xlsx")%>%
-  janitor::clean_names()
+diamonds <- read_excel("MBA6636_SM21_Professor_Proposes_Data.xlsx") %>%
+  janitor::clean_names() %>%
+  subset(select = -wholesaler)
+
 names(diamonds)
 
 ```
@@ -23,7 +26,8 @@ names(diamonds)
 ```{r}
 diamonds %>%
   ggplot(aes(carat, price))+
-  geom_point()
+  geom_point()+
+  geom_smooth(method="lm", se= FALSE)
 ```
 
 ```{r}
@@ -35,10 +39,13 @@ diamonds %>%
 ```
 
 ```{r}
-diamonds %>%
+yy <- diamonds %>%
   group_by(clarity) %>%
   summarise(price_mean=mean(price)) %>%
-  ggplot(aes(clarity,price_mean))+
+  arrange(desc(price_mean))
+yy
+yy %>%
+  ggplot(aes(factor(clarity),price_mean))+
   geom_col(fill="yellow")
 ```
 
@@ -64,25 +71,46 @@ diamonds %>%
 
 ## Univariate Analysis
 
-## Metric Data: Price, Carat, Clarity
+## Metric Data: Price, Carat
 
 
-## Non-Metric Data: Color, Cut, Certification, Polish, Symmetry
+## Non-Metric Data: Color, Cut, Certification, Polish, Symmetry, Clarity
 
 
 ## Bivariate Analysis:
 
 ## Correlation, Covariance
 
+These are measures of assosiation.
+
 ## Regression Model
 
 ## Simple and Multiple Linear Regression
 
+A linear model is generated using **lm()** function. Seven variables passes to model and intercept defined as zero. As result, coefficients calculated 
+
 ```{r}
-MLR <- lm(price~ ., data=diamonds)
-summary(MLR) 
+MLR <- lm(price~ .+0, data=diamonds)
+summary(MLR)  %>%
+  tidy()
+
 ```
 
 
+ "carat"  "colour"  "clarity"    "cut"   "certification" "polish"  "symmetry" 
+
+```{r}
+
+explanatory_data= data.frame(carat= 0.9,
+                             colour= "J",
+                             clarity= "SI2",
+                             cut= "V",
+                             certification= "GIA",
+                             polish= "G",
+                             symmetry= "V")
+  
+
+predict(MLR, explanatory_data)
+```
 
 

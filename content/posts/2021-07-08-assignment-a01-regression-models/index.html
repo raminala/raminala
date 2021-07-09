@@ -6,6 +6,7 @@ slug: []
 categories: []
 tags:
   - Regression
+  - Assignment
 ---
 
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
@@ -21,18 +22,39 @@ tags:
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code>library(readxl)
+library(tidymodels)</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;tune&#39;:
+##   method                   from   
+##   required_pkgs.model_spec parsnip</code></pre>
+<pre><code>## -- Attaching packages -------------------------------------- tidymodels 0.1.3 --</code></pre>
+<pre><code>## v broom        0.7.8      v rsample      0.1.0 
+## v dials        0.0.9      v tune         0.1.5 
+## v infer        0.5.4      v workflows    0.2.2 
+## v modeldata    0.1.0      v workflowsets 0.0.2 
+## v parsnip      0.1.6      v yardstick    0.0.8 
+## v recipes      0.1.16</code></pre>
+<pre><code>## -- Conflicts ----------------------------------------- tidymodels_conflicts() --
+## x scales::discard() masks purrr::discard()
+## x dplyr::filter()   masks stats::filter()
+## x recipes::fixed()  masks stringr::fixed()
+## x dplyr::lag()      masks stats::lag()
+## x yardstick::spec() masks readr::spec()
+## x recipes::step()   masks stats::step()
+## * Use tidymodels_prefer() to resolve common conflicts.</code></pre>
+<pre class="r"><code>#diamonds_price &lt;- read_excel(&quot;MBA6636_SM21_Professor_Proposes_Data.xlsx&quot;, col_names = TRUE, col_types = NULL, na = &quot;&quot;, skip = 0)
 
-#diamonds_price &lt;- read_excel(&quot;MBA6636_SM21_Professor_Proposes_Data.xlsx&quot;, col_names = TRUE, col_types = NULL, na = &quot;&quot;, skip = 0)
+diamonds &lt;- read_excel(&quot;MBA6636_SM21_Professor_Proposes_Data.xlsx&quot;) %&gt;%
+  janitor::clean_names() %&gt;%
+  subset(select = -wholesaler)
 
-diamonds &lt;- read_excel(&quot;MBA6636_SM21_Professor_Proposes_Data.xlsx&quot;)%&gt;%
-  janitor::clean_names()
 names(diamonds)</code></pre>
 <pre><code>## [1] &quot;carat&quot;         &quot;colour&quot;        &quot;clarity&quot;       &quot;cut&quot;          
-## [5] &quot;certification&quot; &quot;polish&quot;        &quot;symmetry&quot;      &quot;price&quot;        
-## [9] &quot;wholesaler&quot;</code></pre>
+## [5] &quot;certification&quot; &quot;polish&quot;        &quot;symmetry&quot;      &quot;price&quot;</code></pre>
 <pre class="r"><code>diamonds %&gt;%
   ggplot(aes(carat, price))+
-  geom_point()</code></pre>
+  geom_point()+
+  geom_smooth(method=&quot;lm&quot;, se= FALSE)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <pre class="r"><code>diamonds %&gt;%
   group_by(colour) %&gt;%
@@ -40,10 +62,25 @@ names(diamonds)</code></pre>
   ggplot(aes(colour,price_mean))+
   geom_col(fill=&quot;blue&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<pre class="r"><code>diamonds %&gt;%
+<pre class="r"><code>yy &lt;- diamonds %&gt;%
   group_by(clarity) %&gt;%
   summarise(price_mean=mean(price)) %&gt;%
-  ggplot(aes(clarity,price_mean))+
+  arrange(desc(price_mean))
+yy</code></pre>
+<pre><code>## # A tibble: 9 x 2
+##   clarity price_mean
+##   &lt;chr&gt;        &lt;dbl&gt;
+## 1 SI3          2619.
+## 2 I1           2543.
+## 3 I2           2342.
+## 4 SI2          1974.
+## 5 VS1          1138.
+## 6 SI1          1048.
+## 7 VS2           888.
+## 8 VVS2          564.
+## 9 VVS1          547</code></pre>
+<pre class="r"><code>yy %&gt;%
+  ggplot(aes(factor(clarity),price_mean))+
   geom_col(fill=&quot;yellow&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <pre class="r"><code>diamonds %&gt;%
@@ -64,75 +101,55 @@ names(diamonds)</code></pre>
 <div id="univariate-analysis" class="section level2">
 <h2>Univariate Analysis</h2>
 </div>
-<div id="metric-data-price-carat-clarity" class="section level2">
-<h2>Metric Data: Price, Carat, Clarity</h2>
+<div id="metric-data-price-carat" class="section level2">
+<h2>Metric Data: Price, Carat</h2>
 </div>
-<div id="non-metric-data-color-cut-certification-polish-symmetry" class="section level2">
-<h2>Non-Metric Data: Color, Cut, Certification, Polish, Symmetry</h2>
+<div id="non-metric-data-color-cut-certification-polish-symmetry-clarity" class="section level2">
+<h2>Non-Metric Data: Color, Cut, Certification, Polish, Symmetry, Clarity</h2>
 </div>
 <div id="bivariate-analysis" class="section level2">
 <h2>Bivariate Analysis:</h2>
 </div>
 <div id="correlation-covariance" class="section level2">
 <h2>Correlation, Covariance</h2>
+<p>These are measures of assosiation.</p>
 </div>
 <div id="regression-model" class="section level2">
 <h2>Regression Model</h2>
 </div>
 <div id="simple-and-multiple-linear-regression" class="section level2">
 <h2>Simple and Multiple Linear Regression</h2>
-<pre class="r"><code>MLR &lt;- lm(price~ ., data=diamonds)
-summary(MLR) </code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = price ~ ., data = diamonds)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -580.46  -76.23  -12.03   69.39  541.51 
-## 
-## Coefficients: (1 not defined because of singularities)
-##                  Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)         72.67     176.30   0.412 0.680401    
-## carat             3170.81      95.67  33.144  &lt; 2e-16 ***
-## colourE           -153.94      45.96  -3.349 0.000887 ***
-## colourF           -243.10      46.28  -5.253 2.42e-07 ***
-## colourG           -206.60      47.35  -4.363 1.63e-05 ***
-## colourH           -311.42      46.49  -6.698 7.08e-11 ***
-## colourI           -363.13      46.86  -7.749 7.54e-14 ***
-## colourJ           -432.04      49.71  -8.690  &lt; 2e-16 ***
-## colourK           -684.65      57.84 -11.837  &lt; 2e-16 ***
-## colourL           -894.44      69.31 -12.905  &lt; 2e-16 ***
-## clarityI2         -586.99      46.27 -12.686  &lt; 2e-16 ***
-## claritySI1         588.67      43.17  13.635  &lt; 2e-16 ***
-## claritySI2         506.55      35.67  14.200  &lt; 2e-16 ***
-## claritySI3         264.53      43.38   6.098 2.51e-09 ***
-## clarityVS1         687.66      57.68  11.923  &lt; 2e-16 ***
-## clarityVS2         635.42      51.12  12.430  &lt; 2e-16 ***
-## clarityVVS1        927.38     136.87   6.776 4.38e-11 ***
-## clarityVVS2        646.61      89.42   7.232 2.40e-12 ***
-## cutG                64.77      35.89   1.805 0.071846 .  
-## cutI                93.18      35.06   2.658 0.008173 ** 
-## cutV                67.83      35.63   1.904 0.057682 .  
-## cutX               112.80      30.93   3.647 0.000300 ***
-## certificationDOW  -277.16     192.36  -1.441 0.150407    
-## certificationEGL   -64.74      75.94  -0.852 0.394480    
-## certificationGIA    88.70      70.26   1.262 0.207503    
-## certificationIGI   114.55      81.78   1.401 0.162082    
-## polishG            182.22      91.48   1.992 0.047049 *  
-## polishI            378.14     134.53   2.811 0.005183 ** 
-## polishv            123.40     198.07   0.623 0.533615    
-## polishV            192.25      94.83   2.027 0.043285 *  
-## polishX            200.51      97.47   2.057 0.040312 *  
-## symmetryG           73.99      49.25   1.502 0.133806    
-## symmetryI              NA         NA      NA       NA    
-## symmetryV           85.65      52.54   1.630 0.103806    
-## symmetryX           75.22      58.65   1.283 0.200357    
-## wholesaler        -394.94      32.44 -12.174  &lt; 2e-16 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 169 on 405 degrees of freedom
-## Multiple R-squared:  0.9809, Adjusted R-squared:  0.9793 
-## F-statistic: 613.3 on 34 and 405 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>A linear model is generated using <strong>lm()</strong> function. Seven variables passes to model and intercept defined as zero. As result, coefficients calculated</p>
+<pre class="r"><code>MLR &lt;- lm(price~ .+0, data=diamonds)
+summary(MLR)  %&gt;%
+  tidy()</code></pre>
+<pre><code>## # A tibble: 34 x 5
+##    term    estimate std.error statistic   p.value
+##    &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+##  1 carat      4205.      51.3     82.0  1.02e-254
+##  2 colourD   -1433.     147.      -9.77 2.25e- 20
+##  3 colourE   -1624.     144.     -11.3  6.40e- 26
+##  4 colourF   -1744.     140.     -12.5  2.13e- 30
+##  5 colourG   -1734.     143.     -12.1  5.96e- 29
+##  6 colourH   -1863.     141.     -13.2  2.26e- 33
+##  7 colourI   -1934.     142.     -13.6  6.09e- 35
+##  8 colourJ   -2068.     146.     -14.2  2.44e- 37
+##  9 colourK   -2419.     151.     -16.1  2.52e- 45
+## 10 colourL   -2606.     156.     -16.7  5.37e- 48
+## # ... with 24 more rows</code></pre>
+<p>“carat” “colour” “clarity” “cut” “certification” “polish” “symmetry”</p>
+<pre class="r"><code>explanatory_data= data.frame(carat= 0.9,
+                             colour= &quot;J&quot;,
+                             clarity= &quot;SI2&quot;,
+                             cut= &quot;V&quot;,
+                             certification= &quot;GIA&quot;,
+                             polish= &quot;G&quot;,
+                             symmetry= &quot;V&quot;)
+  
+
+predict(MLR, explanatory_data)</code></pre>
+<pre><code>## Warning in predict.lm(MLR, explanatory_data): prediction from a rank-deficient
+## fit may be misleading</code></pre>
+<pre><code>##        1 
+## 2797.542</code></pre>
 </div>

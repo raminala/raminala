@@ -8,6 +8,7 @@ tags:
   - data_visualization
   - data_wrangling
   - R
+  - Assignment
 ---
 
 **Ramin Ala**
