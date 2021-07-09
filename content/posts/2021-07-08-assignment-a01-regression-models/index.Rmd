@@ -9,7 +9,7 @@ tags:
   - Assignment
 ---
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(readxl)
 library(tidymodels)
@@ -23,14 +23,14 @@ names(diamonds)
 
 ```
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 diamonds %>%
   ggplot(aes(carat, price))+
   geom_point()+
   geom_smooth(method="lm", se= FALSE)
 ```
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 diamonds %>%
   group_by(colour) %>%
   summarise(price_mean=mean(price)) %>%
@@ -38,7 +38,7 @@ diamonds %>%
   geom_col(fill="blue")
 ```
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 yy <- diamonds %>%
   group_by(clarity) %>%
   summarise(price_mean=mean(price)) %>%
@@ -49,7 +49,7 @@ yy %>%
   geom_col(fill="yellow")
 ```
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 diamonds %>%
   group_by(cut) %>%
   summarise(price_mean=mean(price)) %>%
@@ -89,7 +89,7 @@ These are measures of assosiation.
 
 A linear model is generated using **lm()** function. Seven variables passes to model and intercept defined as zero. As result, coefficients calculated 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 MLR <- lm(price~ .+0, data=diamonds)
 summary(MLR)  %>%
   tidy()
@@ -99,7 +99,7 @@ summary(MLR)  %>%
 
  "carat"  "colour"  "clarity"    "cut"   "certification" "polish"  "symmetry" 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 explanatory_data= data.frame(carat= 0.9,
                              colour= "J",

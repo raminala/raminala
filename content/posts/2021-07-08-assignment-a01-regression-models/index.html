@@ -12,61 +12,10 @@ tags:
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
-<pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
-<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
-## v tibble  3.1.2     v dplyr   1.0.6
-## v tidyr   1.1.3     v stringr 1.4.0
-## v readr   1.4.0     v forcats 0.5.1</code></pre>
-<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
-## x dplyr::filter() masks stats::filter()
-## x dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>library(readxl)
-library(tidymodels)</code></pre>
-<pre><code>## Registered S3 method overwritten by &#39;tune&#39;:
-##   method                   from   
-##   required_pkgs.model_spec parsnip</code></pre>
-<pre><code>## -- Attaching packages -------------------------------------- tidymodels 0.1.3 --</code></pre>
-<pre><code>## v broom        0.7.8      v rsample      0.1.0 
-## v dials        0.0.9      v tune         0.1.5 
-## v infer        0.5.4      v workflows    0.2.2 
-## v modeldata    0.1.0      v workflowsets 0.0.2 
-## v parsnip      0.1.6      v yardstick    0.0.8 
-## v recipes      0.1.16</code></pre>
-<pre><code>## -- Conflicts ----------------------------------------- tidymodels_conflicts() --
-## x scales::discard() masks purrr::discard()
-## x dplyr::filter()   masks stats::filter()
-## x recipes::fixed()  masks stringr::fixed()
-## x dplyr::lag()      masks stats::lag()
-## x yardstick::spec() masks readr::spec()
-## x recipes::step()   masks stats::step()
-## * Use tidymodels_prefer() to resolve common conflicts.</code></pre>
-<pre class="r"><code>#diamonds_price &lt;- read_excel(&quot;MBA6636_SM21_Professor_Proposes_Data.xlsx&quot;, col_names = TRUE, col_types = NULL, na = &quot;&quot;, skip = 0)
-
-diamonds &lt;- read_excel(&quot;MBA6636_SM21_Professor_Proposes_Data.xlsx&quot;) %&gt;%
-  janitor::clean_names() %&gt;%
-  subset(select = -wholesaler)
-
-names(diamonds)</code></pre>
 <pre><code>## [1] &quot;carat&quot;         &quot;colour&quot;        &quot;clarity&quot;       &quot;cut&quot;          
 ## [5] &quot;certification&quot; &quot;polish&quot;        &quot;symmetry&quot;      &quot;price&quot;</code></pre>
-<pre class="r"><code>diamonds %&gt;%
-  ggplot(aes(carat, price))+
-  geom_point()+
-  geom_smooth(method=&quot;lm&quot;, se= FALSE)</code></pre>
-<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<pre class="r"><code>diamonds %&gt;%
-  group_by(colour) %&gt;%
-  summarise(price_mean=mean(price)) %&gt;%
-  ggplot(aes(colour,price_mean))+
-  geom_col(fill=&quot;blue&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<pre class="r"><code>yy &lt;- diamonds %&gt;%
-  group_by(clarity) %&gt;%
-  summarise(price_mean=mean(price)) %&gt;%
-  arrange(desc(price_mean))
-yy</code></pre>
 <pre><code>## # A tibble: 9 x 2
 ##   clarity price_mean
 ##   &lt;chr&gt;        &lt;dbl&gt;
@@ -79,15 +28,7 @@ yy</code></pre>
 ## 7 VS2           888.
 ## 8 VVS2          564.
 ## 9 VVS1          547</code></pre>
-<pre class="r"><code>yy %&gt;%
-  ggplot(aes(factor(clarity),price_mean))+
-  geom_col(fill=&quot;yellow&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<pre class="r"><code>diamonds %&gt;%
-  group_by(cut) %&gt;%
-  summarise(price_mean=mean(price)) %&gt;%
-  ggplot(aes(cut,price_mean))+
-  geom_col(fill=&quot;red&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <div id="summary-of-findings" class="section level2">
 <h2>Summary of Findings:</h2>
@@ -120,9 +61,6 @@ yy</code></pre>
 <div id="simple-and-multiple-linear-regression" class="section level2">
 <h2>Simple and Multiple Linear Regression</h2>
 <p>A linear model is generated using <strong>lm()</strong> function. Seven variables passes to model and intercept defined as zero. As result, coefficients calculated</p>
-<pre class="r"><code>MLR &lt;- lm(price~ .+0, data=diamonds)
-summary(MLR)  %&gt;%
-  tidy()</code></pre>
 <pre><code>## # A tibble: 34 x 5
 ##    term    estimate std.error statistic   p.value
 ##    &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
@@ -138,18 +76,6 @@ summary(MLR)  %&gt;%
 ## 10 colourL   -2606.     156.     -16.7  5.37e- 48
 ## # ... with 24 more rows</code></pre>
 <p>“carat” “colour” “clarity” “cut” “certification” “polish” “symmetry”</p>
-<pre class="r"><code>explanatory_data= data.frame(carat= 0.9,
-                             colour= &quot;J&quot;,
-                             clarity= &quot;SI2&quot;,
-                             cut= &quot;V&quot;,
-                             certification= &quot;GIA&quot;,
-                             polish= &quot;G&quot;,
-                             symmetry= &quot;V&quot;)
-  
-
-predict(MLR, explanatory_data)</code></pre>
-<pre><code>## Warning in predict.lm(MLR, explanatory_data): prediction from a rank-deficient
-## fit may be misleading</code></pre>
 <pre><code>##        1 
 ## 2797.542</code></pre>
 </div>
