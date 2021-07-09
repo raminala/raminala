@@ -567,22 +567,11 @@ mdl_churn_vs_relationship</code></pre>
 <div id="probabilities" class="section level2">
 <h2>4-6 Probabilities</h2>
 <p>There are four main ways of expressing the prediction from a logistic regression model – we’ll look at each of them over the next four exercises. Firstly, since the response variable is either “yes” or “no”, you can make a prediction of the probability of a “yes”. Here, you’ll calculate and visualize these probabilities.</p>
-<pre class="r"><code># Fit a logistic regression of churn vs. 
-# length of relationship using the churn dataset
-mdl_churn_vs_relationship &lt;- glm(has_churned~time_since_first_purchase, data=churn, family = binomial)
+<pre class="r"><code># Make a data frame of predicted probabilities
+
+#prediction_data &lt;- explanatory_data %&gt;% mutate(has_churned = predict(mdl_churn_vs_relationship, explanatory_data, type = &quot;response&quot;))
 
 # See the result
-mdl_churn_vs_relationship</code></pre>
-<pre><code>## 
-## Call:  glm(formula = has_churned ~ time_since_first_purchase, family = binomial, 
-##     data = churn)
-## 
-## Coefficients:
-##               (Intercept)  time_since_first_purchase  
-##                  -0.01518                   -0.35479  
-## 
-## Degrees of Freedom: 399 Total (i.e. Null);  398 Residual
-## Null Deviance:       554.5 
-## Residual Deviance: 543.7     AIC: 547.7</code></pre>
+#prediction_data</code></pre>
 </div>
 </div>

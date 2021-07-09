@@ -1,0 +1,88 @@
+---
+title: 'Assignment A01: Regression Models'
+author: Ramin Ala
+date: '2021-07-08'
+slug: []
+categories: []
+tags:
+  - Regression
+---
+
+```{r}
+library(tidyverse)
+library(readxl)
+
+#diamonds_price <- read_excel("MBA6636_SM21_Professor_Proposes_Data.xlsx", col_names = TRUE, col_types = NULL, na = "", skip = 0)
+
+diamonds <- read_excel("MBA6636_SM21_Professor_Proposes_Data.xlsx")%>%
+  janitor::clean_names()
+names(diamonds)
+
+```
+
+```{r}
+diamonds %>%
+  ggplot(aes(carat, price))+
+  geom_point()
+```
+
+```{r}
+diamonds %>%
+  group_by(colour) %>%
+  summarise(price_mean=mean(price)) %>%
+  ggplot(aes(colour,price_mean))+
+  geom_col(fill="blue")
+```
+
+```{r}
+diamonds %>%
+  group_by(clarity) %>%
+  summarise(price_mean=mean(price)) %>%
+  ggplot(aes(clarity,price_mean))+
+  geom_col(fill="yellow")
+```
+
+```{r}
+diamonds %>%
+  group_by(cut) %>%
+  summarise(price_mean=mean(price)) %>%
+  ggplot(aes(cut,price_mean))+
+  geom_col(fill="red")
+```
+
+
+
+
+
+## Summary of Findings:
+
+## Identify Determinants of Price
+
+
+## Comments on distribution of data
+
+
+## Univariate Analysis
+
+## Metric Data: Price, Carat, Clarity
+
+
+## Non-Metric Data: Color, Cut, Certification, Polish, Symmetry
+
+
+## Bivariate Analysis:
+
+## Correlation, Covariance
+
+## Regression Model
+
+## Simple and Multiple Linear Regression
+
+```{r}
+MLR <- lm(price~ ., data=diamonds)
+summary(MLR) 
+```
+
+
+
+

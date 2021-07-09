@@ -463,12 +463,12 @@ mdl_churn_vs_relationship
 There are four main ways of expressing the prediction from a logistic regression model – we'll look at each of them over the next four exercises. Firstly, since the response variable is either "yes" or "no", you can make a prediction of the probability of a "yes". Here, you'll calculate and visualize these probabilities.
 
 ```{r}
-# Fit a logistic regression of churn vs. 
-# length of relationship using the churn dataset
-mdl_churn_vs_relationship <- glm(has_churned~time_since_first_purchase, data=churn, family = binomial)
+# Make a data frame of predicted probabilities
+
+#prediction_data <- explanatory_data %>% mutate(has_churned = predict(mdl_churn_vs_relationship, explanatory_data, type = "response"))
 
 # See the result
-mdl_churn_vs_relationship
+#prediction_data
 ```
 
 

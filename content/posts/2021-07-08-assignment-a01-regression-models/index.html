@@ -1,0 +1,138 @@
+---
+title: 'Assignment A01: Regression Models'
+author: Ramin Ala
+date: '2021-07-08'
+slug: []
+categories: []
+tags:
+  - Regression
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
+## v tibble  3.1.2     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(readxl)
+
+#diamonds_price &lt;- read_excel(&quot;MBA6636_SM21_Professor_Proposes_Data.xlsx&quot;, col_names = TRUE, col_types = NULL, na = &quot;&quot;, skip = 0)
+
+diamonds &lt;- read_excel(&quot;MBA6636_SM21_Professor_Proposes_Data.xlsx&quot;)%&gt;%
+  janitor::clean_names()
+names(diamonds)</code></pre>
+<pre><code>## [1] &quot;carat&quot;         &quot;colour&quot;        &quot;clarity&quot;       &quot;cut&quot;          
+## [5] &quot;certification&quot; &quot;polish&quot;        &quot;symmetry&quot;      &quot;price&quot;        
+## [9] &quot;wholesaler&quot;</code></pre>
+<pre class="r"><code>diamonds %&gt;%
+  ggplot(aes(carat, price))+
+  geom_point()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>diamonds %&gt;%
+  group_by(colour) %&gt;%
+  summarise(price_mean=mean(price)) %&gt;%
+  ggplot(aes(colour,price_mean))+
+  geom_col(fill=&quot;blue&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>diamonds %&gt;%
+  group_by(clarity) %&gt;%
+  summarise(price_mean=mean(price)) %&gt;%
+  ggplot(aes(clarity,price_mean))+
+  geom_col(fill=&quot;yellow&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>diamonds %&gt;%
+  group_by(cut) %&gt;%
+  summarise(price_mean=mean(price)) %&gt;%
+  ggplot(aes(cut,price_mean))+
+  geom_col(fill=&quot;red&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<div id="summary-of-findings" class="section level2">
+<h2>Summary of Findings:</h2>
+</div>
+<div id="identify-determinants-of-price" class="section level2">
+<h2>Identify Determinants of Price</h2>
+</div>
+<div id="comments-on-distribution-of-data" class="section level2">
+<h2>Comments on distribution of data</h2>
+</div>
+<div id="univariate-analysis" class="section level2">
+<h2>Univariate Analysis</h2>
+</div>
+<div id="metric-data-price-carat-clarity" class="section level2">
+<h2>Metric Data: Price, Carat, Clarity</h2>
+</div>
+<div id="non-metric-data-color-cut-certification-polish-symmetry" class="section level2">
+<h2>Non-Metric Data: Color, Cut, Certification, Polish, Symmetry</h2>
+</div>
+<div id="bivariate-analysis" class="section level2">
+<h2>Bivariate Analysis:</h2>
+</div>
+<div id="correlation-covariance" class="section level2">
+<h2>Correlation, Covariance</h2>
+</div>
+<div id="regression-model" class="section level2">
+<h2>Regression Model</h2>
+</div>
+<div id="simple-and-multiple-linear-regression" class="section level2">
+<h2>Simple and Multiple Linear Regression</h2>
+<pre class="r"><code>MLR &lt;- lm(price~ ., data=diamonds)
+summary(MLR) </code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price ~ ., data = diamonds)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -580.46  -76.23  -12.03   69.39  541.51 
+## 
+## Coefficients: (1 not defined because of singularities)
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)         72.67     176.30   0.412 0.680401    
+## carat             3170.81      95.67  33.144  &lt; 2e-16 ***
+## colourE           -153.94      45.96  -3.349 0.000887 ***
+## colourF           -243.10      46.28  -5.253 2.42e-07 ***
+## colourG           -206.60      47.35  -4.363 1.63e-05 ***
+## colourH           -311.42      46.49  -6.698 7.08e-11 ***
+## colourI           -363.13      46.86  -7.749 7.54e-14 ***
+## colourJ           -432.04      49.71  -8.690  &lt; 2e-16 ***
+## colourK           -684.65      57.84 -11.837  &lt; 2e-16 ***
+## colourL           -894.44      69.31 -12.905  &lt; 2e-16 ***
+## clarityI2         -586.99      46.27 -12.686  &lt; 2e-16 ***
+## claritySI1         588.67      43.17  13.635  &lt; 2e-16 ***
+## claritySI2         506.55      35.67  14.200  &lt; 2e-16 ***
+## claritySI3         264.53      43.38   6.098 2.51e-09 ***
+## clarityVS1         687.66      57.68  11.923  &lt; 2e-16 ***
+## clarityVS2         635.42      51.12  12.430  &lt; 2e-16 ***
+## clarityVVS1        927.38     136.87   6.776 4.38e-11 ***
+## clarityVVS2        646.61      89.42   7.232 2.40e-12 ***
+## cutG                64.77      35.89   1.805 0.071846 .  
+## cutI                93.18      35.06   2.658 0.008173 ** 
+## cutV                67.83      35.63   1.904 0.057682 .  
+## cutX               112.80      30.93   3.647 0.000300 ***
+## certificationDOW  -277.16     192.36  -1.441 0.150407    
+## certificationEGL   -64.74      75.94  -0.852 0.394480    
+## certificationGIA    88.70      70.26   1.262 0.207503    
+## certificationIGI   114.55      81.78   1.401 0.162082    
+## polishG            182.22      91.48   1.992 0.047049 *  
+## polishI            378.14     134.53   2.811 0.005183 ** 
+## polishv            123.40     198.07   0.623 0.533615    
+## polishV            192.25      94.83   2.027 0.043285 *  
+## polishX            200.51      97.47   2.057 0.040312 *  
+## symmetryG           73.99      49.25   1.502 0.133806    
+## symmetryI              NA         NA      NA       NA    
+## symmetryV           85.65      52.54   1.630 0.103806    
+## symmetryX           75.22      58.65   1.283 0.200357    
+## wholesaler        -394.94      32.44 -12.174  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 169 on 405 degrees of freedom
+## Multiple R-squared:  0.9809, Adjusted R-squared:  0.9793 
+## F-statistic: 613.3 on 34 and 405 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
