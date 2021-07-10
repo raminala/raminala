@@ -57,20 +57,9 @@ tags:
 ## 1 (Intercept)    -200.      43.1     -4.65 4.40e-  6
 ## 2 carat          2865.      56.0     51.1  1.02e-186</code></pre>
 </div>
-<div id="simple-linear-regression--prediction-carat0.9" class="section level2">
-<h2>Simple Linear Regression- prediction, carat=0.9</h2>
+<div id="simple-linear-regression--prediction-carat-0.9" class="section level2">
+<h2>Simple Linear Regression- prediction, carat= 0.9</h2>
 <p>The goal is predicting the price based only on carat. To this end, generated model in the previous section is employed to predict price using <strong>predict()</strong> function. Expected price (with only consideration of carat=0.9) is as below:</p>
-<pre class="r"><code>explanatory_data= data.frame(carat= 0.9,
-                             colour= &quot;J&quot;,
-                             clarity= &quot;SI2&quot;,
-                             cut= &quot;V&quot;,
-                             certification= &quot;GIA&quot;,
-                             polish= &quot;G&quot;,
-                             symmetry= &quot;V&quot;)
-
-
-
-predict(SLR, explanatory_data)</code></pre>
 <pre><code>##        1 
 ## 2377.776</code></pre>
 </div>

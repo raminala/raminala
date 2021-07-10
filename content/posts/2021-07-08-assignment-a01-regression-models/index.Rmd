@@ -134,11 +134,11 @@ summary(SLR)  %>%
 
 ```
 
-## Simple Linear Regression- prediction, carat=0.9
+## Simple Linear Regression- prediction, carat= 0.9
 
 The goal is predicting the price based only on carat. To this end, generated model in the previous section is employed to predict price using **predict()** function. Expected price (with only consideration of carat=0.9) is as below:
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 explanatory_data= data.frame(carat= 0.9,
                              colour= "J",
