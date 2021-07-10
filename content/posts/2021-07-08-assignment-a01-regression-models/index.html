@@ -22,47 +22,51 @@ tags:
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <p>Carat is the most important parameter in this dataset and it is a determining factor for the price. This claim can be proven from its coefficient in the multiple linear regression model. This figure shows price versus carat along with a regression line.</p>
 </div>
-<div id="price-considering-both-carat-and-clarity" class="section level2">
-<h2>price considering both carat and clarity</h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>Clarity is the second important parameter. To get the impression about effect of these two parameters on price, price versus carat with the additional layer of color for clarity is useful.</p>
-</div>
 <div id="non-metric-data-color-cut-certification-polish-symmetry-clarity" class="section level2">
 <h2>Non-Metric Data: Color, Cut, Certification, Polish, Symmetry, Clarity</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<pre><code>## # A tibble: 9 x 2
-##   clarity price_mean
-##   &lt;chr&gt;        &lt;dbl&gt;
-## 1 SI3          2619.
-## 2 I1           2543.
-## 3 I2           2342.
-## 4 SI2          1974.
-## 5 VS1          1138.
-## 6 SI1          1048.
-## 7 VS2           888.
-## 8 VVS2          564.
-## 9 VVS1          547</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>Bar plot is a easy way to visualize</p>
+<p>Bar plot is a easy way to visualize categorical variable. The mean of price versus colour, clarity and cut is depicted here.</p>
 </div>
-<div id="bivariate-analysis" class="section level2">
-<h2>Bivariate Analysis:</h2>
+<div id="bivariate-analysis-price-considering-both-carat-and-clarity" class="section level2">
+<h2>Bivariate Analysis: price considering both carat and clarity</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Clarity is the second important parameter. To get the impression about effect of these two parameters on price, price versus carat with the additional layer of color for clarity is useful. Apparently, there is a big gap versus high and low carat items and diamond with both every color is available at both ends of price (below $500 and more than $2000).</p>
 </div>
 <div id="correlation-covariance" class="section level2">
 <h2>Correlation, Covariance</h2>
 <p>These are measures of association.</p>
+<hr />
 </div>
 <div id="regression-model" class="section level2">
 <h2>Regression Model</h2>
 </div>
 <div id="simple-linear-regression" class="section level2">
 <h2>Simple Linear Regression</h2>
+<p>Here, a linear model is generated using <strong>lm()</strong> function to attribute price with carat. Coefficients are as below table.</p>
 <pre><code>## # A tibble: 2 x 5
 ##   term        estimate std.error statistic   p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)    -200.      43.1     -4.65 4.40e-  6
 ## 2 carat          2865.      56.0     51.1  1.02e-186</code></pre>
+</div>
+<div id="simple-linear-regression--prediction-carat0.9" class="section level2">
+<h2>Simple Linear Regression- prediction, carat=0.9</h2>
+<p>The goal is predicting the price based only on carat. To this end, generated model in the previous section is employed to predict price using <strong>predict()</strong> function. Expected price (with only consideration of carat=0.9) is as below:</p>
+<pre class="r"><code>explanatory_data= data.frame(carat= 0.9,
+                             colour= &quot;J&quot;,
+                             clarity= &quot;SI2&quot;,
+                             cut= &quot;V&quot;,
+                             certification= &quot;GIA&quot;,
+                             polish= &quot;G&quot;,
+                             symmetry= &quot;V&quot;)
+
+
+
+predict(SLR, explanatory_data)</code></pre>
+<pre><code>##        1 
+## 2377.776</code></pre>
 </div>
 <div id="multiple-linear-regression" class="section level2">
 <h2>Multiple Linear Regression</h2>
@@ -81,16 +85,22 @@ tags:
 ##  9 colourK   -2419.     151.     -16.1  2.52e- 45
 ## 10 colourL   -2606.     156.     -16.7  5.37e- 48
 ## # ... with 24 more rows</code></pre>
-<hr />
+</div>
+<div id="multiple-linear-regression--prediction" class="section level2">
+<h2>Multiple Linear Regression- prediction</h2>
 <p>Prediction is done here base on below parameters:</p>
 <p>carat= 0.9, colour= “J”, clarity= “SI2”, cut= “V”, certification= “GIA”, polish= “G”, symmetry= “V”</p>
 <pre><code>##        1 
 ## 2797.542</code></pre>
 </div>
-<div id="summary" class="section level2">
-<h2>Summary</h2>
-<p>From the exploratory data analysis and linear regression performed in this report, it seems that the offered price ($3100) is 10% higer than the predicted price ($2800).</p>
-<p>From seven explanatory variables, carat is the first determinant followed by clarity and colour. On the other hand, cut has the least effect on the final price.</p>
-<p>The important trend in the dataset could be found with a glance at price-carat plot. That is carat has two ranges: 0.1-.03 and 0.8- 1.6. There are a substential gap between price of these two catagories, the latter is substentially more costly.</p>
-<p>Dataset was very clean dataset with nearly no need for cleaning. For example there were not any NA and outlier data in the dataset.</p>
+<div id="summary-of-findings" class="section level2">
+<h2>Summary of findings</h2>
+<ul>
+<li><p>From the exploratory data analysis and linear regression performed in this report, it seems that the offered price ($3100) is 10% higer than the predicted price ($2800).</p></li>
+<li><p>With the offered price, he could buy the same diamond with the clarity of VS1 (few inclusions at 30X) instead of SI2 (very few inclusions at 10X).</p></li>
+<li><p>From seven explanatory variables, carat is the first determinant followed by clarity and colour. On the other hand, cut has the least effect on the final price.</p></li>
+<li><p>A single variable regression (price versus carat) shows the offered price is very high for selected carat. However, the clarity of the selected diamond compensate part of its expensive price (although not all of that).</p></li>
+<li><p>The important trend in the dataset could be found with a glance at price-carat plot. That is carat has two ranges: 0.1-.03 and 0.8- 1.6. There are a substantial gap between price of these two catagories, the latter is four times more costly.</p></li>
+<li><p>Dataset was very clean dataset with nearly no need for cleaning. For example there were not any NA and outlier data in the dataset.</p></li>
+</ul>
 </div>

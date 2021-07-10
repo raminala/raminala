@@ -42,15 +42,6 @@ diamonds %>%
 
 Carat is the most important parameter in this dataset and it is a determining factor for the price. This claim can be proven from its coefficient in the multiple linear regression model. This figure shows price versus carat along with a regression line.
 
-## price considering both carat and clarity
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-diamonds %>%
-  ggplot(aes(carat, price, color= clarity))+
-  geom_point()
-```
-
-Clarity is the second important parameter. To get the impression about effect of these two parameters on price, price versus carat with the additional layer of color for clarity is useful.
 
 
 
@@ -66,12 +57,10 @@ diamonds %>%
 ```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-yy <- diamonds %>%
+  diamonds %>%
   group_by(clarity) %>%
   summarise(price_mean=mean(price)) %>%
-  arrange(desc(price_mean))
-yy
-yy %>%
+  arrange(desc(price_mean)) %>%
   ggplot(aes(clarity,price_mean))+
   geom_col(width = 0.5, fill="yellow")+
   labs(x="Clarity", y= "Price mean ($)", title= "Price mean vs Clarity")
@@ -86,19 +75,31 @@ diamonds %>%
   labs(x="Cut", y= "Price mean ($)", title= "Price mean vs Cut")
 ```
 
-Bar plot is a easy way to visualize 
+Bar plot is a easy way to visualize categorical variable. The mean of price versus colour, clarity and cut is depicted here. 
 
 
-## Bivariate Analysis:
+## Bivariate Analysis: price considering both carat and clarity
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+diamonds %>%
+  ggplot(aes(carat, price, color= clarity))+
+  geom_point()
+```
+
+Clarity is the second important parameter. To get the impression about effect of these two parameters on price, price versus carat with the additional layer of color for clarity is useful. Apparently, there is a big gap versus high and low carat items and diamond with both every color is available at both ends of price (below $500 and more than $2000).
+
 
 ## Correlation, Covariance
 
 These are measures of association.
 
+---
+
 ## Regression Model
 
 ## Simple Linear Regression
 
+Here, a linear model is generated using **lm()** function to attribute price with carat. Coefficients are as below table.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 SLR <- lm(price~ carat, data=diamonds)
@@ -107,6 +108,24 @@ summary(SLR)  %>%
 
 ```
 
+## Simple Linear Regression- prediction, carat=0.9
+
+The goal is predicting the price based only on carat. To this end, generated model in the previous section is employed to predict price using **predict()** function. Expected price (with only consideration of carat=0.9) is as below:
+
+```{r}
+
+explanatory_data= data.frame(carat= 0.9,
+                             colour= "J",
+                             clarity= "SI2",
+                             cut= "V",
+                             certification= "GIA",
+                             polish= "G",
+                             symmetry= "V")
+
+
+
+predict(SLR, explanatory_data)
+```
 
 
 ## Multiple Linear Regression
@@ -120,7 +139,9 @@ summary(MLR)  %>%
 
 ```
 
----
+
+
+## Multiple Linear Regression- prediction
 
 Prediction is done here base on below parameters:
 
@@ -141,12 +162,16 @@ predict(MLR, explanatory_data)
 ```
 
 
-## Summary
+## Summary of findings
 
-From the exploratory data analysis and linear regression performed in this report, it seems that the offered price ($3100) is 10% higer than the predicted price ($2800).
+- From the exploratory data analysis and linear regression performed in this report, it seems that the offered price ($3100) is 10% higer than the predicted price ($2800).
 
-From seven explanatory variables, carat is the first determinant followed by clarity and colour. On the other hand, cut has the least effect on the final price.
+- With the offered price, he could buy the same diamond with the clarity of VS1 (few inclusions at 30X) instead of SI2 (very few inclusions at 10X).
 
-The important trend in the dataset could be found with a glance at price-carat plot. That is carat has two ranges: 0.1-.03 and 0.8- 1.6. There are a substential gap between price of these two catagories, the latter is substentially more costly.
+- From seven explanatory variables, carat is the first determinant followed by clarity and colour. On the other hand, cut has the least effect on the final price.
 
-Dataset was very clean dataset with nearly no need for cleaning. For example there were not any NA and outlier data in the dataset.
+- A single variable regression (price versus carat) shows the offered price is very high for selected carat. However, the clarity of the selected diamond compensate part of its expensive price (although not all of that).  
+
+- The important trend in the dataset could be found with a glance at price-carat plot. That is carat has two ranges: 0.1-.03 and 0.8- 1.6. There are a substantial gap between price of these two catagories, the latter is four times more costly.
+
+- Dataset was very clean dataset with nearly no need for cleaning. For example there were not any NA and outlier data in the dataset.
