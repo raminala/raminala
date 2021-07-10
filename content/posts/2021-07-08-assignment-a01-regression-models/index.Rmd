@@ -26,9 +26,6 @@ diamonds <- read_excel("MBA6636_SM21_Professor_Proposes_Data.xlsx") %>%
 
 ```
 
-
-## Univariate Analysis
-
 ## Metric Data: Price, Carat
 
 
@@ -41,9 +38,6 @@ diamonds %>%
 ```
 
 Carat is the most important parameter in this dataset and it is a determining factor for the price. This claim can be proven from its coefficient in the multiple linear regression model. This figure shows price versus carat along with a regression line.
-
-
-
 
 ## Non-Metric Data: Color, Cut, Certification, Polish, Symmetry, Clarity
 
@@ -77,7 +71,6 @@ diamonds %>%
 
 Bar plot is a easy way to visualize categorical variable. The mean of price versus colour, clarity and cut is depicted here. 
 
-
 ## Bivariate Analysis: price considering both carat and clarity
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -88,10 +81,43 @@ diamonds %>%
 
 Clarity is the second important parameter. To get the impression about effect of these two parameters on price, price versus carat with the additional layer of color for clarity is useful. Apparently, there is a big gap versus high and low carat items and diamond with both every color is available at both ends of price (below $500 and more than $2000).
 
+## Three variaable Analysis: price considering carat, colour, and clarity
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+diamonds %>%
+  ggplot(aes(carat, price, color= clarity, shape= colour))+
+  geom_point()+
+  xlim(0.8, 1.3)+ylim(1750, 3250)
+```
+
+Zoom in higher price section helps to add more layers without loosing readability. This plot shows price versus carat, colour, and clarity. Again, it emphasize the importance of clarity even for lower carat diamonds.
 
 ## Correlation, Covariance
 
-These are measures of association.
+These are measures of association between variables.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+cor_price_carat <- cor(diamonds$price, diamonds$carat)
+
+paste("Corrolation between price-carat: ", cor_price_carat)
+
+
+  
+```
+
+This shows the expected outcome, higher carat mean higher price (, same trand for increase-decrease).
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+cov_price_carat <- cov(diamonds$price, diamonds$carat)
+
+paste("Covariance between price-carat: ", cov_price_carat)
+
+```
+
+As expected!
 
 ---
 

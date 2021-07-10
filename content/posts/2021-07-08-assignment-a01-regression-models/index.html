@@ -14,9 +14,6 @@ tags:
 
 <p><strong><em>Ramin Ala</em></strong></p>
 <hr />
-<div id="univariate-analysis" class="section level2">
-<h2>Univariate Analysis</h2>
-</div>
 <div id="metric-data-price-carat" class="section level2">
 <h2>Metric Data: Price, Carat</h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
@@ -34,9 +31,18 @@ tags:
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>Clarity is the second important parameter. To get the impression about effect of these two parameters on price, price versus carat with the additional layer of color for clarity is useful. Apparently, there is a big gap versus high and low carat items and diamond with both every color is available at both ends of price (below $500 and more than $2000).</p>
 </div>
+<div id="three-variaable-analysis-price-considering-carat-colour-and-clarity" class="section level2">
+<h2>Three variaable Analysis: price considering carat, colour, and clarity</h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Zoom in higher price section helps to add more layers without loosing readability. This plot shows price versus carat, colour, and clarity. Again, it emphasize the importance of clarity even for lower carat diamonds.</p>
+</div>
 <div id="correlation-covariance" class="section level2">
 <h2>Correlation, Covariance</h2>
-<p>These are measures of association.</p>
+<p>These are measures of association between variables.</p>
+<pre><code>## [1] &quot;Corrolation between price-carat:  0.925436039946847&quot;</code></pre>
+<p>This shows the expected outcome, higher carat mean higher price (, same trand for increase-decrease).</p>
+<pre><code>## [1] &quot;Covariance between price-carat:  413.23180808656&quot;</code></pre>
+<p>As expected!</p>
 <hr />
 </div>
 <div id="regression-model" class="section level2">
