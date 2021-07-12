@@ -1,14 +1,15 @@
 ---
 title: 'Assignment A02: TIDYVERSE'
-author: ''
+author: Ramin Ala
 date: '2021-05-26'
 slug: assignment-a02-tidyverse
-categories: []
+categories:
+  - ggplot2
 tags: 
   - R
   - data_wrangling
   - Assignment
-  ---
+---
 
 1. Introduction:
 
