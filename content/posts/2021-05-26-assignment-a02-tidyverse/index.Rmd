@@ -219,4 +219,4 @@ hhh
   
   - I used new machine when I tried to do this exercise (other than what I used always). It took some time for me to figure out how to pull repository from git and use that (because I always pushed to git and did not need to use pull!).
   
-  - In the selected dataset, bmi variable's class was "character" instead of numeric, I do not know why a numeric variable defined so.0
+  - In the selected dataset, bmi variable's class was "character" instead of numeric, I do not know why a numeric variable defined so.
