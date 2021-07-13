@@ -18,10 +18,17 @@ library(moderndive)
 library(broom)
 
 taiwan_real_estate <- read_csv("taiwan_real_estate.csv")
+churn <- read_csv("churn.csv")
+names(churn)
 names(taiwan_real_estate)
 ```
 
 # 1-2
+
+
+
+
+
 
 ```{r}
 # Fit a linear regr'n of price_twd_msq vs. n_convenience
@@ -409,5 +416,116 @@ ggplot(taiwan_real_estate, aes(n_convenience, price_twd_msq, color = house_age_y
 geom_point() +
 geom_smooth(method = "lm", se = FALSE) +
 geom_point(data = prediction_data, size = 5, shape = 15)
+```
+
+
+
+
+
+# 4-2 Visualizing multiple explanatory variables
+
+Logistic regression also supports multiple explanatory variables. Plotting has similar issues as the linear regression case: it quickly becomes difficult to include more numeric variables in the plot. Here we'll look at the case of two numeric explanatory variables, and the solution is basically the same as before: use color to denote the response.
+
+Here there are only two possible values of response (zero and one), and later when we add predicted responses, the values all lie between zero and one. Once you include predicted responses, the most important thing to determine from the plot is whether the predictions are close to zero, or close to one. That means that a 2-color gradient split at 0.5 is really useful: responses above 0.5 are one color, and responses below 0.5 are another color.
+
+```{r}
+names(churn)
+
+# Using churn, plot recency vs. length of relationship,
+# colored by churn status
+ggplot(churn, aes(time_since_first_purchase, time_since_last_purchase, color= has_churned)) +
+  # Make it a scatter plot, with transparency 0.5
+  geom_point(alpha=0.5) +
+  # Use a 2-color gradient split at 0.5
+  scale_color_gradient2(midpoint = 0.5)+
+  # Use the black and white theme
+  theme_bw()
+```
+
+
+
+# 4-3 Logistic regression with 2 explanatory variables
+
+To include multiple explanatory variables in logistic regression models, the syntax is the same as for linear regressions. The only change is the same as in the simple case: you run a generalized linear model with a binomial error family.
+
+Here you'll fit a model of churn status with both of the explanatory variables from the dataset: the length of customer relationship and the recency of purchase.
+
+Logistic regression also supports multiple explanatory variables. Plotting has similar issues as the linear regression case: it quickly becomes difficult to include more numeric variables in the plot. Here we'll look at the case of two numeric explanatory variables, and the solution is basically the same as before: use color to denote the response.
+
+Here there are only two possible values of response (zero and one), and later when we add predicted responses, the values all lie between zero and one. Once you include predicted responses, the most important thing to determine from the plot is whether the predictions are close to zero, or close to one. That means that a 2-color gradient split at 0.5 is really useful: responses above 0.5 are one color, and responses below 0.5 are another color.
+
+```{r}
+# Fit a logistic regression of churn status vs. length of
+# relationship, recency, and an interaction
+mdl_churn_vs_both_inter <- glm(has_churned ~ time_since_first_purchase * time_since_last_purchase, data=churn, family = binomial)
+
+
+# See the result
+mdl_churn_vs_both_inter
+```
+
+
+
+# 4-4 Logistic regression prediction
+
+As with linear regression, the joy of logistic regression is that you can make predictions. Let's step through the prediction flow one more time!
+
+```{r}
+# Make a grid of explanatory data
+explanatory_data <- expand_grid(
+  # Set len. relationship to seq from -2 to 4 in steps of 0.1
+  time_since_first_purchase = seq(-2,4,0.1),
+  # Set recency to seq from -1 to 6 in steps of 0.1
+  time_since_last_purchase = seq(-1,6,0.1)
+)
+
+# See the result
+explanatory_data
+
+
+
+#--------------------------
+
+# From previous steps
+explanatory_data <- expand_grid(
+  time_since_first_purchase = seq(-2, 4, 0.1),
+  time_since_last_purchase = seq(-1, 6, 0.1)
+)
+
+# Add a column of predictions using mdl_churn_vs_both_inter
+# and explanatory_data with type response
+prediction_data <- explanatory_data %>%
+mutate(has_churned= predict(mdl_churn_vs_both_inter, explanatory_data, type = "response"))
+
+
+# See the result
+prediction_data
+
+
+#--------------------------
+
+
+
+# From previous steps
+explanatory_data <- expand_grid(
+  time_since_first_purchase = seq(-2, 4, 0.1),
+  time_since_last_purchase = seq(-1, 6, 0.1)
+)
+prediction_data <- explanatory_data %>% 
+  mutate(
+    has_churned = predict(mdl_churn_vs_both_inter, explanatory_data, type = "response")
+  )
+
+# Extend the plot
+ggplot(
+  churn, 
+  aes(time_since_first_purchase, time_since_last_purchase, color = has_churned)
+) +
+  geom_point(alpha = 0.5) +
+  scale_color_gradient2(midpoint = 0.5) +
+  theme_bw() +
+  # Add points from prediction_data with size 3 and shape 15
+  geom_point(data=prediction_data, size= 3,  shape= 15)
+
 ```
 
