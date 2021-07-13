@@ -36,6 +36,19 @@ taiwan_real_estate &lt;- read_csv(&quot;taiwan_real_estate.csv&quot;)</code></pr
 ##   house_age_years = col_character(),
 ##   price_twd_msq = col_double()
 ## )</code></pre>
+<pre class="r"><code>churn &lt;- read_csv(&quot;churn.csv&quot;)</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   X1 = col_double(),
+##   has_churned = col_double(),
+##   time_since_first_purchase = col_double(),
+##   time_since_last_purchase = col_double()
+## )</code></pre>
+<pre class="r"><code>names(churn)</code></pre>
+<pre><code>## [1] &quot;X1&quot;                        &quot;has_churned&quot;              
+## [3] &quot;time_since_first_purchase&quot; &quot;time_since_last_purchase&quot;</code></pre>
 <pre class="r"><code>names(taiwan_real_estate)</code></pre>
 <pre><code>## [1] &quot;X1&quot;              &quot;dist_to_mrt_m&quot;   &quot;n_convenience&quot;   &quot;house_age_years&quot;
 ## [5] &quot;price_twd_msq&quot;</code></pre>
@@ -355,7 +368,9 @@ ggplot(taiwan_real_estate, aes(n_convenience,price_twd_msq, color=house_age_year
   geom_smooth(method=lm, se=FALSE)</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>#2-5 Assessing model performance</p>
+</div>
+<div id="assessing-model-performance" class="section level1">
+<h1>2-5 Assessing model performance</h1>
 <p>To test which approach is best – the whole dataset model or the models for each house age category – you need to calculate some metrics. Here’s, you’ll compare the coefficient of determination and the residual standard error for each model.</p>
 <pre class="r"><code># Get the coeff. of determination for mdl_all_ages
 
@@ -397,7 +412,9 @@ mdl_30_to_45 %&gt;%
 glance() %&gt;%
 pull(sigma)</code></pre>
 <pre><code>## [1] 3.239037</code></pre>
-<p>#2-7 Specifying an interaction</p>
+</div>
+<div id="specifying-an-interaction" class="section level1">
+<h1>2-7 Specifying an interaction</h1>
 <p>So far you used a single parallel slopes model, which gave an OK fit for the whole dataset, then three separate models for each house age category, which gave a better fit for each individual category, but was clunky because you had three separate models to work with and explain. Ideally, you’d have a single model that had all the predictive power of the individual models.</p>
 <p>Defining this single model is achieved through adding interactions between explanatory variables. R’s formula syntax is flexible, and gives you a couple of options, depending on whether you prefer concise code that is quick to type and to read, or explicit code that describes what you are doing in detail.</p>
 <pre class="r"><code># Model price vs both with an interaction using &quot;times&quot; syntax
@@ -431,6 +448,233 @@ lm(
 ##                              -2.36978                               -1.12858  
 ## n_convenience:house_age_years15 to 30  n_convenience:house_age_years30 to 45  
 ##                               0.01833                               -0.16489</code></pre>
-<p>#2-7 Interactions with understandable coeffs</p>
+</div>
+<div id="interactions-with-understandable-coeffs" class="section level1">
+<h1>2-8 Interactions with understandable coeffs</h1>
 <p>The previous model with the interaction term returned coefficients that were a little tricky to interpret. In order clarify what the model is predicting, you can reformulate the model in a way that returns understandable coefficients. For further clarity, you can compare the results to the models on the separate house age categories (mdl_0_to_15, mdl_15_to_30, and mdl_30_to_45).</p>
+<pre class="r"><code># Model price vs. house age plus an interaction, no intercept
+mdl_readable_inter &lt;- lm(price_twd_msq ~ house_age_years + n_convenience:house_age_years + 0, data = taiwan_real_estate)
+
+# See the result
+mdl_readable_inter</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price_twd_msq ~ house_age_years + n_convenience:house_age_years + 
+##     0, data = taiwan_real_estate)
+## 
+## Coefficients:
+##                house_age_years0 to 15                house_age_years15 to 30  
+##                                9.2417                                 6.8719  
+##               house_age_years30 to 45   house_age_years0 to 15:n_convenience  
+##                                8.1131                                 0.8336  
+## house_age_years15 to 30:n_convenience  house_age_years30 to 45:n_convenience  
+##                                0.8519                                 0.6687</code></pre>
+<pre class="r"><code># Get coefficients
+coefficients(mdl_readable_inter)</code></pre>
+<pre><code>##                house_age_years0 to 15               house_age_years15 to 30 
+##                             9.2417022                             6.8719186 
+##               house_age_years30 to 45  house_age_years0 to 15:n_convenience 
+##                             8.1131235                             0.8335867 
+## house_age_years15 to 30:n_convenience house_age_years30 to 45:n_convenience 
+##                             0.8519172                             0.6686981</code></pre>
+</div>
+<div id="interactions-with-understandable-coeffs-1" class="section level1">
+<h1>2-10 Interactions with understandable coeffs</h1>
+<p>As with every other regression model you’ve created, the fun part is making predictions. Fortunately, the code flow for this case is the same as the one without interactions – R can handle calculating the interactions without any extra prompting from you. The only thing you need to remember is the trick for getting combinations of explanatory variables.</p>
+<pre class="r"><code># Make a grid of explanatory data
+explanatory_data &lt;- expand_grid(
+  # Set n_convenience to zero to ten
+  n_convenience= seq(0, 10),
+  # Set house_age_years to the unique values of that variable
+  house_age_years = unique(taiwan_real_estate$house_age_years)
+)
+
+# See the result
+explanatory_data</code></pre>
+<pre><code>## # A tibble: 33 x 2
+##    n_convenience house_age_years
+##            &lt;int&gt; &lt;chr&gt;          
+##  1             0 30 to 45       
+##  2             0 15 to 30       
+##  3             0 0 to 15        
+##  4             1 30 to 45       
+##  5             1 15 to 30       
+##  6             1 0 to 15        
+##  7             2 30 to 45       
+##  8             2 15 to 30       
+##  9             2 0 to 15        
+## 10             3 30 to 45       
+## # ... with 23 more rows</code></pre>
+<pre class="r"><code># From previous step
+explanatory_data &lt;- expand_grid(
+  n_convenience = 0:10,
+  house_age_years = unique(taiwan_real_estate$house_age_years)
+)
+
+# Add predictions to the data frame
+#prediction_data &lt;- explanatory_data %&gt;% 
+#  mutate(
+ #   price_twd_msq = predict(mdl_price_vs_both_inter, explanatory_data) )
+
+# See the result
+prediction_data</code></pre>
+<pre><code>## # A tibble: 33 x 4
+##    n_convenience house_age_years intercept price_twd_msq
+##            &lt;int&gt; &lt;chr&gt;               &lt;dbl&gt;         &lt;dbl&gt;
+##  1             0 30 to 45            0.791         0.791
+##  2             0 15 to 30            7.51          7.51 
+##  3             0 0 to 15             7.09          7.09 
+##  4             1 30 to 45            0.791        10.2  
+##  5             1 15 to 30            7.51         16.9  
+##  6             1 0 to 15             7.09         16.5  
+##  7             2 30 to 45            0.791        19.6  
+##  8             2 15 to 30            7.51         26.3  
+##  9             2 0 to 15             7.09         25.9  
+## 10             3 30 to 45            0.791        29.0  
+## # ... with 23 more rows</code></pre>
+<pre class="r"><code>explanatory_data &lt;- expand_grid(
+  n_convenience = 0:10,
+  house_age_years = unique(taiwan_real_estate$house_age_years)
+)
+#prediction_data &lt;- explanatory_data %&gt;%  mutate(price_twd_msq =predict(mdl_price_vs_both_inter, explanatory_data)  )
+
+# 
+ggplot(taiwan_real_estate, aes(n_convenience, price_twd_msq, color = house_age_years)) +
+geom_point() +
+geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+geom_point(data = prediction_data, size = 5, shape = 15)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+<div id="visualizing-multiple-explanatory-variables" class="section level1">
+<h1>4-2 Visualizing multiple explanatory variables</h1>
+<p>Logistic regression also supports multiple explanatory variables. Plotting has similar issues as the linear regression case: it quickly becomes difficult to include more numeric variables in the plot. Here we’ll look at the case of two numeric explanatory variables, and the solution is basically the same as before: use color to denote the response.</p>
+<p>Here there are only two possible values of response (zero and one), and later when we add predicted responses, the values all lie between zero and one. Once you include predicted responses, the most important thing to determine from the plot is whether the predictions are close to zero, or close to one. That means that a 2-color gradient split at 0.5 is really useful: responses above 0.5 are one color, and responses below 0.5 are another color.</p>
+<pre class="r"><code>names(churn)</code></pre>
+<pre><code>## [1] &quot;X1&quot;                        &quot;has_churned&quot;              
+## [3] &quot;time_since_first_purchase&quot; &quot;time_since_last_purchase&quot;</code></pre>
+<pre class="r"><code># Using churn, plot recency vs. length of relationship,
+# colored by churn status
+ggplot(churn, aes(time_since_first_purchase, time_since_last_purchase, color= has_churned)) +
+  # Make it a scatter plot, with transparency 0.5
+  geom_point(alpha=0.5) +
+  # Use a 2-color gradient split at 0.5
+  scale_color_gradient2(midpoint = 0.5)+
+  # Use the black and white theme
+  theme_bw()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+</div>
+<div id="logistic-regression-with-2-explanatory-variables" class="section level1">
+<h1>4-3 Logistic regression with 2 explanatory variables</h1>
+<p>To include multiple explanatory variables in logistic regression models, the syntax is the same as for linear regressions. The only change is the same as in the simple case: you run a generalized linear model with a binomial error family.</p>
+<p>Here you’ll fit a model of churn status with both of the explanatory variables from the dataset: the length of customer relationship and the recency of purchase.</p>
+<p>Logistic regression also supports multiple explanatory variables. Plotting has similar issues as the linear regression case: it quickly becomes difficult to include more numeric variables in the plot. Here we’ll look at the case of two numeric explanatory variables, and the solution is basically the same as before: use color to denote the response.</p>
+<p>Here there are only two possible values of response (zero and one), and later when we add predicted responses, the values all lie between zero and one. Once you include predicted responses, the most important thing to determine from the plot is whether the predictions are close to zero, or close to one. That means that a 2-color gradient split at 0.5 is really useful: responses above 0.5 are one color, and responses below 0.5 are another color.</p>
+<pre class="r"><code># Fit a logistic regression of churn status vs. length of
+# relationship, recency, and an interaction
+mdl_churn_vs_both_inter &lt;- glm(has_churned ~ time_since_first_purchase * time_since_last_purchase, data=churn, family = binomial)
+
+
+# See the result
+mdl_churn_vs_both_inter</code></pre>
+<pre><code>## 
+## Call:  glm(formula = has_churned ~ time_since_first_purchase * time_since_last_purchase, 
+##     family = binomial, data = churn)
+## 
+## Coefficients:
+##                                        (Intercept)  
+##                                            -0.1505  
+##                          time_since_first_purchase  
+##                                            -0.6376  
+##                           time_since_last_purchase  
+##                                             0.4233  
+## time_since_first_purchase:time_since_last_purchase  
+##                                             0.1123  
+## 
+## Degrees of Freedom: 399 Total (i.e. Null);  396 Residual
+## Null Deviance:       554.5 
+## Residual Deviance: 519.8     AIC: 527.8</code></pre>
+</div>
+<div id="logistic-regression-prediction" class="section level1">
+<h1>4-4 Logistic regression prediction</h1>
+<p>As with linear regression, the joy of logistic regression is that you can make predictions. Let’s step through the prediction flow one more time!</p>
+<pre class="r"><code># Make a grid of explanatory data
+explanatory_data &lt;- expand_grid(
+  # Set len. relationship to seq from -2 to 4 in steps of 0.1
+  time_since_first_purchase = seq(-2,4,0.1),
+  # Set recency to seq from -1 to 6 in steps of 0.1
+  time_since_last_purchase = seq(-1,6,0.1)
+)
+
+# See the result
+explanatory_data</code></pre>
+<pre><code>## # A tibble: 4,331 x 2
+##    time_since_first_purchase time_since_last_purchase
+##                        &lt;dbl&gt;                    &lt;dbl&gt;
+##  1                        -2                     -1  
+##  2                        -2                     -0.9
+##  3                        -2                     -0.8
+##  4                        -2                     -0.7
+##  5                        -2                     -0.6
+##  6                        -2                     -0.5
+##  7                        -2                     -0.4
+##  8                        -2                     -0.3
+##  9                        -2                     -0.2
+## 10                        -2                     -0.1
+## # ... with 4,321 more rows</code></pre>
+<pre class="r"><code>#--------------------------
+
+# From previous steps
+explanatory_data &lt;- expand_grid(
+  time_since_first_purchase = seq(-2, 4, 0.1),
+  time_since_last_purchase = seq(-1, 6, 0.1)
+)
+
+# Add a column of predictions using mdl_churn_vs_both_inter
+# and explanatory_data with type response
+prediction_data &lt;- explanatory_data %&gt;%
+mutate(has_churned= predict(mdl_churn_vs_both_inter, explanatory_data, type = &quot;response&quot;))
+
+
+# See the result
+prediction_data</code></pre>
+<pre><code>## # A tibble: 4,331 x 3
+##    time_since_first_purchase time_since_last_purchase has_churned
+##                        &lt;dbl&gt;                    &lt;dbl&gt;       &lt;dbl&gt;
+##  1                        -2                     -1         0.716
+##  2                        -2                     -0.9       0.720
+##  3                        -2                     -0.8       0.724
+##  4                        -2                     -0.7       0.728
+##  5                        -2                     -0.6       0.732
+##  6                        -2                     -0.5       0.736
+##  7                        -2                     -0.4       0.740
+##  8                        -2                     -0.3       0.744
+##  9                        -2                     -0.2       0.747
+## 10                        -2                     -0.1       0.751
+## # ... with 4,321 more rows</code></pre>
+<pre class="r"><code>#--------------------------
+
+
+
+# From previous steps
+explanatory_data &lt;- expand_grid(
+  time_since_first_purchase = seq(-2, 4, 0.1),
+  time_since_last_purchase = seq(-1, 6, 0.1)
+)
+prediction_data &lt;- explanatory_data %&gt;% 
+  mutate(
+    has_churned = predict(mdl_churn_vs_both_inter, explanatory_data, type = &quot;response&quot;)
+  )
+
+# Extend the plot
+ggplot(
+  churn, 
+  aes(time_since_first_purchase, time_since_last_purchase, color = has_churned)
+) +
+  geom_point(alpha = 0.5) +
+  scale_color_gradient2(midpoint = 0.5) +
+  theme_bw() +
+  # Add points from prediction_data with size 3 and shape 15
+  geom_point(data=prediction_data, size= 3,  shape= 15)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 </div>
