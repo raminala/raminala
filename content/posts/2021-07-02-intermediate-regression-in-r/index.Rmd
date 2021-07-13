@@ -289,7 +289,7 @@ ggplot(taiwan_real_estate, aes(n_convenience,price_twd_msq, color=house_age_year
   geom_smooth(method=lm, se=FALSE)
 ```
 
-#2-5 Assessing model performance
+# 2-5 Assessing model performance
 
 To test which approach is best – the whole dataset model or the models for each house age category – you need to calculate some metrics. Here's, you'll compare the coefficient of determination and the residual standard error for each model.
 
@@ -339,7 +339,7 @@ glance() %>%
 pull(sigma)
 ```
 
-#2-7 Specifying an interaction
+# 2-7 Specifying an interaction
 
 So far you used a single parallel slopes model, which gave an OK fit for the whole dataset, then three separate models for each house age category, which gave a better fit for each individual category, but was clunky because you had three separate models to work with and explain. Ideally, you'd have a single model that had all the predictive power of the individual models.
 
@@ -356,7 +356,7 @@ lm(
 )
 ```
 
-#2-8 Interactions with understandable coeffs
+# 2-8 Interactions with understandable coeffs
 
 The previous model with the interaction term returned coefficients that were a little tricky to interpret. In order clarify what the model is predicting, you can reformulate the model in a way that returns understandable coefficients. For further clarity, you can compare the results to the models on the separate house age categories (mdl_0_to_15, mdl_15_to_30, and mdl_30_to_45).
 
@@ -371,7 +371,7 @@ mdl_readable_inter
 coefficients(mdl_readable_inter)
 ```
 
-#2-10 Interactions with understandable coeffs
+# 2-10 Interactions with understandable coeffs
 
 As with every other regression model you've created, the fun part is making predictions. Fortunately, the code flow for this case is the same as the one without interactions – R can handle calculating the interactions without any extra prompting from you. The only thing you need to remember is the trick for getting combinations of explanatory variables.
 
