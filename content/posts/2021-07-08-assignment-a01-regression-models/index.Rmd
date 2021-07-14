@@ -39,7 +39,7 @@ Univariate analysis is perhaps the simplest form of statistical analysis. The ke
 
 Although univariate analysis can yield misleading results in cases in which multivariate analysis is more appropriate, it provides some insights.
 
-*Univariate Analysis on price*
+**Univariate Analysis on price**
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 diamonds %>%
