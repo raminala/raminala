@@ -39,6 +39,8 @@ Univariate analysis is perhaps the simplest form of statistical analysis. The ke
 
 Although univariate analysis can yield misleading results in cases in which multivariate analysis is more appropriate, it provides some insights.
 
+*distribution of price*
+
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 diamonds %>%
   ggplot(aes(price))+
@@ -46,6 +48,13 @@ diamonds %>%
 ```
 
 Apparently, there are two distinct price ranges. below $500 and above $1800. With univariate analysis, we could not understand the reasons and decisive parameters for this gap in the price. However, one might decide to model these two sections separately for more exact model. This might be the most important finding by this analysis.
+
+Now it worth to take a more statistical look at price variable.
+
+```{r}
+summary(diamonds$price)
+```
+
 
 ## Metric Data: Price, Carat
 

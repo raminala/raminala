@@ -20,29 +20,34 @@ tags:
 <h2>Univariate Analysis</h2>
 <p>Univariate analysis is perhaps the simplest form of statistical analysis. The key fact is that only one variable is involved. Like other forms of statistics, it can be inferential or descriptive.</p>
 <p>Although univariate analysis can yield misleading results in cases in which multivariate analysis is more appropriate, it provides some insights.</p>
+<p><em>distribution of price</em></p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <p>Apparently, there are two distinct price ranges. below $500 and above $1800. With univariate analysis, we could not understand the reasons and decisive parameters for this gap in the price. However, one might decide to model these two sections separately for more exact model. This might be the most important finding by this analysis.</p>
+<p>Now it worth to take a more statistical look at price variable.</p>
+<pre class="r"><code>summary(diamonds$price)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##     160     520    2169    1717    3012    3145</code></pre>
 </div>
 <div id="metric-data-price-carat" class="section level2">
 <h2>Metric Data: Price, Carat</h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>Carat is the most important parameter in this dataset and it is a determining factor for the price. This claim can be proven from its coefficient in the multiple linear regression model. This figure shows price versus carat along with a regression line.</p>
 </div>
 <div id="non-metric-data-color-cut-certification-polish-symmetry-clarity" class="section level2">
 <h2>Non-Metric Data: Color, Cut, Certification, Polish, Symmetry, Clarity</h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>Bar plot is a easy way to visualize categorical variable. The mean of price versus colour, clarity and cut is depicted here.</p>
 </div>
 <div id="bivariate-analysis-price-considering-both-carat-and-clarity" class="section level2">
 <h2>Bivariate Analysis: price considering both carat and clarity</h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>Clarity is the second important parameter. To get the impression about effect of these two parameters on price, price versus carat with the additional layer of color for clarity is useful. Apparently, there is a big gap versus high and low carat items and diamond with both every color is available at both ends of price (below $500 and more than $2000).</p>
 </div>
 <div id="three-variaable-analysis-price-considering-carat-colour-and-clarity" class="section level2">
 <h2>Three variaable Analysis: price considering carat, colour, and clarity</h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>Zoom in higher price section helps to add more layers without loosing readability. This plot shows price versus carat, colour, and clarity. Again, it emphasize the importance of clarity even for lower carat diamonds.</p>
 </div>
 <div id="correlation-covariance" class="section level2">
