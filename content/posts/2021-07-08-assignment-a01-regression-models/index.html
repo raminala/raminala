@@ -14,31 +14,33 @@ tags:
 
 <p><strong><em>Ramin Ala</em></strong></p>
 <hr />
-<div id="executive-summary" class="section level2">
-<h2>Executive Summary</h2>
-<p>This assignment is about deciding, or in a better term predicting, about the price of a diamond based on available data. Since prediction would be done on a quantitative variable (price), it considers as a <em>regression problem</em>. Here, we will solve the problem using <em>linear fitting</em> to avoid over fitting.</p>
+<p>univariate assignment is about deciding, or in a better term predicting, about the price of a diamond based on available data. Since prediction would be done on a quantitative variable (price), it considers as a <em>regression problem</em>. Here, we will solve the problem using <em>linear fitting</em> to avoid over fitting.</p>
 <p>There are a dizzying array of diamond characteristics, configurations, and pricing such as carat, color, Cut, clarity, Polish, Symmetry, and certification, and data collected from three different wholesaler websites. The first step would be understanding data via visualization and then going to making a linear model and prediction based on that.</p>
+<div id="univariate-analysis" class="section level2">
+<h2>Univariate Analysis</h2>
+<p>Univariate analysis is perhaps the simplest form of statistical analysis. The key fact is that only one variable is involved. Like other forms of statistics, it can be inferential or descriptive.</p>
+<p>Although univariate analysis can yield misleading results in cases in which multivariate analysis is more appropriate, it provides some insights.</p>
 </div>
 <div id="metric-data-price-carat" class="section level2">
 <h2>Metric Data: Price, Carat</h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Carat is the most important parameter in this dataset and it is a determining factor for the price. This claim can be proven from its coefficient in the multiple linear regression model. This figure shows price versus carat along with a regression line.</p>
 </div>
 <div id="non-metric-data-color-cut-certification-polish-symmetry-clarity" class="section level2">
 <h2>Non-Metric Data: Color, Cut, Certification, Polish, Symmetry, Clarity</h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>Bar plot is a easy way to visualize categorical variable. The mean of price versus colour, clarity and cut is depicted here.</p>
 </div>
 <div id="bivariate-analysis-price-considering-both-carat-and-clarity" class="section level2">
 <h2>Bivariate Analysis: price considering both carat and clarity</h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>Clarity is the second important parameter. To get the impression about effect of these two parameters on price, price versus carat with the additional layer of color for clarity is useful. Apparently, there is a big gap versus high and low carat items and diamond with both every color is available at both ends of price (below $500 and more than $2000).</p>
 </div>
 <div id="three-variaable-analysis-price-considering-carat-colour-and-clarity" class="section level2">
 <h2>Three variaable Analysis: price considering carat, colour, and clarity</h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>Zoom in higher price section helps to add more layers without loosing readability. This plot shows price versus carat, colour, and clarity. Again, it emphasize the importance of clarity even for lower carat diamonds.</p>
 </div>
 <div id="correlation-covariance" class="section level2">
