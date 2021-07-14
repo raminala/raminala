@@ -111,6 +111,9 @@ This plot shows the mean of price for nine categories of colors. Although these 
   labs(x="Clarity", y= "Price mean ($)", title= "Price mean vs Clarity")
 ```
 
+Importance of clarity might be guesses from this plot. In contrast to color, there is big change in price average with selecting different clarity. I1, I2, Si1, and SI3 are expensive categories and professor selected his diamond from these categories.
+
+
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 diamonds %>%
   group_by(cut) %>%
@@ -119,6 +122,8 @@ diamonds %>%
   geom_col(width = 0.3, fill="red")+
   labs(x="Cut", y= "Price mean ($)", title= "Price mean vs Cut")
 ```
+
+This plot mainly dirsct buyer to select from F category if he is looking for a perfect cut and from V if don't want to break the bank.
 
 Bar plot is a easy way to visualize categorical variable. The mean of price versus colour, clarity and cut is depicted here. 
 
