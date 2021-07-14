@@ -529,3 +529,13 @@ ggplot(
 
 ```
 
+
+
+# 4-4 Confusion matrix
+
+When the response variable has just two outcomes, like the case of churn, the measures of success for the model are "how many cases where the customer churned did the model correctly predict?" and "how many cases where the customer didn't churn did the model correctly predict?". These can be found by generating a confusion matrix and calculating summary metrics on it. A mosaic plot is the natural way to visualize the results.
+
+```{r}
+
+```
+
