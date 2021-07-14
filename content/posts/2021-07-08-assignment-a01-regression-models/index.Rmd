@@ -127,7 +127,7 @@ This plot mainly dirsct buyer to select from F category if he is looking for a p
 
 Bar plot is a easy way to visualize categorical variable. The mean of price versus colour, clarity and cut is depicted here. 
 
-## Bivariate Analysis: price considering both carat and clarity
+## Analysis of three variables: price considering both carat and clarity
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 diamonds %>%
@@ -137,7 +137,7 @@ diamonds %>%
 
 Clarity is the second important parameter. To get the impression about effect of these two parameters on price, price versus carat with the additional layer of color for clarity is useful. Apparently, there is a big gap versus high and low carat items and diamond with both every color is available at both ends of price (below $500 and more than $2000).
 
-## Three variaable Analysis: price considering carat, colour, and clarity
+## four variaables Analysis: price considering carat, colour, and clarity
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 diamonds %>%
