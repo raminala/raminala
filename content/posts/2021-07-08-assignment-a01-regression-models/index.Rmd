@@ -60,14 +60,17 @@ print(afg)
 
 diamonds %>%
   ggplot(aes(price))+
-  geom_boxplot()
+  geom_boxplot()+
+  geom_vline(xintercept = 3100, linetype="dotted", 
+                color = "red", size=1.5)
+  #abline(abline(v = 3000, col = "red", lwd = 2))
 
 ```
 
 First point that a reader could get from these data is that maximum price ($3145) is very close to the offered price ($3100). It means that the professor might be offered the best diamond in the market. On the other hand, mean of price ($1716) is far from offered price (again, he might expect an exceptional item!).
 
 The box plot summarize these parameters in a visualization friendly manner, one look provides
-minimum, mode, median, max, first and third quarterlies.
+minimum, mode, median, max, first and third quarterlies. Note that the red dotted line is the offered price that laied at the very end of box plot.
 
 ## Metric Data: Price, Carat
 
