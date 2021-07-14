@@ -26,9 +26,9 @@ diamonds <- read_excel("MBA6636_SM21_Professor_Proposes_Data.xlsx") %>%
 
 ```
 
+## Executive Summary
 
-
-univariate assignment is about deciding, or in a better term predicting, about the price of a diamond based on available data. Since prediction would be done on a quantitative variable (price), it considers as a *regression problem*. Here, we will solve the problem using *linear fitting* to avoid over fitting. 
+This assignment is about deciding, or in a better term predicting, the price of a diamond based on available data. Since prediction would be done on a quantitative variable (price), it considers as a *regression problem*. Here, we will solve the problem using *linear fitting* to avoid over fitting. 
 
 There are a dizzying array of diamond characteristics, configurations, and pricing such as carat, color, Cut, clarity, Polish, Symmetry, and certification, and data collected from three different wholesaler websites. The first step would be understanding data via visualization and then going to making a linear model and prediction based on that.
 
@@ -39,7 +39,7 @@ Univariate analysis is perhaps the simplest form of statistical analysis. The ke
 
 Although univariate analysis can yield misleading results in cases in which multivariate analysis is more appropriate, it provides some insights.
 
-*distribution of price*
+*Univariate Analysis on price*
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 diamonds %>%
@@ -63,6 +63,8 @@ diamonds %>%
   geom_boxplot()
 
 ```
+
+First point that a reader could get from these data is that maximum price ($3145) is very close to the offered price
 
 
 ## Metric Data: Price, Carat

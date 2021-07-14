@@ -14,13 +14,16 @@ tags:
 
 <p><strong><em>Ramin Ala</em></strong></p>
 <hr />
-<p>univariate assignment is about deciding, or in a better term predicting, about the price of a diamond based on available data. Since prediction would be done on a quantitative variable (price), it considers as a <em>regression problem</em>. Here, we will solve the problem using <em>linear fitting</em> to avoid over fitting.</p>
+<div id="executive-summary" class="section level2">
+<h2>Executive Summary</h2>
+<p>This assignment is about deciding, or in a better term predicting, the price of a diamond based on available data. Since prediction would be done on a quantitative variable (price), it considers as a <em>regression problem</em>. Here, we will solve the problem using <em>linear fitting</em> to avoid over fitting.</p>
 <p>There are a dizzying array of diamond characteristics, configurations, and pricing such as carat, color, Cut, clarity, Polish, Symmetry, and certification, and data collected from three different wholesaler websites. The first step would be understanding data via visualization and then going to making a linear model and prediction based on that.</p>
+</div>
 <div id="univariate-analysis" class="section level2">
 <h2>Univariate Analysis</h2>
 <p>Univariate analysis is perhaps the simplest form of statistical analysis. The key fact is that only one variable is involved. Like other forms of statistics, it can be inferential or descriptive.</p>
 <p>Although univariate analysis can yield misleading results in cases in which multivariate analysis is more appropriate, it provides some insights.</p>
-<p><em>distribution of price</em></p>
+<p><em>Univariate Analysis on price</em></p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <p>Apparently, there are two distinct price ranges. below $500 and above $1800. With univariate analysis, we could not understand the reasons and decisive parameters for this gap in the price. However, one might decide to model these two sections separately for more exact model. This might be the most important finding by this analysis.</p>
 <p>Now it worth to take a more statistical look at price variable.</p>
@@ -29,6 +32,7 @@ tags:
 ##     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
 ## 1     160   520   2169 1717. 3012.    3145</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>First point that a reader could get from these data is that maximum price ($3145) is very close to the offered price</p>
 </div>
 <div id="metric-data-price-carat" class="section level2">
 <h2>Metric Data: Price, Carat</h2>
