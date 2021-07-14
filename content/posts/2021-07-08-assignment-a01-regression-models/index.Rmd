@@ -45,7 +45,7 @@ diamonds %>%
   geom_histogram()
 ```
 
-
+Apparently, there are two distinct price ranges. below $500 and above $1800. With univariate analysis, we could not understand the reasons and decisive parameters for this gap in the price. However, one might decide to model these two sections separately for more exact model. This might be the most important finding by this analysis.
 
 ## Metric Data: Price, Carat
 
