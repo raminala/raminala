@@ -24,8 +24,15 @@ tags:
 ## x dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code>library(moderndive)
 library(broom)
-
-taiwan_real_estate &lt;- read_csv(&quot;taiwan_real_estate.csv&quot;)</code></pre>
+library(yardstick)</code></pre>
+<pre><code>## For binary classification, the first factor level is assumed to be the event.
+## Use the argument `event_level = &quot;second&quot;` to alter this as needed.</code></pre>
+<pre><code>## 
+## Attaching package: &#39;yardstick&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:readr&#39;:
+## 
+##     spec</code></pre>
+<pre class="r"><code>taiwan_real_estate &lt;- read_csv(&quot;taiwan_real_estate.csv&quot;)</code></pre>
 <pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
 <pre><code>## 
 ## -- Column specification --------------------------------------------------------
@@ -681,4 +688,52 @@ ggplot(
 <div id="confusion-matrix" class="section level1">
 <h1>4-4 Confusion matrix</h1>
 <p>When the response variable has just two outcomes, like the case of churn, the measures of success for the model are “how many cases where the customer churned did the model correctly predict?” and “how many cases where the customer didn’t churn did the model correctly predict?”. These can be found by generating a confusion matrix and calculating summary metrics on it. A mosaic plot is the natural way to visualize the results.</p>
+<pre class="r"><code># Get the actual responses from churn
+actual_response &lt;- churn$has_churned
+
+# Get the predicted responses from the model
+predicted_response &lt;- round(fitted(mdl_churn_vs_both_inter))
+
+# Get a table of these values
+outcomes &lt;- table(predicted_response, actual_response)
+
+# Convert the table to a conf_mat object
+confusion &lt;- conf_mat(outcomes)
+
+# See the result
+confusion</code></pre>
+<pre><code>##                   actual_response
+## predicted_response   0   1
+##                  0 102  53
+##                  1  98 147</code></pre>
+<pre class="r"><code>#------------------
+
+
+# From previous step
+actual_response &lt;- churn$has_churned
+predicted_response &lt;- round(fitted(mdl_churn_vs_both_inter))
+outcomes &lt;- table(predicted_response, actual_response)
+confusion &lt;- conf_mat(outcomes)
+
+# &quot;Automatically&quot; plot the confusion matrix
+autoplot(confusion)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<pre class="r"><code># Get summary metrics
+summary(confusion, event_level = &quot;second&quot;)</code></pre>
+<pre><code>## # A tibble: 13 x 3
+##    .metric              .estimator .estimate
+##    &lt;chr&gt;                &lt;chr&gt;          &lt;dbl&gt;
+##  1 accuracy             binary         0.622
+##  2 kap                  binary         0.245
+##  3 sens                 binary         0.735
+##  4 spec                 binary         0.51 
+##  5 ppv                  binary         0.6  
+##  6 npv                  binary         0.658
+##  7 mcc                  binary         0.251
+##  8 j_index              binary         0.245
+##  9 bal_accuracy         binary         0.622
+## 10 detection_prevalence binary         0.612
+## 11 precision            binary         0.6  
+## 12 recall               binary         0.735
+## 13 f_meas               binary         0.661</code></pre>
 </div>

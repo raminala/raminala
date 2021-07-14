@@ -16,6 +16,7 @@ tags:
 library(tidyverse)
 library(moderndive)
 library(broom)
+library(yardstick)
 
 taiwan_real_estate <- read_csv("taiwan_real_estate.csv")
 churn <- read_csv("churn.csv")
@@ -536,6 +537,35 @@ ggplot(
 When the response variable has just two outcomes, like the case of churn, the measures of success for the model are "how many cases where the customer churned did the model correctly predict?" and "how many cases where the customer didn't churn did the model correctly predict?". These can be found by generating a confusion matrix and calculating summary metrics on it. A mosaic plot is the natural way to visualize the results.
 
 ```{r}
+# Get the actual responses from churn
+actual_response <- churn$has_churned
 
+# Get the predicted responses from the model
+predicted_response <- round(fitted(mdl_churn_vs_both_inter))
+
+# Get a table of these values
+outcomes <- table(predicted_response, actual_response)
+
+# Convert the table to a conf_mat object
+confusion <- conf_mat(outcomes)
+
+# See the result
+confusion
+
+
+#------------------
+
+
+# From previous step
+actual_response <- churn$has_churned
+predicted_response <- round(fitted(mdl_churn_vs_both_inter))
+outcomes <- table(predicted_response, actual_response)
+confusion <- conf_mat(outcomes)
+
+# "Automatically" plot the confusion matrix
+autoplot(confusion)
+
+# Get summary metrics
+summary(confusion, event_level = "second")
 ```
 
