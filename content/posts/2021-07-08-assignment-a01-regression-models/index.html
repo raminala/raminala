@@ -24,9 +24,11 @@ tags:
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <p>Apparently, there are two distinct price ranges. below $500 and above $1800. With univariate analysis, we could not understand the reasons and decisive parameters for this gap in the price. However, one might decide to model these two sections separately for more exact model. This might be the most important finding by this analysis.</p>
 <p>Now it worth to take a more statistical look at price variable.</p>
-<pre class="r"><code>summary(diamonds$price)</code></pre>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##     160     520    2169    1717    3012    3145</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   minimum    q1 median  mean    q3 maximum
+##     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+## 1     160   520   2169 1717. 3012.    3145</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 </div>
 <div id="metric-data-price-carat" class="section level2">
 <h2>Metric Data: Price, Carat</h2>

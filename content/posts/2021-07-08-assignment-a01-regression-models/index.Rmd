@@ -44,15 +44,24 @@ Although univariate analysis can yield misleading results in cases in which mult
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 diamonds %>%
   ggplot(aes(price))+
-  geom_histogram()
+  geom_histogram()+
+  labs(y="frequency")
 ```
 
 Apparently, there are two distinct price ranges. below $500 and above $1800. With univariate analysis, we could not understand the reasons and decisive parameters for this gap in the price. However, one might decide to model these two sections separately for more exact model. This might be the most important finding by this analysis.
 
 Now it worth to take a more statistical look at price variable.
 
-```{r}
-summary(diamonds$price)
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+afg <- summary(diamonds$price) %>%
+  tidy() 
+
+print(afg)
+
+diamonds %>%
+  ggplot(aes(price))+
+  geom_boxplot()
+
 ```
 
 
