@@ -76,7 +76,7 @@ minimum, mode, median, max, first and third quarterlies. Note that the red dotte
 
 Bivariate analysis is a simple forms of quantitative (statistical) analysis, however more sophesticated than the univariable analysis which done in the previous part. It involves the analysis of two variables, for the purpose of determining the empirical relationship between them.
 
-## Metric Data: Price, Carat
+**Metric Data: Price, Carat**
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 diamonds %>%
@@ -97,6 +97,9 @@ diamonds %>%
   geom_col(width = 0.5, fill="blue")+
   labs(x="Colour", y= "Price mean ($)", title= "Price mean vs Colour")
 ```
+
+This plot shows the mean of price for nine categories of colors. Although these prices might be the indirect cause of other parameters but gives some clues. It seems that color has not a profound impact on price. Two colour catagories could be recognized from this plot, one with average price of $2500 (D, G, K, and L) and another with the average price of $1300 (E, F, H, J). Professor should be more careful on this as his diamond looks in the lower price category in terms of color.
+
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
   diamonds %>%
