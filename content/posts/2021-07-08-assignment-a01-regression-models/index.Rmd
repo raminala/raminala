@@ -74,9 +74,9 @@ minimum, mode, median, max, first and third quarterlies. Note that the red dotte
 
 ## Bivariate Analysis
 
+Bivariate analysis is a simple forms of quantitative (statistical) analysis, however more sophesticated than the univariable analysis which done in the previous part. It involves the analysis of two variables, for the purpose of determining the empirical relationship between them.
+
 ## Metric Data: Price, Carat
-
-
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 diamonds %>%
