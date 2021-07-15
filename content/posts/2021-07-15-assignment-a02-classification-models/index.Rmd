@@ -17,8 +17,7 @@ library(readxl)
 library(tidymodels)
 
 bank <- read_csv("bank.csv")
-names(bank)
-nrow(bank)
+#names(bank)
 
 ```
 
@@ -37,3 +36,37 @@ Customer's ***job***, ***marital*** status, ***education***  (categorical variab
 Information regarding the reference of dataset is available at:
 
 http://www3.dsi.uminho.pt/pcortez/bib/2011-esm-1.txt
+
+## Univariate Analysis of numerical variables
+
+## *age*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bank %>%
+  ggplot(aes(age)) +
+  geom_density(fill = "green", alpha = 0.4, size=0.01) +
+   scale_x_continuous(breaks = seq(15, 90, by = 5))
+
+summary(bank$age) %>%
+  tidy() 
+```
+
+Above plot and table give an impression on the age of examined group. The minimum, maximum and average ages are 19, 87, and 41 years respectively. Majority of observations are concentrated at the age of between 30 to 35 years. This information would not provide any insight on the possible outcome.
+
+
+## *balance*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bank %>%
+  filter(between(balance,-4000,10000)) %>%
+  ggplot(aes(balance)) +
+  geom_histogram(fill = "red", alpha = 0.4, size=1) +
+   scale_x_continuous(breaks = seq(-4000, 10000, by = 1000))
+
+summary(bank$balance) %>%
+  tidy()
+```
+
+Balance is generally between 0 to $500, however, amounts as high as $71000 is available in data. In the above plot, Only range from $-4000 to $10000 is shown for a better depiction. In this case, mean (1422) is higher than median (444) and plor looks right-skewed.
+
+## Univariate Analysis of some catagorical variables

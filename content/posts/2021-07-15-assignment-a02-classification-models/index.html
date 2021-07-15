@@ -13,10 +13,6 @@ tags:
 
 
 <p><strong><em>Ramin Ala</em></strong></p>
-<pre><code>##  [1] &quot;age&quot;       &quot;job&quot;       &quot;marital&quot;   &quot;education&quot; &quot;default&quot;   &quot;balance&quot;  
-##  [7] &quot;housing&quot;   &quot;loan&quot;      &quot;contact&quot;   &quot;day&quot;       &quot;month&quot;     &quot;duration&quot; 
-## [13] &quot;campaign&quot;  &quot;pdays&quot;     &quot;previous&quot;  &quot;poutcome&quot;  &quot;y&quot;</code></pre>
-<pre><code>## [1] 4521</code></pre>
 <div id="executive-summary" class="section level2">
 <h2>Executive Summary</h2>
 <p>The data is related with direct marketing campaigns (based on phone calls) of a Portuguese banking institution. This really is a <strong>supervised question</strong> because it has an outcome (y), which defined as if the product (bank term deposit) would be (or not) subscribed, “yes” means subscribed, and “no” means did not subscribe. This dataset consists of <strong>4521 observations</strong>.</p>
@@ -26,4 +22,28 @@ tags:
 <p><strong><em>housing loan</em></strong>, <strong><em>personal loan</em></strong>, and <strong><em>default status</em></strong> (binary variables)</p>
 <p>Information regarding the reference of dataset is available at:</p>
 <p><a href="http://www3.dsi.uminho.pt/pcortez/bib/2011-esm-1.txt" class="uri">http://www3.dsi.uminho.pt/pcortez/bib/2011-esm-1.txt</a></p>
+</div>
+<div id="univariate-analysis-of-numerical-variables" class="section level2">
+<h2>Univariate Analysis of numerical variables</h2>
+</div>
+<div id="age" class="section level2">
+<h2><em>age</em></h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre><code>## # A tibble: 1 x 6
+##   minimum    q1 median  mean    q3 maximum
+##     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+## 1      19    33     39  41.2    49      87</code></pre>
+<p>Above plot and table give an impression on the age of examined group. The minimum, maximum and average ages are 19, 87, and 41 years respectively. Majority of observations are concentrated at the age of between 30 to 35 years. This information would not provide any insight on the possible outcome.</p>
+</div>
+<div id="balance" class="section level2">
+<h2><em>balance</em></h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre><code>## # A tibble: 1 x 6
+##   minimum    q1 median  mean    q3 maximum
+##     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+## 1   -3313    69    444 1423.  1480   71188</code></pre>
+<p>Balance is generally between 0 to $500, however, amounts as high as $71000 is available in data. In the above plot, Only range from $-4000 to $10000 is shown for a better depiction. In this case, mean (1422) is higher than median (444) and plor looks right-skewed.</p>
+</div>
+<div id="univariate-analysis-of-some-catagorical-variables" class="section level2">
+<h2>Univariate Analysis of some catagorical variables</h2>
 </div>
