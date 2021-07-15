@@ -9,3 +9,14 @@ tags:
   - Classification
 ---
 
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(tidymodels)
+
+bank <- read_csv("bank.csv")
+names(bank)
+```
+
+## Executive Summary
+
