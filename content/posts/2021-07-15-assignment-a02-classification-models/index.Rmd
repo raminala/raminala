@@ -8,6 +8,8 @@ tags:
   - Assignment
   - Classification
 ---
+***Ramin Ala***
+
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -16,7 +18,22 @@ library(tidymodels)
 
 bank <- read_csv("bank.csv")
 names(bank)
+nrow(bank)
+
 ```
 
 ## Executive Summary
 
+The data is related with direct marketing campaigns (based on phone calls) of a Portuguese banking institution. This really is a **supervised question** because it has an outcome (y), which defined as if the product (bank term deposit) would be (or not) subscribed, "yes" means subscribed, and "no" means did not subscribe. This dataset consists of **`r nrow(bank)` observations**.
+
+In addition to the outcome classification variable, there are 16 variables. Eight variables are related to statistical information about current and previous campaigns, and they seems irrelevant to  dependent variable. So, there are eight determinent variables Including:
+
+Customer's ***age*** and ***balance*** (numerical variables),
+
+Customer's ***job***, ***marital*** status, ***education***  (categorical variables)
+ 
+***housing loan***, ***personal loan***, and ***default status*** (binary variables)  
+
+Information regarding the reference of dataset is available at:
+
+http://www3.dsi.uminho.pt/pcortez/bib/2011-esm-1.txt
