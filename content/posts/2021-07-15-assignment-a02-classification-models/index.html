@@ -100,13 +100,23 @@ tags:
 <div id="subscription-statusage" class="section level2">
 <h2><em>subscription status~age</em></h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>Again it looks difficult to get information from this plot as they have not strong relation.</p>
+</div>
+<div id="analysis-of-three-variables-result-versus-age-and-balance" class="section level2">
+<h2>Analysis of three variables: result versus age and balance</h2>
+<pre class="r"><code>bank %&gt;%
+  filter(between(balance,-4000,30000)) %&gt;%
+  ggplot(aes(age, balance, color=y))+
+  geom_point()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<hr />
 </div>
 <div id="generalized-linear-model" class="section level2">
 <h2>Generalized Linear Model</h2>
 </div>
 <div id="subscription-statusage-1" class="section level2">
 <h2><em>subscription status~age</em></h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>

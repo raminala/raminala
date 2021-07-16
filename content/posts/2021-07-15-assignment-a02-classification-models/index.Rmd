@@ -137,22 +137,36 @@ mdl_bank %>%
   summary()
 ```
 
+
+
 ## *subscription status~age*
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 bank %>%
-  filter(between(balance,-4000,30000)) %>%
-  ggplot(aes(balance, result, color=y))+
-  geom_point()#+
-  #geom_smooth(method = "glm", se=FALSE)
+  ggplot(aes(age, result))+
+  geom_point()+
+  geom_smooth(method = "glm", se=FALSE)
 
 ```
 
+Again it looks difficult to get information from this plot as they have not strong relation.
+
+## Analysis of three variables: result versus age and balance
+
+
+```{r}
+bank %>%
+  filter(between(balance,-4000,30000)) %>%
+  ggplot(aes(age, balance, color=y))+
+  geom_point()
+```
+
+
+---
+
+
 ## Generalized Linear Model
-
-
-
 
 
 ## *subscription status~age*
