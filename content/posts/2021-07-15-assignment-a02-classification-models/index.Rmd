@@ -150,18 +150,40 @@ bank %>%
 
 ```
 
-Again it looks difficult to get information from this plot as they have not strong relation.
+Again it looks difficult to get information from this plot as they have not strong relation. However, blue line that is the generalized regression line, shows that higher age people tends to subscribe more. An important subject to remember is in a multi variable problem, considering one parameter alone could be misleading because of corrolation of variables.
+
+## *subscription status~default*
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+ss <- bank %>%
+  group_by(default) %>%
+  count(result) 
+
+
+ ss$default_result <-paste(ss$default,ss$result)
+
+ss %>%
+  ggplot(aes(default_result, n))+
+  geom_col(fill="blue")
+
+
+```
+
+
+In this plot combination of two categorical variables are counted. One is default and the other is dependent variable (result). We have four categories here (four possible combinations for two binary variables). It seems that default clients (default=yes) is very unlikely to subscribe.
 
 ## Analysis of three variables: result versus age and balance
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 bank %>%
   filter(between(balance,-4000,30000)) %>%
   ggplot(aes(age, balance, color=y))+
   geom_point()
 ```
-
+This plot consists of two numerical variables (age and balance) that both are explanatory variables and response variable which depicted by color (pink colors did not subscribed and blue colours subscribed). 
 
 ---
 
