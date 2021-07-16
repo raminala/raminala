@@ -19,7 +19,6 @@ bank <- read_csv("bank.csv") %>%
   select(c(age, job, marital, education, default, balance, housing, loan, y)) %>%
   mutate(result=ifelse(y == 'yes', 1, 0))
  
-names(bank)
 
 ```
 
@@ -86,32 +85,73 @@ bank %>%
 This univariate analysis could give a clue about probability of subscription in customers. from the above table, it is obvious that magority of customers did not subscribed (88.476%) comparing slighly more than ten percent of customers who finally choose to subscribe (11.524%). The good point about dataset is it provided valid outcome for all customers (whether subscribed or not).
 
 
-filter(between(balance,-4000,10000)) %>%
 
 ## Bivariate Analysis
 
-In this part two variables are considering and their relationship are examined.
+In this part two variables are considering and their relationship are examined. A dummy variable has been defined for outcome so that
+
+0=No (did not subscribed), and
+
+1=yes (subscribed).
+
+
+## Corrolation between age and balance
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+cor_age_balance <- cor(bank$age, bank$balance)
+
+paste("Corrolation between age and balance: ", cor_age_balance)
+
+```
+
+It shows small positive corrolation between age and balance. generally older clients tends to have higher balamce but the corrolation is more like a random relation  because it is more close to zero (random case) than 1 (strong corrolation).
 
 ## *subscription status~balance*
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 bank %>%
+  filter(between(balance,-4000,30000)) %>%
+  ggplot(aes(balance, result, color=y))+
+  geom_point()
+
+```
+
+In this plot, subscription status versus balance depicted. Very high balances (higher than $30000) considered as outlier data and they have been omitted from plotting. Considering this plot alone is not very informative for me. I barely could decide if higher balance increase/decrease the chance of subscription by looking at this plot. For this reason, a Generalized linear line added to plot for a better information.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bank %>%
+  filter(between(balance,-4000,30000)) %>%
   ggplot(aes(balance, result))+
   geom_point()+
   geom_smooth(method = "glm", se=FALSE)
+```
+
+The added layer to this plot, comparing the previous plot, shows that those who has higher balance are more likely to subscribe to a term deposit. But how strong is this relationship? In other word, is balance very determinant parameter? Let's perform generalized analysis and see the parameters.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+mdl_bank <- glm(result ~ balance , data=bank, family = binomial)
+
+mdl_bank %>%
+  summary()
+```
+
+## *subscription status~age*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+bank %>%
+  filter(between(balance,-4000,30000)) %>%
+  ggplot(aes(balance, result, color=y))+
+  geom_point()#+
+  #geom_smooth(method = "glm", se=FALSE)
 
 ```
 
 ## Generalized Linear Model
 
 
-```{r}
-mdl_bank <- glm(result ~ balance , data=bank2, family = binomial)
-
-mdl_bank %>%
-  summary()
-```
 
 
 
@@ -132,10 +172,9 @@ bank %>%
 
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
-bank2d <- read_csv("bank.csv")
-names(bank2d)
+
 bank2 <- read_csv("bank.csv") %>%
   mutate(result=ifelse(y == 'yes', 1, 0)) %>%
   filter (contact == "cellular" | result == "1" )  %>%
@@ -149,14 +188,14 @@ bank2 <- read_csv("bank.csv") %>%
   #group_by(result)  %>%
   #count()
   
-bank2
+
 
 
 
 
 ```
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 bank2 %>%
   filter(between(balance,-4000,10000)) %>%
   ggplot(aes(balance, result))+
@@ -167,7 +206,7 @@ bank2 %>%
 
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 bank2 %>%
   
   ggplot(aes(age, result))+

@@ -56,25 +56,27 @@ tags:
 ## 1 no     4000       88.5
 ## 2 yes     521       11.5</code></pre>
 <p>This univariate analysis could give a clue about probability of subscription in customers. from the above table, it is obvious that magority of customers did not subscribed (88.476%) comparing slighly more than ten percent of customers who finally choose to subscribe (11.524%). The good point about dataset is it provided valid outcome for all customers (whether subscribed or not).</p>
-<p>filter(between(balance,-4000,10000)) %&gt;%</p>
 </div>
 <div id="bivariate-analysis" class="section level2">
 <h2>Bivariate Analysis</h2>
-<p>In this part two variables are considering and their relationship are examined.</p>
+<p>In this part two variables are considering and their relationship are examined. A dummy variable has been defined for outcome so that</p>
+<p>0=No (did not subscribed), and</p>
+<p>1=yes (subscribed).</p>
+</div>
+<div id="corrolation-between-age-and-balance" class="section level2">
+<h2>Corrolation between age and balance</h2>
+<pre><code>## [1] &quot;Corrolation between age and balance:  0.0838201422447776&quot;</code></pre>
+<p>It shows small positive corrolation between age and balance. generally older clients tends to have higher balamce but the corrolation is more like a random relation because it is more close to zero (random case) than 1 (strong corrolation).</p>
 </div>
 <div id="subscription-statusbalance" class="section level2">
 <h2><em>subscription status~balance</em></h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-</div>
-<div id="generalized-linear-model" class="section level2">
-<h2>Generalized Linear Model</h2>
-<pre class="r"><code>mdl_bank &lt;- glm(result ~ balance , data=bank2, family = binomial)
-
-mdl_bank %&gt;%
-  summary()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>In this plot, subscription status versus balance depicted. Very high balances (higher than $30000) considered as outlier data and they have been omitted from plotting. Considering this plot alone is not very informative for me. I barely could decide if higher balance increase/decrease the chance of subscription by looking at this plot. For this reason, a Generalized linear line added to plot for a better information.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>The added layer to this plot, comparing the previous plot, shows that those who has higher balance are more likely to subscribe to a term deposit. But how strong is this relationship? In other word, is balance very determinant parameter? Let’s perform generalized analysis and see the parameters.</p>
 <pre><code>## 
 ## Call:
-## glm(formula = result ~ balance, family = binomial, data = bank2)
+## glm(formula = result ~ balance, family = binomial, data = bank)
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
@@ -97,5 +99,14 @@ mdl_bank %&gt;%
 </div>
 <div id="subscription-statusage" class="section level2">
 <h2><em>subscription status~age</em></h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="generalized-linear-model" class="section level2">
+<h2>Generalized Linear Model</h2>
+</div>
+<div id="subscription-statusage-1" class="section level2">
+<h2><em>subscription status~age</em></h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 </div>
