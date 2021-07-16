@@ -13,11 +13,13 @@ tags:
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
-library(readxl)
 library(tidymodels)
 
-bank <- read_csv("bank.csv")
-#names(bank)
+bank <- read_csv("bank.csv") %>%
+  select(c(age, job, marital, education, default, balance, housing, loan, y)) %>%
+  mutate(result=ifelse(y == 'yes', 1, 0))
+ 
+names(bank)
 
 ```
 
@@ -70,3 +72,107 @@ summary(bank$balance) %>%
 Balance is generally between 0 to $500, however, amounts as high as $71000 is available in data. In the above plot, Only range from $-4000 to $10000 is shown for a better depiction. In this case, mean (1422) is higher than median (444) and plor looks right-skewed.
 
 ## Univariate Analysis of some catagorical variables
+
+## *subscription status*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bank %>%
+  group_by(y) %>%
+  count() %>%
+  mutate(percentage=n/nrow(bank)*100)
+```
+
+
+This univariate analysis could give a clue about probability of subscription in customers. from the above table, it is obvious that magority of customers did not subscribed (88.476%) comparing slighly more than ten percent of customers who finally choose to subscribe (11.524%). The good point about dataset is it provided valid outcome for all customers (whether subscribed or not).
+
+
+filter(between(balance,-4000,10000)) %>%
+
+## Bivariate Analysis
+
+In this part two variables are considering and their relationship are examined.
+
+## *subscription status~balance*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+bank %>%
+  ggplot(aes(balance, result))+
+  geom_point()+
+  geom_smooth(method = "glm", se=FALSE)
+
+```
+
+## Generalized Linear Model
+
+
+```{r}
+mdl_bank <- glm(result ~ balance , data=bank2, family = binomial)
+
+mdl_bank %>%
+  summary()
+```
+
+
+
+## *subscription status~age*
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+bank %>%
+  ggplot(aes(age, result))+
+  geom_point()+
+  geom_smooth(method = "glm", se=FALSE)
+
+```
+
+
+
+
+
+
+```{r}
+
+bank2d <- read_csv("bank.csv")
+names(bank2d)
+bank2 <- read_csv("bank.csv") %>%
+  mutate(result=ifelse(y == 'yes', 1, 0)) %>%
+  filter (contact == "cellular" | result == "1" )  %>%
+  filter (campaign == "1"       | result == "1" ) %>%
+  filter (campaign == "1"       | result == "1" ) %>%
+  filter (previous != "1"       | result == "1" ) %>%
+  filter (previous != "2"       | result == "1" ) %>%
+  filter (previous != "3"       | result == "1" ) %>%
+  filter (previous != "4"       | result == "1" ) %>%
+  filter (previous != "5"       | result == "1" ) #%>%
+  #group_by(result)  %>%
+  #count()
+  
+bank2
+
+
+
+
+```
+
+```{r}
+bank2 %>%
+  filter(between(balance,-4000,10000)) %>%
+  ggplot(aes(balance, result))+
+  geom_point()+
+  geom_smooth(method = "glm", se=FALSE)
+```
+
+
+
+
+```{r}
+bank2 %>%
+  
+  ggplot(aes(age, result))+
+  geom_point()+
+  geom_smooth(method = "glm", se=FALSE)
+```
+
+

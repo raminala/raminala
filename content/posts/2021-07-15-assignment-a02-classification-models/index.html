@@ -47,3 +47,55 @@ tags:
 <div id="univariate-analysis-of-some-catagorical-variables" class="section level2">
 <h2>Univariate Analysis of some catagorical variables</h2>
 </div>
+<div id="subscription-status" class="section level2">
+<h2><em>subscription status</em></h2>
+<pre><code>## # A tibble: 2 x 3
+## # Groups:   y [2]
+##   y         n percentage
+##   &lt;chr&gt; &lt;int&gt;      &lt;dbl&gt;
+## 1 no     4000       88.5
+## 2 yes     521       11.5</code></pre>
+<p>This univariate analysis could give a clue about probability of subscription in customers. from the above table, it is obvious that magority of customers did not subscribed (88.476%) comparing slighly more than ten percent of customers who finally choose to subscribe (11.524%). The good point about dataset is it provided valid outcome for all customers (whether subscribed or not).</p>
+<p>filter(between(balance,-4000,10000)) %&gt;%</p>
+</div>
+<div id="bivariate-analysis" class="section level2">
+<h2>Bivariate Analysis</h2>
+<p>In this part two variables are considering and their relationship are examined.</p>
+</div>
+<div id="subscription-statusbalance" class="section level2">
+<h2><em>subscription status~balance</em></h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="generalized-linear-model" class="section level2">
+<h2>Generalized Linear Model</h2>
+<pre class="r"><code>mdl_bank &lt;- glm(result ~ balance , data=bank2, family = binomial)
+
+mdl_bank %&gt;%
+  summary()</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = result ~ balance, family = binomial, data = bank2)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8279  -0.4937  -0.4904  -0.4892   2.0976  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -2.063e+00  5.116e-02 -40.316   &lt;2e-16 ***
+## balance      1.641e-05  1.370e-05   1.198    0.231    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 3231.0  on 4520  degrees of freedom
+## Residual deviance: 3229.7  on 4519  degrees of freedom
+## AIC: 3233.7
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<div id="subscription-statusage" class="section level2">
+<h2><em>subscription status~age</em></h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
