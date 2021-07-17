@@ -135,7 +135,7 @@ There are twelve categories of jobs.Managements, blue-collars, and technicians a
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 bank0 <- bank %>%
-  group_by(marital, subscription_status) %>%
+  group_by(subscription_status, marital) %>%
   count()  %>% 
 mutate(percent = n)
   
@@ -143,7 +143,7 @@ mutate(percent = n)
 
 bank0 %>%
   
-  ggplot(aes(n, marital,fill=as.factor(subscription_status)))+
+  ggplot(aes(marital, n,fill=as.factor(subscription_status)))+
   geom_col(stat = "identity")+
   
   geom_label(aes(label = n),
