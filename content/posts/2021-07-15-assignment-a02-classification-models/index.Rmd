@@ -109,7 +109,7 @@ It shows small positive corrolation between age and balance. generally older cli
 
 
 
-*subscription status~job*
+## *subscription status~job*
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 bank0 <- bank %>%
@@ -139,7 +139,7 @@ bank0 <- bank %>%
   count()  %>% 
 mutate(percent = n)
   
-bank0
+
 
 bank0 %>%
   
@@ -236,10 +236,31 @@ bank %>%
 ```
 This plot consists of two numerical variables (age and balance) that both are explanatory variables and response variable which depicted by color (pink colors did not subscribed and blue colours subscribed). 
 
+
+## *Analysis of four variables:subscription status~age and marital and loan*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+bank %>%
+  ggplot(aes(age, subscription_status, color=marital, shape=loan))+
+  geom_point()
+
+```
+
+This plot probably give not more information than a two variable analysis because point are very closed hard to distinguish. So it time to examine all parameters using glm function.
+
 ---
 
 
 ## Generalized Linear Model
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+mdl_bank <- glm(subscription_status ~ . , data=bank, family = binomial)
+
+mdl_bank %>%
+  summary()
+```
 
 
 ## *subscription status~age*
@@ -253,27 +274,3 @@ bank %>%
   geom_smooth(method = "glm", se=FALSE)
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

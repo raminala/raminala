@@ -67,22 +67,14 @@ tags:
 <h2>Corrolation between age and balance</h2>
 <pre><code>## [1] &quot;Corrolation between age and balance:  0.0838201422447776&quot;</code></pre>
 <p>It shows small positive corrolation between age and balance. generally older clients tends to have higher balamce but the corrolation is more like a random relation because it is more close to zero (random case) than 1 (strong corrolation).</p>
-<p><em>subscription status~job</em></p>
+</div>
+<div id="subscription-statusjob" class="section level2">
+<h2><em>subscription status~job</em></h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>There are twelve categories of jobs.Managements, blue-collars, and technicians are the most frequent jobs among respondents. As shown in the plot, among these jobs, managements are more likely to subscribe. However, relative number of subscription is very high among students, unknown and unemployed people. These groups are more likely to subscribe.</p>
 </div>
 <div id="subscription-statusmarital" class="section level2">
 <h2><em>subscription status~marital</em></h2>
-<pre><code>## # A tibble: 6 x 4
-## # Groups:   marital, subscription_status [6]
-##   marital  subscription_status     n percent
-##   &lt;chr&gt;                  &lt;dbl&gt; &lt;int&gt;   &lt;int&gt;
-## 1 divorced                   0   451     451
-## 2 divorced                   1    77      77
-## 3 married                    0  2520    2520
-## 4 married                    1   277     277
-## 5 single                     0  1029    1029
-## 6 single                     1   167     167</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>Similar to previous analysis could be done for marital status.This plot shows majority of respondents are married. However, divorced group are more likely to subscribe when numbers compared in each group.</p>
 </div>
@@ -130,12 +122,58 @@ tags:
 <h2>Analysis of three variables: result versus age and balance</h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" />
 This plot consists of two numerical variables (age and balance) that both are explanatory variables and response variable which depicted by color (pink colors did not subscribed and blue colours subscribed).</p>
+</div>
+<div id="analysis-of-four-variablessubscription-statusage-and-marital-and-loan" class="section level2">
+<h2><em>Analysis of four variables:subscription status~age and marital and loan</em></h2>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>This plot probably give not more information than a two variable analysis because point are very closed hard to distinguish. So it time to examine all parameters using glm function.</p>
 <hr />
 </div>
 <div id="generalized-linear-model" class="section level2">
 <h2>Generalized Linear Model</h2>
+<pre><code>## 
+## Call:
+## glm(formula = subscription_status ~ ., family = binomial, data = bank)
+## 
+## Deviance Residuals: 
+##        Min          1Q      Median          3Q         Max  
+## -2.409e-06  -2.409e-06  -2.409e-06  -2.409e-06   2.409e-06  
+## 
+## Coefficients:
+##                      Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)        -2.657e+01  4.248e+04  -0.001    1.000
+## age                -5.975e-14  6.517e+02   0.000    1.000
+## jobblue-collar     -6.962e-13  2.099e+04   0.000    1.000
+## jobentrepreneur    -3.139e-14  3.273e+04   0.000    1.000
+## jobhousemaid        7.074e-14  3.860e+04   0.000    1.000
+## jobmanagement       4.745e-13  2.285e+04   0.000    1.000
+## jobretired         -9.617e-13  3.181e+04   0.000    1.000
+## jobself-employed   -1.168e-13  3.165e+04   0.000    1.000
+## jobservices         2.068e-14  2.391e+04   0.000    1.000
+## jobstudent          1.873e-12  4.375e+04   0.000    1.000
+## jobtechnician       1.332e-13  2.094e+04   0.000    1.000
+## jobunemployed       4.199e-13  3.575e+04   0.000    1.000
+## jobunknown          1.222e-13  6.151e+04   0.000    1.000
+## maritalmarried     -1.675e-13  1.709e+04   0.000    1.000
+## maritalsingle      -5.528e-13  1.994e+04   0.000    1.000
+## educationsecondary -1.253e-12  1.731e+04   0.000    1.000
+## educationtertiary  -1.532e-12  2.116e+04   0.000    1.000
+## educationunknown   -1.298e-12  3.046e+04   0.000    1.000
+## defaultyes         -4.341e-13  4.150e+04   0.000    1.000
+## balance             5.998e-18  1.787e+00   0.000    1.000
+## housingyes         -4.459e-13  1.138e+04   0.000    1.000
+## loanyes            -3.960e-14  1.494e+04   0.000    1.000
+## yyes                5.313e+01  1.684e+04   0.003    0.997
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 3.2310e+03  on 4520  degrees of freedom
+## Residual deviance: 2.6229e-08  on 4498  degrees of freedom
+## AIC: 46
+## 
+## Number of Fisher Scoring iterations: 25</code></pre>
 </div>
 <div id="subscription-statusage-1" class="section level2">
 <h2><em>subscription status~age</em></h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 </div>
