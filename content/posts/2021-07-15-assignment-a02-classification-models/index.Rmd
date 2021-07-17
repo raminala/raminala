@@ -249,28 +249,18 @@ bank %>%
 
 This plot probably give not more information than a two variable analysis because point are very closed hard to distinguish. So it time to examine all parameters using glm function.
 
----
 
 
 ## Generalized Linear Model
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-mdl_bank <- glm(subscription_status ~ . , data=bank, family = binomial)
+mdl_bank <- glm(subscription_status ~ age+job+marital+education+default+balance+housing+loan , data=bank, family = binomial)
 
 mdl_bank %>%
   summary()
 ```
 
+## Summary of findings
 
-## *subscription status~age*
-
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-
-bank %>%
-  ggplot(aes(age, subscription_status))+
-  geom_point()+
-  geom_smooth(method = "glm", se=FALSE)
-
-```
+-f
