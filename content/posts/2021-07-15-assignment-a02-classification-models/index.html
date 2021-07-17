@@ -127,49 +127,54 @@ This plot consists of two numerical variables (age and balance) that both are ex
 <h2><em>Analysis of four variables:subscription status~age and marital and loan</em></h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <p>This plot probably give not more information than a two variable analysis because point are very closed hard to distinguish. So it time to examine all parameters using glm function.</p>
-<hr />
 </div>
 <div id="generalized-linear-model" class="section level2">
 <h2>Generalized Linear Model</h2>
 <pre><code>## 
 ## Call:
-## glm(formula = subscription_status ~ ., family = binomial, data = bank)
+## glm(formula = subscription_status ~ age + job + marital + education + 
+##     default + balance + housing + loan, family = binomial, data = bank)
 ## 
 ## Deviance Residuals: 
-##        Min          1Q      Median          3Q         Max  
-## -2.409e-06  -2.409e-06  -2.409e-06  -2.409e-06   2.409e-06  
+##     Min       1Q   Median       3Q      Max  
+## -1.0264  -0.5385  -0.4425  -0.3564   2.6223  
 ## 
 ## Coefficients:
-##                      Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)        -2.657e+01  4.248e+04  -0.001    1.000
-## age                -5.975e-14  6.517e+02   0.000    1.000
-## jobblue-collar     -6.962e-13  2.099e+04   0.000    1.000
-## jobentrepreneur    -3.139e-14  3.273e+04   0.000    1.000
-## jobhousemaid        7.074e-14  3.860e+04   0.000    1.000
-## jobmanagement       4.745e-13  2.285e+04   0.000    1.000
-## jobretired         -9.617e-13  3.181e+04   0.000    1.000
-## jobself-employed   -1.168e-13  3.165e+04   0.000    1.000
-## jobservices         2.068e-14  2.391e+04   0.000    1.000
-## jobstudent          1.873e-12  4.375e+04   0.000    1.000
-## jobtechnician       1.332e-13  2.094e+04   0.000    1.000
-## jobunemployed       4.199e-13  3.575e+04   0.000    1.000
-## jobunknown          1.222e-13  6.151e+04   0.000    1.000
-## maritalmarried     -1.675e-13  1.709e+04   0.000    1.000
-## maritalsingle      -5.528e-13  1.994e+04   0.000    1.000
-## educationsecondary -1.253e-12  1.731e+04   0.000    1.000
-## educationtertiary  -1.532e-12  2.116e+04   0.000    1.000
-## educationunknown   -1.298e-12  3.046e+04   0.000    1.000
-## defaultyes         -4.341e-13  4.150e+04   0.000    1.000
-## balance             5.998e-18  1.787e+00   0.000    1.000
-## housingyes         -4.459e-13  1.138e+04   0.000    1.000
-## loanyes            -3.960e-14  1.494e+04   0.000    1.000
-## yyes                5.313e+01  1.684e+04   0.003    0.997
+##                      Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)        -1.932e+00  3.725e-01  -5.188 2.13e-07 ***
+## age                 8.437e-03  5.734e-03   1.471   0.1412    
+## jobblue-collar     -3.658e-01  1.976e-01  -1.851   0.0642 .  
+## jobentrepreneur    -3.297e-01  3.141e-01  -1.050   0.2939    
+## jobhousemaid       -6.485e-02  3.321e-01  -0.195   0.8452    
+## jobmanagement      -1.225e-01  1.961e-01  -0.625   0.5319    
+## jobretired          5.436e-01  2.465e-01   2.205   0.0274 *  
+## jobself-employed   -2.588e-01  2.851e-01  -0.908   0.3641    
+## jobservices        -2.735e-01  2.225e-01  -1.229   0.2191    
+## jobstudent          4.532e-01  3.137e-01   1.445   0.1486    
+## jobtechnician      -2.465e-01  1.857e-01  -1.327   0.1844    
+## jobunemployed      -3.675e-01  3.299e-01  -1.114   0.2652    
+## jobunknown          2.766e-01  4.590e-01   0.603   0.5467    
+## maritalmarried     -3.947e-01  1.425e-01  -2.771   0.0056 ** 
+## maritalsingle      -1.661e-02  1.655e-01  -0.100   0.9200    
+## educationsecondary  2.162e-01  1.663e-01   1.300   0.1935    
+## educationtertiary   4.237e-01  1.915e-01   2.212   0.0269 *  
+## educationunknown   -1.751e-01  2.900e-01  -0.604   0.5460    
+## defaultyes          1.861e-01  3.653e-01   0.510   0.6104    
+## balance            -2.165e-07  1.468e-05  -0.015   0.9882    
+## housingyes         -4.840e-01  1.011e-01  -4.787 1.69e-06 ***
+## loanyes            -7.235e-01  1.679e-01  -4.310 1.64e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 3.2310e+03  on 4520  degrees of freedom
-## Residual deviance: 2.6229e-08  on 4498  degrees of freedom
-## AIC: 46
+##     Null deviance: 3231.0  on 4520  degrees of freedom
+## Residual deviance: 3096.5  on 4499  degrees of freedom
+## AIC: 3140.5
 ## 
-## Number of Fisher Scoring iterations: 25</code></pre>
+## Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+<div id="summary-of-findings" class="section level2">
+<h2>Summary of findings</h2>
+<p>-f</p>
 </div>
