@@ -67,16 +67,35 @@ tags:
 <h2>Corrolation between age and balance</h2>
 <pre><code>## [1] &quot;Corrolation between age and balance:  0.0838201422447776&quot;</code></pre>
 <p>It shows small positive corrolation between age and balance. generally older clients tends to have higher balamce but the corrolation is more like a random relation because it is more close to zero (random case) than 1 (strong corrolation).</p>
+<p><em>subscription status~job</em></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>There are twelve categories of jobs.Managements, blue-collars, and technicians are the most frequent jobs among respondents. As shown in the plot, among these jobs, managements are more likely to subscribe. However, relative number of subscription is very high among students, unknown and unemployed people. These groups are more likely to subscribe.</p>
+</div>
+<div id="subscription-statusmarital" class="section level2">
+<h2><em>subscription status~marital</em></h2>
+<pre><code>## # A tibble: 6 x 4
+## # Groups:   marital, subscription_status [6]
+##   marital  subscription_status     n percent
+##   &lt;chr&gt;                  &lt;dbl&gt; &lt;int&gt;   &lt;int&gt;
+## 1 divorced                   0   451     451
+## 2 divorced                   1    77      77
+## 3 married                    0  2520    2520
+## 4 married                    1   277     277
+## 5 single                     0  1029    1029
+## 6 single                     1   167     167</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Similar to previous analysis could be done for marital status.This plot shows majority of respondents are married. However, divorced group are more likely to subscribe when numbers compared in each group.</p>
 </div>
 <div id="subscription-statusbalance" class="section level2">
 <h2><em>subscription status~balance</em></h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>In this plot, subscription status versus balance depicted. Very high balances (higher than $30000) considered as outlier data and they have been omitted from plotting. Considering this plot alone is not very informative for me. I barely could decide if higher balance increase/decrease the chance of subscription by looking at this plot. For this reason, a Generalized linear line added to plot for a better information.</p>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>The added layer to this plot, comparing the previous plot, shows that those who has higher balance are more likely to subscribe to a term deposit. But how strong is this relationship? In other word, is balance very determinant parameter? Let’s perform generalized analysis and see the parameters.</p>
 <pre><code>## 
 ## Call:
-## glm(formula = result ~ balance, family = binomial, data = bank)
+## glm(formula = subscription_status ~ balance, family = binomial, 
+##     data = bank)
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
@@ -99,17 +118,17 @@ tags:
 </div>
 <div id="subscription-statusage" class="section level2">
 <h2><em>subscription status~age</em></h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>Again it looks difficult to get information from this plot as they have not strong relation. However, blue line that is the generalized regression line, shows that higher age people tends to subscribe more. An important subject to remember is in a multi variable problem, considering one parameter alone could be misleading because of corrolation of variables.</p>
 </div>
 <div id="subscription-statusdefault" class="section level2">
 <h2><em>subscription status~default</em></h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <p>In this plot combination of two categorical variables are counted. One is default and the other is dependent variable (result). We have four categories here (four possible combinations for two binary variables). It seems that default clients (default=yes) is very unlikely to subscribe.</p>
 </div>
 <div id="analysis-of-three-variables-result-versus-age-and-balance" class="section level2">
 <h2>Analysis of three variables: result versus age and balance</h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" />
 This plot consists of two numerical variables (age and balance) that both are explanatory variables and response variable which depicted by color (pink colors did not subscribed and blue colours subscribed).</p>
 <hr />
 </div>
@@ -118,7 +137,5 @@ This plot consists of two numerical variables (age and balance) that both are ex
 </div>
 <div id="subscription-statusage-1" class="section level2">
 <h2><em>subscription status~age</em></h2>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>

@@ -17,7 +17,7 @@ library(tidymodels)
 
 bank <- read_csv("bank.csv") %>%
   select(c(age, job, marital, education, default, balance, housing, loan, y)) %>%
-  mutate(result=ifelse(y == 'yes', 1, 0))
+  mutate(subscription_status=ifelse(y == 'yes', 1, 0))
  
 
 ```
@@ -107,13 +107,64 @@ paste("Corrolation between age and balance: ", cor_age_balance)
 
 It shows small positive corrolation between age and balance. generally older clients tends to have higher balamce but the corrolation is more like a random relation  because it is more close to zero (random case) than 1 (strong corrolation).
 
+
+
+*subscription status~job*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bank0 <- bank %>%
+  group_by(job, subscription_status) %>%
+  count() 
+
+bank0 %>%
+  
+  ggplot(aes(n, job,fill=as.factor(subscription_status)))+
+  geom_col(stat = "identity")+
+  
+  geom_label(aes(label = n),
+               position = position_stack(vjust = 0.5),
+               size = 3.75,
+               colour = 'black')
+
+```
+
+There are twelve categories of jobs.Managements, blue-collars, and technicians are the most frequent jobs among respondents. As shown in the plot, among these jobs, managements are more likely to subscribe. However, relative number of subscription is very high among students, unknown and unemployed people. These groups are more likely to subscribe. 
+
+## *subscription status~marital*
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bank0 <- bank %>%
+  group_by(marital, subscription_status) %>%
+  count()  %>% 
+mutate(percent = n)
+  
+bank0
+
+bank0 %>%
+  
+  ggplot(aes(n, marital,fill=as.factor(subscription_status)))+
+  geom_col(stat = "identity")+
+  
+  geom_label(aes(label = n),
+               position = position_stack(vjust = 0.5),
+               size = 3.75,
+               colour = 'black')
+
+```
+
+Similar to previous analysis could be done for marital status.This plot shows majority of respondents are married. However, divorced group are more likely to subscribe when numbers compared in each group.
+
+
+
+
 ## *subscription status~balance*
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 bank %>%
   filter(between(balance,-4000,30000)) %>%
-  ggplot(aes(balance, result, color=y))+
+  ggplot(aes(balance, subscription_status, color=y))+
   geom_point()
 
 ```
@@ -123,7 +174,7 @@ In this plot, subscription status versus balance depicted. Very high balances (h
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 bank %>%
   filter(between(balance,-4000,30000)) %>%
-  ggplot(aes(balance, result))+
+  ggplot(aes(balance, subscription_status))+
   geom_point()+
   geom_smooth(method = "glm", se=FALSE)
 ```
@@ -131,7 +182,7 @@ bank %>%
 The added layer to this plot, comparing the previous plot, shows that those who has higher balance are more likely to subscribe to a term deposit. But how strong is this relationship? In other word, is balance very determinant parameter? Let's perform generalized analysis and see the parameters.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-mdl_bank <- glm(result ~ balance , data=bank, family = binomial)
+mdl_bank <- glm(subscription_status ~ balance , data=bank, family = binomial)
 
 mdl_bank %>%
   summary()
@@ -144,7 +195,7 @@ mdl_bank %>%
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 bank %>%
-  ggplot(aes(age, result))+
+  ggplot(aes(age, subscription_status))+
   geom_point()+
   geom_smooth(method = "glm", se=FALSE)
 
@@ -159,10 +210,10 @@ Again it looks difficult to get information from this plot as they have not stro
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 ss <- bank %>%
   group_by(default) %>%
-  count(result) 
+  count(subscription_status) 
 
 
- ss$default_result <-paste(ss$default,ss$result)
+ ss$default_result <-paste(ss$default,ss$subscription_status)
 
 ss %>%
   ggplot(aes(default_result, n))+
@@ -197,7 +248,7 @@ This plot consists of two numerical variables (age and balance) that both are ex
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 bank %>%
-  ggplot(aes(age, result))+
+  ggplot(aes(age, subscription_status))+
   geom_point()+
   geom_smooth(method = "glm", se=FALSE)
 
@@ -208,46 +259,21 @@ bank %>%
 
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-
-
-bank2 <- read_csv("bank.csv") %>%
-  mutate(result=ifelse(y == 'yes', 1, 0)) %>%
-  filter (contact == "cellular" | result == "1" )  %>%
-  filter (campaign == "1"       | result == "1" ) %>%
-  filter (campaign == "1"       | result == "1" ) %>%
-  filter (previous != "1"       | result == "1" ) %>%
-  filter (previous != "2"       | result == "1" ) %>%
-  filter (previous != "3"       | result == "1" ) %>%
-  filter (previous != "4"       | result == "1" ) %>%
-  filter (previous != "5"       | result == "1" ) #%>%
-  #group_by(result)  %>%
-  #count()
-  
 
 
 
 
 
-```
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-bank2 %>%
-  filter(between(balance,-4000,10000)) %>%
-  ggplot(aes(balance, result))+
-  geom_point()+
-  geom_smooth(method = "glm", se=FALSE)
-```
 
 
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-bank2 %>%
-  
-  ggplot(aes(age, result))+
-  geom_point()+
-  geom_smooth(method = "glm", se=FALSE)
-```
+
+
+
+
+
+
+
 
 
