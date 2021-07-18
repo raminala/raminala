@@ -263,4 +263,12 @@ mdl_bank %>%
 
 ## Summary of findings
 
--f
+- Most respondents in this campaign was 30 to 35 years old with near zero balance.Besides, nearly 90% of respondents did not subscribe finally.
+
+- Univariate analysis shows positive slope for both age and balance (higher age/balance means higher chance of subscription). However, generalized linear Modeling with consideration of all variables shows balance has not an impact on chance of subscription.
+
+- Univariate analysis  of job shows that a big postion of students, unemployed, and those with unknown jobs subscribed, but respondents with blue-color jobs and technicians did not subscribe so often.
+
+- Divorced respondents was more likely to subscribe than married and single ones.
+
+-
