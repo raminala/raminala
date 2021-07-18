@@ -271,4 +271,6 @@ mdl_bank %>%
 
 - Divorced respondents was more likely to subscribe than married and single ones.
 
--
+- Generalized Linear Model shows that balance is not a determinant factor but housing and loan status are both determinant.
+
+- Coefficients of glm analysis are all small because the number of respondents with subscribed status are very lower than not subscribed clients.
