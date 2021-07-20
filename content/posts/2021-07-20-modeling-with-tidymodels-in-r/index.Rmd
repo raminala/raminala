@@ -247,12 +247,28 @@ logistic_model <-  logistic_reg() %>%
 # Print the model specification
 logistic_model
 
+
 # Fit to training data
 logistic_fit <- logistic_model %>% 
-  fit(canceled_service~avg_call_mins+ avg_intl_mins+monthly_charges,
+  fit(factor(canceled_service)~avg_call_mins+ avg_intl_mins+monthly_charges,
       data = telecom_training)
 
 # Print model fit object
 logistic_fit
+
+
+```
+
+## 2-4 Combining test dataset results
+
+Evaluating your model's performance on the test dataset gives insights into how well your model predicts on new data sources. These insights will help you communicate your model's value in solving problems or improving decision making.
+
+Before you can calculate classification metrics such as sensitivity or specificity, you must create a results tibble with the required columns for yardstick metric functions.
+
+In this exercise, you will use your trained model to predict the outcome variable in the telecom_test dataset and combine it with the true outcome values in the canceled_service column.
+
+
+```{r}
+♦
 ```
 
