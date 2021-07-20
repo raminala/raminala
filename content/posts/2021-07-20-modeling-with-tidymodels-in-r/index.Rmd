@@ -213,6 +213,46 @@ The first step in a machine learning project is to create training and test data
 You will be working with the telecom_df dataset which contains information on customers of a telecommunications company. The outcome variable is canceled_service and it records whether a customer canceled their contract with the company. The predictor variables contain information about customers' cell phone and internet usage as well as their contract type and monthly charges.
 
 ```{r}
+# Create data split object
+telecom_split <- initial_split(telecom_df, prop = 0.75,
+                     strata = canceled_service)
 
+# Create the training data
+telecom_training <- telecom_split %>% 
+  training()
+
+# Create the test data
+telecom_test <- telecom_split %>% 
+  testing()
+
+# Check the number of rows
+nrow(telecom_training)
+nrow(telecom_test)
+```
+
+## 2-3 Fitting a logistic regression model
+
+In addition to regression models, the parsnip package also provides a general interface to classification models in R.
+
+In this exercise, you will define a parsnip logistic regression object and train your model to predict canceled_service using avg_call_mins, avg_intl_mins, and monthly_charges as predictor variables from the telecom_df data.
+
+```{r}
+# Specify a logistic regression model
+logistic_model <-  logistic_reg() %>% 
+  # Set the engine
+  set_engine('glm') %>% 
+  # Set the mode
+  set_mode('classification')
+
+# Print the model specification
+logistic_model
+
+# Fit to training data
+logistic_fit <- logistic_model %>% 
+  fit(canceled_service~avg_call_mins+ avg_intl_mins+monthly_charges,
+      data = telecom_training)
+
+# Print model fit object
+logistic_fit
 ```
 
