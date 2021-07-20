@@ -1,0 +1,157 @@
+---
+title: Modeling with tidymodels in R
+author: ''
+date: '2021-07-20'
+slug: []
+categories:
+  - tidymodels
+tags:
+  - Machine Learning
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(tidymodels)</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;tune&#39;:
+##   method                   from   
+##   required_pkgs.model_spec parsnip</code></pre>
+<pre><code>## -- Attaching packages -------------------------------------- tidymodels 0.1.3 --</code></pre>
+<pre><code>## v broom        0.7.8      v recipes      0.1.16
+## v dials        0.0.9      v rsample      0.1.0 
+## v dplyr        1.0.6      v tibble       3.1.2 
+## v ggplot2      3.3.3      v tidyr        1.1.3 
+## v infer        0.5.4      v tune         0.1.5 
+## v modeldata    0.1.0      v workflows    0.2.2 
+## v parsnip      0.1.6      v workflowsets 0.0.2 
+## v purrr        0.3.4      v yardstick    0.0.8</code></pre>
+<pre><code>## -- Conflicts ----------------------------------------- tidymodels_conflicts() --
+## x purrr::discard() masks scales::discard()
+## x dplyr::filter()  masks stats::filter()
+## x dplyr::lag()     masks stats::lag()
+## x recipes::step()  masks stats::step()
+## * Use tidymodels_prefer() to resolve common conflicts.</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v readr   1.4.0     v forcats 0.5.1
+## v stringr 1.4.0</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x readr::col_factor() masks scales::col_factor()
+## x purrr::discard()    masks scales::discard()
+## x dplyr::filter()     masks stats::filter()
+## x stringr::fixed()    masks recipes::fixed()
+## x dplyr::lag()        masks stats::lag()
+## x readr::spec()       masks yardstick::spec()</code></pre>
+<p>tidymodels is a collection of machine learning packages designed to simplify the machine learning workflow in R.</p>
+<pre class="r"><code>home_sales &lt;- read_csv(&quot;home_sales.csv&quot;)</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   X1 = col_double(),
+##   selling_price = col_double(),
+##   home_age = col_double(),
+##   bedrooms = col_double(),
+##   bathrooms = col_double(),
+##   sqft_living = col_double(),
+##   sqft_lot = col_double(),
+##   sqft_basement = col_double(),
+##   floors = col_double()
+## )</code></pre>
+<div id="creating-training-and-test-datasets" class="section level2">
+<h2>1-3 Creating training and test datasets</h2>
+<p>The rsample package is designed to create training and test datasets. Creating a test dataset is important for estimating how a trained model will likely perform on new data. It also guards against overfitting, where a model memorizes patterns that exist only in the training data and performs poorly on new data.</p>
+<p>This data contains information on homes sold in the Seattle, Washington area between 2015 and 2016.
+The outcome variable in this data is selling_price.</p>
+<pre class="r"><code># Create a data split object
+
+# Create a data split object
+home_split &lt;- initial_split(home_sales, 
+                            prop = 0.7, 
+                            strata = selling_price)
+
+# Create the training data
+home_training &lt;- home_split %&gt;%
+  training()
+
+# Create the test data
+home_test &lt;- home_split %&gt;% 
+  testing()
+
+# Check number of rows in each dataset
+nrow(home_training)</code></pre>
+<pre><code>## [1] 1042</code></pre>
+<pre class="r"><code>nrow(home_test)</code></pre>
+<pre><code>## [1] 450</code></pre>
+</div>
+<div id="distribution-of-outcome-variable-values" class="section level2">
+<h2>1-4 Distribution of outcome variable values</h2>
+<p>Stratifying by the outcome variable when generating training and test datasets ensures that the outcome variable values have a similar range in both datasets.</p>
+<p>Since the original data is split at random, stratification avoids placing all the expensive homes in home_sales into the test dataset, for example. In this case, your model would most likely perform poorly because it was trained on less expensive homes.</p>
+<p>In this exercise, you will calculate summary statistics for the selling_price variable in the training and test datasets. The home_training and home_test tibbles have been loaded from the previous exercise.</p>
+<pre class="r"><code># Distribution of selling_price in training data
+home_training %&gt;% 
+  summarize(min_sell_price = min(selling_price),
+            max_sell_price = max(selling_price),
+            mean_sell_price = mean(selling_price),
+            sd_sell_price = sd(selling_price))</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   min_sell_price max_sell_price mean_sell_price sd_sell_price
+##            &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+## 1         350000         650000         478855.        80891.</code></pre>
+<pre class="r"><code># Distribution of selling_price in test data
+home_test %&gt;% 
+  summarize(min_sell_price = min(selling_price),
+            max_sell_price = max(selling_price),
+            mean_sell_price = mean(selling_price),
+            sd_sell_price = sd(selling_price))</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   min_sell_price max_sell_price mean_sell_price sd_sell_price
+##            &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+## 1         350000         650000         479617.        81270.</code></pre>
+</div>
+<div id="fitting-a-linear-regression-model" class="section level2">
+<h2>1-6 Fitting a linear regression model</h2>
+<p>The parsnip package provides a unified syntax for the model fitting process in R.</p>
+<p>With parsnip, it is easy to define models using the various packages, or engines, that exist in the R ecosystem.</p>
+<p>In this exercise, you will define a parsnip linear regression object and train your model to predict selling_price using home_age and sqft_living as predictor variables from the home_sales data.</p>
+<p>The home_training and home_test tibbles that you created in the previous lesson have been loaded into this session.</p>
+<pre class="r"><code># Specify a linear regression model, linear_model
+linear_model &lt;- linear_reg() %&gt;% 
+  # Set the model engine
+  set_engine(&#39;lm&#39;) %&gt;% 
+  # Set the model mode
+  set_mode(&#39;regression&#39;)
+
+# Train the model with the training data
+lm_fit &lt;- linear_model %&gt;% 
+  fit(selling_price~home_age+sqft_living,
+      data = home_training)
+
+# Print lm_fit to view model information
+lm_fit</code></pre>
+<pre><code>## parsnip model object
+## 
+## Fit time:  0ms 
+## 
+## Call:
+## stats::lm(formula = selling_price ~ home_age + sqft_living, data = data)
+## 
+## Coefficients:
+## (Intercept)     home_age  sqft_living  
+##    285500.4      -1313.1        104.4</code></pre>
+<pre class="r"><code>tidy(lm_fit)</code></pre>
+<pre><code>## # A tibble: 3 x 5
+##   term        estimate std.error statistic   p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)  285500.   7448.       38.3  4.60e-201
+## 2 home_age      -1313.    176.       -7.45 1.97e- 13
+## 3 sqft_living     104.      2.71     38.6  1.04e-202</code></pre>
+</div>
+<div id="predicting-home-selling-prices" class="section level2">
+<h2>1-8 Predicting home selling prices</h2>
+<p>After fitting a model using the training data, the next step is to use it to make predictions on the test dataset. The test dataset acts as a new source of data for the model and will allow you to evaluate how well it performs.</p>
+<p>Before you can evaluate model performance, you must add your predictions to the test dataset.</p>
+<p>In this exercise, you will use your trained model, lm_fit, to predict selling_price in the home_test dataset.</p>
+<p>Your trained model, lm_fit, as well as the test dataset, home_test have been loaded into your session.</p>
+</div>

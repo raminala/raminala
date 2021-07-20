@@ -1,0 +1,119 @@
+---
+title: Modeling with tidymodels in R
+author: ''
+date: '2021-07-20'
+slug: []
+categories:
+  - tidymodels
+tags:
+  - Machine Learning
+---
+
+```{r}
+library(tidymodels)
+library(tidyverse)
+```
+
+tidymodels is a collection of machine learning packages designed to simplify the machine learning workflow in R.
+
+```{r}
+home_sales <- read_csv("home_sales.csv")
+```
+
+## 1-3 Creating training and test datasets
+
+The rsample package is designed to create training and test datasets. Creating a test dataset is important for estimating how a trained model will likely perform on new data. It also guards against overfitting, where a model memorizes patterns that exist only in the training data and performs poorly on new data.
+
+This data contains information on homes sold in the Seattle, Washington area between 2015 and 2016.
+The outcome variable in this data is selling_price.
+
+```{r}
+# Create a data split object
+
+# Create a data split object
+home_split <- initial_split(home_sales, 
+                            prop = 0.7, 
+                            strata = selling_price)
+
+# Create the training data
+home_training <- home_split %>%
+  training()
+
+# Create the test data
+home_test <- home_split %>% 
+  testing()
+
+# Check number of rows in each dataset
+nrow(home_training)
+nrow(home_test)
+
+```
+
+## 1-4 Distribution of outcome variable values
+
+Stratifying by the outcome variable when generating training and test datasets ensures that the outcome variable values have a similar range in both datasets.
+
+Since the original data is split at random, stratification avoids placing all the expensive homes in home_sales into the test dataset, for example. In this case, your model would most likely perform poorly because it was trained on less expensive homes.
+
+In this exercise, you will calculate summary statistics for the selling_price variable in the training and test datasets. The home_training and home_test tibbles have been loaded from the previous exercise.
+
+```{r}
+# Distribution of selling_price in training data
+home_training %>% 
+  summarize(min_sell_price = min(selling_price),
+            max_sell_price = max(selling_price),
+            mean_sell_price = mean(selling_price),
+            sd_sell_price = sd(selling_price))
+
+
+
+
+
+# Distribution of selling_price in test data
+home_test %>% 
+  summarize(min_sell_price = min(selling_price),
+            max_sell_price = max(selling_price),
+            mean_sell_price = mean(selling_price),
+            sd_sell_price = sd(selling_price))
+```
+
+## 1-6 Fitting a linear regression model
+
+The parsnip package provides a unified syntax for the model fitting process in R.
+
+With parsnip, it is easy to define models using the various packages, or engines, that exist in the R ecosystem.
+
+In this exercise, you will define a parsnip linear regression object and train your model to predict selling_price using home_age and sqft_living as predictor variables from the home_sales data.
+
+The home_training and home_test tibbles that you created in the previous lesson have been loaded into this session.
+
+```{r}
+
+# Specify a linear regression model, linear_model
+linear_model <- linear_reg() %>% 
+  # Set the model engine
+  set_engine('lm') %>% 
+  # Set the model mode
+  set_mode('regression')
+
+# Train the model with the training data
+lm_fit <- linear_model %>% 
+  fit(selling_price~home_age+sqft_living,
+      data = home_training)
+
+# Print lm_fit to view model information
+lm_fit
+
+
+tidy(lm_fit)
+```
+
+## 1-8 Predicting home selling prices
+
+After fitting a model using the training data, the next step is to use it to make predictions on the test dataset. The test dataset acts as a new source of data for the model and will allow you to evaluate how well it performs.
+
+Before you can evaluate model performance, you must add your predictions to the test dataset.
+
+In this exercise, you will use your trained model, lm_fit, to predict selling_price in the home_test dataset.
+
+Your trained model, lm_fit, as well as the test dataset, home_test have been loaded into your session.
