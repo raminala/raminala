@@ -114,7 +114,7 @@ home_training %&gt;%
 <pre><code>## # A tibble: 1 x 4
 ##   min_sell_price max_sell_price mean_sell_price sd_sell_price
 ##            &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
-## 1         350000         650000         479783.        81885.</code></pre>
+## 1         350000         650000         479336.        80561.</code></pre>
 <pre class="r"><code># Distribution of selling_price in test data
 home_test %&gt;% 
   summarize(min_sell_price = min(selling_price),
@@ -124,7 +124,7 @@ home_test %&gt;%
 <pre><code>## # A tibble: 1 x 4
 ##   min_sell_price max_sell_price mean_sell_price sd_sell_price
 ##            &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
-## 1         350000         650000         477467.        78906.</code></pre>
+## 1         350000         650000         478503.        82026.</code></pre>
 </div>
 <div id="fitting-a-linear-regression-model" class="section level2">
 <h2>1-6 Fitting a linear regression model</h2>
@@ -148,21 +148,21 @@ lm_fit &lt;- linear_model %&gt;%
 lm_fit</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  0ms 
+## Fit time:  20ms 
 ## 
 ## Call:
 ## stats::lm(formula = selling_price ~ home_age + sqft_living, data = data)
 ## 
 ## Coefficients:
 ## (Intercept)     home_age  sqft_living  
-##    289244.4      -1430.3        103.7</code></pre>
+##    289449.5      -1408.9        102.9</code></pre>
 <pre class="r"><code>tidy(lm_fit)</code></pre>
 <pre><code>## # A tibble: 3 x 5
 ##   term        estimate std.error statistic   p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)  289244.   7554.       38.3  8.90e-201
-## 2 home_age      -1430.    179.       -8.00 3.23e- 15
-## 3 sqft_living     104.      2.72     38.2  4.10e-200</code></pre>
+## 1 (Intercept)  289450.   7578.       38.2  4.07e-200
+## 2 home_age      -1409.    177.       -7.94 5.04e- 15
+## 3 sqft_living     103.      2.73     37.6  3.66e-196</code></pre>
 </div>
 <div id="predicting-home-selling-prices" class="section level2">
 <h2>1-8 Predicting home selling prices</h2>
@@ -179,16 +179,16 @@ home_predictions</code></pre>
 <pre><code>## # A tibble: 450 x 1
 ##      .pred
 ##      &lt;dbl&gt;
-##  1 631085.
-##  2 489281.
-##  3 506978.
-##  4 484235.
-##  5 533812.
-##  6 622444.
-##  7 382612.
-##  8 392624.
-##  9 534709.
-## 10 578536.
+##  1 380341.
+##  2 628455.
+##  3 409795.
+##  4 487983.
+##  5 528015.
+##  6 402750.
+##  7 482950.
+##  8 532018.
+##  9 427061.
+## 10 502050.
 ## # ... with 440 more rows</code></pre>
 <pre class="r"><code># Combine test data with predictions
 home_test_results &lt;- home_test %&gt;% 
@@ -200,16 +200,16 @@ home_test_results</code></pre>
 <pre><code>## # A tibble: 450 x 4
 ##    selling_price home_age sqft_living   .pred
 ##            &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;
-##  1        635000        4        3350 631085.
-##  2        464950       19        2190 489281.
-##  3        495000        3        2140 506978.
-##  4        525000       16        2100 484235.
-##  5        485000        6        2440 533812.
-##  6        624000       26        3570 622444.
-##  7        355000       37        1410 382612.
-##  8        391000       30        1410 392624.
-##  9        550000        9        2490 534709.
-## 10        590000       11        2940 578536.
+##  1        411000       18        1130 380341.
+##  2        635000        4        3350 628455.
+##  3        355000       19        1430 409795.
+##  4        464950       19        2190 487983.
+##  5        535000        3        2360 528015.
+##  6        356000       24        1430 402750.
+##  7        525000       16        2100 482950.
+##  8        485000        6        2440 532018.
+##  9        381000       25        1680 427061.
+## 10        525000       28        2450 502050.
 ## # ... with 440 more rows</code></pre>
 </div>
 <div id="model-performance-metrics" class="section level2">
@@ -222,16 +222,16 @@ home_test_results</code></pre>
 <pre><code>## # A tibble: 450 x 4
 ##    selling_price home_age sqft_living   .pred
 ##            &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;
-##  1        635000        4        3350 631085.
-##  2        464950       19        2190 489281.
-##  3        495000        3        2140 506978.
-##  4        525000       16        2100 484235.
-##  5        485000        6        2440 533812.
-##  6        624000       26        3570 622444.
-##  7        355000       37        1410 382612.
-##  8        391000       30        1410 392624.
-##  9        550000        9        2490 534709.
-## 10        590000       11        2940 578536.
+##  1        411000       18        1130 380341.
+##  2        635000        4        3350 628455.
+##  3        355000       19        1430 409795.
+##  4        464950       19        2190 487983.
+##  5        535000        3        2360 528015.
+##  6        356000       24        1430 402750.
+##  7        525000       16        2100 482950.
+##  8        485000        6        2440 532018.
+##  9        381000       25        1680 427061.
+## 10        525000       28        2450 502050.
 ## # ... with 440 more rows</code></pre>
 <pre class="r"><code># Caculate the RMSE metric
 home_test_results %&gt;% 
@@ -239,14 +239,14 @@ home_test_results %&gt;%
 <pre><code>## # A tibble: 1 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 rmse    standard      46737.</code></pre>
+## 1 rmse    standard      47470.</code></pre>
 <pre class="r"><code># Calculate the R squared metric
 home_test_results %&gt;% 
   rsq(selling_price , .pred)</code></pre>
 <pre><code>## # A tibble: 1 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 rsq     standard       0.648</code></pre>
+## 1 rsq     standard       0.667</code></pre>
 </div>
 <div id="r-squared-plot" class="section level2">
 <h2>1-11 R squared plot</h2>
@@ -282,16 +282,16 @@ predictions_df</code></pre>
 <pre><code>## # A tibble: 450 x 5
 ##    id                 .pred  .row selling_price .config             
 ##    &lt;chr&gt;              &lt;dbl&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt;               
-##  1 train/test split 693694.     4        635000 Preprocessor1_Model1
-##  2 train/test split 476519.     8        464950 Preprocessor1_Model1
-##  3 train/test split 478343.    12        495000 Preprocessor1_Model1
-##  4 train/test split 505612.    13        525000 Preprocessor1_Model1
-##  5 train/test split 562304.    17        485000 Preprocessor1_Model1
-##  6 train/test split 630988.    22        624000 Preprocessor1_Model1
-##  7 train/test split 381191.    28        355000 Preprocessor1_Model1
-##  8 train/test split 388024.    29        391000 Preprocessor1_Model1
-##  9 train/test split 575572.    35        550000 Preprocessor1_Model1
-## 10 train/test split 587230.    39        590000 Preprocessor1_Model1
+##  1 train/test split 400849.     3        411000 Preprocessor1_Model1
+##  2 train/test split 694271.     4        635000 Preprocessor1_Model1
+##  3 train/test split 401610.     7        355000 Preprocessor1_Model1
+##  4 train/test split 481889.     8        464950 Preprocessor1_Model1
+##  5 train/test split 483606.    10        535000 Preprocessor1_Model1
+##  6 train/test split 449995.    11        356000 Preprocessor1_Model1
+##  7 train/test split 504157.    13        525000 Preprocessor1_Model1
+##  8 train/test split 566149.    17        485000 Preprocessor1_Model1
+##  9 train/test split 398419.    18        381000 Preprocessor1_Model1
+## 10 train/test split 455211.    19        525000 Preprocessor1_Model1
 ## # ... with 440 more rows</code></pre>
 <pre class="r"><code># Make an R squared plot using predictions_df
 ggplot(predictions_df, aes(x = selling_price , y = .pred)) + 
