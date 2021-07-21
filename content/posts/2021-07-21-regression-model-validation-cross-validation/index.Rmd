@@ -58,4 +58,19 @@ data.frame( R2 = R2(predictions, test.data$Fertility),
 RMSE(predictions, test.data$Fertility)/mean(test.data$Fertility)
 ```
  
- 
+## Leave one out cross validation - LOOCV
+
+```{r}
+# Define training control
+train.control <- trainControl(method = "LOOCV")
+# Train the model
+model <- train(Fertility ~., data = swiss, method = "lm",
+               trControl = train.control)
+# Summarize the results
+summary(model)
+
+#print(model)
+```
+
+
+
