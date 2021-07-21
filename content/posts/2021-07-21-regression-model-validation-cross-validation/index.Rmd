@@ -1,0 +1,23 @@
+---
+title: Regression Model Validation- Cross-Validation
+author: ''
+date: '2021-07-21'
+slug: []
+categories: []
+tags:
+  - Regression
+  - Classification
+---
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+```
+
+```{r}
+# Load the data
+data("swiss")
+# Inspect the data
+sample_n(swiss, 3)
+```
+
