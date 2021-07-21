@@ -261,15 +261,17 @@ predict(MLR, explanatory_data)
 
 ## Resampling Methods
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library(caret)
+
 library(yardstick)
+
 ```
 
 
 ## Cross-Validation method
 
-## Leave one out cross validation - LOOCV
+## LOOCV (Leave one out cross validation) 
 
 The LOOCV method is using all data points therefore it reduces the bias.
 
