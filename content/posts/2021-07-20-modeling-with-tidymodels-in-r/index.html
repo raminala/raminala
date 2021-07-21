@@ -114,7 +114,7 @@ home_training %&gt;%
 <pre><code>## # A tibble: 1 x 4
 ##   min_sell_price max_sell_price mean_sell_price sd_sell_price
 ##            &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
-## 1         350000         650000         479513.        81578.</code></pre>
+## 1         350000         650000         479205.        81026.</code></pre>
 <pre class="r"><code># Distribution of selling_price in test data
 home_test %&gt;% 
   summarize(min_sell_price = min(selling_price),
@@ -124,7 +124,7 @@ home_test %&gt;%
 <pre><code>## # A tibble: 1 x 4
 ##   min_sell_price max_sell_price mean_sell_price sd_sell_price
 ##            &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
-## 1         350000         650000         478092.        79654.</code></pre>
+## 1         350000         650000         478806.        80958.</code></pre>
 </div>
 <div id="fitting-a-linear-regression-model" class="section level2">
 <h2>1-6 Fitting a linear regression model</h2>
@@ -155,14 +155,14 @@ lm_fit</code></pre>
 ## 
 ## Coefficients:
 ## (Intercept)     home_age  sqft_living  
-##    290772.2      -1574.6        104.3</code></pre>
+##    293472.8      -1542.8        102.4</code></pre>
 <pre class="r"><code>tidy(lm_fit)</code></pre>
 <pre><code>## # A tibble: 3 x 5
 ##   term        estimate std.error statistic   p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)  290772.   7481.       38.9  9.20e-205
-## 2 home_age      -1575.    175.       -8.99 1.12e- 18
-## 3 sqft_living     104.      2.72     38.4  2.07e-201</code></pre>
+## 1 (Intercept)  293473.   7298.       40.2  5.38e-214
+## 2 home_age      -1543.    169.       -9.13 3.44e- 19
+## 3 sqft_living     102.      2.63     38.9  7.15e-205</code></pre>
 </div>
 <div id="predicting-home-selling-prices" class="section level2">
 <h2>1-8 Predicting home selling prices</h2>
@@ -179,16 +179,16 @@ home_predictions</code></pre>
 <pre><code>## # A tibble: 450 x 1
 ##      .pred
 ##      &lt;dbl&gt;
-##  1 434654.
-##  2 509319.
-##  3 484676.
-##  4 564974.
-##  5 449600.
-##  6 530736.
-##  7 426686.
-##  8 487749.
-##  9 459029.
-## 10 407887.
+##  1 474505.
+##  2 488362.
+##  3 402843.
+##  4 507927.
+##  5 449388.
+##  6 534012.
+##  7 426894.
+##  8 458630.
+##  9 405985.
+## 10 404378.
 ## # ... with 440 more rows</code></pre>
 <pre class="r"><code># Combine test data with predictions
 home_test_results &lt;- home_test %&gt;% 
@@ -200,16 +200,16 @@ home_test_results</code></pre>
 <pre><code>## # A tibble: 450 x 4
 ##    selling_price home_age sqft_living   .pred
 ##            &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;
-##  1        465000       10        1530 434654.
-##  2        495000        3        2140 509319.
-##  3        525000       16        2100 484676.
-##  4        559900       20        2930 564974.
-##  5        552321       29        1960 449600.
-##  6        475000        0        2300 530736.
-##  7        381000       25        1680 426686.
-##  8        540000       22        2220 487749.
-##  9        450000       25        1990 459029.
-## 10        452000       27        1530 407887.
+##  1        380000       24        2130 474505.
+##  2        464950       19        2190 488362.
+##  3        356000       24        1430 402843.
+##  4        495000        3        2140 507927.
+##  5        552321       29        1960 449388.
+##  6        485000        6        2440 534012.
+##  7        381000       25        1680 426894.
+##  8        450000       25        1990 458630.
+##  9        398000       14        1310 405985.
+## 10        389999       24        1445 404378.
 ## # ... with 440 more rows</code></pre>
 </div>
 <div id="model-performance-metrics" class="section level2">
@@ -222,16 +222,16 @@ home_test_results</code></pre>
 <pre><code>## # A tibble: 450 x 4
 ##    selling_price home_age sqft_living   .pred
 ##            &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;
-##  1        465000       10        1530 434654.
-##  2        495000        3        2140 509319.
-##  3        525000       16        2100 484676.
-##  4        559900       20        2930 564974.
-##  5        552321       29        1960 449600.
-##  6        475000        0        2300 530736.
-##  7        381000       25        1680 426686.
-##  8        540000       22        2220 487749.
-##  9        450000       25        1990 459029.
-## 10        452000       27        1530 407887.
+##  1        380000       24        2130 474505.
+##  2        464950       19        2190 488362.
+##  3        356000       24        1430 402843.
+##  4        495000        3        2140 507927.
+##  5        552321       29        1960 449388.
+##  6        485000        6        2440 534012.
+##  7        381000       25        1680 426894.
+##  8        450000       25        1990 458630.
+##  9        398000       14        1310 405985.
+## 10        389999       24        1445 404378.
 ## # ... with 440 more rows</code></pre>
 <pre class="r"><code># Caculate the RMSE metric
 home_test_results %&gt;% 
@@ -239,14 +239,14 @@ home_test_results %&gt;%
 <pre><code>## # A tibble: 1 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 rmse    standard      47394.</code></pre>
+## 1 rmse    standard      49891.</code></pre>
 <pre class="r"><code># Calculate the R squared metric
 home_test_results %&gt;% 
   rsq(selling_price , .pred)</code></pre>
 <pre><code>## # A tibble: 1 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 rsq     standard       0.646</code></pre>
+## 1 rsq     standard       0.620</code></pre>
 </div>
 <div id="r-squared-plot" class="section level2">
 <h2>1-11 R squared plot</h2>
@@ -282,16 +282,16 @@ predictions_df</code></pre>
 <pre><code>## # A tibble: 450 x 5
 ##    id                 .pred  .row selling_price .config             
 ##    &lt;chr&gt;              &lt;dbl&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt;               
-##  1 train/test split 421270.     2        465000 Preprocessor1_Model1
-##  2 train/test split 477378.    12        495000 Preprocessor1_Model1
-##  3 train/test split 501864.    13        525000 Preprocessor1_Model1
-##  4 train/test split 582915.    14        559900 Preprocessor1_Model1
-##  5 train/test split 466952.    15        552321 Preprocessor1_Model1
-##  6 train/test split 462254.    16        475000 Preprocessor1_Model1
-##  7 train/test split 392149.    18        381000 Preprocessor1_Model1
-##  8 train/test split 511522.    20        540000 Preprocessor1_Model1
-##  9 train/test split 475850.    21        450000 Preprocessor1_Model1
-## 10 train/test split 407041.    23        452000 Preprocessor1_Model1
+##  1 train/test split 413013.     5        380000 Preprocessor1_Model1
+##  2 train/test split 475169.     8        464950 Preprocessor1_Model1
+##  3 train/test split 441999.    11        356000 Preprocessor1_Model1
+##  4 train/test split 479184.    12        495000 Preprocessor1_Model1
+##  5 train/test split 465349.    15        552321 Preprocessor1_Model1
+##  6 train/test split 559623.    17        485000 Preprocessor1_Model1
+##  7 train/test split 393424.    18        381000 Preprocessor1_Model1
+##  8 train/test split 474725.    21        450000 Preprocessor1_Model1
+##  9 train/test split 382127.    24        398000 Preprocessor1_Model1
+## 10 train/test split 396010.    25        389999 Preprocessor1_Model1
 ## # ... with 440 more rows</code></pre>
 <pre class="r"><code># Make an R squared plot using predictions_df
 ggplot(predictions_df, aes(x = selling_price , y = .pred)) + 
@@ -327,4 +327,243 @@ nrow(telecom_training)</code></pre>
 <h2>2-3 Fitting a logistic regression model</h2>
 <p>In addition to regression models, the parsnip package also provides a general interface to classification models in R.</p>
 <p>In this exercise, you will define a parsnip logistic regression object and train your model to predict canceled_service using avg_call_mins, avg_intl_mins, and monthly_charges as predictor variables from the telecom_df data.</p>
+<pre class="r"><code># Specify a logistic regression model
+logistic_model &lt;-  logistic_reg() %&gt;% 
+  # Set the engine
+  set_engine(&#39;glm&#39;) %&gt;% 
+  # Set the mode
+  set_mode(&#39;classification&#39;)
+
+# Print the model specification
+logistic_model</code></pre>
+<pre><code>## Logistic Regression Model Specification (classification)
+## 
+## Computational engine: glm</code></pre>
+<pre class="r"><code># Fit to training data
+logistic_fit &lt;- logistic_model %&gt;% 
+  fit(factor(canceled_service)~avg_call_mins+ avg_intl_mins+monthly_charges,
+      data = telecom_training)
+
+# Print model fit object
+logistic_fit</code></pre>
+<pre><code>## parsnip model object
+## 
+## Fit time:  0ms 
+## 
+## Call:  stats::glm(formula = factor(canceled_service) ~ avg_call_mins + 
+##     avg_intl_mins + monthly_charges, family = stats::binomial, 
+##     data = data)
+## 
+## Coefficients:
+##     (Intercept)    avg_call_mins    avg_intl_mins  monthly_charges  
+##       -1.858056         0.010053        -0.024337         0.002157  
+## 
+## Degrees of Freedom: 730 Total (i.e. Null);  727 Residual
+## Null Deviance:       932.4 
+## Residual Deviance: 802.4     AIC: 810.4</code></pre>
+</div>
+<div id="combining-test-dataset-results" class="section level2">
+<h2>2-4 Combining test dataset results</h2>
+<p>Evaluating your model’s performance on the test dataset gives insights into how well your model predicts on new data sources. These insights will help you communicate your model’s value in solving problems or improving decision making.</p>
+<p>Before you can calculate classification metrics such as sensitivity or specificity, you must create a results tibble with the required columns for yardstick metric functions.</p>
+<p>In this exercise, you will use your trained model to predict the outcome variable in the telecom_test dataset and combine it with the true outcome values in the canceled_service column.</p>
+<pre class="r"><code># Predict outcome categories
+class_preds &lt;- predict(logistic_fit, new_data = telecom_test,
+                       type = &#39;class&#39;)
+
+# Obtain estimated probabilities for each outcome value
+prob_preds &lt;- predict(logistic_fit, new_data = telecom_test, 
+                      type = &#39;prob&#39;)
+
+# Combine test set results
+telecom_results &lt;- telecom_test %&gt;% 
+  select(canceled_service) %&gt;% 
+  bind_cols(class_preds, prob_preds)
+
+# View results tibble
+telecom_results</code></pre>
+<pre><code>## # A tibble: 244 x 4
+##    canceled_service .pred_class .pred_no .pred_yes
+##    &lt;chr&gt;            &lt;fct&gt;          &lt;dbl&gt;     &lt;dbl&gt;
+##  1 no               no             0.889    0.111 
+##  2 yes              yes            0.474    0.526 
+##  3 no               no             0.600    0.400 
+##  4 no               no             0.840    0.160 
+##  5 yes              yes            0.491    0.509 
+##  6 yes              yes            0.404    0.596 
+##  7 no               no             0.622    0.378 
+##  8 no               no             0.904    0.0962
+##  9 no               no             0.676    0.324 
+## 10 no               no             0.620    0.380 
+## # ... with 234 more rows</code></pre>
+</div>
+<div id="evaluating-performance-with-yardstick" class="section level2">
+<h2>2-7 Evaluating performance with yardstick</h2>
+<p>In the previous exercise, you calculated classification metrics from a sample confusion matrix. The yardstick package was designed to automate this process.</p>
+<p>For classification models, yardstick functions require a tibble of model results as the first argument. This should include the actual outcome values, predicted outcome values, and estimated probabilities for each value of the outcome variable.</p>
+<p>In this exercise, you will use the results from your logistic regression model, telecom_results, to calculate performance metrics.</p>
+<pre class="r"><code># Calculate the confusion matrix
+conf_mat(telecom_results, truth = canceled_service,
+    estimate = .pred_class)</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
+## was converted to a factor</code></pre>
+<pre><code>##           Truth
+## Prediction  no yes
+##        no  139  47
+##        yes  23  35</code></pre>
+<pre class="r"><code># Calculate the accuracy
+accuracy(telecom_results, truth = factor(canceled_service),
+    estimate = .pred_class)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   .metric  .estimator .estimate
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+## 1 accuracy binary         0.713</code></pre>
+<pre class="r"><code># Calculate the sensitivity
+sens(telecom_results, truth = factor(canceled_service),
+    estimate = .pred_class)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 sens    binary         0.858</code></pre>
+</div>
+<div id="creating-custom-metric-sets" class="section level2">
+<h2>2-8 Creating custom metric sets</h2>
+<p>The yardstick package also provides the ability to create custom sets of model metrics. In cases where the cost of obtaining false negative errors is different from the cost of false positive errors, it may be important to examine a specific set of performance metrics.</p>
+<p>Instead of calculating accuracy, sensitivity, and specificity separately, you can create your own metric function that calculates all three at the same time.</p>
+<p>In this exercise, you will use the results from your logistic regression model, telecom_results, to calculate a custom set of performance metrics. You will also use a confusion matrix to calculate all available binary classification metrics in tidymodelsall at once.</p>
+</div>
+<div id="plotting-the-confusion-matrix" class="section level2">
+<h2>2-10 Plotting the confusion matrix</h2>
+<p>Calculating performance metrics with the yardstick package provides insight into how well a classification model is performing on the test dataset. Most yardstick functions return a single number that summarizes classification performance.</p>
+<p>Many times, it is helpful to create visualizations of the confusion matrix to more easily communicate your results.</p>
+<p>In this exercise, you will make a heat map and mosaic plot of the confusion matrix from your logistic regression model on the telecom_df dataset.</p>
+<pre class="r"><code># Create a confusion matrix
+conf_mat(telecom_results,
+         truth = canceled_service ,
+         estimate = .pred_class) %&gt;% 
+  # Create a heat map
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
+## was converted to a factor</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code># Create a confusion matrix
+conf_mat(telecom_results,
+         truth = canceled_service,
+         estimate = .pred_class) %&gt;% 
+  # Create a mosaic plot
+  autoplot(type = &#39;mosaic&#39;)</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
+## was converted to a factor</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-2.png" width="672" /></p>
+</div>
+<div id="roc-curves-and-area-under-the-roc-curve" class="section level2">
+<h2>2-11 ROC curves and area under the ROC curve</h2>
+<p>ROC curves are used to visualize the performance of a classification model across a range of probability thresholds. An ROC curve with the majority of points near the upper left corner of the plot indicates that a classification model is able to correctly predict both the positive and negative outcomes correctly across a wide range of probability thresholds.</p>
+<p>The area under this curve provides a letter grade summary of model performance.</p>
+<p>In this exercise, you will create an ROC curve from your logistic regression model results and calculate the area under the ROC curve with yardstick.</p>
+<pre class="r"><code># Calculate metrics across thresholds
+threshold_df &lt;- telecom_results %&gt;% 
+  roc_curve(truth = factor(canceled_service) , .pred_yes)
+
+# View results
+threshold_df</code></pre>
+<pre><code>## # A tibble: 246 x 3
+##    .threshold specificity sensitivity
+##         &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;
+##  1  -Inf                0       1    
+##  2     0.0396           0       1    
+##  3     0.0437           0       0.994
+##  4     0.0500           0       0.988
+##  5     0.0529           0       0.981
+##  6     0.0546           0       0.975
+##  7     0.0584           0       0.969
+##  8     0.0596           0       0.963
+##  9     0.0783           0       0.957
+## 10     0.0821           0       0.951
+## # ... with 236 more rows</code></pre>
+<pre class="r"><code># Plot ROC curve
+threshold_df %&gt;% 
+  autoplot()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<pre class="r"><code># Calculate ROC AUC
+roc_auc(telecom_results,
+    truth = factor(canceled_service) , 
+    .pred_yes)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 roc_auc binary         0.260</code></pre>
+</div>
+<div id="streamlining-the-modeling-process" class="section level2">
+<h2>2-13 Streamlining the modeling process</h2>
+<p>The last_fit() function is designed to streamline the modeling workflow in tidymodels. Instead of training your model on the training data and building a results tibble using the test data, last_fit() accomplishes this with one function.</p>
+<p>In this exercise, you will train the same logistic regression model as you fit in the previous exercises, except with the last_fit() function.</p>
+<pre class="r"><code># Train model with last_fit()
+telecom_last_fit &lt;- logistic_model %&gt;% 
+  last_fit(factor(canceled_service) ~ avg_call_mins+avg_intl_mins+monthly_charges,
+           split = telecom_split)
+
+# View test set metrics
+telecom_last_fit %&gt;% 
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary         0.713 Preprocessor1_Model1
+## 2 roc_auc  binary         0.740 Preprocessor1_Model1</code></pre>
+</div>
+<div id="collecting-predictions-and-creating-custom-metrics" class="section level2">
+<h2>2-14 Collecting predictions and creating custom metrics</h2>
+<p>Using the last_fit() modeling workflow also saves time in collecting model predictions. Instead of manually creating a tibble of model results, there are helper functions that extract this information automatically.</p>
+<p>In this exercise, you will use your trained model, telecom_last_fit, to create a tibble of model results on the test dataset as well as calculate custom performance metrics.</p>
+<pre class="r"><code># Collect predictions
+last_fit_results &lt;- telecom_last_fit %&gt;% 
+  collect_predictions()
+
+# View results
+last_fit_results</code></pre>
+<pre><code>## # A tibble: 244 x 7
+##    id        .pred_no .pred_yes  .row .pred_class `factor(canceled_s~ .config   
+##    &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;               &lt;chr&gt;     
+##  1 train/te~    0.889    0.111      8 no          no                  Preproces~
+##  2 train/te~    0.474    0.526      9 yes         yes                 Preproces~
+##  3 train/te~    0.600    0.400     15 no          no                  Preproces~
+##  4 train/te~    0.840    0.160     27 no          no                  Preproces~
+##  5 train/te~    0.491    0.509     31 yes         yes                 Preproces~
+##  6 train/te~    0.404    0.596     34 yes         yes                 Preproces~
+##  7 train/te~    0.622    0.378     39 no          no                  Preproces~
+##  8 train/te~    0.904    0.0962    40 no          no                  Preproces~
+##  9 train/te~    0.676    0.324     42 no          no                  Preproces~
+## 10 train/te~    0.620    0.380     48 no          no                  Preproces~
+## # ... with 234 more rows</code></pre>
+<pre class="r"><code># Custom metrics function
+#last_fit_metrics &lt;- metric_set(accuracy, sens, spec, roc_auc)
+
+# Calculate metrics
+#last_fit_metrics(last_fit_results, truth = canceled_service, estimate = .pred_class,.pred_yes)</code></pre>
+</div>
+<div id="complete-modeling-workflow" class="section level2">
+<h2>2-15 Complete modeling workflow</h2>
+<p>In this exercise, you will use the last_fit() function to train a logistic regression model and evaluate its performance on the test data by assessing the ROC curve and the area under the ROC curve.</p>
+<p>Similar to previous exercises, you will predict canceled_service in the telecom_df data, but with an additional predictor variable to see if you can improve model performance.</p>
+<p>The telecom_df tibble, telecom_split, and logistic_model objects from the previous exercises have been loaded into your workspace. The telecom_split object contains the instructions for randomly splitting the telecom_df tibble into training and test sets. The logistic_model object is a parsnip specification of a logistic regression model.</p>
+<pre class="r"><code># Train a logistic regression model
+logistic_fit &lt;- logistic_model %&gt;% 
+  last_fit(factor(canceled_service) ~ avg_call_mins + avg_intl_mins + monthly_charges + months_with_company, 
+           split = telecom_split)
+
+# Collect metrics
+logistic_fit %&gt;% 
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary         0.807 Preprocessor1_Model1
+## 2 roc_auc  binary         0.860 Preprocessor1_Model1</code></pre>
+<pre class="r"><code># Collect model predictions
+#logistic_fit %&gt;% 
+ # collect_predictions() %&gt;% 
+  # Plot ROC curve
+  #roc_curve(truth = canceled_service, .pred_yes) %&gt;% 
+  #autoplot()</code></pre>
 </div>
