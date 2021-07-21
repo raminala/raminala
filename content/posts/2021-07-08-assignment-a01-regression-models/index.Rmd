@@ -257,3 +257,11 @@ predict(MLR, explanatory_data)
 - The important trend in the dataset could be found with a glance at price-carat plot. That is carat has two ranges: 0.1-.03 and 0.8- 1.6. There are a substantial gap between price of these two catagories, the latter is four times more costly.
 
 - Dataset was very clean dataset with nearly no need for cleaning. For example there were not any NA and outlier data in the dataset.
+
+## Resampling
+
+## Cross-Validation method
+
+## Bootstraping method 
+
+

@@ -281,3 +281,11 @@ variables.
 - Generalized Linear Model shows that balance is not a determinant factor but housing and loan status are both determinant.
 
 - Coefficients of glm analysis are all small because the number of respondents with subscribed status are very lower than not subscribed clients.
+
+
+
+## Resampling
+
+## Cross-Validation method
+
+## Bootstraping method 
