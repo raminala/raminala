@@ -258,10 +258,10 @@ predict(MLR, explanatory_data)
 
 - Dataset was very clean dataset with nearly no need for cleaning. For example there were not any NA and outlier data in the dataset.
 
-## Resampling
+
+## Resampling Methods
 
 ## Cross-Validation method
 
 ## Bootstraping method 
-
 
