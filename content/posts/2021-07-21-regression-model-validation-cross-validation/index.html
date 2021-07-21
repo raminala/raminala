@@ -15,7 +15,7 @@ tags:
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
 <pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
-## v tibble  3.1.1     v dplyr   1.0.6
+## v tibble  3.1.2     v dplyr   1.0.6
 ## v tidyr   1.1.3     v stringr 1.4.0
 ## v readr   1.4.0     v forcats 0.5.1</code></pre>
 <pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
@@ -32,10 +32,14 @@ tags:
 data(&quot;swiss&quot;)
 # Inspect the data
 sample_n(swiss, 3)</code></pre>
-<pre><code>##        Fertility Agriculture Examination Education Catholic Infant.Mortality
-## Morges      65.5        59.8          22        10     5.23             18.0
-## Oron        72.5        71.2          12         1     2.40             21.0
-## Moudon      65.0        55.1          14         3     4.52             22.4</code></pre>
+<pre><code>##              Fertility Agriculture Examination Education Catholic
+## La Vallee         54.3        15.2          31        20     2.15
+## Franches-Mnt      92.5        39.7           5         5    93.40
+## Conthey           75.5        85.9           3         2    99.71
+##              Infant.Mortality
+## La Vallee                10.8
+## Franches-Mnt             20.2
+## Conthey                  15.1</code></pre>
 <div id="spliting-dataset" class="section level2">
 <h2>Spliting dataset</h2>
 <p>splits the swiss data set so that 80% is used for training a linear regression model and 20% is used to evaluate the model performance.</p>
@@ -68,4 +72,37 @@ data.frame( R2 = R2(predictions, test.data$Fertility),
 <p>the RMSE and the MAE are measured in the same scale as the outcome variable. Dividing the RMSE by the average value of the outcome variable will give you the prediction error rate, which should be as small as possible.</p>
 <pre class="r"><code>RMSE(predictions, test.data$Fertility)/mean(test.data$Fertility)</code></pre>
 <pre><code>## [1] 0.09813499</code></pre>
+</div>
+<div id="leave-one-out-cross-validation---loocv" class="section level2">
+<h2>Leave one out cross validation - LOOCV</h2>
+<pre class="r"><code># Define training control
+train.control &lt;- trainControl(method = &quot;LOOCV&quot;)
+# Train the model
+model &lt;- train(Fertility ~., data = swiss, method = &quot;lm&quot;,
+               trControl = train.control)
+# Summarize the results
+summary(model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = .outcome ~ ., data = dat)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.2743  -5.2617   0.5032   4.1198  15.3213 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      66.91518   10.70604   6.250 1.91e-07 ***
+## Agriculture      -0.17211    0.07030  -2.448  0.01873 *  
+## Examination      -0.25801    0.25388  -1.016  0.31546    
+## Education        -0.87094    0.18303  -4.758 2.43e-05 ***
+## Catholic          0.10412    0.03526   2.953  0.00519 ** 
+## Infant.Mortality  1.07705    0.38172   2.822  0.00734 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 7.165 on 41 degrees of freedom
+## Multiple R-squared:  0.7067, Adjusted R-squared:  0.671 
+## F-statistic: 19.76 on 5 and 41 DF,  p-value: 5.594e-10</code></pre>
+<pre class="r"><code>#print(model)</code></pre>
 </div>

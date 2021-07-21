@@ -147,27 +147,6 @@ minimum, mode, median, max, first and third quarterlies. Note that the red dotte
 <h2>Leave one out cross validation - LOOCV</h2>
 <p>The LOOCV method is using all data points therefore it reduces the bias.</p>
 <p>However, the execution time could be so long if n (number of observation) is large. Besides, we know that low bias means high variance and the model is more prone to overfitting.</p>
-<pre class="r"><code># Define training control
-train.control &lt;- trainControl(method = &quot;LOOCV&quot;)
-# Train the model
-model &lt;- train(Fertility ~., data = swiss, method = &quot;lm&quot;,
-               trControl = train.control)
-# Summarize the results
-print(model)</code></pre>
-<pre><code>## Linear Regression 
-## 
-## 47 samples
-##  5 predictor
-## 
-## No pre-processing
-## Resampling: Leave-One-Out Cross-Validation 
-## Summary of sample sizes: 46, 46, 46, 46, 46, 46, ... 
-## Resampling results:
-## 
-##   RMSE      Rsquared   MAE     
-##   7.738618  0.6128307  6.116021
-## 
-## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
 </div>
 <div id="bootstraping-method" class="section level2">
 <h2>Bootstraping method</h2>
