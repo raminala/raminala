@@ -21,3 +21,6 @@ data("swiss")
 sample_n(swiss, 3)
 ```
 
+ ## splits the swiss data set so that 80% is used for training a linear regression model and 20% is used to evaluate the model performance.
+ 
+ 
