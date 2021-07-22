@@ -292,10 +292,6 @@ model <- train(price ~., data = diamonds, method = "lm",
 print(model)
 ```
 
-```{r}
-summary(model) %>%
-  tidy()
-```
 
 ## K-fold cross-validation
 
