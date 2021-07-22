@@ -373,7 +373,8 @@ ggplot(test_results_SLR, aes(price ,Price_pred))+
   geom_abline(color = 'blue', linetype = 2) +
   coord_obs_pred() +
   labs(x = 'Actual diamond Price', y = 'Prediction by SLR')+
-  annotate('text', x = 800, y = 4000, label = 'R^2=0.8564319',  size = 5, color="red")
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.8564319',  size = 5, color="red")+
+  xlim(0, 4000)+ylim(0, 4000)
 
 SLR %>% glance() %>%  pull(r.squared)
 #--------------------------------------------------------------------------------------------------
@@ -382,7 +383,8 @@ ggplot(test_results_MLR, aes(price ,Price_pred))+
   geom_abline(color = 'blue', linetype = 2) +
   coord_obs_pred() +
   labs(x = 'Actual diamond Price', y = 'Prediction by MLR')+
-  annotate('text', x = 800, y = 4000, label = 'R^2=0.991704',  size = 5, color="red")
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.991704',  size = 5, color="red")+
+  xlim(0, 4000)+ylim(0, 4000)
 
 MLR %>% glance() %>%  pull(r.squared)
 #--------------------------------------------------------------------------------------------------
@@ -391,7 +393,8 @@ ggplot(test_results_model_LOOCV, aes(price ,Price_pred))+
   geom_abline(color = 'blue', linetype = 2) +
   coord_obs_pred() +
   labs(x = 'Actual diamond Price', y = 'Prediction by LOOCV')+
-  annotate('text', x = 800, y = 4000, label = 'R^2=0.9673791',  size = 5, color="red")
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.9673791',  size = 5, color="red")+
+  xlim(0, 4000)+ylim(0, 4000)
 
 model_LOOCV$results %>%  pull(Rsquared)
 #--------------------------------------------------------------------------------------------------
@@ -400,7 +403,8 @@ ggplot(test_results_model_K_fold, aes(price ,Price_pred))+
   geom_abline(color = 'blue', linetype = 2) +
   coord_obs_pred() +
   labs(x = 'Actual diamond Price', y = 'Prediction by K-fold')+
-  annotate('text', x = 800, y = 4000, label = 'R^2=1',  size = 5, color="red")
+  annotate('text', x = 800, y = 4000, label = 'R^2=1',  size = 5, color="red")+
+  xlim(0, 4000)+ylim(0, 4000)
 
 
 model_K_fold$results %>%  pull(Rsquared)
@@ -411,7 +415,8 @@ ggplot(test_results_model_Bootstrap, aes(price ,Price_pred))+
   geom_abline(color = 'blue', linetype = 2) +
   coord_obs_pred() +
   labs(x = 'Actual diamond Price', y = 'Prediction by Bootstrap')+
-  annotate('text', x = 800, y = 4000, label = 'R^2=1',  size = 5, color="red")
+  annotate('text', x = 800, y = 4000, label = 'R^2=1',  size = 5, color="red")+
+  xlim(0, 4000)+ylim(0, 4000)
 
 
 model_K_fold$results %>%  pull(Rsquared)
