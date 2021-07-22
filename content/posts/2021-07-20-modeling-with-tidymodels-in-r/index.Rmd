@@ -432,3 +432,64 @@ logistic_fit %>%
   #autoplot()
 ```
 
+## 3-2 Exploring recipe objects
+
+The first step in feature engineering is to specify a recipe object with the recipe() function and add data preprocessing steps with one or more step_*() functions. Storing all of this information in a single recipe object makes it easier to manage complex feature engineering pipelines and transform new data sources.
+
+How many numeric and nominal predictor variables are encoded in the telecom_rec object?
+
+```{r}
+telecom_rec <- recipe(canceled_service ~ .,
+                      data = telecom_df) %>% 
+  step_log(avg_call_mins, base = 10)
+
+summary(telecom_rec)
+```
+
+## Creating recipe objects
+
+```{r}
+# Specify feature engineering recipe
+telecom_log_rec <- recipe(canceled_service ~ ., 
+                          data = telecom_training) %>%
+  # Add log transformation step
+  step_log(avg_call_mins, avg_intl_mins, base = 10)
+
+# View variable roles and data types
+telecom_log_rec %>%
+  summary()
+```
+
+## 3-6 Discovering correlated predictors
+
+Correlated predictor variables provide redundant information and can negatively impact the model fitting process. When two variables are highly correlated, their values change linearly with each other and hence provide the same information to your machine learning algorithms. This phenomenon is know as multicollinearity.
+
+Before beginning the model fitting process, it's important to explore your dataset to uncover these relationships and remove them in your feature engineering steps.
+
+```{r}
+telecom_training %>% 
+  # Select numeric columns
+  select_if(is.numeric) %>% 
+  # Calculate correlation matrix
+  cor()
+
+# Plot correlated predictors
+ggplot(telecom_training, aes(x = avg_data_gb, y = monthly_charges)) + 
+  # Add points
+  geom_point()  + 
+  # Add title
+  labs(title = "Monthly Charges vs. Average Data Usage",
+       y = 'Monthly Charges ($)', x = 'Average Data Usage (GB)') 
+```
+
+## 3-7 Removing correlated predictors with recipes
+Removing correlated predictor variables from your training and test datasets is an important feature engineering step to ensure your model fitting runs as smoothly as possible.
+
+Now that you have discovered that monthly_charges and avg_data_gb are highly correlated, you must add a correlation filter with step_corr() to your feature engineering pipeline for the telecommunications data.
+
+In this exercise, you will create a recipe object that removes correlated predictors from the telecommunications data.
+
+```{r}
+
+```
+

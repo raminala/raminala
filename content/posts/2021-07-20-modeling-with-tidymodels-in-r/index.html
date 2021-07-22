@@ -114,7 +114,7 @@ home_training %&gt;%
 <pre><code>## # A tibble: 1 x 4
 ##   min_sell_price max_sell_price mean_sell_price sd_sell_price
 ##            &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
-## 1         350000         650000         479205.        81026.</code></pre>
+## 1         350000         650000         478867.        80886.</code></pre>
 <pre class="r"><code># Distribution of selling_price in test data
 home_test %&gt;% 
   summarize(min_sell_price = min(selling_price),
@@ -124,7 +124,7 @@ home_test %&gt;%
 <pre><code>## # A tibble: 1 x 4
 ##   min_sell_price max_sell_price mean_sell_price sd_sell_price
 ##            &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
-## 1         350000         650000         478806.        80958.</code></pre>
+## 1         350000         650000         479589.        81282.</code></pre>
 </div>
 <div id="fitting-a-linear-regression-model" class="section level2">
 <h2>1-6 Fitting a linear regression model</h2>
@@ -155,14 +155,14 @@ lm_fit</code></pre>
 ## 
 ## Coefficients:
 ## (Intercept)     home_age  sqft_living  
-##    293472.8      -1542.8        102.4</code></pre>
+##    292888.2      -1526.3        103.1</code></pre>
 <pre class="r"><code>tidy(lm_fit)</code></pre>
 <pre><code>## # A tibble: 3 x 5
 ##   term        estimate std.error statistic   p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)  293473.   7298.       40.2  5.38e-214
-## 2 home_age      -1543.    169.       -9.13 3.44e- 19
-## 3 sqft_living     102.      2.63     38.9  7.15e-205</code></pre>
+## 1 (Intercept)  292888.   7519.       39.0  2.39e-205
+## 2 home_age      -1526.    174.       -8.78 6.63e- 18
+## 3 sqft_living     103.      2.72     37.9  2.19e-198</code></pre>
 </div>
 <div id="predicting-home-selling-prices" class="section level2">
 <h2>1-8 Predicting home selling prices</h2>
@@ -179,16 +179,16 @@ home_predictions</code></pre>
 <pre><code>## # A tibble: 450 x 1
 ##      .pred
 ##      &lt;dbl&gt;
-##  1 474505.
-##  2 488362.
-##  3 402843.
-##  4 507927.
-##  5 449388.
-##  6 534012.
-##  7 426894.
-##  8 458630.
-##  9 405985.
-## 10 404378.
+##  1 539503.
+##  2 381920.
+##  3 632172.
+##  4 489681.
+##  5 508946.
+##  6 450705.
+##  7 530021.
+##  8 488195.
+##  9 621277.
+## 10 406583.
 ## # ... with 440 more rows</code></pre>
 <pre class="r"><code># Combine test data with predictions
 home_test_results &lt;- home_test %&gt;% 
@@ -200,16 +200,16 @@ home_test_results</code></pre>
 <pre><code>## # A tibble: 450 x 4
 ##    selling_price home_age sqft_living   .pred
 ##            &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;
-##  1        380000       24        2130 474505.
-##  2        464950       19        2190 488362.
-##  3        356000       24        1430 402843.
-##  4        495000        3        2140 507927.
-##  5        552321       29        1960 449388.
-##  6        485000        6        2440 534012.
-##  7        381000       25        1680 426894.
-##  8        450000       25        1990 458630.
-##  9        398000       14        1310 405985.
-## 10        389999       24        1445 404378.
+##  1        487000       10        2540 539503.
+##  2        411000       18        1130 381920.
+##  3        635000        4        3350 632172.
+##  4        464950       19        2190 489681.
+##  5        495000        3        2140 508946.
+##  6        552321       29        1960 450705.
+##  7        475000        0        2300 530021.
+##  8        540000       22        2220 488195.
+##  9        624000       26        3570 621277.
+## 10        398000       14        1310 406583.
 ## # ... with 440 more rows</code></pre>
 </div>
 <div id="model-performance-metrics" class="section level2">
@@ -222,16 +222,16 @@ home_test_results</code></pre>
 <pre><code>## # A tibble: 450 x 4
 ##    selling_price home_age sqft_living   .pred
 ##            &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;
-##  1        380000       24        2130 474505.
-##  2        464950       19        2190 488362.
-##  3        356000       24        1430 402843.
-##  4        495000        3        2140 507927.
-##  5        552321       29        1960 449388.
-##  6        485000        6        2440 534012.
-##  7        381000       25        1680 426894.
-##  8        450000       25        1990 458630.
-##  9        398000       14        1310 405985.
-## 10        389999       24        1445 404378.
+##  1        487000       10        2540 539503.
+##  2        411000       18        1130 381920.
+##  3        635000        4        3350 632172.
+##  4        464950       19        2190 489681.
+##  5        495000        3        2140 508946.
+##  6        552321       29        1960 450705.
+##  7        475000        0        2300 530021.
+##  8        540000       22        2220 488195.
+##  9        624000       26        3570 621277.
+## 10        398000       14        1310 406583.
 ## # ... with 440 more rows</code></pre>
 <pre class="r"><code># Caculate the RMSE metric
 home_test_results %&gt;% 
@@ -239,14 +239,14 @@ home_test_results %&gt;%
 <pre><code>## # A tibble: 1 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 rmse    standard      49891.</code></pre>
+## 1 rmse    standard      48554.</code></pre>
 <pre class="r"><code># Calculate the R squared metric
 home_test_results %&gt;% 
   rsq(selling_price , .pred)</code></pre>
 <pre><code>## # A tibble: 1 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 rsq     standard       0.620</code></pre>
+## 1 rsq     standard       0.643</code></pre>
 </div>
 <div id="r-squared-plot" class="section level2">
 <h2>1-11 R squared plot</h2>
@@ -282,16 +282,16 @@ predictions_df</code></pre>
 <pre><code>## # A tibble: 450 x 5
 ##    id                 .pred  .row selling_price .config             
 ##    &lt;chr&gt;              &lt;dbl&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt;               
-##  1 train/test split 413013.     5        380000 Preprocessor1_Model1
-##  2 train/test split 475169.     8        464950 Preprocessor1_Model1
-##  3 train/test split 441999.    11        356000 Preprocessor1_Model1
-##  4 train/test split 479184.    12        495000 Preprocessor1_Model1
-##  5 train/test split 465349.    15        552321 Preprocessor1_Model1
-##  6 train/test split 559623.    17        485000 Preprocessor1_Model1
-##  7 train/test split 393424.    18        381000 Preprocessor1_Model1
-##  8 train/test split 474725.    21        450000 Preprocessor1_Model1
-##  9 train/test split 382127.    24        398000 Preprocessor1_Model1
-## 10 train/test split 396010.    25        389999 Preprocessor1_Model1
+##  1 train/test split 527861.     1        487000 Preprocessor1_Model1
+##  2 train/test split 399723.     3        411000 Preprocessor1_Model1
+##  3 train/test split 694380.     4        635000 Preprocessor1_Model1
+##  4 train/test split 475419.     8        464950 Preprocessor1_Model1
+##  5 train/test split 478196.    12        495000 Preprocessor1_Model1
+##  6 train/test split 468636.    15        552321 Preprocessor1_Model1
+##  7 train/test split 461785.    16        475000 Preprocessor1_Model1
+##  8 train/test split 513089.    20        540000 Preprocessor1_Model1
+##  9 train/test split 628497.    22        624000 Preprocessor1_Model1
+## 10 train/test split 380541.    24        398000 Preprocessor1_Model1
 ## # ... with 440 more rows</code></pre>
 <pre class="r"><code># Make an R squared plot using predictions_df
 ggplot(predictions_df, aes(x = selling_price , y = .pred)) + 
@@ -356,11 +356,11 @@ logistic_fit</code></pre>
 ## 
 ## Coefficients:
 ##     (Intercept)    avg_call_mins    avg_intl_mins  monthly_charges  
-##       -1.858056         0.010053        -0.024337         0.002157  
+##       -1.736150         0.010784        -0.022900        -0.004793  
 ## 
 ## Degrees of Freedom: 730 Total (i.e. Null);  727 Residual
 ## Null Deviance:       932.4 
-## Residual Deviance: 802.4     AIC: 810.4</code></pre>
+## Residual Deviance: 798.1     AIC: 806.1</code></pre>
 </div>
 <div id="combining-test-dataset-results" class="section level2">
 <h2>2-4 Combining test dataset results</h2>
@@ -385,16 +385,16 @@ telecom_results</code></pre>
 <pre><code>## # A tibble: 244 x 4
 ##    canceled_service .pred_class .pred_no .pred_yes
 ##    &lt;chr&gt;            &lt;fct&gt;          &lt;dbl&gt;     &lt;dbl&gt;
-##  1 no               no             0.889    0.111 
-##  2 yes              yes            0.474    0.526 
-##  3 no               no             0.600    0.400 
-##  4 no               no             0.840    0.160 
-##  5 yes              yes            0.491    0.509 
-##  6 yes              yes            0.404    0.596 
-##  7 no               no             0.622    0.378 
-##  8 no               no             0.904    0.0962
-##  9 no               no             0.676    0.324 
-## 10 no               no             0.620    0.380 
+##  1 yes              no             0.855     0.145
+##  2 no               no             0.784     0.216
+##  3 no               no             0.516     0.484
+##  4 no               no             0.735     0.265
+##  5 no               no             0.854     0.146
+##  6 no               yes            0.463     0.537
+##  7 no               no             0.860     0.140
+##  8 yes              no             0.818     0.182
+##  9 no               yes            0.419     0.581
+## 10 yes              yes            0.431     0.569
 ## # ... with 234 more rows</code></pre>
 </div>
 <div id="evaluating-performance-with-yardstick" class="section level2">
@@ -409,22 +409,22 @@ conf_mat(telecom_results, truth = canceled_service,
 ## was converted to a factor</code></pre>
 <pre><code>##           Truth
 ## Prediction  no yes
-##        no  139  47
-##        yes  23  35</code></pre>
+##        no  141  51
+##        yes  21  31</code></pre>
 <pre class="r"><code># Calculate the accuracy
 accuracy(telecom_results, truth = factor(canceled_service),
     estimate = .pred_class)</code></pre>
 <pre><code>## # A tibble: 1 x 3
 ##   .metric  .estimator .estimate
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
-## 1 accuracy binary         0.713</code></pre>
+## 1 accuracy binary         0.705</code></pre>
 <pre class="r"><code># Calculate the sensitivity
 sens(telecom_results, truth = factor(canceled_service),
     estimate = .pred_class)</code></pre>
 <pre><code>## # A tibble: 1 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 sens    binary         0.858</code></pre>
+## 1 sens    binary         0.870</code></pre>
 </div>
 <div id="creating-custom-metric-sets" class="section level2">
 <h2>2-8 Creating custom metric sets</h2>
@@ -471,15 +471,15 @@ threshold_df</code></pre>
 ##    .threshold specificity sensitivity
 ##         &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;
 ##  1  -Inf                0       1    
-##  2     0.0396           0       1    
-##  3     0.0437           0       0.994
-##  4     0.0500           0       0.988
-##  5     0.0529           0       0.981
-##  6     0.0546           0       0.975
-##  7     0.0584           0       0.969
-##  8     0.0596           0       0.963
-##  9     0.0783           0       0.957
-## 10     0.0821           0       0.951
+##  2     0.0179           0       1    
+##  3     0.0274           0       0.994
+##  4     0.0302           0       0.988
+##  5     0.0305           0       0.981
+##  6     0.0389           0       0.975
+##  7     0.0402           0       0.969
+##  8     0.0495           0       0.963
+##  9     0.0531           0       0.957
+## 10     0.0590           0       0.951
 ## # ... with 236 more rows</code></pre>
 <pre class="r"><code># Plot ROC curve
 threshold_df %&gt;% 
@@ -492,7 +492,7 @@ roc_auc(telecom_results,
 <pre><code>## # A tibble: 1 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 roc_auc binary         0.260</code></pre>
+## 1 roc_auc binary         0.277</code></pre>
 </div>
 <div id="streamlining-the-modeling-process" class="section level2">
 <h2>2-13 Streamlining the modeling process</h2>
@@ -509,8 +509,8 @@ telecom_last_fit %&gt;%
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.713 Preprocessor1_Model1
-## 2 roc_auc  binary         0.740 Preprocessor1_Model1</code></pre>
+## 1 accuracy binary         0.705 Preprocessor1_Model1
+## 2 roc_auc  binary         0.723 Preprocessor1_Model1</code></pre>
 </div>
 <div id="collecting-predictions-and-creating-custom-metrics" class="section level2">
 <h2>2-14 Collecting predictions and creating custom metrics</h2>
@@ -525,16 +525,16 @@ last_fit_results</code></pre>
 <pre><code>## # A tibble: 244 x 7
 ##    id        .pred_no .pred_yes  .row .pred_class `factor(canceled_s~ .config   
 ##    &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;               &lt;chr&gt;     
-##  1 train/te~    0.889    0.111      8 no          no                  Preproces~
-##  2 train/te~    0.474    0.526      9 yes         yes                 Preproces~
-##  3 train/te~    0.600    0.400     15 no          no                  Preproces~
-##  4 train/te~    0.840    0.160     27 no          no                  Preproces~
-##  5 train/te~    0.491    0.509     31 yes         yes                 Preproces~
-##  6 train/te~    0.404    0.596     34 yes         yes                 Preproces~
-##  7 train/te~    0.622    0.378     39 no          no                  Preproces~
-##  8 train/te~    0.904    0.0962    40 no          no                  Preproces~
-##  9 train/te~    0.676    0.324     42 no          no                  Preproces~
-## 10 train/te~    0.620    0.380     48 no          no                  Preproces~
+##  1 train/te~    0.855     0.145     4 no          yes                 Preproces~
+##  2 train/te~    0.784     0.216     6 no          no                  Preproces~
+##  3 train/te~    0.516     0.484    16 no          no                  Preproces~
+##  4 train/te~    0.735     0.265    20 no          no                  Preproces~
+##  5 train/te~    0.854     0.146    21 no          no                  Preproces~
+##  6 train/te~    0.463     0.537    24 yes         no                  Preproces~
+##  7 train/te~    0.860     0.140    32 no          no                  Preproces~
+##  8 train/te~    0.818     0.182    38 no          yes                 Preproces~
+##  9 train/te~    0.419     0.581    43 yes         no                  Preproces~
+## 10 train/te~    0.431     0.569    53 yes         yes                 Preproces~
 ## # ... with 234 more rows</code></pre>
 <pre class="r"><code># Custom metrics function
 #last_fit_metrics &lt;- metric_set(accuracy, sens, spec, roc_auc)
@@ -559,11 +559,97 @@ logistic_fit %&gt;%
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
 ## 1 accuracy binary         0.807 Preprocessor1_Model1
-## 2 roc_auc  binary         0.860 Preprocessor1_Model1</code></pre>
+## 2 roc_auc  binary         0.814 Preprocessor1_Model1</code></pre>
 <pre class="r"><code># Collect model predictions
 #logistic_fit %&gt;% 
  # collect_predictions() %&gt;% 
   # Plot ROC curve
   #roc_curve(truth = canceled_service, .pred_yes) %&gt;% 
   #autoplot()</code></pre>
+</div>
+<div id="exploring-recipe-objects" class="section level2">
+<h2>3-2 Exploring recipe objects</h2>
+<p>The first step in feature engineering is to specify a recipe object with the recipe() function and add data preprocessing steps with one or more step_*() functions. Storing all of this information in a single recipe object makes it easier to manage complex feature engineering pipelines and transform new data sources.</p>
+<p>How many numeric and nominal predictor variables are encoded in the telecom_rec object?</p>
+<pre class="r"><code>telecom_rec &lt;- recipe(canceled_service ~ .,
+                      data = telecom_df) %&gt;% 
+  step_log(avg_call_mins, base = 10)
+
+summary(telecom_rec)</code></pre>
+<pre><code>## # A tibble: 10 x 4
+##    variable            type    role      source  
+##    &lt;chr&gt;               &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;   
+##  1 X1                  numeric predictor original
+##  2 cellular_service    nominal predictor original
+##  3 avg_data_gb         numeric predictor original
+##  4 avg_call_mins       numeric predictor original
+##  5 avg_intl_mins       numeric predictor original
+##  6 internet_service    nominal predictor original
+##  7 contract            nominal predictor original
+##  8 months_with_company numeric predictor original
+##  9 monthly_charges     numeric predictor original
+## 10 canceled_service    nominal outcome   original</code></pre>
+</div>
+<div id="creating-recipe-objects" class="section level2">
+<h2>Creating recipe objects</h2>
+<pre class="r"><code># Specify feature engineering recipe
+telecom_log_rec &lt;- recipe(canceled_service ~ ., 
+                          data = telecom_training) %&gt;%
+  # Add log transformation step
+  step_log(avg_call_mins, avg_intl_mins, base = 10)
+
+# View variable roles and data types
+telecom_log_rec %&gt;%
+  summary()</code></pre>
+<pre><code>## # A tibble: 10 x 4
+##    variable            type    role      source  
+##    &lt;chr&gt;               &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;   
+##  1 X1                  numeric predictor original
+##  2 cellular_service    nominal predictor original
+##  3 avg_data_gb         numeric predictor original
+##  4 avg_call_mins       numeric predictor original
+##  5 avg_intl_mins       numeric predictor original
+##  6 internet_service    nominal predictor original
+##  7 contract            nominal predictor original
+##  8 months_with_company numeric predictor original
+##  9 monthly_charges     numeric predictor original
+## 10 canceled_service    nominal outcome   original</code></pre>
+</div>
+<div id="discovering-correlated-predictors" class="section level2">
+<h2>3-6 Discovering correlated predictors</h2>
+<p>Correlated predictor variables provide redundant information and can negatively impact the model fitting process. When two variables are highly correlated, their values change linearly with each other and hence provide the same information to your machine learning algorithms. This phenomenon is know as multicollinearity.</p>
+<p>Before beginning the model fitting process, it’s important to explore your dataset to uncover these relationships and remove them in your feature engineering steps.</p>
+<pre class="r"><code>telecom_training %&gt;% 
+  # Select numeric columns
+  select_if(is.numeric) %&gt;% 
+  # Calculate correlation matrix
+  cor()</code></pre>
+<pre><code>##                               X1 avg_data_gb avg_call_mins avg_intl_mins
+## X1                   1.000000000 -0.03120397  -0.026003680  -0.003673486
+## avg_data_gb         -0.031203966  1.00000000   0.162746317   0.149451616
+## avg_call_mins       -0.026003680  0.16274632   1.000000000   0.060246713
+## avg_intl_mins       -0.003673486  0.14945162   0.060246713   1.000000000
+## months_with_company -0.009110928  0.42778886   0.004486417   0.239783992
+## monthly_charges     -0.032597989  0.95709117   0.162098112   0.148429397
+##                     months_with_company monthly_charges
+## X1                         -0.009110928     -0.03259799
+## avg_data_gb                 0.427788864      0.95709117
+## avg_call_mins               0.004486417      0.16209811
+## avg_intl_mins               0.239783992      0.14842940
+## months_with_company         1.000000000      0.45853253
+## monthly_charges             0.458532529      1.00000000</code></pre>
+<pre class="r"><code># Plot correlated predictors
+ggplot(telecom_training, aes(x = avg_data_gb, y = monthly_charges)) + 
+  # Add points
+  geom_point()  + 
+  # Add title
+  labs(title = &quot;Monthly Charges vs. Average Data Usage&quot;,
+       y = &#39;Monthly Charges ($)&#39;, x = &#39;Average Data Usage (GB)&#39;) </code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+</div>
+<div id="removing-correlated-predictors-with-recipes" class="section level2">
+<h2>3-7 Removing correlated predictors with recipes</h2>
+<p>Removing correlated predictor variables from your training and test datasets is an important feature engineering step to ensure your model fitting runs as smoothly as possible.</p>
+<p>Now that you have discovered that monthly_charges and avg_data_gb are highly correlated, you must add a correlation filter with step_corr() to your feature engineering pipeline for the telecommunications data.</p>
+<p>In this exercise, you will create a recipe object that removes correlated predictors from the telecommunications data.</p>
 </div>

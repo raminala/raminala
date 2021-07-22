@@ -187,7 +187,7 @@ print(model)</code></pre>
 <p>Trade-off:</p>
 <p><strong><em>low K:</em></strong> is more biased (undesirable).</p>
 <p><strong><em>high K:</em></strong> large variance (undesirable).</p>
-<p>here, we consider k=5 for 440 observations.</p>
+<p>here, we consider <em>k=5</em> for 440 observations.</p>
 <pre class="r"><code># Define training control
 set.seed(10) 
 
@@ -213,6 +213,33 @@ print(model)</code></pre>
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
 </div>
-<div id="bootstraping-method" class="section level2">
-<h2>Bootstraping method</h2>
+<div id="bootstrap-method" class="section level2">
+<h2>Bootstrap method</h2>
+<pre class="r"><code># Define training control
+train.control &lt;- trainControl(method = &quot;boot&quot;, number = 100)
+
+# Train the model
+model &lt;- train(price ~., data = diamonds, method = &quot;lm&quot;,
+               trControl = train.control)
+# Summarize the results
+print(model)</code></pre>
+<pre><code>## Linear Regression 
+## 
+## 440 samples
+##   7 predictor
+## 
+## No pre-processing
+## Resampling: Bootstrapped (100 reps) 
+## Summary of sample sizes: 440, 440, 440, 440, 440, 440, ... 
+## Resampling results:
+## 
+##   RMSE      Rsquared   MAE     
+##   228.7459  0.9624027  158.1545
+## 
+## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+<p>RMSE (Root Mean Squared Error)</p>
+<p>MAE(Mean Absolute Error)</p>
+<p>The R-squared represents the proportion of variation in the outcome explained by the predictor variables included in the model
+The higher the R-squared, the better the model.
+The lower the RMSE and the MAE, the better the model.</p>
 </div>

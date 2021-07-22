@@ -309,7 +309,7 @@ Trade-off:
 
 
 
-here, we consider k=5 for 440 observations.
+here, we consider *k=5* for 440 observations.
 
 ```{r, warning=FALSE}
 # Define training control
@@ -324,4 +324,23 @@ model <- train(price ~., data = diamonds, method = "lm",
 print(model)
 ```
 
-## Bootstraping method 
+## Bootstrap method 
+
+```{r, warning=FALSE}
+# Define training control
+train.control <- trainControl(method = "boot", number = 100)
+
+# Train the model
+model <- train(price ~., data = diamonds, method = "lm",
+               trControl = train.control)
+# Summarize the results
+print(model)
+```
+
+RMSE (Root Mean Squared Error)
+
+MAE(Mean Absolute Error)
+
+The R-squared represents the proportion of variation in the outcome explained by the predictor variables included in the model
+The higher the R-squared, the better the model.
+The lower the RMSE and the MAE, the better the model.
