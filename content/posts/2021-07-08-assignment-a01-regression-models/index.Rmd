@@ -258,6 +258,7 @@ predict(MLR, explanatory_data)
 
 - Dataset was very clean dataset with nearly no need for cleaning. For example there were not any NA and outlier data in the dataset.
 
+---
 
 ## Resampling Methods
 
@@ -277,17 +278,49 @@ The LOOCV method is using all data points therefore it reduces the bias.
 
 However, the execution time could be so long if n (number of observation) is large. Besides, we know that low bias means high variance and the model is more prone to overfitting.
 
-```{r}
+---
+
+```{r, warning=FALSE}
 # Define training control
 train.control <- trainControl(method = "LOOCV")
+
 # Train the model
-model <- train(Fertility ~., data = swiss, method = "lm",
+model <- train(price ~., data = diamonds, method = "lm",
                trControl = train.control)
 # Summarize the results
 print(model)
 ```
 
+```{r}
+summary(model) %>%
+  tidy()
+```
 
+## K-fold cross-validation
+
+The obvious advantage of k-fold over LOOCV is K-fold is faster (needs less computation)). A less obvious but potentially more important advantage of k-fold CV is that it often gives more accurate estimates of the test error rate than does LOOCV.
+
+Trade-off:
+
+***low K:*** is more biased (undesirable).
+
+***high K:*** large variance (undesirable).
+
+
+
+here, we consider k=5 for 440 observations.
+
+```{r, warning=FALSE}
+# Define training control
+set.seed(10) 
+
+train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 4)
+
+# Train the model
+model <- train(price ~., data = diamonds, method = "lm",
+               trControl = train.control)
+# Summarize the results
+print(model)
+```
 
 ## Bootstraping method 
-
