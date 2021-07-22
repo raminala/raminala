@@ -157,7 +157,7 @@ These are measures of association between variables.
 
 cor_price_carat <- cor(diamonds$price, diamonds$carat)
 
-paste("Corrolation between price-carat: ", cor_price_carat)
+paste("Correlation between price-carat: ", cor_price_carat)
 
 
   
@@ -283,13 +283,13 @@ However, the execution time could be so long if n (number of observation) is lar
 
 ```{r, warning=FALSE}
 # Define training control
-train.control <- trainControl(method = "LOOCV")
+train.control_LOOCV <- trainControl(method = "LOOCV")
 
 # Train the model
-model <- train(price ~., data = diamonds, method = "lm",
-               trControl = train.control)
+model_LOOCV <- train(price ~., data = diamonds, method = "lm",
+               trControl = train.control_LOOCV)
 # Summarize the results
-print(model)
+print(model_LOOCV)
 ```
 
 
@@ -311,26 +311,26 @@ here, we consider *k=5* for 440 observations.
 # Define training control
 set.seed(10) 
 
-train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 4)
+train.control_K_fold <- trainControl(method = "repeatedcv", number = 244, repeats = 4)
 
 # Train the model
-model <- train(price ~., data = diamonds, method = "lm",
-               trControl = train.control)
+model_K_fold <- train(price ~., data = diamonds, method = "lm",
+               trControl = train.control_K_fold)
 # Summarize the results
-print(model)
+print(model_K_fold)
 ```
 
 ## Bootstrap method 
 
 ```{r, warning=FALSE}
 # Define training control
-train.control <- trainControl(method = "boot", number = 100)
+train.control_Bootstrap <- trainControl(method = "boot", number = 100)
 
 # Train the model
-model <- train(price ~., data = diamonds, method = "lm",
-               trControl = train.control)
+model_Bootstrap <- train(price ~., data = diamonds, method = "lm",
+               trControl = train.control_Bootstrap)
 # Summarize the results
-print(model)
+print(model_Bootstrap)
 ```
 
 RMSE (Root Mean Squared Error)
@@ -340,3 +340,84 @@ MAE(Mean Absolute Error)
 The R-squared represents the proportion of variation in the outcome explained by the predictor variables included in the model
 The higher the R-squared, the better the model.
 The lower the RMSE and the MAE, the better the model.
+
+## Comparing Models using R squared plot
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+price_predictions_SLR <- predict(SLR, new_data = diamonds)
+price_predictions_MLR <- predict(MLR, new_data = diamonds)
+price_predictions_model_LOOCV <- predict(model_LOOCV$finalModel, new_data = diamonds)
+price_predictions_model_K_fold <- predict(model_K_fold$finalModel, new_data = diamonds)
+price_predictions_model_Bootstrap <- predict(model_Bootstrap$finalModel, new_data = diamonds)
+
+test_results_SLR <- diamonds %>%
+  bind_cols(Price_pred=price_predictions_SLR)
+
+test_results_MLR <- diamonds %>%
+  bind_cols(Price_pred=price_predictions_MLR)
+
+test_results_model_LOOCV <- diamonds %>%
+  bind_cols(Price_pred=price_predictions_model_LOOCV)
+
+test_results_model_K_fold <- diamonds %>%
+  bind_cols(Price_pred=price_predictions_model_K_fold)
+
+test_results_model_Bootstrap <- diamonds %>%
+  bind_cols(Price_pred=price_predictions_model_Bootstrap)
+
+
+ggplot(test_results_SLR, aes(price ,Price_pred))+
+  geom_point(alpha = 0.5) + 
+  geom_abline(color = 'blue', linetype = 2) +
+  coord_obs_pred() +
+  labs(x = 'Actual diamond Price', y = 'Prediction by SLR')+
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.8564319',  size = 5, color="red")
+
+SLR %>% glance() %>%  pull(r.squared)
+#--------------------------------------------------------------------------------------------------
+ggplot(test_results_MLR, aes(price ,Price_pred))+
+  geom_point(alpha = 0.5) + 
+  geom_abline(color = 'blue', linetype = 2) +
+  coord_obs_pred() +
+  labs(x = 'Actual diamond Price', y = 'Prediction by MLR')+
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.991704',  size = 5, color="red")
+
+MLR %>% glance() %>%  pull(r.squared)
+#--------------------------------------------------------------------------------------------------
+ggplot(test_results_model_LOOCV, aes(price ,Price_pred))+
+  geom_point(alpha = 0.5) + 
+  geom_abline(color = 'blue', linetype = 2) +
+  coord_obs_pred() +
+  labs(x = 'Actual diamond Price', y = 'Prediction by LOOCV')+
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.9673791',  size = 5, color="red")
+
+model_LOOCV$results %>%  pull(Rsquared)
+#--------------------------------------------------------------------------------------------------
+ggplot(test_results_model_K_fold, aes(price ,Price_pred))+
+  geom_point(alpha = 0.5) + 
+  geom_abline(color = 'blue', linetype = 2) +
+  coord_obs_pred() +
+  labs(x = 'Actual diamond Price', y = 'Prediction by K-fold')+
+  annotate('text', x = 800, y = 4000, label = 'R^2=1',  size = 5, color="red")
+
+
+model_K_fold$results %>%  pull(Rsquared)
+#--------------------------------------------------------------------------------------------------
+
+ggplot(test_results_model_Bootstrap, aes(price ,Price_pred))+
+  geom_point(alpha = 0.5) + 
+  geom_abline(color = 'blue', linetype = 2) +
+  coord_obs_pred() +
+  labs(x = 'Actual diamond Price', y = 'Prediction by Bootstrap')+
+  annotate('text', x = 800, y = 4000, label = 'R^2=1',  size = 5, color="red")
+
+
+model_K_fold$results %>%  pull(Rsquared)
+
+
+
+```
+
+

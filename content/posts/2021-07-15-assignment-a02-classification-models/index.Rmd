@@ -82,7 +82,7 @@ bank %>%
 ```
 
 
-This univariate analysis could give a clue about probability of subscription in customers. from the above table, it is obvious that magority of customers did not subscribed (88.476%) comparing slighly more than ten percent of customers who finally choose to subscribe (11.524%). The good point about dataset is it provided valid outcome for all customers (whether subscribed or not).
+This univariate analysis could give a clue about probability of subscription in customers. from the above table, it is obvious that majority of customers did not subscribed (88.476%) comparing slightly more than ten percent of customers who finally choose to subscribe (11.524%). The good point about dataset is it provided valid outcome for all customers (whether subscribed or not).
 
 
 
@@ -95,17 +95,17 @@ In this part two variables are considering and their relationship are examined. 
 1=yes (subscribed).
 
 
-## Corrolation between age and balance
+## correlation between age and balance
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 cor_age_balance <- cor(bank$age, bank$balance)
 
-paste("Corrolation between age and balance: ", cor_age_balance)
+paste("correlation between age and balance: ", cor_age_balance)
 
 ```
 
-It shows small positive corrolation between age and balance. generally older clients tends to have higher balamce but the corrolation is more like a random relation  because it is more close to zero (random case) than 1 (strong corrolation).
+It shows small positive correlation between age and balance. generally older clients tends to have higher balance but the correlation is more like a random relation  because it is more close to zero (random case) than 1 (strong correlation).
 
 
 
@@ -201,7 +201,7 @@ bank %>%
 
 ```
 
-Again it looks difficult to get information from this plot as they have not strong relation. However, blue line that is the generalized regression line, shows that higher age people tends to subscribe more. An important subject to remember is in a multi variable problem, considering one parameter alone could be misleading because of corrolation of variables.
+Again it looks difficult to get information from this plot as they have not strong relation. However, blue line that is the generalized regression line, shows that higher age people tends to subscribe more. An important subject to remember is in a multi-variable problem, considering one parameter alone could be misleading because of correlation of variables.
 
 ## *subscription status~default*
 
@@ -234,7 +234,7 @@ bank %>%
   ggplot(aes(age, balance, color=y))+
   geom_point()
 ```
-This plot consists of two numerical variables (age and balance) that both are explanatory variables and response variable which depicted by color (pink colors did not subscribed and blue colours subscribed). 
+This plot consists of two numerical variables (age and balance) that both are explanatory variables and response variable which depicted by color (pink colors did not subscribed and blue colors subscribed). 
 
 
 ## *Analysis of four variables:subscription status~age and marital and loan*
@@ -265,7 +265,7 @@ Pr(>|z|) value for  balance is close to 1 and this makes us to believe it is not
 
 In addition, Coefficients of above analysis are all small because the number of respondents with subscribed status are very lower than not subscribed clients.
 
-Finally, some parameters that seemed to be determinant in univariate analysis are not important in fact. This is because of corrolation between non determinant and determinant 
+Finally, some parameters that seemed to be determinant in univariate analysis are not important in fact. This is because of correlation between non determinant and determinant 
 variables.
 
 ## Summary of findings
@@ -274,7 +274,7 @@ variables.
 
 - Univariate analysis shows positive slope for both age and balance (higher age/balance means higher chance of subscription). However, generalized linear Modeling with consideration of all variables shows balance has not an impact on chance of subscription.
 
-- Univariate analysis  of job shows that a big postion of students, unemployed, and those with unknown jobs subscribed, but respondents with blue-color jobs and technicians did not subscribe so often.
+- Univariate analysis  of job shows that a big portion of students, unemployed, and those with unknown jobs subscribed, but respondents with blue-color jobs and technicians did not subscribe so often.
 
 - Divorced respondents was more likely to subscribe than married and single ones.
 
