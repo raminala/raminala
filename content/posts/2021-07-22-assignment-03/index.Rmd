@@ -210,3 +210,10 @@ conf_mat(p4, truth = truth,
 
 ```
 
+
+
+
+
+
+
+the execution time for LOOCV is vaey large.

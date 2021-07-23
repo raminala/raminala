@@ -133,14 +133,19 @@ minimum, mode, median, max, first and third quarterlies. Note that the red dotte
 <pre class="r"><code>library(caret)
 
 library(yardstick)</code></pre>
+<p>Datasampling versus resampling: Data sampling refers to statistical methods for selecting observations from the domain with the objective of estimating a population parameter. Whereas data resampling refers to methods for economically using a collected dataset to improve the estimate of the population parameter and help to quantify the uncertainty of the estimate. In this part we are studying resampling. Two methods are considereing in the following paragraphs: cross validation (two sub-categories, LOOCV, K-fold) and bootstraping.</p>
+<p>for each category resampling is conducted using <strong><em>caret</em></strong> package and their performance is evaluated and compared using appropriate methods.</p>
+<p>In the above sections two models achieved: <strong><em>Single linear regression (SLR)</em></strong> and <strong><em>Multiple linear regression (MLR)</em></strong>. In the following paragraphs three models will calculate using resampling: LOOCV, K-fold, and Bootstrap. So, we will have five models in total. performance of them will be compared.</p>
 </div>
-<div id="cross-validation-method" class="section level2">
-<h2>Cross-Validation method</h2>
+<div id="cross-validation-methods" class="section level2">
+<h2>Cross-Validation methods</h2>
 </div>
 <div id="loocv-leave-one-out-cross-validation" class="section level2">
 <h2>LOOCV (Leave one out cross validation)</h2>
-<p>The LOOCV method is using all data points therefore it reduces the bias.</p>
-<p>However, the execution time could be so long if n (number of observation) is large. Besides, we know that low bias means high variance and the model is more prone to overfitting.</p>
+<p>The LOOCV method is using all data points (excludes only one observation each time). There are advantages and disadvantages for this method:</p>
+<p><strong>Advantage:</strong> Because of using <em>n-1</em> observations in each iteration, it reduces the bias (because it will not bias to selected portion).</p>
+<p><strong>Disadvantage:</strong> The execution time could be so long if n (number of observation) is large. Fortunately, we have 450 observations in <em>diamond</em> dataset and my machine with 16GB of RAM easily executed this. Besides, we know that low bias means high variance and the method is more prone to overfitting.</p>
+<p>Divide the dataset to two sections (train and test) could show the overfitting, however, Here, we will not practice that.</p>
 <hr />
 <pre class="r"><code># Define training control
 train.control_LOOCV &lt;- trainControl(method = &quot;LOOCV&quot;)
