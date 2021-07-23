@@ -286,7 +286,11 @@ The LOOCV method is using all data points (excludes only one observation each ti
 
 **Disadvantage:** The execution time could be so long if n (number of observation) is large. Fortunately, we have 450 observations in *diamond* dataset and my machine with 16GB of RAM easily executed this. Besides, we know that low bias means high variance and the method is more prone to overfitting.
 
+Other disadvantage of this method is it tests the model performance against *one data point* at each iteration.This might result to higher variation in the prediction error, especially if some data points are outliers.
+
 Divide the dataset to two sections (train and test) could show the overfitting, however, Here, we will not practice that.
+
+Below is code for performing LOOCV using caret library.
 
 ---
 
@@ -299,8 +303,16 @@ model_LOOCV <- train(price ~., data = diamonds, method = "lm",
                trControl = train.control_LOOCV)
 # Summarize the results
 print(model_LOOCV)
+
 ```
 
+As expected, sample sizes are 439 (440-1) and process repeated 440 times (n). Three important parameters are provided to evaluate performance.
+
+RMSE (Root Mean Squared Error), which measures the average prediction errors made by the model in predicting the outcome for an observation. We expect low value for RMSE. Note that an outlier observation could drastically increase this error. The achieved value in this part will be compared by this values in other methods to compare these methods.
+
+To tackale the problem of outlier in RMSE, MAE (Mean Absolute Error) is introduced. MAE is an alternative to the RMSE that is less sensitive to outliers. It corresponds to the average absolute difference between observed and predicted outcomes. again, the lower the MAE, the better the model. We compare this number for different models in following parts.
+
+Rsquared or R2 is familiar parameter of squared correlation between the observed outcome values and the predicted values by the model. The closer to 1 the adjusted R2, the better the model. here we achieved 0.9673791.
 
 ## K-fold cross-validation
 
