@@ -498,3 +498,4 @@ conf_mat(p4, truth = truth,
   autoplot(type = 'heatmap')
 
 ```
+

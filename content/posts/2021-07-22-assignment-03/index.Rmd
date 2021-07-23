@@ -1,0 +1,200 @@
+---
+title: Assignment-03
+author: ''
+date: '2021-07-22'
+slug: []
+categories: []
+tags: []
+---
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(tidymodels)
+library(knitr)
+library(markdown)
+bank <- read_csv("bank.csv") %>%
+  select(c(age, job, marital, education, default, balance, housing, loan, y)) %>%
+  mutate(subscription_status=ifelse(y == 'yes', 1, 0))
+ 
+
+```
+
+
+## Resampling Methods
+
+```{r, warning=FALSE, message=FALSE}
+library(caret)
+
+library(yardstick)
+
+```
+
+## Cross-Validation method
+
+## LOOCV (Leave one out cross validation) 
+
+The LOOCV method is using all data points therefore it reduces the bias.
+
+However, the execution time could be so long if n (number of observation) is large. Besides, we know that low bias means high variance and the model is more prone to overfitting.
+
+---
+
+```{r, warning=FALSE}
+# Define training control
+train.control_LOOCV <- trainControl(method = "LOOCV")
+
+# Train the model
+model_LOOCV <- train(subscription_status ~ ., data = bank, method = "lm",
+               trControl = train.control_LOOCV)
+# Summarize the results
+print(model_LOOCV)
+```
+
+
+## K-fold cross-validation
+
+
+```{r, warning=FALSE}
+# Define training control
+set.seed(120) 
+
+train.control_K_fold <- trainControl(method = "repeatedcv", number = 10, repeats = 4)
+
+# Train the model
+model_K_fold <- train(subscription_status ~., data = bank, method = "lm",
+               trControl = train.control_K_fold)
+# Summarize the results
+print(model_K_fold)
+```
+
+
+
+## Bootstrap method 
+
+
+```{r, warning=FALSE}
+# Define training control
+train.control_Bootstrap <- trainControl(method = "boot", number = 100)
+
+# Train the model
+model_Bootstrap <- train(subscription_status ~., data = bank, method = "lm",
+               trControl = train.control_Bootstrap)
+# Summarize the results
+print(model_Bootstrap)
+```
+
+
+
+## Evaluating performance with confusion matrix
+
+
+```{r}
+
+status_predictions_SLR <- predict(mdl_bank_S, new_data = bank, type = "response")
+
+status_predictions_MLR <- predict(mdl_bank_M, new_data = bank, type = "response")
+
+status_predictions_model_LOOCV <- predict(model_LOOCV$finalModel, new_data = bank)
+status_predictions_model_K_fold <- predict(model_K_fold$finalModel, new_data = bank)
+status_predictions_model_Bootstrap <- predict(model_Bootstrap$finalModel, new_data = bank)
+
+test_results_SLR <- bank %>%
+  bind_cols(status_pred=status_predictions_SLR)
+
+test_results_MLR <- bank %>%
+  bind_cols(status_pred=status_predictions_MLR)
+
+test_results_model_LOOCV <- bank %>%
+  bind_cols(status_pred=status_predictions_model_LOOCV)
+
+
+test_results_model_K_fold <- bank %>%
+  bind_cols(status_pred=status_predictions_model_K_fold)
+
+test_results_model_Bootstrap <- bank %>%
+  bind_cols(status_pred=status_predictions_model_Bootstrap)
+
+
+```
+
+
+```{r}
+# LOOCV
+
+p <- test_results_model_LOOCV %>% select(subscription_status,status_pred) %>% 
+   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
+   mutate(estimate=ifelse(status_pred == '1' , 'yes', 'no'))
+
+# Calculate the confusion matrix
+conf_mat(p, truth = truth,
+    estimate = estimate)%>% 
+  # Create a heat map
+  autoplot(type = 'heatmap')
+```
+
+
+```{r}
+# K_fold
+
+p2 <- test_results_model_K_fold %>% select(subscription_status,status_pred) %>% 
+   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
+   mutate(estimate=ifelse(status_pred == '1' , 'yes', 'no'))
+
+# Calculate the confusion matrix
+conf_mat(p2, truth = truth,
+    estimate = estimate)%>% 
+  # Create a heat map
+  autoplot(type = 'heatmap')
+```
+
+
+```{r}
+# Bootstrap
+
+p3 <- test_results_model_Bootstrap %>% select(subscription_status,status_pred) %>% 
+   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
+   mutate(estimate=ifelse(status_pred == '1' , 'yes', 'no'))
+
+# Calculate the confusion matrix
+conf_mat(p3, truth = truth,
+    estimate = estimate)%>% 
+  # Create a heat map
+  autoplot(type = 'heatmap')
+
+```
+
+
+```{r}
+# SLR
+
+p4 <- test_results_SLR %>% select(subscription_status,status_pred) %>% 
+   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
+   mutate(estimate=ifelse(status_pred > 0.13 , 'yes', 'no'))
+
+# Calculate the confusion matrix
+conf_mat(p4, truth = truth,
+    estimate = estimate)%>% 
+  # Create a heat map
+  autoplot(type = 'heatmap')
+
+```
+
+
+
+
+```{r}
+#  MLR
+
+p4 <- test_results_MLR %>% select(subscription_status,status_pred) %>% 
+   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
+   mutate(estimate=ifelse(status_pred > 0.3 , 'yes', 'no'))
+
+# Calculate the confusion matrix
+conf_mat(p4, truth = truth,
+    estimate = estimate)%>% 
+  # Create a heat map
+  autoplot(type = 'heatmap')
+
+```
+
