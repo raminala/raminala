@@ -186,6 +186,7 @@ mdl_bank_S <- glm(subscription_status ~ balance , data=bank, family = binomial)
 
 mdl_bank_S %>%
   summary()
+
 ```
 
 
@@ -385,18 +386,18 @@ print(model_Bootstrap)
 
 
 
-## Evaluating performance with yardstick
+## Evaluating performance with confusion matrix
 
 
 ```{r}
 
-status_predictions_SLR <- predict(mdl_bank_S, new_data = bank)
-status_predictions_MLR <- predict(mdl_bank_M, new_data = bank)
+status_predictions_SLR <- predict(mdl_bank_S, new_data = bank, type = "response")
+
+status_predictions_MLR <- predict(mdl_bank_M, new_data = bank, type = "response")
+
 status_predictions_model_LOOCV <- predict(model_LOOCV$finalModel, new_data = bank)
 status_predictions_model_K_fold <- predict(model_K_fold$finalModel, new_data = bank)
 status_predictions_model_Bootstrap <- predict(model_Bootstrap$finalModel, new_data = bank)
-
-
 
 test_results_SLR <- bank %>%
   bind_cols(status_pred=status_predictions_SLR)
@@ -407,6 +408,7 @@ test_results_MLR <- bank %>%
 test_results_model_LOOCV <- bank %>%
   bind_cols(status_pred=status_predictions_model_LOOCV)
 
+
 test_results_model_K_fold <- bank %>%
   bind_cols(status_pred=status_predictions_model_K_fold)
 
@@ -414,9 +416,84 @@ test_results_model_Bootstrap <- bank %>%
   bind_cols(status_pred=status_predictions_model_Bootstrap)
 
 
-
-# Calculate the confusion matrix
-conf_mat(status_predictions_model_LOOCV, truth = subscription_status,
-    estimate = status_pred)
 ```
 
+
+```{r}
+# LOOCV
+
+p <- test_results_model_LOOCV %>% select(subscription_status,status_pred) %>% 
+   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
+   mutate(estimate=ifelse(status_pred == '1' , 'yes', 'no'))
+
+# Calculate the confusion matrix
+conf_mat(p, truth = truth,
+    estimate = estimate)%>% 
+  # Create a heat map
+  autoplot(type = 'heatmap')
+```
+
+
+```{r}
+# K_fold
+
+p2 <- test_results_model_K_fold %>% select(subscription_status,status_pred) %>% 
+   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
+   mutate(estimate=ifelse(status_pred == '1' , 'yes', 'no'))
+
+# Calculate the confusion matrix
+conf_mat(p2, truth = truth,
+    estimate = estimate)%>% 
+  # Create a heat map
+  autoplot(type = 'heatmap')
+```
+
+
+```{r}
+# Bootstrap
+
+p3 <- test_results_model_Bootstrap %>% select(subscription_status,status_pred) %>% 
+   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
+   mutate(estimate=ifelse(status_pred == '1' , 'yes', 'no'))
+
+# Calculate the confusion matrix
+conf_mat(p3, truth = truth,
+    estimate = estimate)%>% 
+  # Create a heat map
+  autoplot(type = 'heatmap')
+
+```
+
+
+```{r}
+# SLR
+
+p4 <- test_results_SLR %>% select(subscription_status,status_pred) %>% 
+   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
+   mutate(estimate=ifelse(status_pred > 0.13 , 'yes', 'no'))
+
+# Calculate the confusion matrix
+conf_mat(p4, truth = truth,
+    estimate = estimate)%>% 
+  # Create a heat map
+  autoplot(type = 'heatmap')
+
+```
+
+
+
+
+```{r}
+# MLR
+
+p4 <- test_results_MLR %>% select(subscription_status,status_pred) %>% 
+   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
+   mutate(estimate=ifelse(status_pred > 0.3 , 'yes', 'no'))
+
+# Calculate the confusion matrix
+conf_mat(p4, truth = truth,
+    estimate = estimate)%>% 
+  # Create a heat map
+  autoplot(type = 'heatmap')
+
+```
