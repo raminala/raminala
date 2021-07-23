@@ -182,9 +182,9 @@ bank %>%
 The added layer to this plot, comparing the previous plot, shows that those who has higher balance are more likely to subscribe to a term deposit. But how strong is this relationship? In other word, is balance very determinant parameter? Let's perform generalized analysis and see the parameters.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-mdl_bank <- glm(subscription_status ~ balance , data=bank, family = binomial)
+mdl_bank_S <- glm(subscription_status ~ balance , data=bank, family = binomial)
 
-mdl_bank %>%
+mdl_bank_S %>%
   summary()
 ```
 
@@ -255,9 +255,9 @@ This plot probably give not more information than a two variable analysis becaus
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-mdl_bank <- glm(subscription_status ~ age+job+marital+education+default+balance+housing+loan , data=bank, family = binomial)
+mdl_bank_M <- glm(subscription_status ~ age+job+marital+education+default+balance+housing+loan , data=bank, family = binomial)
 
-mdl_bank %>%
+mdl_bank_M %>%
   summary()
 ```
 
@@ -390,8 +390,8 @@ print(model_Bootstrap)
 
 ```{r}
 
-status_predictions_SLR <- predict(SLR, new_data = bank)
-status_predictions_MLR <- predict(MLR, new_data = bank)
+status_predictions_SLR <- predict(mdl_bank_S, new_data = bank)
+status_predictions_MLR <- predict(mdl_bank_M, new_data = bank)
 status_predictions_model_LOOCV <- predict(model_LOOCV$finalModel, new_data = bank)
 status_predictions_model_K_fold <- predict(model_K_fold$finalModel, new_data = bank)
 status_predictions_model_Bootstrap <- predict(model_Bootstrap$finalModel, new_data = bank)
@@ -416,7 +416,7 @@ test_results_model_Bootstrap <- bank %>%
 
 
 # Calculate the confusion matrix
-conf_mat(telecom_results, truth = subscription_status,
-    estimate = .pred_class)
+conf_mat(status_predictions_model_LOOCV, truth = subscription_status,
+    estimate = status_pred)
 ```
 
