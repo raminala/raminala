@@ -397,6 +397,24 @@ status_predictions_model_K_fold <- predict(model_K_fold$finalModel, new_data = b
 status_predictions_model_Bootstrap <- predict(model_Bootstrap$finalModel, new_data = bank)
 
 
+
+test_results_SLR <- bank %>%
+  bind_cols(status_pred=status_predictions_SLR)
+
+test_results_MLR <- bank %>%
+  bind_cols(status_pred=status_predictions_MLR)
+
+test_results_model_LOOCV <- bank %>%
+  bind_cols(status_pred=status_predictions_model_LOOCV)
+
+test_results_model_K_fold <- bank %>%
+  bind_cols(status_pred=status_predictions_model_K_fold)
+
+test_results_model_Bootstrap <- bank %>%
+  bind_cols(status_pred=status_predictions_model_Bootstrap)
+
+
+
 # Calculate the confusion matrix
 conf_mat(telecom_results, truth = subscription_status,
     estimate = .pred_class)
