@@ -485,7 +485,7 @@ conf_mat(p4, truth = truth,
 
 
 ```{r}
-# MLR
+#  MLR
 
 p4 <- test_results_MLR %>% select(subscription_status,status_pred) %>% 
    mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
