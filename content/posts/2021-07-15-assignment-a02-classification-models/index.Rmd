@@ -14,7 +14,8 @@ tags:
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(tidymodels)
-
+library(knitr)
+library(markdown)
 bank <- read_csv("bank.csv") %>%
   select(c(age, job, marital, education, default, balance, housing, loan, y)) %>%
   mutate(subscription_status=ifelse(y == 'yes', 1, 0))
@@ -24,7 +25,7 @@ bank <- read_csv("bank.csv") %>%
 
 ## Executive Summary
 
-The data is related with direct marketing campaigns (based on phone calls) of a Portuguese banking institution. This really is a **supervised question** because it has an outcome (y), which defined as if the product (bank term deposit) would be (or not) subscribed, "yes" means subscribed, and "no" means did not subscribe. This dataset consists of **`r nrow(bank)` observations**.
+The data is related with direct marketing campaigns (based on phone calls) of a Portuguese banking institution. This really is a **supervised question** because it has an outcome (y), which defined as if the product (bank term deposit) would be (or not) subscribed, "yes" means subscribed, and "no" means did not subscribe. This dataset consists of **`r nrow(bank)` observations**..
 
 In addition to the outcome classification variable, there are 16 variables. Eight variables are related to statistical information about current and previous campaigns, and they seems irrelevant to  dependent variable. So, there are eight determinant variables Including:
 
