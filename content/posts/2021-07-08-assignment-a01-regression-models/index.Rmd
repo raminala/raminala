@@ -311,7 +311,7 @@ here, we consider *k=5* for 440 observations.
 # Define training control
 set.seed(10) 
 
-train.control_K_fold <- trainControl(method = "repeatedcv", number = 244, repeats = 4)
+train.control_K_fold <- trainControl(method = "repeatedcv", number = 5, repeats = 20)
 
 # Train the model
 model_K_fold <- train(price ~., data = diamonds, method = "lm",
@@ -403,7 +403,7 @@ ggplot(test_results_model_K_fold, aes(price ,Price_pred))+
   geom_abline(color = 'blue', linetype = 2) +
   coord_obs_pred() +
   labs(x = 'Actual diamond Price', y = 'Prediction by K-fold')+
-  annotate('text', x = 800, y = 4000, label = 'R^2=1',  size = 5, color="red")+
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.9670232',  size = 5, color="red")+
   xlim(0, 4000)+ylim(0, 4000)
 
 
@@ -415,11 +415,11 @@ ggplot(test_results_model_Bootstrap, aes(price ,Price_pred))+
   geom_abline(color = 'blue', linetype = 2) +
   coord_obs_pred() +
   labs(x = 'Actual diamond Price', y = 'Prediction by Bootstrap')+
-  annotate('text', x = 800, y = 4000, label = 'R^2=1',  size = 5, color="red")+
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.9623576',  size = 5, color="red")+
   xlim(0, 4000)+ylim(0, 4000)
 
 
-model_K_fold$results %>%  pull(Rsquared)
+model_Bootstrap$results %>%  pull(Rsquared)
 
 
 

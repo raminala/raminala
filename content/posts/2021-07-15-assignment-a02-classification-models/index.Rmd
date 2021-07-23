@@ -322,6 +322,83 @@ variables.
 
 ## Resampling Methods
 
+```{r, warning=FALSE, message=FALSE}
+library(caret)
+
+library(yardstick)
+
+```
+
 ## Cross-Validation method
 
-## Bootstraping method 
+## LOOCV (Leave one out cross validation) 
+
+The LOOCV method is using all data points therefore it reduces the bias.
+
+However, the execution time could be so long if n (number of observation) is large. Besides, we know that low bias means high variance and the model is more prone to overfitting.
+
+---
+
+```{r, warning=FALSE}
+# Define training control
+train.control_LOOCV <- trainControl(method = "LOOCV")
+
+# Train the model
+model_LOOCV <- train(subscription_status ~ ., data = bank, method = "lm",
+               trControl = train.control_LOOCV)
+# Summarize the results
+print(model_LOOCV)
+```
+
+
+## K-fold cross-validation
+
+
+```{r, warning=FALSE}
+# Define training control
+set.seed(120) 
+
+train.control_K_fold <- trainControl(method = "repeatedcv", number = 10, repeats = 4)
+
+# Train the model
+model_K_fold <- train(subscription_status ~., data = bank, method = "lm",
+               trControl = train.control_K_fold)
+# Summarize the results
+print(model_K_fold)
+```
+
+
+
+## Bootstrap method 
+
+
+```{r, warning=FALSE}
+# Define training control
+train.control_Bootstrap <- trainControl(method = "boot", number = 100)
+
+# Train the model
+model_Bootstrap <- train(subscription_status ~., data = bank, method = "lm",
+               trControl = train.control_Bootstrap)
+# Summarize the results
+print(model_Bootstrap)
+```
+
+
+
+## Evaluating performance with yardstick
+
+
+```{r}
+
+status_predictions_SLR <- predict(SLR, new_data = bank)
+status_predictions_MLR <- predict(MLR, new_data = bank)
+status_predictions_model_LOOCV <- predict(model_LOOCV$finalModel, new_data = bank)
+status_predictions_model_K_fold <- predict(model_K_fold$finalModel, new_data = bank)
+status_predictions_model_Bootstrap <- predict(model_Bootstrap$finalModel, new_data = bank)
+
+
+# Calculate the confusion matrix
+conf_mat(telecom_results, truth = subscription_status,
+    estimate = .pred_class)
+```
+

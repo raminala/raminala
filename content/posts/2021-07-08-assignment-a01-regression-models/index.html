@@ -175,7 +175,7 @@ print(model_LOOCV)</code></pre>
 <pre class="r"><code># Define training control
 set.seed(10) 
 
-train.control_K_fold &lt;- trainControl(method = &quot;repeatedcv&quot;, number = 244, repeats = 4)
+train.control_K_fold &lt;- trainControl(method = &quot;repeatedcv&quot;, number = 5, repeats = 20)
 
 # Train the model
 model_K_fold &lt;- train(price ~., data = diamonds, method = &quot;lm&quot;,
@@ -188,12 +188,12 @@ print(model_K_fold)</code></pre>
 ##   7 predictor
 ## 
 ## No pre-processing
-## Resampling: Cross-Validated (244 fold, repeated 4 times) 
-## Summary of sample sizes: 438, 438, 438, 438, 439, 438, ... 
+## Resampling: Cross-Validated (5 fold, repeated 20 times) 
+## Summary of sample sizes: 353, 352, 352, 351, 352, 352, ... 
 ## Resampling results:
 ## 
-##   RMSE      Rsquared  MAE     
-##   169.0662  1         151.5017
+##   RMSE      Rsquared   MAE    
+##   214.5049  0.9670232  152.254
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
 </div>
@@ -218,7 +218,7 @@ print(model_Bootstrap)</code></pre>
 ## Resampling results:
 ## 
 ##   RMSE      Rsquared   MAE     
-##   230.8398  0.9618224  159.6501
+##   229.2781  0.9623576  158.3777
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
 <p>RMSE (Root Mean Squared Error)</p>
@@ -236,7 +236,7 @@ The lower the RMSE and the MAE, the better the model.</p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-3.png" width="672" /></p>
 <pre><code>## [1] 0.9673791</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-4.png" width="672" /></p>
-<pre><code>## [1] 1</code></pre>
+<pre><code>## [1] 0.9670232</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-5.png" width="672" /></p>
-<pre><code>## [1] 1</code></pre>
+<pre><code>## [1] 0.9623576</code></pre>
 </div>

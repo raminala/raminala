@@ -16,7 +16,7 @@ tags:
 <div id="executive-summary" class="section level2">
 <h2>Executive Summary</h2>
 <p>The data is related with direct marketing campaigns (based on phone calls) of a Portuguese banking institution. This really is a <strong>supervised question</strong> because it has an outcome (y), which defined as if the product (bank term deposit) would be (or not) subscribed, “yes” means subscribed, and “no” means did not subscribe. This dataset consists of <strong>4521 observations</strong>.</p>
-<p>In addition to the outcome classification variable, there are 16 variables. Eight variables are related to statistical information about current and previous campaigns, and they seems irrelevant to dependent variable. So, there are eight determinent variables Including:</p>
+<p>In addition to the outcome classification variable, there are 16 variables. Eight variables are related to statistical information about current and previous campaigns, and they seems irrelevant to dependent variable. So, there are eight determinant variables Including:</p>
 <p>Customer’s <strong><em>age</em></strong> and <strong><em>balance</em></strong> (numerical variables),</p>
 <p>Customer’s <strong><em>job</em></strong>, <strong><em>marital</em></strong> status, <strong><em>education</em></strong> (categorical variables)</p>
 <p><strong><em>housing loan</em></strong>, <strong><em>personal loan</em></strong>, and <strong><em>default status</em></strong> (binary variables)</p>
@@ -55,7 +55,7 @@ tags:
 ##   &lt;chr&gt; &lt;int&gt;      &lt;dbl&gt;
 ## 1 no     4000       88.5
 ## 2 yes     521       11.5</code></pre>
-<p>This univariate analysis could give a clue about probability of subscription in customers. from the above table, it is obvious that magority of customers did not subscribed (88.476%) comparing slighly more than ten percent of customers who finally choose to subscribe (11.524%). The good point about dataset is it provided valid outcome for all customers (whether subscribed or not).</p>
+<p>This univariate analysis could give a clue about probability of subscription in customers. from the above table, it is obvious that majority of customers did not subscribed (88.476%) comparing slightly more than ten percent of customers who finally choose to subscribe (11.524%). The good point about dataset is it provided valid outcome for all customers (whether subscribed or not).</p>
 </div>
 <div id="bivariate-analysis" class="section level2">
 <h2>Bivariate Analysis</h2>
@@ -63,10 +63,10 @@ tags:
 <p>0=No (did not subscribed), and</p>
 <p>1=yes (subscribed).</p>
 </div>
-<div id="corrolation-between-age-and-balance" class="section level2">
-<h2>Corrolation between age and balance</h2>
-<pre><code>## [1] &quot;Corrolation between age and balance:  0.0838201422447776&quot;</code></pre>
-<p>It shows small positive corrolation between age and balance. generally older clients tends to have higher balamce but the corrolation is more like a random relation because it is more close to zero (random case) than 1 (strong corrolation).</p>
+<div id="correlation-between-age-and-balance" class="section level2">
+<h2>correlation between age and balance</h2>
+<pre><code>## [1] &quot;correlation between age and balance:  0.0838201422447776&quot;</code></pre>
+<p>It shows small positive correlation between age and balance. generally older clients tends to have higher balance but the correlation is more like a random relation because it is more close to zero (random case) than 1 (strong correlation).</p>
 </div>
 <div id="subscription-statusjob" class="section level2">
 <h2><em>subscription status~job</em></h2>
@@ -111,7 +111,7 @@ tags:
 <div id="subscription-statusage" class="section level2">
 <h2><em>subscription status~age</em></h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>Again it looks difficult to get information from this plot as they have not strong relation. However, blue line that is the generalized regression line, shows that higher age people tends to subscribe more. An important subject to remember is in a multi variable problem, considering one parameter alone could be misleading because of corrolation of variables.</p>
+<p>Again it looks difficult to get information from this plot as they have not strong relation. However, blue line that is the generalized regression line, shows that higher age people tends to subscribe more. An important subject to remember is in a multi-variable problem, considering one parameter alone could be misleading because of correlation of variables.</p>
 </div>
 <div id="subscription-statusdefault" class="section level2">
 <h2><em>subscription status~default</em></h2>
@@ -121,7 +121,7 @@ tags:
 <div id="analysis-of-three-variables-result-versus-age-and-balance" class="section level2">
 <h2>Analysis of three variables: result versus age and balance</h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" />
-This plot consists of two numerical variables (age and balance) that both are explanatory variables and response variable which depicted by color (pink colors did not subscribed and blue colours subscribed).</p>
+This plot consists of two numerical variables (age and balance) that both are explanatory variables and response variable which depicted by color (pink colors did not subscribed and blue colors subscribed).</p>
 </div>
 <div id="analysis-of-four-variablessubscription-statusage-and-marital-and-loan" class="section level2">
 <h2><em>Analysis of four variables:subscription status~age and marital and loan</em></h2>
@@ -175,7 +175,7 @@ This plot consists of two numerical variables (age and balance) that both are ex
 ## Number of Fisher Scoring iterations: 5</code></pre>
 <p>Pr(&gt;|z|) value for balance is close to 1 and this makes us to believe it is not a determinant parameter, but this parameter is negligible for housing with relatively high value for its coefficient. This is the reason for importance of housing status. A similar circumstance is for loan status.</p>
 <p>In addition, Coefficients of above analysis are all small because the number of respondents with subscribed status are very lower than not subscribed clients.</p>
-<p>Finally, some parameters that seemed to be determinant in univariate analysis are not important in fact. This is because of corrolation between non determinant and determinant
+<p>Finally, some parameters that seemed to be determinant in univariate analysis are not important in fact. This is because of correlation between non determinant and determinant
 variables.</p>
 </div>
 <div id="summary-of-findings" class="section level2">
@@ -183,7 +183,7 @@ variables.</p>
 <ul>
 <li><p>Most respondents in this campaign was 30 to 35 years old with near zero balance.Besides, nearly 90% of respondents did not subscribe finally.</p></li>
 <li><p>Univariate analysis shows positive slope for both age and balance (higher age/balance means higher chance of subscription). However, generalized linear Modeling with consideration of all variables shows balance has not an impact on chance of subscription.</p></li>
-<li><p>Univariate analysis of job shows that a big postion of students, unemployed, and those with unknown jobs subscribed, but respondents with blue-color jobs and technicians did not subscribe so often.</p></li>
+<li><p>Univariate analysis of job shows that a big portion of students, unemployed, and those with unknown jobs subscribed, but respondents with blue-color jobs and technicians did not subscribe so often.</p></li>
 <li><p>Divorced respondents was more likely to subscribe than married and single ones.</p></li>
 <li><p>Generalized Linear Model shows that balance is not a determinant factor but housing and loan status are both determinant.</p></li>
 <li><p>Coefficients of glm analysis are all small because the number of respondents with subscribed status are very lower than not subscribed clients.</p></li>
@@ -191,6 +191,9 @@ variables.</p>
 </div>
 <div id="resampling-methods" class="section level2">
 <h2>Resampling Methods</h2>
+<pre class="r"><code>library(caret)
+
+library(yardstick)</code></pre>
 </div>
 <div id="cross-validation-method" class="section level2">
 <h2>Cross-Validation method</h2>
