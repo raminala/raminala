@@ -1,5 +1,5 @@
 ---
-title: Assignment-03
+title: "Assignment-03"
 author: ''
 date: '2021-07-22'
 slug: []
@@ -20,6 +20,18 @@ bank <- read_csv("bank.csv") %>%
 
 ```
 
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+mdl_bank_S <- glm(subscription_status ~ balance , data=bank, family = binomial)
+
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+mdl_bank_M <- glm(subscription_status ~ age+job+marital+education+default+balance+housing+loan , data=bank, family = binomial)
+
+```
 
 ## Resampling Methods
 

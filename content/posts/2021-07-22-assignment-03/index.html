@@ -1,0 +1,207 @@
+---
+title: "Assignment-03"
+author: ''
+date: '2021-07-22'
+slug: []
+categories: []
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="resampling-methods" class="section level2">
+<h2>Resampling Methods</h2>
+<pre class="r"><code>library(caret)
+
+library(yardstick)</code></pre>
+</div>
+<div id="cross-validation-method" class="section level2">
+<h2>Cross-Validation method</h2>
+</div>
+<div id="loocv-leave-one-out-cross-validation" class="section level2">
+<h2>LOOCV (Leave one out cross validation)</h2>
+<p>The LOOCV method is using all data points therefore it reduces the bias.</p>
+<p>However, the execution time could be so long if n (number of observation) is large. Besides, we know that low bias means high variance and the model is more prone to overfitting.</p>
+<hr />
+<pre class="r"><code># Define training control
+train.control_LOOCV &lt;- trainControl(method = &quot;LOOCV&quot;)
+
+# Train the model
+model_LOOCV &lt;- train(subscription_status ~ ., data = bank, method = &quot;lm&quot;,
+               trControl = train.control_LOOCV)
+# Summarize the results
+print(model_LOOCV)</code></pre>
+<pre><code>## Linear Regression 
+## 
+## 4521 samples
+##    9 predictor
+## 
+## No pre-processing
+## Resampling: Leave-One-Out Cross-Validation 
+## Summary of sample sizes: 4520, 4520, 4520, 4520, 4520, 4520, ... 
+## Resampling results:
+## 
+##   RMSE          Rsquared  MAE         
+##   8.053605e-16  1         4.179036e-16
+## 
+## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+</div>
+<div id="k-fold-cross-validation" class="section level2">
+<h2>K-fold cross-validation</h2>
+<pre class="r"><code># Define training control
+set.seed(120) 
+
+train.control_K_fold &lt;- trainControl(method = &quot;repeatedcv&quot;, number = 10, repeats = 4)
+
+# Train the model
+model_K_fold &lt;- train(subscription_status ~., data = bank, method = &quot;lm&quot;,
+               trControl = train.control_K_fold)
+# Summarize the results
+print(model_K_fold)</code></pre>
+<pre><code>## Linear Regression 
+## 
+## 4521 samples
+##    9 predictor
+## 
+## No pre-processing
+## Resampling: Cross-Validated (10 fold, repeated 4 times) 
+## Summary of sample sizes: 4069, 4069, 4069, 4069, 4069, 4069, ... 
+## Resampling results:
+## 
+##   RMSE          Rsquared  MAE         
+##   6.116485e-16  1         3.847581e-16
+## 
+## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+</div>
+<div id="bootstrap-method" class="section level2">
+<h2>Bootstrap method</h2>
+<pre class="r"><code># Define training control
+train.control_Bootstrap &lt;- trainControl(method = &quot;boot&quot;, number = 100)
+
+# Train the model
+model_Bootstrap &lt;- train(subscription_status ~., data = bank, method = &quot;lm&quot;,
+               trControl = train.control_Bootstrap)
+# Summarize the results
+print(model_Bootstrap)</code></pre>
+<pre><code>## Linear Regression 
+## 
+## 4521 samples
+##    9 predictor
+## 
+## No pre-processing
+## Resampling: Bootstrapped (100 reps) 
+## Summary of sample sizes: 4521, 4521, 4521, 4521, 4521, 4521, ... 
+## Resampling results:
+## 
+##   RMSE          Rsquared  MAE         
+##   1.030247e-15  1         6.465142e-16
+## 
+## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+</div>
+<div id="evaluating-performance-with-confusion-matrix" class="section level2">
+<h2>Evaluating performance with confusion matrix</h2>
+<pre class="r"><code>status_predictions_SLR &lt;- predict(mdl_bank_S, new_data = bank, type = &quot;response&quot;)
+
+status_predictions_MLR &lt;- predict(mdl_bank_M, new_data = bank, type = &quot;response&quot;)
+
+status_predictions_model_LOOCV &lt;- predict(model_LOOCV$finalModel, new_data = bank)
+status_predictions_model_K_fold &lt;- predict(model_K_fold$finalModel, new_data = bank)
+status_predictions_model_Bootstrap &lt;- predict(model_Bootstrap$finalModel, new_data = bank)
+
+test_results_SLR &lt;- bank %&gt;%
+  bind_cols(status_pred=status_predictions_SLR)
+
+test_results_MLR &lt;- bank %&gt;%
+  bind_cols(status_pred=status_predictions_MLR)
+
+test_results_model_LOOCV &lt;- bank %&gt;%
+  bind_cols(status_pred=status_predictions_model_LOOCV)
+
+
+test_results_model_K_fold &lt;- bank %&gt;%
+  bind_cols(status_pred=status_predictions_model_K_fold)
+
+test_results_model_Bootstrap &lt;- bank %&gt;%
+  bind_cols(status_pred=status_predictions_model_Bootstrap)</code></pre>
+<pre class="r"><code># LOOCV
+
+p &lt;- test_results_model_LOOCV %&gt;% select(subscription_status,status_pred) %&gt;% 
+   mutate(truth=ifelse(subscription_status == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;)) %&gt;% 
+   mutate(estimate=ifelse(status_pred == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;))
+
+# Calculate the confusion matrix
+conf_mat(p, truth = truth,
+    estimate = estimate)%&gt;% 
+  # Create a heat map
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
+## was converted to a factor</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...):
+## `estimate` was converted to a factor</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code># K_fold
+
+p2 &lt;- test_results_model_K_fold %&gt;% select(subscription_status,status_pred) %&gt;% 
+   mutate(truth=ifelse(subscription_status == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;)) %&gt;% 
+   mutate(estimate=ifelse(status_pred == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;))
+
+# Calculate the confusion matrix
+conf_mat(p2, truth = truth,
+    estimate = estimate)%&gt;% 
+  # Create a heat map
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
+## was converted to a factor</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...):
+## `estimate` was converted to a factor</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code># Bootstrap
+
+p3 &lt;- test_results_model_Bootstrap %&gt;% select(subscription_status,status_pred) %&gt;% 
+   mutate(truth=ifelse(subscription_status == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;)) %&gt;% 
+   mutate(estimate=ifelse(status_pred == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;))
+
+# Calculate the confusion matrix
+conf_mat(p3, truth = truth,
+    estimate = estimate)%&gt;% 
+  # Create a heat map
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
+## was converted to a factor</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...):
+## `estimate` was converted to a factor</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code># SLR
+
+p4 &lt;- test_results_SLR %&gt;% select(subscription_status,status_pred) %&gt;% 
+   mutate(truth=ifelse(subscription_status == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;)) %&gt;% 
+   mutate(estimate=ifelse(status_pred &gt; 0.13 , &#39;yes&#39;, &#39;no&#39;))
+
+# Calculate the confusion matrix
+conf_mat(p4, truth = truth,
+    estimate = estimate)%&gt;% 
+  # Create a heat map
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
+## was converted to a factor</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...):
+## `estimate` was converted to a factor</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code>#  MLR
+
+p4 &lt;- test_results_MLR %&gt;% select(subscription_status,status_pred) %&gt;% 
+   mutate(truth=ifelse(subscription_status == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;)) %&gt;% 
+   mutate(estimate=ifelse(status_pred &gt; 0.3 , &#39;yes&#39;, &#39;no&#39;))
+
+# Calculate the confusion matrix
+conf_mat(p4, truth = truth,
+    estimate = estimate)%&gt;% 
+  # Create a heat map
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
+## was converted to a factor</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...):
+## `estimate` was converted to a factor</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
