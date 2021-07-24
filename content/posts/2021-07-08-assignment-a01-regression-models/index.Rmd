@@ -188,6 +188,7 @@ Here, a linear model is generated using **lm()** function to attribute price wit
 SLR <- lm(price~ carat, data=diamonds)
 summary(SLR)  %>%
   tidy()
+print(SLR)
 
 ```
 
@@ -275,7 +276,7 @@ library(yardstick)
 
 for each category resampling is conducted using ***caret*** package and their performance is evaluated and compared using appropriate methods.
 
-In the above sections two models achieved: ***Single linear regression (SLR)*** and ***Multiple linear regression (MLR)***. In the following paragraphs three models will calculate using resampling: LOOCV, K-fold, and Bootstrap. So, we will have five models in total. performance of them will be compared.
+In the following paragraphs three models will calculate using resampling: LOOCV, K-fold, and Bootstrap. subsequently, we will compare performance of these three models.
 
 ## Resampling methods
 
@@ -344,13 +345,17 @@ print(model_K_fold)
 
 In this method, subsets are selected in a pseudorandom process. So we could reproduce them by setting seed number. We repeated the process 20 times for a better estimation (by setting repeat argument).
 
-As it can be seen from parameters, RMSE, Rsquared, and MAE are very close to those of LOOCV model. However, calculation performs in a shorter duration.
+As it can be seen from parameters, RMSE, Rsquared, and MAE are very close to those of LOOCV model. However, calculation performed faster.
 
 ## Bootstrap method 
 
+Bootstrap resampling consists of repeatedly selecting (***with Replacement***) a sample of n observations from the original data set (dataset consists of n observations), and to evaluate the model on each copy. An average standard error is then calculated and the results provide an indication of the overall variance of the model performance.
+
+Here, we consider *number =100*. It means that process of selecting (n=440) samplaes with replacement repeated 100 times.
+
 ```{r, warning=FALSE}
 # Define training control
-train.control_Bootstrap <- trainControl(method = "boot", number = 100)
+train.control_Bootstrap <- trainControl(method = "boot", number =100)
 
 # Train the model
 model_Bootstrap <- train(price ~., data = diamonds, method = "lm",
@@ -359,23 +364,32 @@ model_Bootstrap <- train(price ~., data = diamonds, method = "lm",
 print(model_Bootstrap)
 ```
 
-RMSE (Root Mean Squared Error)
+Again, model parameters (RMSE, Rsquared, and MAE) are close to previous methods.
 
-MAE(Mean Absolute Error)
+## Table of comparison of these three models
+
+First, a short revies of model parameters:
+RMSE (Root Mean Squared Error) and MAE(Mean Absolute Error) are metric of error.
 
 The R-squared represents the proportion of variation in the outcome explained by the predictor variables included in the model
-The higher the R-squared, the better the model.
+The higher the R-squared, the better the model (Maximum Rsquared is 1).
 The lower the RMSE and the MAE, the better the model.
 
+    ----------
 
-Method        |    LOOCV      |  K-fold       |   Bootstrap
+  Method        |    LOOCV      |  K-fold       |   Bootstrap
 -------------   | ------------- | ------------- | -------------
-   RMSE         |   212.186     |  212.186      |    212.186
-   R^2          |  0.9673791    |  0.9673791    |    212.186
-   MAE          |   150.5193    |  212.186      |    212.186
+   RMSE         |   212.186     |  214.612      |    229.1964
+   R^2          |    0.967      |   0.967       |     0.962
+   MAE          |   150.5193    |  152.228      |    159.7997
 
+    ----------
+
+Values are very close to each other. I tweaked values in models like number and repeats in k-fold method and number in bootstrap method to see their effect. As result, it seems that small changes would not make big change in these parameters, at least for this specific dataset.
 
 ## Comparing Models using R squared plot
+
+In this section, predicted values of diamonds (based on five models in hand from previous section) versus actual price of diamonds from dataset are plotted.This called R squared plot, and it is extremely important because it will uncover potential problems with your model, such as non-linear patterns or regions where your model is either over or under-predicting the outcome variable.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -406,7 +420,7 @@ ggplot(test_results_SLR, aes(price ,Price_pred))+
   geom_point(alpha = 0.5) + 
   geom_abline(color = 'blue', linetype = 2) +
   coord_obs_pred() +
-  labs(x = 'Actual diamond Price', y = 'Prediction by SLR')+
+  labs(title="Single linear regression", x = 'Actual diamond Price', y = 'Prediction by SLR')+
   annotate('text', x = 800, y = 4000, label = 'R^2=0.8564319',  size = 5, color="red")+
   xlim(0, 4000)+ylim(0, 4000)
 
@@ -416,7 +430,7 @@ ggplot(test_results_MLR, aes(price ,Price_pred))+
   geom_point(alpha = 0.5) + 
   geom_abline(color = 'blue', linetype = 2) +
   coord_obs_pred() +
-  labs(x = 'Actual diamond Price', y = 'Prediction by MLR')+
+  labs(title="Multiple linear regression", x = 'Actual diamond Price', y = 'Prediction by MLR')+
   annotate('text', x = 800, y = 4000, label = 'R^2=0.991704',  size = 5, color="red")+
   xlim(0, 4000)+ylim(0, 4000)
 
@@ -426,7 +440,7 @@ ggplot(test_results_model_LOOCV, aes(price ,Price_pred))+
   geom_point(alpha = 0.5) + 
   geom_abline(color = 'blue', linetype = 2) +
   coord_obs_pred() +
-  labs(x = 'Actual diamond Price', y = 'Prediction by LOOCV')+
+  labs(title="Cross-Validation, LOOCV ", x = 'Actual diamond Price', y = 'Prediction by LOOCV')+
   annotate('text', x = 800, y = 4000, label = 'R^2=0.9673791',  size = 5, color="red")+
   xlim(0, 4000)+ylim(0, 4000)
 
@@ -436,8 +450,8 @@ ggplot(test_results_model_K_fold, aes(price ,Price_pred))+
   geom_point(alpha = 0.5) + 
   geom_abline(color = 'blue', linetype = 2) +
   coord_obs_pred() +
-  labs(x = 'Actual diamond Price', y = 'Prediction by K-fold')+
-  annotate('text', x = 800, y = 4000, label = 'R^2=0.9670232',  size = 5, color="red")+
+  labs(title="Cross-Validation, K_fold", x = 'Actual diamond Price', y = 'Prediction by K-fold')+
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.9670286',  size = 5, color="red")+
   xlim(0, 4000)+ylim(0, 4000)
 
 
@@ -448,8 +462,8 @@ ggplot(test_results_model_Bootstrap, aes(price ,Price_pred))+
   geom_point(alpha = 0.5) + 
   geom_abline(color = 'blue', linetype = 2) +
   coord_obs_pred() +
-  labs(x = 'Actual diamond Price', y = 'Prediction by Bootstrap')+
-  annotate('text', x = 800, y = 4000, label = 'R^2=0.9623576',  size = 5, color="red")+
+  labs(title="Bootstrap", x = 'Actual diamond Price', y = 'Prediction by Bootstrap')+
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.9626821',  size = 5, color="red")+
   xlim(0, 4000)+ylim(0, 4000)
 
 
@@ -459,4 +473,6 @@ model_Bootstrap$results %>%  pull(Rsquared)
 
 ```
 
+
+Apart from Single regression model (which prediction only made based upon carat), all other models provided similar predictions. Same result deducted by comparing model parameters like error and R.squared. We could also calculate correlation between these predictions to determine their similarities.
 

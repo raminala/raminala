@@ -84,6 +84,13 @@ minimum, mode, median, max, first and third quarterlies. Note that the red dotte
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)    -200.      43.1     -4.65 4.40e-  6
 ## 2 carat          2865.      56.0     51.1  1.02e-186</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = price ~ carat, data = diamonds)
+## 
+## Coefficients:
+## (Intercept)        carat  
+##      -200.5       2864.7</code></pre>
 </div>
 <div id="simple-linear-regression--prediction-carat-0.9" class="section level2">
 <h2>Simple Linear Regression- prediction, carat= 0.9</h2>
@@ -135,7 +142,7 @@ minimum, mode, median, max, first and third quarterlies. Note that the red dotte
 library(yardstick)</code></pre>
 <p><strong>Data sampling versus resampling:</strong> Data sampling refers to statistical methods for selecting observations from the domain with the objective of estimating a population parameter. Whereas data resampling refers to methods for economically using a collected dataset to improve the estimate of the population parameter and help to quantify the uncertainty of the estimate. In this part we are studying resampling. Two methods are considereing in the following paragraphs: cross validation (two sub-categories, LOOCV, K-fold) and bootstraping.</p>
 <p>for each category resampling is conducted using <strong><em>caret</em></strong> package and their performance is evaluated and compared using appropriate methods.</p>
-<p>In the above sections two models achieved: <strong><em>Single linear regression (SLR)</em></strong> and <strong><em>Multiple linear regression (MLR)</em></strong>. In the following paragraphs three models will calculate using resampling: LOOCV, K-fold, and Bootstrap. So, we will have five models in total. performance of them will be compared.</p>
+<p>In the following paragraphs three models will calculate using resampling: LOOCV, K-fold, and Bootstrap. subsequently, we will compare performance of these three models.</p>
 </div>
 <div id="resampling-methods" class="section level2">
 <h2>Resampling methods</h2>
@@ -211,12 +218,14 @@ print(model_K_fold)</code></pre>
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
 <p>In this method, subsets are selected in a pseudorandom process. So we could reproduce them by setting seed number. We repeated the process 20 times for a better estimation (by setting repeat argument).</p>
-<p>As it can be seen from parameters, RMSE, Rsquared, and MAE are very close to those of LOOCV model. However, calculation performs in a shorter duration.</p>
+<p>As it can be seen from parameters, RMSE, Rsquared, and MAE are very close to those of LOOCV model. However, calculation performed faster.</p>
 </div>
 <div id="bootstrap-method" class="section level2">
 <h2>Bootstrap method</h2>
+<p>Bootstrap resampling consists of repeatedly selecting (<strong><em>with Replacement</em></strong>) a sample of n observations from the original data set (dataset consists of n observations), and to evaluate the model on each copy. An average standard error is then calculated and the results provide an indication of the overall variance of the model performance.</p>
+<p>Here, we consider <em>number =100</em>. It means that process of selecting (n=440) samplaes with replacement repeated 100 times.</p>
 <pre class="r"><code># Define training control
-train.control_Bootstrap &lt;- trainControl(method = &quot;boot&quot;, number = 100)
+train.control_Bootstrap &lt;- trainControl(method = &quot;boot&quot;, number =100)
 
 # Train the model
 model_Bootstrap &lt;- train(price ~., data = diamonds, method = &quot;lm&quot;,
@@ -237,11 +246,16 @@ print(model_Bootstrap)</code></pre>
 ##   229.1964  0.9626821  159.7997
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
-<p>RMSE (Root Mean Squared Error)</p>
-<p>MAE(Mean Absolute Error)</p>
+<p>Again, model parameters (RMSE, Rsquared, and MAE) are close to previous methods.</p>
+</div>
+<div id="table-of-comparison-of-these-three-models" class="section level2">
+<h2>Table of comparison of these three models</h2>
+<p>First, a short revies of model parameters:
+RMSE (Root Mean Squared Error) and MAE(Mean Absolute Error) are metric of error.</p>
 <p>The R-squared represents the proportion of variation in the outcome explained by the predictor variables included in the model
-The higher the R-squared, the better the model.
+The higher the R-squared, the better the model (Maximum Rsquared is 1).
 The lower the RMSE and the MAE, the better the model.</p>
+<pre><code>----------</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -255,26 +269,29 @@ The lower the RMSE and the MAE, the better the model.</p>
 <tr class="odd">
 <td>RMSE</td>
 <td>212.186</td>
-<td>212.186</td>
-<td>212.186</td>
+<td>214.612</td>
+<td>229.1964</td>
 </tr>
 <tr class="even">
 <td>R^2</td>
-<td>0.9673791</td>
-<td>0.9673791</td>
-<td>212.186</td>
+<td>0.967</td>
+<td>0.967</td>
+<td>0.962</td>
 </tr>
 <tr class="odd">
 <td>MAE</td>
 <td>150.5193</td>
-<td>212.186</td>
-<td>212.186</td>
+<td>152.228</td>
+<td>159.7997</td>
 </tr>
 </tbody>
 </table>
+<pre><code>----------</code></pre>
+<p>Values are very close to each other. I tweaked values in models like number and repeats in k-fold method and number in bootstrap method to see their effect. As result, it seems that small changes would not make big change in these parameters, at least for this specific dataset.</p>
 </div>
 <div id="comparing-models-using-r-squared-plot" class="section level2">
 <h2>Comparing Models using R squared plot</h2>
+<p>In this section, predicted values of diamonds (based on five models in hand from previous section) versus actual price of diamonds from dataset are plotted.This called R squared plot, and it is extremely important because it will uncover potential problems with your model, such as non-linear patterns or regions where your model is either over or under-predicting the outcome variable.</p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <pre><code>## [1] 0.8564319</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-2.png" width="672" /></p>
@@ -285,4 +302,5 @@ The lower the RMSE and the MAE, the better the model.</p>
 <pre><code>## [1] 0.9670286</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-5.png" width="672" /></p>
 <pre><code>## [1] 0.9626821</code></pre>
+<p>Apart from Single regression model (which prediction only made based upon carat), all other models provided similar predictions. Same result deducted by comparing model parameters like error and R.squared. We could also calculate correlation between these predictions to determine their similarities.</p>
 </div>
