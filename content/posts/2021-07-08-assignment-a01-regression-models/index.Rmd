@@ -323,15 +323,15 @@ K-fold evaluates the model performance on different subset (there are k subsets)
 
 There is a trade-off in selecting k (number of subsets):
 
-***low K:*** is more biased (undesirable).
+***small K:*** is more biased (undesirable).
 
-***high K:*** large variance (undesirable).
+***large K:*** large variance (undesirable).
 
 Here, we consider *k=5* for 440 observations to build a 5-fold model.
 
 ```{r, warning=FALSE}
-# Define training control
-set.seed(10) 
+# Define pseudorandom seed number
+set.seed(190) 
 
 train.control_K_fold <- trainControl(method = "repeatedcv", number = 5, repeats = 20)
 
@@ -341,6 +341,10 @@ model_K_fold <- train(price ~., data = diamonds, method = "lm",
 # Summarize the results
 print(model_K_fold)
 ```
+
+In this method, subsets are selected in a pseudorandom process. So we could reproduce them by setting seed number. We repeated the process 20 times for a better estimation (by setting repeat argument).
+
+As it can be seen from parameters, RMSE, Rsquared, and MAE are very close to those of LOOCV model. However, calculation performs in a shorter duration.
 
 ## Bootstrap method 
 

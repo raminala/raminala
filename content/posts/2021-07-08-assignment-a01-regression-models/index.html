@@ -183,11 +183,11 @@ print(model_LOOCV)</code></pre>
 <h2>K-fold cross-validation</h2>
 <p>K-fold evaluates the model performance on different subset (there are k subsets) of the training data and then calculate the average prediction error rate.The obvious advantage of k-fold over LOOCV is K-fold is faster (needs less computation). A less obvious but potentially more important advantage of k-fold cross validation method is that it often gives more accurate estimates of the test error rate than does LOOCV.</p>
 <p>There is a trade-off in selecting k (number of subsets):</p>
-<p><strong><em>low K:</em></strong> is more biased (undesirable).</p>
-<p><strong><em>high K:</em></strong> large variance (undesirable).</p>
+<p><strong><em>small K:</em></strong> is more biased (undesirable).</p>
+<p><strong><em>large K:</em></strong> large variance (undesirable).</p>
 <p>Here, we consider <em>k=5</em> for 440 observations to build a 5-fold model.</p>
-<pre class="r"><code># Define training control
-set.seed(10) 
+<pre class="r"><code># Define pseudorandom seed number
+set.seed(190) 
 
 train.control_K_fold &lt;- trainControl(method = &quot;repeatedcv&quot;, number = 5, repeats = 20)
 
@@ -203,13 +203,15 @@ print(model_K_fold)</code></pre>
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (5 fold, repeated 20 times) 
-## Summary of sample sizes: 353, 352, 352, 351, 352, 352, ... 
+## Summary of sample sizes: 352, 353, 352, 351, 352, 351, ... 
 ## Resampling results:
 ## 
-##   RMSE      Rsquared   MAE    
-##   214.5049  0.9670232  152.254
+##   RMSE      Rsquared   MAE     
+##   214.6123  0.9670286  152.2284
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+<p>In this method, subsets are selected in a pseudorandom process. So we could reproduce them by setting seed number. We repeated the process 20 times for a better estimation (by setting repeat argument).</p>
+<p>As it can be seen from parameters, RMSE, Rsquared, and MAE are very close to those of LOOCV model. However, calculation performs in a shorter duration.</p>
 </div>
 <div id="bootstrap-method" class="section level2">
 <h2>Bootstrap method</h2>
@@ -232,7 +234,7 @@ print(model_Bootstrap)</code></pre>
 ## Resampling results:
 ## 
 ##   RMSE      Rsquared   MAE     
-##   229.2781  0.9623576  158.3777
+##   229.1964  0.9626821  159.7997
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
 <p>RMSE (Root Mean Squared Error)</p>
@@ -280,7 +282,7 @@ The lower the RMSE and the MAE, the better the model.</p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-3.png" width="672" /></p>
 <pre><code>## [1] 0.9673791</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-4.png" width="672" /></p>
-<pre><code>## [1] 0.9670232</code></pre>
+<pre><code>## [1] 0.9670286</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-5.png" width="672" /></p>
-<pre><code>## [1] 0.9623576</code></pre>
+<pre><code>## [1] 0.9626821</code></pre>
 </div>
