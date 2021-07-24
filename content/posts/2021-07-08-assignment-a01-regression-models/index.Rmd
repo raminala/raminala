@@ -261,7 +261,7 @@ predict(MLR, explanatory_data)
 
 ---
 
-## Resampling Methods
+## Resampling
 
 ```{r, warning=FALSE, message=FALSE}
 library(caret)
@@ -270,13 +270,16 @@ library(yardstick)
 
 ```
 
-Datasampling versus resampling: Data sampling refers to statistical methods for selecting observations from the domain with the objective of estimating a population parameter. Whereas data resampling refers to methods for economically using a collected dataset to improve the estimate of the population parameter and help to quantify the uncertainty of the estimate. In this part we are studying resampling. Two methods are considereing in the following paragraphs: cross validation (two sub-categories, LOOCV, K-fold) and bootstraping.
+
+**Data sampling versus resampling:** Data sampling refers to statistical methods for selecting observations from the domain with the objective of estimating a population parameter. Whereas data resampling refers to methods for economically using a collected dataset to improve the estimate of the population parameter and help to quantify the uncertainty of the estimate. In this part we are studying resampling. Two methods are considereing in the following paragraphs: cross validation (two sub-categories, LOOCV, K-fold) and bootstraping.
 
 for each category resampling is conducted using ***caret*** package and their performance is evaluated and compared using appropriate methods.
 
 In the above sections two models achieved: ***Single linear regression (SLR)*** and ***Multiple linear regression (MLR)***. In the following paragraphs three models will calculate using resampling: LOOCV, K-fold, and Bootstrap. So, we will have five models in total. performance of them will be compared.
 
-## Cross-Validation methods
+## Resampling methods
+
+## ***Cross-Validation methods***
 
 ## LOOCV (Leave one out cross validation) 
 
@@ -284,9 +287,9 @@ The LOOCV method is using all data points (excludes only one observation each ti
 
 **Advantage:** Because of using *n-1* observations in each iteration, it reduces the bias (because it will not  bias to selected portion).
 
-**Disadvantage:** The execution time could be so long if n (number of observation) is large. Fortunately, we have 450 observations in *diamond* dataset and my machine with 16GB of RAM easily executed this. Besides, we know that low bias means high variance and the method is more prone to overfitting.
+**Disadvantages:** The execution time could be so long if n (number of observation) is large. Fortunately, we have 450 observations in *diamond* dataset and my machine with 16GB of RAM easily executed this. Besides, we know that low bias means high variance and the method is more prone to overfitting.
 
-Other disadvantage of this method is it tests the model performance against *one data point* at each iteration.This might result to higher variation in the prediction error, especially if some data points are outliers.
+Another disadvantage of this method is that tests the model performance against *one data point* at each iteration.This might result to higher variation in the prediction error, especially if some data points are outliers.
 
 Divide the dataset to two sections (train and test) could show the overfitting, however, Here, we will not practice that.
 
@@ -316,17 +319,15 @@ Rsquared or R2 is familiar parameter of squared correlation between the observed
 
 ## K-fold cross-validation
 
-The obvious advantage of k-fold over LOOCV is K-fold is faster (needs less computation)). A less obvious but potentially more important advantage of k-fold CV is that it often gives more accurate estimates of the test error rate than does LOOCV.
+K-fold evaluates the model performance on different subset (there are k subsets) of the training data and then calculate the average prediction error rate.The obvious advantage of k-fold over LOOCV is K-fold is faster (needs less computation). A less obvious but potentially more important advantage of k-fold cross validation method is that it often gives more accurate estimates of the test error rate than does LOOCV.
 
-Trade-off:
+There is a trade-off in selecting k (number of subsets):
 
 ***low K:*** is more biased (undesirable).
 
 ***high K:*** large variance (undesirable).
 
-
-
-here, we consider *k=5* for 440 observations.
+Here, we consider *k=5* for 440 observations to build a 5-fold model.
 
 ```{r, warning=FALSE}
 # Define training control
@@ -361,6 +362,14 @@ MAE(Mean Absolute Error)
 The R-squared represents the proportion of variation in the outcome explained by the predictor variables included in the model
 The higher the R-squared, the better the model.
 The lower the RMSE and the MAE, the better the model.
+
+
+Method        |    LOOCV      |  K-fold       |   Bootstrap
+-------------   | ------------- | ------------- | -------------
+   RMSE         |   212.186     |  212.186      |    212.186
+   R^2          |  0.9673791    |  0.9673791    |    212.186
+   MAE          |   150.5193    |  212.186      |    212.186
+
 
 ## Comparing Models using R squared plot
 

@@ -128,24 +128,27 @@ minimum, mode, median, max, first and third quarterlies. Note that the red dotte
 </ul>
 <hr />
 </div>
-<div id="resampling-methods" class="section level2">
-<h2>Resampling Methods</h2>
+<div id="resampling" class="section level2">
+<h2>Resampling</h2>
 <pre class="r"><code>library(caret)
 
 library(yardstick)</code></pre>
-<p>Datasampling versus resampling: Data sampling refers to statistical methods for selecting observations from the domain with the objective of estimating a population parameter. Whereas data resampling refers to methods for economically using a collected dataset to improve the estimate of the population parameter and help to quantify the uncertainty of the estimate. In this part we are studying resampling. Two methods are considereing in the following paragraphs: cross validation (two sub-categories, LOOCV, K-fold) and bootstraping.</p>
+<p><strong>Data sampling versus resampling:</strong> Data sampling refers to statistical methods for selecting observations from the domain with the objective of estimating a population parameter. Whereas data resampling refers to methods for economically using a collected dataset to improve the estimate of the population parameter and help to quantify the uncertainty of the estimate. In this part we are studying resampling. Two methods are considereing in the following paragraphs: cross validation (two sub-categories, LOOCV, K-fold) and bootstraping.</p>
 <p>for each category resampling is conducted using <strong><em>caret</em></strong> package and their performance is evaluated and compared using appropriate methods.</p>
 <p>In the above sections two models achieved: <strong><em>Single linear regression (SLR)</em></strong> and <strong><em>Multiple linear regression (MLR)</em></strong>. In the following paragraphs three models will calculate using resampling: LOOCV, K-fold, and Bootstrap. So, we will have five models in total. performance of them will be compared.</p>
 </div>
+<div id="resampling-methods" class="section level2">
+<h2>Resampling methods</h2>
+</div>
 <div id="cross-validation-methods" class="section level2">
-<h2>Cross-Validation methods</h2>
+<h2><strong><em>Cross-Validation methods</em></strong></h2>
 </div>
 <div id="loocv-leave-one-out-cross-validation" class="section level2">
 <h2>LOOCV (Leave one out cross validation)</h2>
 <p>The LOOCV method is using all data points (excludes only one observation each time). There are advantages and disadvantages for this method:</p>
 <p><strong>Advantage:</strong> Because of using <em>n-1</em> observations in each iteration, it reduces the bias (because it will not bias to selected portion).</p>
-<p><strong>Disadvantage:</strong> The execution time could be so long if n (number of observation) is large. Fortunately, we have 450 observations in <em>diamond</em> dataset and my machine with 16GB of RAM easily executed this. Besides, we know that low bias means high variance and the method is more prone to overfitting.</p>
-<p>Other disadvantage of this method is it tests the model performance against <em>one data point</em> at each iteration.This might result to higher variation in the prediction error, especially if some data points are outliers.</p>
+<p><strong>Disadvantages:</strong> The execution time could be so long if n (number of observation) is large. Fortunately, we have 450 observations in <em>diamond</em> dataset and my machine with 16GB of RAM easily executed this. Besides, we know that low bias means high variance and the method is more prone to overfitting.</p>
+<p>Another disadvantage of this method is that tests the model performance against <em>one data point</em> at each iteration.This might result to higher variation in the prediction error, especially if some data points are outliers.</p>
 <p>Divide the dataset to two sections (train and test) could show the overfitting, however, Here, we will not practice that.</p>
 <p>Below is code for performing LOOCV using caret library.</p>
 <hr />
@@ -178,11 +181,11 @@ print(model_LOOCV)</code></pre>
 </div>
 <div id="k-fold-cross-validation" class="section level2">
 <h2>K-fold cross-validation</h2>
-<p>The obvious advantage of k-fold over LOOCV is K-fold is faster (needs less computation)). A less obvious but potentially more important advantage of k-fold CV is that it often gives more accurate estimates of the test error rate than does LOOCV.</p>
-<p>Trade-off:</p>
+<p>K-fold evaluates the model performance on different subset (there are k subsets) of the training data and then calculate the average prediction error rate.The obvious advantage of k-fold over LOOCV is K-fold is faster (needs less computation). A less obvious but potentially more important advantage of k-fold cross validation method is that it often gives more accurate estimates of the test error rate than does LOOCV.</p>
+<p>There is a trade-off in selecting k (number of subsets):</p>
 <p><strong><em>low K:</em></strong> is more biased (undesirable).</p>
 <p><strong><em>high K:</em></strong> large variance (undesirable).</p>
-<p>here, we consider <em>k=5</em> for 440 observations.</p>
+<p>Here, we consider <em>k=5</em> for 440 observations to build a 5-fold model.</p>
 <pre class="r"><code># Define training control
 set.seed(10) 
 
@@ -237,6 +240,36 @@ print(model_Bootstrap)</code></pre>
 <p>The R-squared represents the proportion of variation in the outcome explained by the predictor variables included in the model
 The higher the R-squared, the better the model.
 The lower the RMSE and the MAE, the better the model.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>LOOCV</th>
+<th>K-fold</th>
+<th>Bootstrap</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RMSE</td>
+<td>212.186</td>
+<td>212.186</td>
+<td>212.186</td>
+</tr>
+<tr class="even">
+<td>R^2</td>
+<td>0.9673791</td>
+<td>0.9673791</td>
+<td>212.186</td>
+</tr>
+<tr class="odd">
+<td>MAE</td>
+<td>150.5193</td>
+<td>212.186</td>
+<td>212.186</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="comparing-models-using-r-squared-plot" class="section level2">
 <h2>Comparing Models using R squared plot</h2>
