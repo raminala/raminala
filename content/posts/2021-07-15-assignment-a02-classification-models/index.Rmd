@@ -491,7 +491,7 @@ p4 <- test_results_MLR %>% select(subscription_status,status_pred) %>%
    mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
    mutate(estimate=ifelse(status_pred > 0.3 , 'yes', 'no'))
 
-# Calculate the confusion matrix
+# Calculate the confusion matrix 
 conf_mat(p4, truth = truth,
     estimate = estimate)%>% 
   # Create a heat map

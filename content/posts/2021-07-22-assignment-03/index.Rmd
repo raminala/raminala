@@ -7,6 +7,9 @@ categories: []
 tags: []
 ---
 
+## Resampling
+
+
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -33,7 +36,7 @@ mdl_bank_M <- glm(subscription_status ~ age+job+marital+education+default+balanc
 
 ```
 
-## Resampling Methods
+
 
 ```{r, warning=FALSE, message=FALSE}
 library(caret)
@@ -42,9 +45,13 @@ library(yardstick)
 
 ```
 
-## Cross-Validation method
+
+## Resampling methods
+
+## ***Cross-Validation methods***
 
 ## LOOCV (Leave one out cross validation) 
+
 
 The LOOCV method is using all data points therefore it reduces the bias.
 
@@ -100,6 +107,7 @@ print(model_Bootstrap)
 
 ## Evaluating performance with confusion matrix
 
+Calculating performance metrics with the yardstick package provides insight into how well a classification model is performing on the test dataset.
 
 ```{r}
 
