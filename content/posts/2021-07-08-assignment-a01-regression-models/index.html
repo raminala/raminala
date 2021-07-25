@@ -159,10 +159,10 @@ library(tictoc)</code></pre>
 <p><strong>Disadvantages:</strong> The execution time could be so long if n (number of observation) is large. Fortunately, we have 450 observations in <em>diamond</em> dataset and my machine with 16GB of RAM easily executed this. Besides, we know that low bias means high variance and the method is more prone to overfitting.</p>
 <p>Another disadvantage of this method is that tests the model performance against <em>one data point</em> at each iteration.This might result to higher variation in the prediction error, especially if some data points are outliers.</p>
 <p>Divide the dataset to two sections (train and test) could show the overfitting, however, Here, we will not practice that.</p>
+<p>We are using tictoc library to measure the running time for each code chunk to evaluate performance of these methods in terms of running time.</p>
 <p>Below is code for performing LOOCV using caret library.</p>
 <hr />
-<p>start_time = Sys.time()</p>
-<pre class="r"><code>start_time &lt;- Sys.time()
+<pre class="r"><code>start_time_LOOCV1 &lt;- Sys.time()
 # Define training control
 train.control_LOOCV &lt;- trainControl(method = &quot;LOOCV&quot;)
 
@@ -185,17 +185,18 @@ print(model_LOOCV)</code></pre>
 ##   212.186  0.9673791  150.5193
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
-<pre class="r"><code>end_time &lt;-  Sys.time()
+<pre class="r"><code>end_time_LOOCV1 &lt;- Sys.time()
 
-LOOCV_time &lt;-  end_time - start_time
-print(paste0(&quot;Runing time for LOOCV is: &quot;, LOOCV_time))</code></pre>
-<pre><code>## [1] &quot;Runing time for LOOCV is: 4.1515691280365&quot;</code></pre>
-<pre class="r"><code>print(LOOCV_time)</code></pre>
-<pre><code>## Time difference of 4.151569 secs</code></pre>
+LOOCV_run_time1= end_time_LOOCV1 - start_time_LOOCV1
+
+#Print run time
+print(LOOCV_run_time1)</code></pre>
+<pre><code>## Time difference of 4.041427 secs</code></pre>
 <p>As expected, sample sizes are 439 (440-1) and process repeated 440 times (n). Three important parameters are provided to evaluate performance.</p>
 <p>RMSE (Root Mean Squared Error), which measures the average prediction errors made by the model in predicting the outcome for an observation. We expect low value for RMSE. Note that an outlier observation could drastically increase this error. The achieved value in this part will be compared by this values in other methods to compare these methods.</p>
 <p>To tackale the problem of outlier in RMSE, MAE (Mean Absolute Error) is introduced. MAE is an alternative to the RMSE that is less sensitive to outliers. It corresponds to the average absolute difference between observed and predicted outcomes. again, the lower the MAE, the better the model. We compare this number for different models in following parts.</p>
 <p>Rsquared or R2 is familiar parameter of squared correlation between the observed outcome values and the predicted values by the model. The closer to 1 the adjusted R2, the better the model. here we achieved 0.9673791.</p>
+<p>This chunk of code took about 4.2 seconds to complete.</p>
 </div>
 <div id="k-fold-cross-validation" class="section level2">
 <h2>K-fold cross-validation</h2>
@@ -206,6 +207,7 @@ print(paste0(&quot;Runing time for LOOCV is: &quot;, LOOCV_time))</code></pre>
 <p>Here, we consider <em>k=5</em> for 440 observations to build a 5-fold model.</p>
 <pre class="r"><code># Define pseudorandom seed number
 set.seed(190) 
+start_time_K_fold1 &lt;- Sys.time()
 
 train.control_K_fold &lt;- trainControl(method = &quot;repeatedcv&quot;, number = 5, repeats = 20)
 
@@ -228,14 +230,23 @@ print(model_K_fold)</code></pre>
 ##   214.6123  0.9670286  152.2284
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+<pre class="r"><code>end_time_K_fold1 &lt;- Sys.time()
+
+K_fold_run_time1= end_time_K_fold1 - start_time_K_fold1
+
+#Print run time
+print(K_fold_run_time1)</code></pre>
+<pre><code>## Time difference of 1.207991 secs</code></pre>
 <p>In this method, subsets are selected in a pseudorandom process. So we could reproduce them by setting seed number. We repeated the process 20 times for a better estimation (by setting repeat argument).</p>
 <p>As it can be seen from parameters, RMSE, Rsquared, and MAE are very close to those of LOOCV model. However, calculation performed faster.</p>
+<p>It takes 1.6 seconds to complete running of K-fold cross-validation method.</p>
 </div>
 <div id="bootstrap-method" class="section level2">
 <h2>Bootstrap method</h2>
 <p>Bootstrap resampling consists of repeatedly selecting (<strong><em>with Replacement</em></strong>) a sample of n observations from the original data set (dataset consists of n observations), and to evaluate the model on each copy. An average standard error is then calculated and the results provide an indication of the overall variance of the model performance.</p>
 <p>Here, we consider <em>number =100</em>. It means that process of selecting (n=440) samplaes with replacement repeated 100 times.</p>
-<pre class="r"><code># Define training control
+<pre class="r"><code>start_time_bootstrap1 &lt;- Sys.time()
+# Define training control
 train.control_Bootstrap &lt;- trainControl(method = &quot;boot&quot;, number =100)
 
 # Train the model
@@ -257,7 +268,15 @@ print(model_Bootstrap)</code></pre>
 ##   229.1964  0.9626821  159.7997
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+<pre class="r"><code>end_time_bootstrap1 &lt;- Sys.time()
+
+bootstrap_run_time1= end_time_bootstrap1 - start_time_bootstrap1
+
+#Print run time
+print(bootstrap_run_time1)</code></pre>
+<pre><code>## Time difference of 1.252951 secs</code></pre>
 <p>Again, model parameters (RMSE, Rsquared, and MAE) are close to previous methods.</p>
+<p>It takes 1.5 seconds to complete running of K-fold cross-validation method.</p>
 </div>
 <div id="table-of-comparison-of-these-three-models" class="section level2">
 <h2>Table of comparison of these three models</h2>
@@ -279,9 +298,9 @@ The lower the RMSE and the MAE, the better the model.</p>
 <tbody>
 <tr class="odd">
 <td>RMSE</td>
-<td>212.186</td>
-<td>214.612</td>
-<td>229.1964</td>
+<td>212.2</td>
+<td>214.6</td>
+<td>229.2</td>
 </tr>
 <tr class="even">
 <td>R^2</td>
@@ -291,14 +310,21 @@ The lower the RMSE and the MAE, the better the model.</p>
 </tr>
 <tr class="odd">
 <td>MAE</td>
-<td>150.5193</td>
-<td>152.228</td>
-<td>159.7997</td>
+<td>150.5</td>
+<td>152.2</td>
+<td>159.8</td>
+</tr>
+<tr class="even">
+<td>run time(sec)</td>
+<td>4.2</td>
+<td>1.4</td>
+<td>1.5</td>
 </tr>
 </tbody>
 </table>
 <pre><code>----------</code></pre>
 <p>Values are very close to each other. I tweaked values in models like number and repeats in k-fold method and number in bootstrap method to see their effect. As result, it seems that small changes would not make big change in these parameters, at least for this specific dataset.</p>
+<p>About timing it worth mentioning that short times (like 1 seconds) is not fix in multiple simulations and we cannot say fro these results that whether K-fold or Bootstrap is faster, however it is obvious that LOOCV has the least speed.</p>
 </div>
 <div id="comparing-models-using-r-squared-plot" class="section level2">
 <h2>Comparing Models using R squared plot</h2>

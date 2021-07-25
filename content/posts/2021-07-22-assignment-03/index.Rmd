@@ -53,14 +53,16 @@ library(tictoc)
 
 ## LOOCV (Leave one out cross validation) 
 
-For this dataset, the LOOCV method takes long time to process. Because it consists building the model for (4521-1) times, evaluating the remaining sample with the model and averaging error. We are using tictoc library to measure the running time for each code chunk to evaluate performance of these methods in terms of running time.
+For this dataset, the LOOCV method takes long time to process. Because it consists building the model for (4521-1) times, evaluating the remaining sample with the model and averaging error.
+
+We are using tictoc library to measure the running time for each code chunk to evaluate performance of these methods in terms of running time.
 
 ---
 
 
 ```{r, warning=FALSE}
 
-#start_time <- Sys.time()
+start_time_LOOCV <- Sys.time()
 
 
 # Define training control
@@ -72,12 +74,12 @@ model_LOOCV <- train(subscription_status ~ ., data = bank, method = "lm",
 # Summarize the results
 print(model_LOOCV)
 
-#end_time <- Sys.time()
+end_time_LOOCV <- Sys.time()
 
-#LOOCV_run_time= end_time - start_time
+LOOCV_run_time= end_time_LOOCV - start_time_LOOCV
 
 #Print run time
-#print(LOOCV_run_time)
+print(LOOCV_run_time)
 
 ```
 
@@ -85,10 +87,13 @@ Calculated errors shows there is negligible error in predicting outputs. we will
 
 ## K-fold cross-validation
 
+Here k selected as 10 (by setting number argument to 10 in trainControl function). This number selected because there are 4521 observation in dataset.
 
 ```{r, warning=FALSE}
 # Define training control
 set.seed(120) 
+
+start_time_K_fold <- Sys.time()
 
 train.control_K_fold <- trainControl(method = "repeatedcv", number = 10, repeats = 4)
 
@@ -97,15 +102,25 @@ model_K_fold <- train(subscription_status ~., data = bank, method = "lm",
                trControl = train.control_K_fold)
 # Summarize the results
 print(model_K_fold)
+
+end_time_K_fold <- Sys.time()
+
+K_fold_run_time= end_time_K_fold - start_time_K_fold
+
+#Print run time
+print(K_fold_run_time)
 ```
 
-
+Again error is nearly zero but code run in just 1.3 seconds thatis a great improvement.
 
 ## Bootstrap method 
 
 
 ```{r, warning=FALSE}
 # Define training control
+
+start_time_bootstrap <- Sys.time()
+
 train.control_Bootstrap <- trainControl(method = "boot", number = 100)
 
 # Train the model
@@ -113,6 +128,13 @@ model_Bootstrap <- train(subscription_status ~., data = bank, method = "lm",
                trControl = train.control_Bootstrap)
 # Summarize the results
 print(model_Bootstrap)
+
+end_time_bootstrap <- Sys.time()
+
+bootstrap_run_time= end_time_bootstrap - start_time_bootstrap
+
+#Print run time
+print(bootstrap_run_time)
 ```
 
 
