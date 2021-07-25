@@ -295,8 +295,10 @@ variables.
 
 ## Evaluating performance with confusion matrix
 
+It is important to assess accuracy of model. Although model should be assesses with test data (not previously seen data or data that is not used for building the model), but In this part we will use model train data for assessment. We pass data to both single and multiple Logistic regression Models in order to classify whether clients associated with the given information in the train data set will subscribe to a term deposit. besides, we will evaluate the performance of the model by confusion matrix and heatmap plot.
 
-```{r}
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 status_predictions_SLR <- predict(mdl_bank_S, new_data = bank, type = "response")
 
@@ -309,10 +311,7 @@ status_predictions_MLR <- predict(mdl_bank_M, new_data = bank, type = "response"
 ```
 
 
-
-
-
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # SLR
 
 p4 <- test_results_SLR %>% select(subscription_status,status_pred) %>% 
@@ -329,7 +328,7 @@ conf_mat(p4, truth = truth,
 
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #  MLR
 
 p4 <- test_results_MLR %>% select(subscription_status,status_pred) %>% 
@@ -344,3 +343,5 @@ conf_mat(p4, truth = truth,
 
 ```
 
+After passing the data SLR model shows --% of correct result and
+MLR  
