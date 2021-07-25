@@ -62,9 +62,9 @@ library(tictoc)
 
 ## LOOCV (Leave one out cross validation) 
 
-For this dataset, the LOOCV method takes long time to process. Because it consists building the model for (4521-1) times, evaluating the remaining sample with the model and averaging error.
+For this dataset, the LOOCV method takes long time to process. Because it consists building the model for (4521-1) times and evaluating the remaining sample with the model and averaging errors after finishinf process.
 
-We are using tictoc library to measure the running time for each code chunk to evaluate performance of these methods in terms of running time.
+We are using tictoc library to measure the run time for each code chunk to evaluate the performance of these methods in terms of run time.
 
 ---
 
@@ -92,7 +92,7 @@ print(LOOCV_run_time)
 
 ```
 
-Calculated errors shows there is negligible error in predicting outputs. we will see this in final section called confusion matrix. Besides, running of this method lasted "1.24 min".
+Calculated errors shows there is negligible error in predicting outputs. we will see this in final section called confusion matrix. Besides, running of this method lasted "1.23 min".
 
 ## K-fold cross-validation
 
@@ -152,7 +152,7 @@ Error is also negligible here, and code run in just 3.6 seconds that is a great 
 
 Calculating performance metrics with the yardstick package provides insight into how well a classification model is performing on the test dataset.
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 status_predictions_SLR <- predict(mdl_bank_S, new_data = bank, type = "response")
 
@@ -182,7 +182,7 @@ test_results_model_Bootstrap <- bank %>%
 ```
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # LOOCV
 
 p <- test_results_model_LOOCV %>% select(subscription_status,status_pred) %>% 
@@ -197,7 +197,7 @@ conf_mat(p, truth = truth,
 ```
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # K_fold
 
 p2 <- test_results_model_K_fold %>% select(subscription_status,status_pred) %>% 
@@ -212,7 +212,7 @@ conf_mat(p2, truth = truth,
 ```
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # Bootstrap
 
 p3 <- test_results_model_Bootstrap %>% select(subscription_status,status_pred) %>% 
@@ -228,7 +228,7 @@ conf_mat(p3, truth = truth,
 ```
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # SLR
 
 p4 <- test_results_SLR %>% select(subscription_status,status_pred) %>% 
@@ -246,7 +246,7 @@ conf_mat(p4, truth = truth,
 
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #  MLR
 
 p4 <- test_results_MLR %>% select(subscription_status,status_pred) %>% 

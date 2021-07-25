@@ -26,8 +26,8 @@ library(tictoc)</code></pre>
 </div>
 <div id="loocv-leave-one-out-cross-validation" class="section level2">
 <h2>LOOCV (Leave one out cross validation)</h2>
-<p>For this dataset, the LOOCV method takes long time to process. Because it consists building the model for (4521-1) times, evaluating the remaining sample with the model and averaging error.</p>
-<p>We are using tictoc library to measure the running time for each code chunk to evaluate performance of these methods in terms of running time.</p>
+<p>For this dataset, the LOOCV method takes long time to process. Because it consists building the model for (4521-1) times and evaluating the remaining sample with the model and averaging errors after finishinf process.</p>
+<p>We are using tictoc library to measure the run time for each code chunk to evaluate the performance of these methods in terms of run time.</p>
 <hr />
 <pre class="r"><code>start_time_LOOCV &lt;- Sys.time()
 
@@ -60,8 +60,8 @@ LOOCV_run_time= end_time_LOOCV - start_time_LOOCV
 
 #Print run time
 print(LOOCV_run_time)</code></pre>
-<pre><code>## Time difference of 1.26939 mins</code></pre>
-<p>Calculated errors shows there is negligible error in predicting outputs. we will see this in final section called confusion matrix. Besides, running of this method lasted “1.24 min”.</p>
+<pre><code>## Time difference of 1.284482 mins</code></pre>
+<p>Calculated errors shows there is negligible error in predicting outputs. we will see this in final section called confusion matrix. Besides, running of this method lasted “1.23 min”.</p>
 </div>
 <div id="k-fold-cross-validation" class="section level2">
 <h2>K-fold cross-validation</h2>
@@ -98,7 +98,7 @@ K_fold_run_time= end_time_K_fold - start_time_K_fold
 
 #Print run time
 print(K_fold_run_time)</code></pre>
-<pre><code>## Time difference of 1.257281 secs</code></pre>
+<pre><code>## Time difference of 1.213336 secs</code></pre>
 <p>Again error is nearly zero but code run in just 1.4 seconds that is a great improvement in caparison with LOOCV method.</p>
 </div>
 <div id="bootstrap-method" class="section level2">
@@ -134,114 +134,16 @@ bootstrap_run_time= end_time_bootstrap - start_time_bootstrap
 
 #Print run time
 print(bootstrap_run_time)</code></pre>
-<pre><code>## Time difference of 3.492438 secs</code></pre>
+<pre><code>## Time difference of 3.569924 secs</code></pre>
 <p>Error is also negligible here, and code run in just 3.6 seconds that is a great improvement in caparison with LOOCV method but slower than K-fold. Obviously, number of iteration affects timing.</p>
 </div>
 <div id="evaluating-performance-with-confusion-matrix" class="section level2">
 <h2>Evaluating performance with confusion matrix</h2>
 <p>Calculating performance metrics with the yardstick package provides insight into how well a classification model is performing on the test dataset.</p>
-<pre class="r"><code>status_predictions_SLR &lt;- predict(mdl_bank_S, new_data = bank, type = &quot;response&quot;)
-
-status_predictions_MLR &lt;- predict(mdl_bank_M, new_data = bank, type = &quot;response&quot;)
-
-status_predictions_model_LOOCV &lt;- predict(model_LOOCV$finalModel, new_data = bank)
-status_predictions_model_K_fold &lt;- predict(model_K_fold$finalModel, new_data = bank)
-status_predictions_model_Bootstrap &lt;- predict(model_Bootstrap$finalModel, new_data = bank)
-
-test_results_SLR &lt;- bank %&gt;%
-  bind_cols(status_pred=status_predictions_SLR)
-
-test_results_MLR &lt;- bank %&gt;%
-  bind_cols(status_pred=status_predictions_MLR)
-
-test_results_model_LOOCV &lt;- bank %&gt;%
-  bind_cols(status_pred=status_predictions_model_LOOCV)
-
-
-test_results_model_K_fold &lt;- bank %&gt;%
-  bind_cols(status_pred=status_predictions_model_K_fold)
-
-test_results_model_Bootstrap &lt;- bank %&gt;%
-  bind_cols(status_pred=status_predictions_model_Bootstrap)</code></pre>
-<pre class="r"><code># LOOCV
-
-p &lt;- test_results_model_LOOCV %&gt;% select(subscription_status,status_pred) %&gt;% 
-   mutate(truth=ifelse(subscription_status == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;)) %&gt;% 
-   mutate(estimate=ifelse(status_pred == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;))
-
-# Calculate the confusion matrix
-conf_mat(p, truth = truth,
-    estimate = estimate)%&gt;% 
-  # Create a heat map
-  autoplot(type = &#39;heatmap&#39;)</code></pre>
-<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
-## was converted to a factor</code></pre>
-<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...):
-## `estimate` was converted to a factor</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<pre class="r"><code># K_fold
-
-p2 &lt;- test_results_model_K_fold %&gt;% select(subscription_status,status_pred) %&gt;% 
-   mutate(truth=ifelse(subscription_status == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;)) %&gt;% 
-   mutate(estimate=ifelse(status_pred == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;))
-
-# Calculate the confusion matrix
-conf_mat(p2, truth = truth,
-    estimate = estimate)%&gt;% 
-  # Create a heat map
-  autoplot(type = &#39;heatmap&#39;)</code></pre>
-<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
-## was converted to a factor</code></pre>
-<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...):
-## `estimate` was converted to a factor</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<pre class="r"><code># Bootstrap
-
-p3 &lt;- test_results_model_Bootstrap %&gt;% select(subscription_status,status_pred) %&gt;% 
-   mutate(truth=ifelse(subscription_status == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;)) %&gt;% 
-   mutate(estimate=ifelse(status_pred == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;))
-
-# Calculate the confusion matrix
-conf_mat(p3, truth = truth,
-    estimate = estimate)%&gt;% 
-  # Create a heat map
-  autoplot(type = &#39;heatmap&#39;)</code></pre>
-<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
-## was converted to a factor</code></pre>
-<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...):
-## `estimate` was converted to a factor</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<pre class="r"><code># SLR
-
-p4 &lt;- test_results_SLR %&gt;% select(subscription_status,status_pred) %&gt;% 
-   mutate(truth=ifelse(subscription_status == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;)) %&gt;% 
-   mutate(estimate=ifelse(status_pred &gt; 0.13 , &#39;yes&#39;, &#39;no&#39;))
-
-# Calculate the confusion matrix
-conf_mat(p4, truth = truth,
-    estimate = estimate)%&gt;% 
-  # Create a heat map
-  autoplot(type = &#39;heatmap&#39;)</code></pre>
-<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
-## was converted to a factor</code></pre>
-<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...):
-## `estimate` was converted to a factor</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<pre class="r"><code>#  MLR
-
-p4 &lt;- test_results_MLR %&gt;% select(subscription_status,status_pred) %&gt;% 
-   mutate(truth=ifelse(subscription_status == &#39;1&#39; , &#39;yes&#39;, &#39;no&#39;)) %&gt;% 
-   mutate(estimate=ifelse(status_pred &gt; 0.3 , &#39;yes&#39;, &#39;no&#39;))
-
-# Calculate the confusion matrix
-conf_mat(p4, truth = truth,
-    estimate = estimate)%&gt;% 
-  # Create a heat map
-  autoplot(type = &#39;heatmap&#39;)</code></pre>
-<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
-## was converted to a factor</code></pre>
-<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...):
-## `estimate` was converted to a factor</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>Confusion matrices and heatmap plots shows there are no error in predictions.</p>
 <p>Explanations about predictions of SLR (Single linear regression) and MLR (Multiple linear regression) is necessary. In these cases, we defined a threshold of probabilities that separates “yes” and “no” outcomes. These thresholds are selected so that number of errors (numbers in sub diagonal of matrix) become minimum.</p>
