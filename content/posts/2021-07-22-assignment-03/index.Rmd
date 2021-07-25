@@ -43,6 +43,7 @@ library(caret)
 
 library(yardstick)
 
+library(tictoc)
 ```
 
 
@@ -52,14 +53,16 @@ library(yardstick)
 
 ## LOOCV (Leave one out cross validation) 
 
-
-The LOOCV method is using all data points therefore it reduces the bias.
-
-However, the execution time could be so long if n (number of observation) is large. Besides, we know that low bias means high variance and the model is more prone to overfitting.
+For this dataset, the LOOCV method takes long time to process. Because it consists building the model for (4521-1) times, evaluating the remaining sample with the model and averaging error. We are using tictoc library to measure the running time for each code chunk to evaluate performance of these methods in terms of running time.
 
 ---
 
+
 ```{r, warning=FALSE}
+
+#start_time <- Sys.time()
+
+
 # Define training control
 train.control_LOOCV <- trainControl(method = "LOOCV")
 
@@ -68,8 +71,17 @@ model_LOOCV <- train(subscription_status ~ ., data = bank, method = "lm",
                trControl = train.control_LOOCV)
 # Summarize the results
 print(model_LOOCV)
+
+#end_time <- Sys.time()
+
+#LOOCV_run_time= end_time - start_time
+
+#Print run time
+#print(LOOCV_run_time)
+
 ```
 
+Calculated errors shows there is negligible error in predicting outputs. we will see this in final section called confusion matrix. Besides, running of this method lasted "1.24 min".
 
 ## K-fold cross-validation
 

@@ -139,7 +139,9 @@ minimum, mode, median, max, first and third quarterlies. Note that the red dotte
 <h2>Resampling</h2>
 <pre class="r"><code>library(caret)
 
-library(yardstick)</code></pre>
+library(yardstick)
+
+library(tictoc)</code></pre>
 <p><strong>Data sampling versus resampling:</strong> Data sampling refers to statistical methods for selecting observations from the domain with the objective of estimating a population parameter. Whereas data resampling refers to methods for economically using a collected dataset to improve the estimate of the population parameter and help to quantify the uncertainty of the estimate. In this part we are studying resampling. Two methods are considereing in the following paragraphs: cross validation (two sub-categories, LOOCV, K-fold) and bootstraping.</p>
 <p>for each category resampling is conducted using <strong><em>caret</em></strong> package and their performance is evaluated and compared using appropriate methods.</p>
 <p>In the following paragraphs three models will calculate using resampling: LOOCV, K-fold, and Bootstrap. subsequently, we will compare performance of these three models.</p>
@@ -159,7 +161,9 @@ library(yardstick)</code></pre>
 <p>Divide the dataset to two sections (train and test) could show the overfitting, however, Here, we will not practice that.</p>
 <p>Below is code for performing LOOCV using caret library.</p>
 <hr />
-<pre class="r"><code># Define training control
+<p>start_time = Sys.time()</p>
+<pre class="r"><code>start_time &lt;- Sys.time()
+# Define training control
 train.control_LOOCV &lt;- trainControl(method = &quot;LOOCV&quot;)
 
 # Train the model
@@ -181,6 +185,13 @@ print(model_LOOCV)</code></pre>
 ##   212.186  0.9673791  150.5193
 ## 
 ## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+<pre class="r"><code>end_time &lt;-  Sys.time()
+
+LOOCV_time &lt;-  end_time - start_time
+print(paste0(&quot;Runing time for LOOCV is: &quot;, LOOCV_time))</code></pre>
+<pre><code>## [1] &quot;Runing time for LOOCV is: 4.1515691280365&quot;</code></pre>
+<pre class="r"><code>print(LOOCV_time)</code></pre>
+<pre><code>## Time difference of 4.151569 secs</code></pre>
 <p>As expected, sample sizes are 439 (440-1) and process repeated 440 times (n). Three important parameters are provided to evaluate performance.</p>
 <p>RMSE (Root Mean Squared Error), which measures the average prediction errors made by the model in predicting the outcome for an observation. We expect low value for RMSE. Note that an outlier observation could drastically increase this error. The achieved value in this part will be compared by this values in other methods to compare these methods.</p>
 <p>To tackale the problem of outlier in RMSE, MAE (Mean Absolute Error) is introduced. MAE is an alternative to the RMSE that is less sensitive to outliers. It corresponds to the average absolute difference between observed and predicted outcomes. again, the lower the MAE, the better the model. We compare this number for different models in following parts.</p>

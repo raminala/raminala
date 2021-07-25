@@ -17,6 +17,7 @@ tags:
 library(tidyverse)
 library(readxl)
 library(tidymodels)
+
 #diamonds_price <- read_excel("MBA6636_SM21_Professor_Proposes_Data.xlsx", col_names = TRUE, col_types = NULL, na = "", skip = 0)
 
 diamonds <- read_excel("MBA6636_SM21_Professor_Proposes_Data.xlsx") %>%
@@ -269,6 +270,8 @@ library(caret)
 
 library(yardstick)
 
+library(tictoc)
+
 ```
 
 
@@ -297,8 +300,12 @@ Divide the dataset to two sections (train and test) could show the overfitting, 
 Below is code for performing LOOCV using caret library.
 
 ---
+start_time = Sys.time()
+
 
 ```{r, warning=FALSE}
+
+start_time <- Sys.time()
 # Define training control
 train.control_LOOCV <- trainControl(method = "LOOCV")
 
@@ -308,6 +315,11 @@ model_LOOCV <- train(price ~., data = diamonds, method = "lm",
 # Summarize the results
 print(model_LOOCV)
 
+end_time <-  Sys.time()
+
+LOOCV_time <-  end_time - start_time
+print(paste0("Runing time for LOOCV is: ", LOOCV_time))
+print(LOOCV_time)
 ```
 
 As expected, sample sizes are 439 (440-1) and process repeated 440 times (n). Three important parameters are provided to evaluate performance.
