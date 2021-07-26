@@ -1,17 +1,13 @@
 ---
-title: 'Assignment A02: Classification Models'
-author: Ramin Ala
-date: '2021-07-15'
+title: 'Assignment A02: Classification Models-revision'
+author: ''
+date: '2021-07-25'
 slug: []
 categories: []
-tags:
-  - Assignment
-  - Classification
+tags: []
 ---
+
 ***Ramin Ala***
-
-
-
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -330,35 +326,6 @@ from Generalized Linear Model coefficient, it appears that education is a determ
 
 It is important to assess accuracy of model. Although model should be assesses with test data (not previously seen data or data that is not used for building the model), but In this part we will use model train data for assessment. We pass data to both single and multiple Logistic regression Models in order to classify whether clients associated with the given information in the train data set will subscribe to a term deposit. besides, we will evaluate the performance of the model by confusion matrix and heatmap plot.
 
-
-```{r, warning=FALSE}
-# Define training control
-
-start_time_bootstrap <- Sys.time()
-
-train.control_Bootstrap <- trainControl(method = "boot", number = 100)
-
-# Train the model
-model_Bootstrap <- train(subscription_status ~., data = bank, method = "lm",
-               trControl = train.control_Bootstrap)
-# Summarize the results
-print(model_Bootstrap)
-
-end_time_bootstrap <- Sys.time()
-
-bootstrap_run_time= end_time_bootstrap - start_time_bootstrap
-
-#Print run time
-print(bootstrap_run_time)
-```
-
-Error is also negligible here, and code run in just 3.6 seconds that is a great improvement in caparison with LOOCV method but slower than K-fold. Obviously, number of iteration affects timing.
-
-## Evaluating performance with confusion matrix
-
-Calculating performance metrics with the yardstick package provides insight into how well a classification model is performing on the test dataset.
-
-
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 status_predictions_SLR <- predict(mdl_bank_S, new_data = bank, type = "response")
@@ -366,14 +333,20 @@ status_predictions_SLR <- predict(mdl_bank_S, new_data = bank, type = "response"
 status_predictions_MLR <- predict(mdl_bank_M, new_data = bank, type = "response")
 
 
+test_results_SLR <- bank %>%
+  bind_cols(status_pred=status_predictions_SLR)
 
+test_results_MLR <- bank %>%
+  bind_cols(status_pred=status_predictions_MLR)
 
 
 ```
 
+
 First, start with evaluating the performance of single logistic regression Model using heatmap matrix.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
 # SLR
 
 p4 <- test_results_SLR %>% select(subscription_status,status_pred) %>% 
