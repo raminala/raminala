@@ -13,12 +13,12 @@ tags: []
 <p><strong><em>Ramin Ala</em></strong></p>
 <div id="executive-summary" class="section level2">
 <h2>Executive Summary</h2>
-<p>The data is related with direct marketing campaigns (based on phone calls) of a Portuguese banking institution. This really is a <strong>supervised question</strong> because it has an outcome (y), which defined as if the product (bank term deposit) would be (or not) subscribed, “yes” means subscribed, and “no” means did not subscribe. This dataset consists of <strong>4521 observations</strong>..</p>
-<p>In addition to the outcome classification variable, there are 16 variables. Eight variables are related to statistical information about current and previous campaigns, and they seems irrelevant to dependent variable. So, there are eight determinant variables Including:</p>
+<p>The data is related to direct marketing campaigns (based on phone calls) of a Portuguese banking institution. This is a <strong>supervised question</strong> because it has an outcome (y), which is defined as if the product (bank term deposit) would be (or not) subscribed, “yes” means subscribed, and “no” means did not subscribe. This dataset consists of <strong>4521 observations</strong>..</p>
+<p>In addition to the outcome classification variable, there are 16 variables. Eight variables are related to statistical information about current and previous campaigns, and they seem irrelevant to a dependent variable. So, there are eight determinant variables Including:</p>
 <p>Customer’s <strong><em>age</em></strong> and <strong><em>balance</em></strong> (numerical variables),</p>
 <p>Customer’s <strong><em>job</em></strong>, <strong><em>marital</em></strong> status, <strong><em>education</em></strong> (categorical variables)</p>
 <p><strong><em>housing loan</em></strong>, <strong><em>personal loan</em></strong>, and <strong><em>default status</em></strong> (binary variables)</p>
-<p>Information regarding the reference of dataset is available at:</p>
+<p>Information regarding the reference of the dataset is available at:</p>
 <p><a href="http://www3.dsi.uminho.pt/pcortez/bib/2011-esm-1.txt" class="uri">http://www3.dsi.uminho.pt/pcortez/bib/2011-esm-1.txt</a></p>
 </div>
 <div id="univariate-analysis-of-numerical-variables" class="section level2">
@@ -31,7 +31,7 @@ tags: []
 ##   minimum    q1 median  mean    q3 maximum
 ##     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
 ## 1      19    33     39  41.2    49      87</code></pre>
-<p>Above plot and table give an impression of the age of examined group. The minimum, maximum and average ages are 19, 87, and 41 years respectively. The majority of observations are concentrated at the age of between 30 to 35 years. This information would not provide any insight into the possible outcome.</p>
+<p>This plot and table give an impression of the age of examined group. The minimum, maximum and average ages are 19, 87, and 41 years respectively. The majority of observations are concentrated at the age of between 30 to 35 years. This information would not provide any insight into the possible outcome.</p>
 </div>
 <div id="balance" class="section level2">
 <h2><em>balance</em></h2>
@@ -53,35 +53,35 @@ tags: []
 ##   &lt;chr&gt; &lt;int&gt;      &lt;dbl&gt;
 ## 1 no     4000       88.5
 ## 2 yes     521       11.5</code></pre>
-<p>This univariate analysis could give a clue about probability of subscription in customers. from the above table, it is obvious that majority of customers did not subscribed (88.476%) comparing slightly more than ten percent of customers who finally choose to subscribe (11.524%). The good point about dataset is it provided valid outcome for all customers (whether subscribed or not).</p>
+<p>This univariate analysis could give a clue about probability of subscription in customers. from the above table, it is obvious that majority of customers did not subscribe (88.476%) comparing slightly more than ten percent of customers who finally choose to subscribe (11.524%). The good point about dataset is it provided valid outcomes for all customers (whether subscribed or not).</p>
 </div>
 <div id="bivariate-analysis" class="section level2">
 <h2>Bivariate Analysis</h2>
-<p>In this part two variables are considering and their relationship are examined. A dummy variable has been defined for outcome so that</p>
-<p>0=No (did not subscribed), and</p>
+<p>In this part, two variables are considering and their relationship is examined. A dummy variable has been defined for outcomes so that</p>
+<p>0=No (did not subscribe), and</p>
 <p>1=yes (subscribed).</p>
 </div>
 <div id="correlation-between-age-and-balance" class="section level2">
 <h2>correlation between age and balance</h2>
 <pre><code>## [1] &quot;correlation between age and balance:  0.0838201422447776&quot;</code></pre>
-<p>It shows small positive correlation between age and balance. generally older clients tends to have higher balance but the correlation is more like a random relation because it is more close to zero (random case) than 1 (strong correlation). It shows that these two parameters cannot be assessed from each others. On the other hand, highly correlated variables are not good predictors together because they follow a same trend.</p>
+<p>It shows a small positive correlation between age and balance. Generally, older clients tend to have a higher balance but the correlation is more like a random relation because it is more close to zero (random case) than 1 (strong correlation). It shows that these two parameters cannot be assessed from each other. On the other hand, highly correlated variables are not good predictors together because they follow the same trend.</p>
 </div>
 <div id="subscription-statusjob" class="section level2">
 <h2><em>subscription status~job</em></h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>There are twelve categories of jobs.Managements, blue-collars, and technicians are the most frequent jobs among respondents. As shown in the plot, among these jobs, managements are more likely to subscribe. However, relative number of subscription is very high among students, unknown and unemployed people. These groups are more likely to subscribe.</p>
+<p>There are twelve categories of jobs. Managements, blue-collars, and technicians are the most frequent jobs among respondents. As shown in the plot, among these jobs, managements are more likely to subscribe. However, relative number of subscriptions is very high among students, unknown and unemployed people. These groups are more likely to subscribe.</p>
 </div>
 <div id="subscription-statusmarital" class="section level2">
 <h2><em>subscription status~marital</em></h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<p>Similar to previous analysis could be done for marital status.This plot shows majority of respondents are married. However, divorced group are more likely to subscribe when numbers compared in each group.</p>
+<p>Similar to previous analysis could be done for marital status. This plot shows a majority of respondents are married. However, divorced group are more likely to subscribe when numbers are compared in each group.</p>
 </div>
 <div id="subscription-statusbalance" class="section level2">
 <h2><em>subscription status~balance</em></h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<p>In this plot, subscription status versus balance depicted. Very high balances (higher than $30000) considered as outlier data and they have been omitted from plotting. Considering this plot alone is not very informative for me. I barely could decide if higher balance increase/decrease the chance of subscription by looking at this plot. For this reason, a Generalized linear line added to plot for a better information.</p>
+<p>In this plot, subscription status versus balance is depicted. Very high balances (higher than $30000) are considered as outlier data and they have been omitted from plotting. Considering this plot alone is not very informative for me. I barely could decide if a higher balance increase/decrease the chance of subscription by looking at this plot. For this reason, a Generalized linear line was added to the plot for better information.</p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p>The added layer to this plot, comparing the previous plot, shows that those who has higher balance are more likely to subscribe to a term deposit. But how strong is this relationship? In other word, is balance very determinant parameter? Let’s perform generalized analysis and see the parameters.</p>
+<p>The added layer to this plot, comparing the previous plot, shows that those who have a higher balance are more likely to subscribe to a term deposit. But how strong is this relationship? In other word, is balance very determinant parameter? Let’s perform a generalized analysis and see the parameters.</p>
 <pre><code>## 
 ## Call:
 ## glm(formula = subscription_status ~ balance, family = binomial, 
@@ -114,12 +114,12 @@ tags: []
 <div id="subscription-statusdefault" class="section level2">
 <h2><em>subscription status~default</em></h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<p>In this plot combination of two categorical variables are counted. One is default and the other is dependent variable (result). We have four categories here (four possible combinations for two binary variables). It seems that default clients (default=yes) is very unlikely to subscribe.</p>
+<p>In this plot combination of two categorical variables are counted. One is default and the other is the dependent variable (result). We have four categories here (four possible combinations for two binary variables). It seems that default clients (default=yes) is very unlikely to subscribe.</p>
 </div>
 <div id="box-plot-for-subscription-status-versus-age" class="section level2">
 <h2>Box plot for subscription status versus age</h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
-<p>In this plot we take a look at the distribution of subscription_status by age of clients. Plots shows age has a relatively low effect on the chance of subscription of a client. This will be proved later by multiple linear regression and looking at coefficient of age and its p-value. Despite age has low effect, older clients has slightly hight chance of subscription. This can be seen by comparing mean and third quartile lines.</p>
+<p>In this plot, we take a look at the distribution of subscription_status by age of clients. Plots show age has a relatively low effect on the chance of subscription of a client. This will be proved later by multiple linear regression and looking at the coefficient of age and its p-value. Older clients have a slightly higher chance of subscription. This can be seen by comparing mean and third quartile lines.</p>
 </div>
 <div id="box-plot-for-subscription-status-versus-balance" class="section level2">
 <h2>Box plot for subscription status versus balance</h2>

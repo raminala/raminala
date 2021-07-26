@@ -24,9 +24,9 @@ bank <- read_csv("bank.csv") %>%
 
 ## Executive Summary
 
-The data is related with direct marketing campaigns (based on phone calls) of a Portuguese banking institution. This really is a **supervised question** because it has an outcome (y), which defined as if the product (bank term deposit) would be (or not) subscribed, "yes" means subscribed, and "no" means did not subscribe. This dataset consists of **`r nrow(bank)` observations**..
+The data is related to direct marketing campaigns (based on phone calls) of a Portuguese banking institution. This is a **supervised question** because it has an outcome (y), which is defined as if the product (bank term deposit) would be (or not) subscribed, "yes" means subscribed, and "no" means did not subscribe. This dataset consists of **`r nrow(bank)` observations**..
 
-In addition to the outcome classification variable, there are 16 variables. Eight variables are related to statistical information about current and previous campaigns, and they seems irrelevant to  dependent variable. So, there are eight determinant variables Including:
+In addition to the outcome classification variable, there are 16 variables. Eight variables are related to statistical information about current and previous campaigns, and they seem irrelevant to a dependent variable. So, there are eight determinant variables Including:
 
 Customer's ***age*** and ***balance*** (numerical variables),
 
@@ -34,7 +34,7 @@ Customer's ***job***, ***marital*** status, ***education***  (categorical variab
  
 ***housing loan***, ***personal loan***, and ***default status*** (binary variables)  
 
-Information regarding the reference of dataset is available at:
+Information regarding the reference of the dataset is available at:
 
 http://www3.dsi.uminho.pt/pcortez/bib/2011-esm-1.txt
 
@@ -52,7 +52,7 @@ summary(bank$age) %>%
   tidy() 
 ```
 
-Above plot and table give an impression of the age of examined group. The minimum, maximum and average ages are 19, 87, and 41 years respectively. The majority of observations are concentrated at the age of between 30 to 35 years. This information would not provide any insight into the possible outcome.
+This plot and table give an impression of the age of examined group. The minimum, maximum and average ages are 19, 87, and 41 years respectively. The majority of observations are concentrated at the age of between 30 to 35 years. This information would not provide any insight into the possible outcome.
 
 
 ## *balance*
@@ -82,15 +82,15 @@ bank %>%
 ```
 
 
-This univariate analysis could give a clue about probability of subscription in customers. from the above table, it is obvious that majority of customers did not subscribed (88.476%) comparing slightly more than ten percent of customers who finally choose to subscribe (11.524%). The good point about dataset is it provided valid outcome for all customers (whether subscribed or not).
+This univariate analysis could give a clue about probability of subscription in customers. from the above table, it is obvious that majority of customers did not subscribe (88.476%) comparing slightly more than ten percent of customers who finally choose to subscribe (11.524%). The good point about dataset is it provided valid outcomes for all customers (whether subscribed or not).
 
 
 
 ## Bivariate Analysis
 
-In this part two variables are considering and their relationship are examined. A dummy variable has been defined for outcome so that
+In this part, two variables are considering and their relationship is examined. A dummy variable has been defined for outcomes so that
 
-0=No (did not subscribed), and
+0=No (did not subscribe), and
 
 1=yes (subscribed).
 
@@ -105,7 +105,7 @@ paste("correlation between age and balance: ", cor_age_balance)
 
 ```
 
-It shows small positive correlation between age and balance. generally older clients tends to have higher balance but the correlation is more like a random relation  because it is more close to zero (random case) than 1 (strong correlation). It shows that these two parameters cannot be assessed from each others. On the other hand, highly correlated variables are not good predictors together because they follow a same trend.
+It shows a small positive correlation between age and balance. Generally, older clients tend to have a higher balance but the correlation is more like a random relation  because it is more close to zero (random case) than 1 (strong correlation). It shows that these two parameters cannot be assessed from each other. On the other hand, highly correlated variables are not good predictors together because they follow the same trend.
 
 
 
@@ -128,7 +128,7 @@ bank0 %>%
 
 ```
 
-There are twelve categories of jobs.Managements, blue-collars, and technicians are the most frequent jobs among respondents. As shown in the plot, among these jobs, managements are more likely to subscribe. However, relative number of subscription is very high among students, unknown and unemployed people. These groups are more likely to subscribe. 
+There are twelve categories of jobs. Managements, blue-collars, and technicians are the most frequent jobs among respondents. As shown in the plot, among these jobs, managements are more likely to subscribe. However, relative number of subscriptions is very high among students, unknown and unemployed people. These groups are more likely to subscribe. 
 
 ## *subscription status~marital*
 
@@ -153,7 +153,7 @@ bank0 %>%
 
 ```
 
-Similar to previous analysis could be done for marital status.This plot shows majority of respondents are married. However, divorced group are more likely to subscribe when numbers compared in each group.
+Similar to previous analysis could be done for marital status. This plot shows a majority of respondents are married. However, divorced group are more likely to subscribe when numbers are compared in each group.
 
 
 
@@ -169,7 +169,7 @@ bank %>%
 
 ```
 
-In this plot, subscription status versus balance depicted. Very high balances (higher than $30000) considered as outlier data and they have been omitted from plotting. Considering this plot alone is not very informative for me. I barely could decide if higher balance increase/decrease the chance of subscription by looking at this plot. For this reason, a Generalized linear line added to plot for a better information.
+In this plot, subscription status versus balance is depicted. Very high balances (higher than $30000) are considered as outlier data and they have been omitted from plotting. Considering this plot alone is not very informative for me. I barely could decide if a higher balance increase/decrease the chance of subscription by looking at this plot. For this reason, a Generalized linear line was added to the plot for better information.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 bank %>%
@@ -179,7 +179,7 @@ bank %>%
   geom_smooth(method = "glm", se=FALSE)
 ```
 
-The added layer to this plot, comparing the previous plot, shows that those who has higher balance are more likely to subscribe to a term deposit. But how strong is this relationship? In other word, is balance very determinant parameter? Let's perform generalized analysis and see the parameters.
+The added layer to this plot, comparing the previous plot, shows that those who have a higher balance are more likely to subscribe to a term deposit. But how strong is this relationship? In other word, is balance very determinant parameter? Let's perform a generalized analysis and see the parameters.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 mdl_bank_S <- glm(subscription_status ~ balance , data=bank, family = binomial)
@@ -224,7 +224,7 @@ ss %>%
 ```
 
 
-In this plot combination of two categorical variables are counted. One is default and the other is dependent variable (result). We have four categories here (four possible combinations for two binary variables). It seems that default clients (default=yes) is very unlikely to subscribe.
+In this plot combination of two categorical variables are counted. One is default and the other is the dependent variable (result). We have four categories here (four possible combinations for two binary variables). It seems that default clients (default=yes) is very unlikely to subscribe.
 
 ## Box plot for subscription status versus age
 
@@ -238,7 +238,7 @@ ggplot(aes(factor(y), age))+
 
 ```
 
-In this plot we take a look at the distribution of subscription_status by age of clients. Plots shows age has a relatively low effect on the chance of subscription of a client. This will be proved later by multiple linear regression and looking at coefficient of age and its p-value. Despite age has low effect, older clients has slightly hight chance of subscription. This can be seen by comparing mean and third quartile lines.
+In this plot, we take a look at the distribution of subscription_status by age of clients. Plots show age has a relatively low effect on the chance of subscription of a client. This will be proved later by multiple linear regression and looking at the coefficient of age and its p-value. Older clients have a slightly higher chance of subscription. This can be seen by comparing mean and third quartile lines.
 
 ## Box plot for subscription status versus balance
 
