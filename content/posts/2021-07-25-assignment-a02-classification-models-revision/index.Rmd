@@ -388,12 +388,12 @@ We set threshold to 0.35 here. After passing the data SLR model, it shows 88.5% 
 
 - Most respondents in this campaign were 30 to 35 years old with near zero balance. Besides, nearly 90% of respondents did not subscribe finally.
 
-- Univariate analysis shows positive slope for both age and balance (higher age/balance means higher chance of subscription). However, generalized linear Modeling with consideration of all variables shows balance has not an impact on chance of subscription.
+- Univariate analysis shows a positive slope for both age and balance (higher age/balance means a higher chance of subscription). However, generalized linear Modeling with consideration of all variables shows balance has not an impact on chance of subscription.
 
-- Univariate analysis  of job shows that a big portion of students, unemployed, and those with unknown jobs subscribed, but respondents with blue-color jobs and technicians did not subscribe so often.
+- Univariate analysis of jobs shows that a big portion of students, unemployed, and those with unknown jobs subscribed, but respondents with blue-color jobs and technicians did not subscribe so often.
 
-- Divorced respondents was more likely to subscribe than married and single ones.
+- Divorced respondents were more likely to subscribe than married and single ones.
 
-- Generalized Linear Model shows that balance is not a determinant factor but housing and loan status are both determinant.
+- Generalized Linear Model shows that balance is not a determinant factor but housing and loan status are both determinants.
 
-- Coefficients of glm analysis are all small because the number of respondents with subscribed status are very lower than not subscribed clients.
+- Coefficients of glm analysis are all small because the number of respondents with subscribed status is very lower than not subscribed clients.
