@@ -264,7 +264,7 @@ bank %>%
   ggplot(aes(age, balance, color=y))+
   geom_point()
 ```
-This plot consists of two numerical variables (age and balance) that both are explanatory variables and response variable which depicted by color (pink colors did not subscribed and blue colors subscribed). 
+This plot consists of two numerical variables (age and balance) that both are explanatory variables and the response variable which is depicted by color (pink colors did not subscribe and blue colors subscribed). 
 
 
 ## *Analysis of four variables:subscription status~age and marital and loan*
@@ -277,7 +277,7 @@ bank %>%
 
 ```
 
-This plot probably give not more information than a two variable analysis because point are very closed hard to distinguish. So it time to examine all parameters using glm function.
+This plot probably gives not more information than a two-variable analysis because points are very closed hard to distinguish. So it is time to examine all parameters using glm function.
 
 
 
@@ -291,11 +291,11 @@ mdl_bank_M %>%
   summary()
 ```
 
-Pr(>|z|) value for  balance is close to 1 and this makes us to believe it is not a determinant parameter, but this parameter is negligible for housing with relatively high value for its coefficient. This is the reason for importance of housing status. A similar circumstance is for loan status.
+Pr(>|z|) value for  balance is close to 1 and this makes us believe it is not a determinant parameter, but this parameter is negligible for housing with relatively high value for its coefficient. This is the reason for importance of housing status. A similar circumstance is for loan status.
 
-In addition, Coefficients of above analysis are all small because the number of respondents with subscribed status are very lower than not subscribed clients.
+In addition, Coefficients of above analysis are all small because the number of respondents with subscribed status is very lower than not subscribed clients.
 
-Finally, some parameters that seemed to be determinant in univariate analysis are not important in fact. This is because of correlation between non determinant and determinant 
+Finally, some parameters that seemed to be determinant in univariate analysis are not important in fact. This is because of correlation between non-determinant and determinant 
 variables.
 
 ## *subscription status~education*
@@ -320,11 +320,11 @@ bank_e %>%
 
 ```
 
-from Generalized Linear Model coefficient, it appears that education is a determinant factor, therefore an analysis of education and subscription status performed here. This plot shows that most clients have secondary education, followed by tertiary, primary and unknown education level. Comparing the ratio of people who subscribed to those did not subscribe in each categories shows that people with tertiary education is more likely to finally subscribe.
+From generalized linear model coefficient, it appears that education is a determinant factor, therefore an analysis of education and subscription status is performed here. This plot shows that most clients have secondary education, followed by tertiary, primary, and unknown education levels. Comparing the ratio of people who subscribed to those who did not subscribe in each category shows that people with tertiary education are more likely to finally subscribe.
 
 ## Evaluating performance with confusion matrix
 
-It is important to assess accuracy of model. Although model should be assesses with test data (not previously seen data or data that is not used for building the model), but In this part we will use model train data for assessment. We pass data to both single and multiple Logistic regression Models in order to classify whether clients associated with the given information in the train data set will subscribe to a term deposit. besides, we will evaluate the performance of the model by confusion matrix and heatmap plot.
+It is important to assess accuracy of model. Although model should be assessed with test data (not previously seen data or data that is not used for building the model). In this part we will use model train data for assessment. We pass data to both single and multiple Logistic regression Models in order to classify whether clients associated with the given information in the train data set will subscribe to a term deposit. besides, we will evaluate the performance of the model by confusion matrix and heatmap plot.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -343,7 +343,7 @@ test_results_MLR <- bank %>%
 ```
 
 
-First, start with evaluating the performance of single logistic regression Model using heatmap matrix.
+First, start with evaluating the performance of a single logistic regression Model using heatmap matrix.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -361,7 +361,7 @@ conf_mat(p4, truth = truth,
 
 ```
 
-Here, We set threshold to 0.2. After passing the data to SLR model,it shows 88.5% of predictions are accurate. There are 521 false negative and 2 false positive predictions.
+Here, We set the threshold to 0.2. After passing the data to SLR model, it shows 88.5% of predictions are accurate. There are 521 false-negative and 2 false-positive predictions.
 
 
 
@@ -380,13 +380,13 @@ conf_mat(p4, truth = truth,
 
 ```
 
-We set threshold to 0.35 here. After passing the data SLR model,it shows 88.5% of predictions are accurate. There are 514 false negative and 4 false positive predictions.
+We set threshold to 0.35 here. After passing the data SLR model, it shows 88.5% of predictions are accurate. There are 514 false-negative and 4 false-positive predictions.
 
 
 
 ## Summary of findings
 
-- Most respondents in this campaign was 30 to 35 years old with near zero balance.Besides, nearly 90% of respondents did not subscribe finally.
+- Most respondents in this campaign were 30 to 35 years old with near zero balance. Besides, nearly 90% of respondents did not subscribe finally.
 
 - Univariate analysis shows positive slope for both age and balance (higher age/balance means higher chance of subscription). However, generalized linear Modeling with consideration of all variables shows balance has not an impact on chance of subscription.
 

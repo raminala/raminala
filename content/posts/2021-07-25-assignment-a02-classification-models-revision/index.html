@@ -129,12 +129,12 @@ tags: []
 <div id="analysis-of-three-variables-result-versus-age-and-balance" class="section level2">
 <h2>Analysis of three variables: result versus age and balance</h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" />
-This plot consists of two numerical variables (age and balance) that both are explanatory variables and response variable which depicted by color (pink colors did not subscribed and blue colors subscribed).</p>
+This plot consists of two numerical variables (age and balance) that both are explanatory variables and the response variable which is depicted by color (pink colors did not subscribe and blue colors subscribed).</p>
 </div>
 <div id="analysis-of-four-variablessubscription-statusage-and-marital-and-loan" class="section level2">
 <h2><em>Analysis of four variables:subscription status~age and marital and loan</em></h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
-<p>This plot probably give not more information than a two variable analysis because point are very closed hard to distinguish. So it time to examine all parameters using glm function.</p>
+<p>This plot probably gives not more information than a two-variable analysis because points are very closed hard to distinguish. So it is time to examine all parameters using glm function.</p>
 </div>
 <div id="generalized-linear-model" class="section level2">
 <h2>Generalized Linear Model</h2>
@@ -181,29 +181,29 @@ This plot consists of two numerical variables (age and balance) that both are ex
 ## AIC: 3140.5
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
-<p>Pr(&gt;|z|) value for balance is close to 1 and this makes us to believe it is not a determinant parameter, but this parameter is negligible for housing with relatively high value for its coefficient. This is the reason for importance of housing status. A similar circumstance is for loan status.</p>
-<p>In addition, Coefficients of above analysis are all small because the number of respondents with subscribed status are very lower than not subscribed clients.</p>
-<p>Finally, some parameters that seemed to be determinant in univariate analysis are not important in fact. This is because of correlation between non determinant and determinant
+<p>Pr(&gt;|z|) value for balance is close to 1 and this makes us believe it is not a determinant parameter, but this parameter is negligible for housing with relatively high value for its coefficient. This is the reason for importance of housing status. A similar circumstance is for loan status.</p>
+<p>In addition, Coefficients of above analysis are all small because the number of respondents with subscribed status is very lower than not subscribed clients.</p>
+<p>Finally, some parameters that seemed to be determinant in univariate analysis are not important in fact. This is because of correlation between non-determinant and determinant
 variables.</p>
 </div>
 <div id="subscription-statuseducation" class="section level2">
 <h2><em>subscription status~education</em></h2>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
-<p>from Generalized Linear Model coefficient, it appears that education is a determinant factor, therefore an analysis of education and subscription status performed here. This plot shows that most clients have secondary education, followed by tertiary, primary and unknown education level. Comparing the ratio of people who subscribed to those did not subscribe in each categories shows that people with tertiary education is more likely to finally subscribe.</p>
+<p>From generalized linear model coefficient, it appears that education is a determinant factor, therefore an analysis of education and subscription status is performed here. This plot shows that most clients have secondary education, followed by tertiary, primary, and unknown education levels. Comparing the ratio of people who subscribed to those who did not subscribe in each category shows that people with tertiary education are more likely to finally subscribe.</p>
 </div>
 <div id="evaluating-performance-with-confusion-matrix" class="section level2">
 <h2>Evaluating performance with confusion matrix</h2>
-<p>It is important to assess accuracy of model. Although model should be assesses with test data (not previously seen data or data that is not used for building the model), but In this part we will use model train data for assessment. We pass data to both single and multiple Logistic regression Models in order to classify whether clients associated with the given information in the train data set will subscribe to a term deposit. besides, we will evaluate the performance of the model by confusion matrix and heatmap plot.</p>
-<p>First, start with evaluating the performance of single logistic regression Model using heatmap matrix.</p>
+<p>It is important to assess accuracy of model. Although model should be assessed with test data (not previously seen data or data that is not used for building the model). In this part we will use model train data for assessment. We pass data to both single and multiple Logistic regression Models in order to classify whether clients associated with the given information in the train data set will subscribe to a term deposit. besides, we will evaluate the performance of the model by confusion matrix and heatmap plot.</p>
+<p>First, start with evaluating the performance of a single logistic regression Model using heatmap matrix.</p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
-<p>Here, We set threshold to 0.2. After passing the data to SLR model,it shows 88.5% of predictions are accurate. There are 521 false negative and 2 false positive predictions.</p>
+<p>Here, We set the threshold to 0.2. After passing the data to SLR model, it shows 88.5% of predictions are accurate. There are 521 false-negative and 2 false-positive predictions.</p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
-<p>We set threshold to 0.35 here. After passing the data SLR model,it shows 88.5% of predictions are accurate. There are 514 false negative and 4 false positive predictions.</p>
+<p>We set threshold to 0.35 here. After passing the data SLR model, it shows 88.5% of predictions are accurate. There are 514 false-negative and 4 false-positive predictions.</p>
 </div>
 <div id="summary-of-findings" class="section level2">
 <h2>Summary of findings</h2>
 <ul>
-<li><p>Most respondents in this campaign was 30 to 35 years old with near zero balance.Besides, nearly 90% of respondents did not subscribe finally.</p></li>
+<li><p>Most respondents in this campaign were 30 to 35 years old with near zero balance. Besides, nearly 90% of respondents did not subscribe finally.</p></li>
 <li><p>Univariate analysis shows positive slope for both age and balance (higher age/balance means higher chance of subscription). However, generalized linear Modeling with consideration of all variables shows balance has not an impact on chance of subscription.</p></li>
 <li><p>Univariate analysis of job shows that a big portion of students, unemployed, and those with unknown jobs subscribed, but respondents with blue-color jobs and technicians did not subscribe so often.</p></li>
 <li><p>Divorced respondents was more likely to subscribe than married and single ones.</p></li>
