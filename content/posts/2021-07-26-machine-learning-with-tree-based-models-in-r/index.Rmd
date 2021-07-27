@@ -1,0 +1,194 @@
+---
+title: Machine Learning with Tree-Based Models in R
+author: ''
+date: '2021-07-26'
+slug: []
+categories: []
+tags:
+  - Tree-Based Models
+  - Machine Learning
+---
+
+```{r}
+library(tidymodels)
+```
+
+```{r}
+# Load the package
+library(tidymodels)
+library(tidyverse)
+diabetes <- read_csv("diabetes.csv")
+```
+
+
+## 1-3 Specify that tree
+
+In order to build models and use them to solve real-world problems, you first need to lay the foundations of your model by creating a model specification. This is the very first step in every machine learning pipeline that you will ever build.
+
+You are going to load the relevant packages and design the specification for your classification tree in just a few steps.
+
+```{r}
+# Pick a model class
+tree_spec <- decision_tree() %>% 
+  # Set the engine
+  set_engine("rpart") %>% 
+  # Set the mode
+  set_mode("classification")
+
+# Print the result
+tree_spec
+```
+
+## 1-4 Train that model
+
+A model specification is a good start, just like the canvas for a painter. But just as a painter needs color, the specification needs data. Only the final model is able to make predictions:
+
+Model specification + data = model
+
+In this exercise, you will train a decision tree that models the risk of diabetes using health variables as predictors. The response variable, outcome, indicates whether the patient has diabetes or not, which means this is a binary classification problem (there are just two classes). The dataset also contains health variables of patients like blood_pressure, age, and bmi.
+
+```{r}
+# Train the model
+tree_model_bmi <- tree_spec %>% 
+  fit(formula = factor(outcome) ~ bmi,
+data = diabetes)
+
+# Print the model
+tree_model_bmi
+```
+
+## 1-6 Train/test split
+
+In order to test your models, you need to build and test the model on two different parts of the data - otherwise, it's like cheating on an exam (as you already know the answers).
+
+The data split is an integral part of the modeling process. You will dive into this by splitting the diabetes data and confirming the split proportions.
+
+```{r}
+# Create the split
+diabetes_split <- initial_split(diabetes, prop = 0.8)
+
+# Extract the training and test set
+diabetes_train <- training(diabetes_split)
+diabetes_test  <- testing(diabetes_split)
+
+# Verify the proportions of both sets
+round(nrow(diabetes_train) / nrow(diabetes), 2) == 0.80
+round(nrow(diabetes_test) / nrow(diabetes), 2) == 0.20
+```
+
+## 1-7 Avoiding class imbalances
+
+Some data contains very imbalanced outcomes - like a rare disease dataset. When splitting randomly, you might end up with a very unfortunate split. Imagine all the rare observations are in the test and none in the training set. That would ruin your whole training process!
+
+Fortunately, the initial_split() function provides a remedy. You are going to observe and solve these so-called class imbalances in this exercise.
+
+There's already a split object diabetes_split available with a 75% training and 25% test split.
+
+```{r}
+# Proportion of 'yes' outcomes in the training data
+counts_train <- table(training(diabetes_split)$outcome)
+prop_yes_train <- counts_train["yes"] / sum(counts_train)
+
+# Proportion of 'yes' outcomes in the test data
+counts_test <- table(testing(diabetes_split)$outcome)
+prop_yes_test <- counts_test["yes"] / sum(counts_test)
+
+paste("Proportion of positive outcomes in training set:", round(prop_yes_train, 2))
+paste("Proportion of positive outcomes in test set:", round(prop_yes_test, 2))
+
+```
+
+```{r}
+# Create a split with a constant outcome distribution
+diabetes_split <- initial_split(diabetes,
+prop = 0.75,
+strata = outcome)
+
+# Proportion of 'yes' outcomes in the training data
+counts_train <- table(training(diabetes_split)$outcome)
+prop_yes_train <- counts_train["yes"] / sum(counts_train)
+
+# Proportion of 'yes' outcomes in the test data
+counts_test <- table(testing(diabetes_split)$outcome)
+prop_yes_test <- counts_test["yes"] / sum(counts_test)
+
+paste("Proportion of positive outcomes in training set:", round(prop_yes_train, 2))
+paste("Proportion of positive outcomes in test set:", round(prop_yes_test, 2))
+```
+
+## 1-8 From zero to hero
+
+You mastered the skills of creating a model specification and splitting the data into training and test sets. You also know how to avoid class imbalances in the split. It's now time to combine what you learned in the preceding lesson and build your model using only the training set!
+
+You are going to build a proper machine learning pipeline. This is comprised of creating a model specification, splitting your data into training and test sets, and last but not least, fitting the training data to a model. Enjoy!
+
+```{r}
+# Create the balanced data split
+diabetes_split <- initial_split(diabetes,
+prop = 0.75,
+strata = outcome)
+
+# Build the specification of the model
+tree_spec <- decision_tree() %>% 
+  set_engine("rpart") %>% 
+  set_mode("classification")
+
+# Train the model
+model_trained <- tree_spec %>% 
+  fit(formula = factor(outcome) ~ bmi+skin_thickness, 
+      data = training(diabetes_split))
+
+model_trained
+```
+
+## Make predictions
+
+Making predictions with data is one of the fundamental goals of machine learning. Now that you know how to split the data and fit a model, it's time to make predictions about unseen samples with your models.
+
+You are going to make predictions about your test set using a model obtained by fitting the training data to a tree specification.
+
+```{r}
+model <- tree_spec %>% 
+  fit(formula = factor(outcome) ~ ., 
+      data = diabetes_train)
+
+# Generate predictions
+predictions <- predict(model,
+                   diabetes_test, type = "class")
+
+# Add the true outcomes
+predictions_combined <- predictions %>% 
+  mutate(true_class = diabetes_test$outcome)
+
+
+# Print the first lines of the result
+head(predictions_combined)
+```
+
+## 1-11 Crack the matrix
+
+Visual representations are a great and intuitive way to assess results. One way to visualize and assess the performance of your model is by using a confusion matrix. In this exercise, you will create the confusion matrix of your predicted values to see in which cases it performs well and in which cases it doesn't.
+
+```{r}
+# The confusion matrix
+diabetes_matrix <- conf_mat(data = predictions_combined,
+estimate = .pred_class,
+truth = true_class)
+
+# Print the matrix
+print(diabetes_matrix)
+```
+
+## Are you predicting correctly?
+
+Your model should be as good as possible, right? One way you can assess this is by counting how often it predicted the correct classes compared to the total number of predictions it made. As discussed in the video, we call this performance measure accuracy. You can either calculate this manually or by using a handy shortcut. Both obtain the same result.
+
+```{r}
+
+# The accuracy calculated by a function
+acc_auto <- accuracy(predictions_combined, estimate = .pred_class, truth = factor(true_class))
+
+acc_auto$estimate
+
+
+```
