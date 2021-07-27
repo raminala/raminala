@@ -141,7 +141,7 @@ model_trained <- tree_spec %>%
 model_trained
 ```
 
-## Make predictions
+## 1-10 Make predictions
 
 Making predictions with data is one of the fundamental goals of machine learning. Now that you know how to split the data and fit a model, it's time to make predictions about unseen samples with your models.
 
@@ -179,7 +179,7 @@ truth = true_class)
 print(diabetes_matrix)
 ```
 
-## Are you predicting correctly?
+## 1-12 Are you predicting correctly?
 
 Your model should be as good as possible, right? One way you can assess this is by counting how often it predicted the correct classes compared to the total number of predictions it made. As discussed in the video, we call this performance measure accuracy. You can either calculate this manually or by using a handy shortcut. Both obtain the same result.
 
@@ -221,6 +221,18 @@ model_fit
 A predictive model is one that predicts the outcomes of new, unseen data. Besides the numeric predictors, there are other useful columns in the dataset. The goal of this exercise is to predict the final rating grades of a chocolate tasting based on all other predictor variables that are available.
 
 ```{r}
+chocolate_test <- read_csv("chocolate_test.csv")
 
+# Train the model
+chocolate_model <- model_spec %>%
+  fit(formula = final_grade ~ . , 
+      data = chocolate_train)
+
+# Predict new data
+#predictions <- predict(chocolate_model,new_data = chocolate_test) %>%
+  # Add the test set
+ # bind_cols(chocolate_test)
+
+#predictions
 ```
 

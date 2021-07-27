@@ -91,7 +91,7 @@ data = diabetes)
 tree_model_bmi</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  0ms 
+## Fit time:  10ms 
 ## n= 768 
 ## 
 ## node), split, n, loss, yval, (yprob)
@@ -134,9 +134,9 @@ counts_test &lt;- table(testing(diabetes_split)$outcome)
 prop_yes_test &lt;- counts_test[&quot;yes&quot;] / sum(counts_test)
 
 paste(&quot;Proportion of positive outcomes in training set:&quot;, round(prop_yes_train, 2))</code></pre>
-<pre><code>## [1] &quot;Proportion of positive outcomes in training set: 0.35&quot;</code></pre>
+<pre><code>## [1] &quot;Proportion of positive outcomes in training set: 0.36&quot;</code></pre>
 <pre class="r"><code>paste(&quot;Proportion of positive outcomes in test set:&quot;, round(prop_yes_test, 2))</code></pre>
-<pre><code>## [1] &quot;Proportion of positive outcomes in test set: 0.35&quot;</code></pre>
+<pre><code>## [1] &quot;Proportion of positive outcomes in test set: 0.32&quot;</code></pre>
 <pre class="r"><code># Create a split with a constant outcome distribution
 diabetes_split &lt;- initial_split(diabetes,
 prop = 0.75,
@@ -177,38 +177,34 @@ model_trained &lt;- tree_spec %&gt;%
 model_trained</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  20ms 
+## Fit time:  10ms 
 ## n= 576 
 ## 
 ## node), split, n, loss, yval, (yprob)
 ##       * denotes terminal node
 ## 
-##   1) root 576 201 no (0.6510417 0.3489583)  
-##     2) bmi&lt; 29.95 231  39 no (0.8311688 0.1688312) *
-##     3) bmi&gt;=29.95 345 162 no (0.5304348 0.4695652)  
-##       6) bmi&lt; 45.4 322 144 no (0.5527950 0.4472050)  
-##        12) skin_thickness&gt;=5.5 234  94 no (0.5982906 0.4017094)  
-##          24) bmi&lt; 33.25 63  17 no (0.7301587 0.2698413) *
-##          25) bmi&gt;=33.25 171  77 no (0.5497076 0.4502924)  
-##            50) skin_thickness&lt; 28.5 37  11 no (0.7027027 0.2972973) *
-##            51) skin_thickness&gt;=28.5 134  66 no (0.5074627 0.4925373)  
-##             102) bmi&gt;=35.15 99  43 no (0.5656566 0.4343434)  
-##               204) bmi&lt; 40.75 73  28 no (0.6164384 0.3835616)  
-##                 408) bmi&gt;=38.05 28   7 no (0.7500000 0.2500000) *
-##                 409) bmi&lt; 38.05 45  21 no (0.5333333 0.4666667)  
-##                   818) bmi&lt; 37.45 36  14 no (0.6111111 0.3888889) *
-##                   819) bmi&gt;=37.45 9   2 yes (0.2222222 0.7777778) *
-##               205) bmi&gt;=40.75 26  11 yes (0.4230769 0.5769231) *
-##             103) bmi&lt; 35.15 35  12 yes (0.3428571 0.6571429) *
-##        13) skin_thickness&lt; 5.5 88  38 yes (0.4318182 0.5681818)  
-##          26) bmi&gt;=32.45 62  30 no (0.5161290 0.4838710)  
-##            52) bmi&lt; 35.45 28  10 no (0.6428571 0.3571429) *
-##            53) bmi&gt;=35.45 34  14 yes (0.4117647 0.5882353) *
-##          27) bmi&lt; 32.45 26   6 yes (0.2307692 0.7692308) *
-##       7) bmi&gt;=45.4 23   5 yes (0.2173913 0.7826087) *</code></pre>
+##   1) root 576 201 no (0.65104167 0.34895833)  
+##     2) bmi&lt; 26.75 135  10 no (0.92592593 0.07407407) *
+##     3) bmi&gt;=26.75 441 191 no (0.56689342 0.43310658)  
+##       6) bmi&lt; 42.25 386 156 no (0.59585492 0.40414508)  
+##        12) bmi&lt; 29.85 91  27 no (0.70329670 0.29670330) *
+##        13) bmi&gt;=29.85 295 129 no (0.56271186 0.43728814)  
+##          26) skin_thickness&gt;=6.5 218  88 no (0.59633028 0.40366972)  
+##            52) bmi&gt;=35.25 86  30 no (0.65116279 0.34883721) *
+##            53) bmi&lt; 35.25 132  58 no (0.56060606 0.43939394)  
+##             106) bmi&lt; 33.65 83  30 no (0.63855422 0.36144578) *
+##             107) bmi&gt;=33.65 49  21 yes (0.42857143 0.57142857)  
+##               214) skin_thickness&lt; 23.5 7   0 no (1.00000000 0.00000000) *
+##               215) skin_thickness&gt;=23.5 42  14 yes (0.33333333 0.66666667) *
+##          27) skin_thickness&lt; 6.5 77  36 yes (0.46753247 0.53246753)  
+##            54) bmi&gt;=33.05 42  18 no (0.57142857 0.42857143)  
+##             108) bmi&lt; 37.65 25   7 no (0.72000000 0.28000000) *
+##             109) bmi&gt;=37.65 17   6 yes (0.35294118 0.64705882) *
+##            55) bmi&lt; 33.05 35  12 yes (0.34285714 0.65714286) *
+##       7) bmi&gt;=42.25 55  20 yes (0.36363636 0.63636364) *</code></pre>
 </div>
 <div id="make-predictions" class="section level2">
-<h2>Make predictions</h2>
+<h2>1-10 Make predictions</h2>
 <p>Making predictions with data is one of the fundamental goals of machine learning. Now that you know how to split the data and fit a model, it’s time to make predictions about unseen samples with your models.</p>
 <p>You are going to make predictions about your test set using a model obtained by fitting the training data to a tree specification.</p>
 <pre class="r"><code>model &lt;- tree_spec %&gt;% 
@@ -230,11 +226,11 @@ head(predictions_combined)</code></pre>
 ##   .pred_class true_class
 ##   &lt;fct&gt;       &lt;chr&gt;     
 ## 1 no          yes       
-## 2 yes         yes       
-## 3 yes         yes       
-## 4 no          yes       
-## 5 yes         no        
-## 6 no          no</code></pre>
+## 2 no          no        
+## 3 no          no        
+## 4 yes         no        
+## 5 yes         yes       
+## 6 no          yes</code></pre>
 </div>
 <div id="crack-the-matrix" class="section level2">
 <h2>1-11 Crack the matrix</h2>
@@ -249,11 +245,11 @@ truth = true_class)</code></pre>
 print(diabetes_matrix)</code></pre>
 <pre><code>##           Truth
 ## Prediction no yes
-##        no  83  22
-##        yes 17  32</code></pre>
+##        no  83  24
+##        yes 21  26</code></pre>
 </div>
 <div id="are-you-predicting-correctly" class="section level2">
-<h2>Are you predicting correctly?</h2>
+<h2>1-12 Are you predicting correctly?</h2>
 <p>Your model should be as good as possible, right? One way you can assess this is by counting how often it predicted the correct classes compared to the total number of predictions it made. As discussed in the video, we call this performance measure accuracy. You can either calculate this manually or by using a handy shortcut. Both obtain the same result.</p>
 <pre class="r"><code># The accuracy calculated by a function
 acc_auto &lt;- accuracy(predictions_combined, estimate = .pred_class, truth = factor(true_class))
@@ -309,4 +305,28 @@ model_fit</code></pre>
 ##       15) cocoa_percent&gt;=0.625 1145 247.175200 3.246725 *</code></pre>
 <p>##2-3 Predict new values</p>
 <p>A predictive model is one that predicts the outcomes of new, unseen data. Besides the numeric predictors, there are other useful columns in the dataset. The goal of this exercise is to predict the final rating grades of a chocolate tasting based on all other predictor variables that are available.</p>
+<pre class="r"><code>chocolate_test &lt;- read_csv(&quot;chocolate_test.csv&quot;)</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   X1 = col_double(),
+##   final_grade = col_double(),
+##   review_date = col_double(),
+##   cocoa_percent = col_double(),
+##   company_location = col_character(),
+##   bean_type = col_character(),
+##   broad_bean_origin = col_character()
+## )</code></pre>
+<pre class="r"><code># Train the model
+chocolate_model &lt;- model_spec %&gt;%
+  fit(formula = final_grade ~ . , 
+      data = chocolate_train)
+
+# Predict new data
+#predictions &lt;- predict(chocolate_model,new_data = chocolate_test) %&gt;%
+  # Add the test set
+ # bind_cols(chocolate_test)
+
+#predictions</code></pre>
 </div>
