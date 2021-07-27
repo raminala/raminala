@@ -91,7 +91,7 @@ data = diabetes)
 tree_model_bmi</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  10ms 
+## Fit time:  0ms 
 ## n= 768 
 ## 
 ## node), split, n, loss, yval, (yprob)
@@ -134,9 +134,9 @@ counts_test &lt;- table(testing(diabetes_split)$outcome)
 prop_yes_test &lt;- counts_test[&quot;yes&quot;] / sum(counts_test)
 
 paste(&quot;Proportion of positive outcomes in training set:&quot;, round(prop_yes_train, 2))</code></pre>
-<pre><code>## [1] &quot;Proportion of positive outcomes in training set: 0.37&quot;</code></pre>
+<pre><code>## [1] &quot;Proportion of positive outcomes in training set: 0.35&quot;</code></pre>
 <pre class="r"><code>paste(&quot;Proportion of positive outcomes in test set:&quot;, round(prop_yes_test, 2))</code></pre>
-<pre><code>## [1] &quot;Proportion of positive outcomes in test set: 0.27&quot;</code></pre>
+<pre><code>## [1] &quot;Proportion of positive outcomes in test set: 0.35&quot;</code></pre>
 <pre class="r"><code># Create a split with a constant outcome distribution
 diabetes_split &lt;- initial_split(diabetes,
 prop = 0.75,
@@ -177,29 +177,35 @@ model_trained &lt;- tree_spec %&gt;%
 model_trained</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  0ms 
+## Fit time:  20ms 
 ## n= 576 
 ## 
 ## node), split, n, loss, yval, (yprob)
 ##       * denotes terminal node
 ## 
-##   1) root 576 201 no (0.65104167 0.34895833)  
-##     2) bmi&lt; 29.65 205  33 no (0.83902439 0.16097561) *
-##     3) bmi&gt;=29.65 371 168 no (0.54716981 0.45283019)  
-##       6) bmi&lt; 48.1 359 157 no (0.56267409 0.43732591)  
-##        12) skin_thickness&gt;=14.5 265 108 no (0.59245283 0.40754717)  
-##          24) skin_thickness&lt; 17.5 10   0 no (1.00000000 0.00000000) *
-##          25) skin_thickness&gt;=17.5 255 108 no (0.57647059 0.42352941)  
-##            50) bmi&gt;=45.95 7   1 no (0.85714286 0.14285714) *
-##            51) bmi&lt; 45.95 248 107 no (0.56854839 0.43145161)  
-##             102) bmi&lt; 40.8 219  89 no (0.59360731 0.40639269) *
-##             103) bmi&gt;=40.8 29  11 yes (0.37931034 0.62068966) *
-##        13) skin_thickness&lt; 14.5 94  45 yes (0.47872340 0.52127660)  
-##          26) bmi&gt;=33.5 51  24 no (0.52941176 0.47058824)  
-##            52) bmi&lt; 37.65 26   9 no (0.65384615 0.34615385) *
-##            53) bmi&gt;=37.65 25  10 yes (0.40000000 0.60000000) *
-##          27) bmi&lt; 33.5 43  18 yes (0.41860465 0.58139535) *
-##       7) bmi&gt;=48.1 12   1 yes (0.08333333 0.91666667) *</code></pre>
+##   1) root 576 201 no (0.6510417 0.3489583)  
+##     2) bmi&lt; 29.95 231  39 no (0.8311688 0.1688312) *
+##     3) bmi&gt;=29.95 345 162 no (0.5304348 0.4695652)  
+##       6) bmi&lt; 45.4 322 144 no (0.5527950 0.4472050)  
+##        12) skin_thickness&gt;=5.5 234  94 no (0.5982906 0.4017094)  
+##          24) bmi&lt; 33.25 63  17 no (0.7301587 0.2698413) *
+##          25) bmi&gt;=33.25 171  77 no (0.5497076 0.4502924)  
+##            50) skin_thickness&lt; 28.5 37  11 no (0.7027027 0.2972973) *
+##            51) skin_thickness&gt;=28.5 134  66 no (0.5074627 0.4925373)  
+##             102) bmi&gt;=35.15 99  43 no (0.5656566 0.4343434)  
+##               204) bmi&lt; 40.75 73  28 no (0.6164384 0.3835616)  
+##                 408) bmi&gt;=38.05 28   7 no (0.7500000 0.2500000) *
+##                 409) bmi&lt; 38.05 45  21 no (0.5333333 0.4666667)  
+##                   818) bmi&lt; 37.45 36  14 no (0.6111111 0.3888889) *
+##                   819) bmi&gt;=37.45 9   2 yes (0.2222222 0.7777778) *
+##               205) bmi&gt;=40.75 26  11 yes (0.4230769 0.5769231) *
+##             103) bmi&lt; 35.15 35  12 yes (0.3428571 0.6571429) *
+##        13) skin_thickness&lt; 5.5 88  38 yes (0.4318182 0.5681818)  
+##          26) bmi&gt;=32.45 62  30 no (0.5161290 0.4838710)  
+##            52) bmi&lt; 35.45 28  10 no (0.6428571 0.3571429) *
+##            53) bmi&gt;=35.45 34  14 yes (0.4117647 0.5882353) *
+##          27) bmi&lt; 32.45 26   6 yes (0.2307692 0.7692308) *
+##       7) bmi&gt;=45.4 23   5 yes (0.2173913 0.7826087) *</code></pre>
 </div>
 <div id="make-predictions" class="section level2">
 <h2>Make predictions</h2>
@@ -223,10 +229,10 @@ head(predictions_combined)</code></pre>
 <pre><code>## # A tibble: 6 x 2
 ##   .pred_class true_class
 ##   &lt;fct&gt;       &lt;chr&gt;     
-## 1 no          no        
+## 1 no          yes       
 ## 2 yes         yes       
 ## 3 yes         yes       
-## 4 yes         yes       
+## 4 no          yes       
 ## 5 yes         no        
 ## 6 no          no</code></pre>
 </div>
@@ -243,8 +249,8 @@ truth = true_class)</code></pre>
 print(diabetes_matrix)</code></pre>
 <pre><code>##           Truth
 ## Prediction no yes
-##        no  87  10
-##        yes 26  31</code></pre>
+##        no  83  22
+##        yes 17  32</code></pre>
 </div>
 <div id="are-you-predicting-correctly" class="section level2">
 <h2>Are you predicting correctly?</h2>
@@ -255,4 +261,52 @@ acc_auto &lt;- accuracy(predictions_combined, estimate = .pred_class, truth = fa
 acc_auto$estimate</code></pre>
 <pre><code>## Warning: Unknown or uninitialised column: `estimate`.</code></pre>
 <pre><code>## NULL</code></pre>
+<p>##2-2 Train a regression tree</p>
+<p>As you know already, decision trees are a useful tool for classification problems. Moreover, you can also use them to model regression problems. The structural difference is that there will be numeric values (instead of classes) on the leaf nodes.</p>
+<p>In this exercise, you will use the chocolate dataset to fit a regression tree. This is very similar to what you already did in Chapter 1 with the diabetes dataset.</p>
+<pre class="r"><code>chocolate_train &lt;- read_csv(&quot;chocolate_train.csv&quot;)</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   X1 = col_double(),
+##   final_grade = col_double(),
+##   review_date = col_double(),
+##   cocoa_percent = col_double(),
+##   company_location = col_character(),
+##   bean_type = col_character(),
+##   broad_bean_origin = col_character()
+## )</code></pre>
+<pre class="r"><code># Build the specification
+model_spec &lt;- decision_tree() %&gt;%
+  set_mode(&quot;regression&quot;) %&gt;%
+  set_engine(&quot;rpart&quot;)
+
+# Fit to the data
+model_fit &lt;- model_spec %&gt;%
+  fit(formula = final_grade ~ cocoa_percent+review_date,
+      data = chocolate_train)
+
+model_fit</code></pre>
+<pre><code>## parsnip model object
+## 
+## Fit time:  0ms 
+## n= 1437 
+## 
+## node), split, n, deviance, yval
+##       * denotes terminal node
+## 
+##  1) root 1437 341.707000 3.187543  
+##    2) cocoa_percent&gt;=0.905 24  10.364580 2.229167  
+##      4) review_date&lt; 2012.5 13   4.076923 1.865385 *
+##      5) review_date&gt;=2012.5 11   2.534091 2.659091 *
+##    3) cocoa_percent&lt; 0.905 1413 308.924400 3.203822  
+##      6) cocoa_percent&gt;=0.755 190  37.447700 3.035526  
+##       12) review_date&lt; 2012.5 77  17.698050 2.866883 *
+##       13) review_date&gt;=2012.5 113  16.067480 3.150442 *
+##      7) cocoa_percent&lt; 0.755 1223 265.259200 3.229967  
+##       14) cocoa_percent&lt; 0.625 78  13.042470 2.983974 *
+##       15) cocoa_percent&gt;=0.625 1145 247.175200 3.246725 *</code></pre>
+<p>##2-3 Predict new values</p>
+<p>A predictive model is one that predicts the outcomes of new, unseen data. Besides the numeric predictors, there are other useful columns in the dataset. The goal of this exercise is to predict the final rating grades of a chocolate tasting based on all other predictor variables that are available.</p>
 </div>

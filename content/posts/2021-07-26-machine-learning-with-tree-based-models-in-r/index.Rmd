@@ -192,3 +192,35 @@ acc_auto$estimate
 
 
 ```
+
+
+##2-2 Train a regression tree
+
+As you know already, decision trees are a useful tool for classification problems. Moreover, you can also use them to model regression problems. The structural difference is that there will be numeric values (instead of classes) on the leaf nodes.
+
+In this exercise, you will use the chocolate dataset to fit a regression tree. This is very similar to what you already did in Chapter 1 with the diabetes dataset.
+
+```{r}
+
+chocolate_train <- read_csv("chocolate_train.csv")
+# Build the specification
+model_spec <- decision_tree() %>%
+  set_mode("regression") %>%
+  set_engine("rpart")
+
+# Fit to the data
+model_fit <- model_spec %>%
+  fit(formula = final_grade ~ cocoa_percent+review_date,
+      data = chocolate_train)
+
+model_fit
+```
+
+##2-3 Predict new values
+
+A predictive model is one that predicts the outcomes of new, unseen data. Besides the numeric predictors, there are other useful columns in the dataset. The goal of this exercise is to predict the final rating grades of a chocolate tasting based on all other predictor variables that are available.
+
+```{r}
+
+```
+
