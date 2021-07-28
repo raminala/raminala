@@ -136,7 +136,7 @@ prop_yes_test &lt;- counts_test[&quot;yes&quot;] / sum(counts_test)
 paste(&quot;Proportion of positive outcomes in training set:&quot;, round(prop_yes_train, 2))</code></pre>
 <pre><code>## [1] &quot;Proportion of positive outcomes in training set: 0.34&quot;</code></pre>
 <pre class="r"><code>paste(&quot;Proportion of positive outcomes in test set:&quot;, round(prop_yes_test, 2))</code></pre>
-<pre><code>## [1] &quot;Proportion of positive outcomes in test set: 0.38&quot;</code></pre>
+<pre><code>## [1] &quot;Proportion of positive outcomes in test set: 0.37&quot;</code></pre>
 <pre class="r"><code># Create a split with a constant outcome distribution
 diabetes_split &lt;- initial_split(diabetes,
 prop = 0.75,
@@ -183,23 +183,35 @@ model_trained</code></pre>
 ## node), split, n, loss, yval, (yprob)
 ##       * denotes terminal node
 ## 
-##   1) root 576 201 no (0.65104167 0.34895833)  
-##     2) bmi&lt; 29.85 221  38 no (0.82805430 0.17194570) *
-##     3) bmi&gt;=29.85 355 163 no (0.54084507 0.45915493)  
-##       6) bmi&lt; 40.8 296 126 no (0.57432432 0.42567568)  
-##        12) skin_thickness&gt;=5.5 224  87 no (0.61160714 0.38839286)  
-##          24) skin_thickness&lt; 17.5 13   2 no (0.84615385 0.15384615) *
-##          25) skin_thickness&gt;=17.5 211  85 no (0.59715640 0.40284360)  
-##            50) bmi&gt;=35.25 96  33 no (0.65625000 0.34375000) *
-##            51) bmi&lt; 35.25 115  52 no (0.54782609 0.45217391)  
-##             102) bmi&lt; 34.15 90  36 no (0.60000000 0.40000000) *
-##             103) bmi&gt;=34.15 25   9 yes (0.36000000 0.64000000) *
-##        13) skin_thickness&lt; 5.5 72  33 yes (0.45833333 0.54166667)  
-##          26) bmi&gt;=31.05 61  29 no (0.52459016 0.47540984)  
-##            52) bmi&gt;=34.05 35  14 no (0.60000000 0.40000000) *
-##            53) bmi&lt; 34.05 26  11 yes (0.42307692 0.57692308) *
-##          27) bmi&lt; 31.05 11   1 yes (0.09090909 0.90909091) *
-##       7) bmi&gt;=40.8 59  22 yes (0.37288136 0.62711864) *</code></pre>
+##    1) root 576 201 no (0.65104167 0.34895833)  
+##      2) bmi&lt; 27.35 155  15 no (0.90322581 0.09677419) *
+##      3) bmi&gt;=27.35 421 186 no (0.55819477 0.44180523)  
+##        6) bmi&lt; 40.85 361 150 no (0.58448753 0.41551247)  
+##         12) bmi&gt;=40.05 8   0 no (1.00000000 0.00000000) *
+##         13) bmi&lt; 40.05 353 150 no (0.57507082 0.42492918)  
+##           26) bmi&lt; 29.85 72  22 no (0.69444444 0.30555556) *
+##           27) bmi&gt;=29.85 281 128 no (0.54448399 0.45551601)  
+##             54) bmi&gt;=36.7 68  25 no (0.63235294 0.36764706) *
+##             55) bmi&lt; 36.7 213 103 no (0.51643192 0.48356808)  
+##              110) skin_thickness&gt;=42.5 12   2 no (0.83333333 0.16666667) *
+##              111) skin_thickness&lt; 42.5 201 100 yes (0.49751244 0.50248756)  
+##                222) bmi&lt; 35.85 184  87 no (0.52717391 0.47282609)  
+##                  444) skin_thickness&lt; 27.5 103  44 no (0.57281553 0.42718447)  
+##                    888) bmi&gt;=33 41  11 no (0.73170732 0.26829268) *
+##                    889) bmi&lt; 33 62  29 yes (0.46774194 0.53225806)  
+##                     1778) skin_thickness&gt;=6.5 34  14 no (0.58823529 0.41176471) *
+##                     1779) skin_thickness&lt; 6.5 28   9 yes (0.32142857 0.67857143) *
+##                  445) skin_thickness&gt;=27.5 81  38 yes (0.46913580 0.53086420)  
+##                    890) bmi&lt; 32.2 22   6 no (0.72727273 0.27272727) *
+##                    891) bmi&gt;=32.2 59  22 yes (0.37288136 0.62711864)  
+##                     1782) bmi&gt;=35.15 13   5 no (0.61538462 0.38461538) *
+##                     1783) bmi&lt; 35.15 46  14 yes (0.30434783 0.69565217) *
+##                223) bmi&gt;=35.85 17   3 yes (0.17647059 0.82352941) *
+##        7) bmi&gt;=40.85 60  24 yes (0.40000000 0.60000000)  
+##         14) bmi&lt; 48.1 49  22 yes (0.44897959 0.55102041)  
+##           28) bmi&gt;=44.75 14   4 no (0.71428571 0.28571429) *
+##           29) bmi&lt; 44.75 35  12 yes (0.34285714 0.65714286) *
+##         15) bmi&gt;=48.1 11   2 yes (0.18181818 0.81818182) *</code></pre>
 </div>
 <div id="make-predictions" class="section level2">
 <h2>1-10 Make predictions</h2>
@@ -223,12 +235,12 @@ head(predictions_combined)</code></pre>
 <pre><code>## # A tibble: 6 x 2
 ##   .pred_class true_class
 ##   &lt;fct&gt;       &lt;chr&gt;     
-## 1 no          no        
-## 2 yes         yes       
-## 3 yes         no        
-## 4 yes         yes       
+## 1 yes         yes       
+## 2 no          no        
+## 3 no          yes       
+## 4 no          yes       
 ## 5 yes         no        
-## 6 no          no</code></pre>
+## 6 yes         yes</code></pre>
 </div>
 <div id="crack-the-matrix" class="section level2">
 <h2>1-11 Crack the matrix</h2>
@@ -243,8 +255,8 @@ truth = true_class)</code></pre>
 print(diabetes_matrix)</code></pre>
 <pre><code>##           Truth
 ## Prediction no yes
-##        no  75  29
-##        yes 21  29</code></pre>
+##        no  78  29
+##        yes 19  28</code></pre>
 </div>
 <div id="are-you-predicting-correctly" class="section level2">
 <h2>1-12 Are you predicting correctly?</h2>
@@ -255,7 +267,9 @@ acc_auto &lt;- accuracy(predictions_combined, estimate = .pred_class, truth = fa
 acc_auto$estimate</code></pre>
 <pre><code>## Warning: Unknown or uninitialised column: `estimate`.</code></pre>
 <pre><code>## NULL</code></pre>
-<p>##2-2 Train a regression tree</p>
+</div>
+<div id="train-a-regression-tree" class="section level2">
+<h2>2-2 Train a regression tree</h2>
 <p>As you know already, decision trees are a useful tool for classification problems. Moreover, you can also use them to model regression problems. The structural difference is that there will be numeric values (instead of classes) on the leaf nodes.</p>
 <p>In this exercise, you will use the chocolate dataset to fit a regression tree. This is very similar to what you already did in Chapter 1 with the diabetes dataset.</p>
 <pre class="r"><code>chocolate_train &lt;- read_csv(&quot;chocolate_train.csv&quot;)</code></pre>
@@ -284,7 +298,7 @@ model_fit &lt;- model_spec %&gt;%
 model_fit</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  21ms 
+## Fit time:  0ms 
 ## n= 1437 
 ## 
 ## node), split, n, deviance, yval
@@ -301,7 +315,9 @@ model_fit</code></pre>
 ##      7) cocoa_percent&lt; 0.755 1223 265.259200 3.229967  
 ##       14) cocoa_percent&lt; 0.625 78  13.042470 2.983974 *
 ##       15) cocoa_percent&gt;=0.625 1145 247.175200 3.246725 *</code></pre>
-<p>##2-3 Predict new values</p>
+</div>
+<div id="predict-new-values" class="section level2">
+<h2>2-3 Predict new values</h2>
 <p>A predictive model is one that predicts the outcomes of new, unseen data. Besides the numeric predictors, there are other useful columns in the dataset. The goal of this exercise is to predict the final rating grades of a chocolate tasting based on all other predictor variables that are available.</p>
 <pre class="r"><code>chocolate_test &lt;- read_csv(&quot;chocolate_test.csv&quot;)</code></pre>
 <pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
@@ -437,7 +453,7 @@ chocolate_model &lt;- decision_tree(tree_depth = 1) %&gt;%
 chocolate_model</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  0ms 
+## Fit time:  10ms 
 ## n= 1437 
 ## 
 ## node), split, n, deviance, yval
@@ -462,8 +478,8 @@ chocolate_model</code></pre>
 ## 
 ## 1) root 1437 341.707 3.187543 *</code></pre>
 </div>
-<div id="n-sample-and-out-of-sample-performance" class="section level1">
-<h1>2-16 n-sample and out-of-sample performance</h1>
+<div id="n-sample-and-out-of-sample-performance" class="section level2">
+<h2>2-16 n-sample and out-of-sample performance</h2>
 <p>Does a more sophisticated model always perform better? As we discussed in the video, that’s only half the truth.</p>
 <p>Overfitted models understand the structure of their training set perfectly but cannot generalize to new data. That’s a bummer! At the end of the day, the main purpose of a predictive model is to perform well on new data, right? Go investigate!</p>
 <pre class="r"><code># Predict on and combine with training data and calculate the error
@@ -472,8 +488,8 @@ chocolate_model</code></pre>
 #   mae(estimate = .pred,
 #truth = final_grade)</code></pre>
 </div>
-<div id="generate-a-tuning-grid" class="section level1">
-<h1>3-2 Generate a tuning grid</h1>
+<div id="generate-a-tuning-grid" class="section level2">
+<h2>3-2 Generate a tuning grid</h2>
 <p>The standard hyperparameters of most models provide a good fit for most datasets. Yet, they need optimization for the best performance. Otherwise, it’s like driving a car with an activated hand brake. Release the brake and tune your models!</p>
 <p>In this exercise, you’ll create two objects that serve as a starting point: a tuning grid (a set of hyperparameter combinations) and a model specification that you later train with every value of the grid.</p>
 <pre class="r"><code># Create a specification with tuning placeholders
@@ -505,8 +521,8 @@ tree_grid</code></pre>
 ## 3    0.0000000001         15
 ## 4    0.1                  15</code></pre>
 </div>
-<div id="tune-along-the-grid" class="section level1">
-<h1>3-3 Tune along the grid</h1>
+<div id="tune-along-the-grid" class="section level2">
+<h2>3-3 Tune along the grid</h2>
 <p>After creating the tuning grid and a dummy specification, you need to fit a model on every grid point and evaluate the resulting model. This is very easy in the tidymodels framework using the tune_grid() function, as introduced in the slides.</p>
 <p>In the remaining exercises, you will use the credit card customers dataset, which has the following columns:</p>
 <p>still_customer: flag (yes or no) that indicates if a customer is still an active customer</p>
@@ -533,8 +549,8 @@ tune_results &lt;- tune_grid(tune_spec,
 autoplot(tune_results)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 </div>
-<div id="pick-the-winner" class="section level1">
-<h1>3-4 Pick the winner</h1>
+<div id="pick-the-winner" class="section level2">
+<h2>3-4 Pick the winner</h2>
 <p>Once tuning has been performed, it’s time to pick the optimal hyperparameters from the results and build the final model. Two helpers from tidymodels come in handy:</p>
 <p>The function select_best() extracts the optimal hyperparameters from a tuning results tibble, and finalize_model() plugs these results into the specification, replacing the placeholders.</p>
 <pre class="r"><code># Select the parameters that perform best
@@ -564,7 +580,7 @@ final_model &lt;- fit(best_spec,
 final_model</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  50ms 
+## Fit time:  41ms 
 ## n= 800 
 ## 
 ## node), split, n, loss, yval, (yprob)
@@ -608,50 +624,77 @@ final_model</code></pre>
 ##        14) total_trans_ct&gt;=55 8   2 no (0.75000000 0.25000000) *
 ##        15) total_trans_ct&lt; 55 33   1 yes (0.03030303 0.96969697) *</code></pre>
 </div>
-<div id="calculate-specificity" class="section level1">
-<h1>3-6 Calculate specificity</h1>
+<div id="calculate-specificity" class="section level2">
+<h2>3-6 Calculate specificity</h2>
 <p>Using different measures for model performance allows you to more accurately assess it. There are several metrics for different use cases. Specificity measures the proportion of true negative outcomes correctly identified:</p>
 <p>This formula implies that with specificity approaching 100%, the number of false positives (FP) approaches 0.</p>
 <p>In this exercise, you are going to investigate the out-of-sample specificity of your model with cross-validation.</p>
 </div>
-<div id="draw-the-roc-curve" class="section level1">
-<h1>3-7 Draw the ROC curve</h1>
+<div id="draw-the-roc-curve" class="section level2">
+<h2>3-7 Draw the ROC curve</h2>
 <p>Visualizing model performance with a ROC curve allows you to gather the performance across all possible thresholds into a single plot. It shows the sensitivity and specificity for every threshold. The more “up and left” a ROC curve is, the better the model.</p>
 <p>You are going to predict class probabilities of credit card customers having churned and plot the results as a ROC curve.</p>
-<pre class="r"><code># Extract the training and test set
-customers_test &lt;- testing(customers_split)
-
-
-# Predict probabilities on test set
-#predictions &lt;- predict(model, customers_test, type = &quot;prob&quot;) %&gt;% 
-  # Add test set
- # bind_cols(customers_test)
-
-# Calculate the ROC curve for all thresholds
-#roc &lt;- roc_curve(predictions,
-     #      estimate = .pred_yes, 
-    #       truth = still_customer)
-
-# Plot the ROC curve
-#autoplot(roc)</code></pre>
+</div>
+<div id="extract-the-training-and-test-set" class="section level1">
+<h1>Extract the training and test set</h1>
+<p>customers_test &lt;- testing(customers_split)</p>
+</div>
+<div id="predict-probabilities-on-test-set" class="section level1">
+<h1>Predict probabilities on test set</h1>
+<p>predictions &lt;- predict(model, customers_test, type = “prob”) %&gt;%
+# Add test set
+bind_cols(customers_test)</p>
+</div>
+<div id="calculate-the-roc-curve-for-all-thresholds" class="section level1">
+<h1>Calculate the ROC curve for all thresholds</h1>
+<p>roc &lt;- roc_curve(predictions,
+estimate = .pred_yes,
+truth = still_customer)</p>
+</div>
+<div id="plot-the-roc-curve" class="section level1">
+<h1>Plot the ROC curve</h1>
+<p>autoplot(roc)</p>
+<div id="area-under-the-roc-curve" class="section level2">
+<h2>3-8 Area under the ROC curve</h2>
+<p>The area under the ROC curve boils down many other performance estimates to one single number and allows you to assess a model’s performance very quickly. For this reason, it is a very common performance measure for classification models.</p>
+</div>
+</div>
+<div id="calculate-area-under-the-curve" class="section level1">
+<h1>Calculate area under the curve</h1>
+<p>auc_result &lt;- roc_auc(predictions,
+estimate = .pred_yes,
+truth = still_customer)</p>
+<p>print(paste(“The area under the ROC curve is”, round(auc_result$.estimate, 3)))</p>
+</div>
+<div id="create-bagged-trees" class="section level1">
+<h1>3-10 Create bagged trees</h1>
+<p>Ensemble models like bagged trees are more powerful than single decision trees. Each tree in the ensemble gives a vote, and the average or majority vote is your prediction. This ensures you use swarm intelligence instead of relying on a single tree. For bagged trees, the bootstrap method ensures that in every ensemble tree, only a bootstrapped sample (sampled with replacement) of the original dataset is used to train the tree and create the prediction.</p>
+</div>
+<div id="create-the-specification" class="section level1">
+<h1>Create the specification</h1>
+<p>spec_bagged &lt;- baguette::bag_tree() %&gt;%
+set_mode(“classification”) %&gt;%
+set_engine(“rpart”, times = 20)</p>
+</div>
+<div id="fit-to-the-training-data" class="section level1">
+<h1>Fit to the training data</h1>
+<p>model_bagged &lt;- fit(spec_bagged,
+formula = still_customer ~ total_trans_amt+customer_age+education_level,
+data = customers_train)</p>
+</div>
+<div id="print-the-model" class="section level1">
+<h1>Print the model</h1>
+<p>model_bagged</p>
+</div>
+<div id="section" class="section level1">
+<h1>3-11</h1>
+</div>
+<div id="check-for-overfitting" class="section level1">
+<h1>3-12 Check for overfitting</h1>
+<p>A very high in-sample AUC like can be an indicator of overfitting. It is also possible that your dataset is just very well structured, or your model might just be terrific!</p>
+<p>To check which of these is true, you need to produce out-of-sample estimates of your AUC, and because you don’t want to touch your test set yet, you can produce these using cross-validation on your training set.</p>
 </div>
 <div id="n-sample-and-out-of-sample-performance-1" class="section level1">
-<h1>3-8 n-sample and out-of-sample performance</h1>
-<p>Does a</p>
-</div>
-<div id="n-sample-and-out-of-sample-performance-2" class="section level1">
-<h1>3-10 n-sample and out-of-sample performance</h1>
-<p>Does a</p>
-</div>
-<div id="n-sample-and-out-of-sample-performance-3" class="section level1">
-<h1>3-11 n-sample and out-of-sample performance</h1>
-<p>Does a</p>
-</div>
-<div id="n-sample-and-out-of-sample-performance-4" class="section level1">
-<h1>3-12 n-sample and out-of-sample performance</h1>
-<p>Does a</p>
-</div>
-<div id="n-sample-and-out-of-sample-performance-5" class="section level1">
 <h1>3-15 n-sample and out-of-sample performance</h1>
 <p>Does a</p>
 </div>

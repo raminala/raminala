@@ -194,7 +194,7 @@ acc_auto$estimate
 ```
 
 
-##2-2 Train a regression tree
+## 2-2 Train a regression tree
 
 As you know already, decision trees are a useful tool for classification problems. Moreover, you can also use them to model regression problems. The structural difference is that there will be numeric values (instead of classes) on the leaf nodes.
 
@@ -216,7 +216,7 @@ model_fit <- model_spec %>%
 model_fit
 ```
 
-##2-3 Predict new values
+## 2-3 Predict new values
 
 A predictive model is one that predicts the outcomes of new, unseen data. Besides the numeric predictors, there are other useful columns in the dataset. The goal of this exercise is to predict the final rating grades of a chocolate tasting based on all other predictor variables that are available.
 
@@ -343,7 +343,7 @@ chocolate_model <- decision_tree(min_n = 2,
 #chocolate_model
 ```
 
-# 2-16 n-sample and out-of-sample performance
+## 2-16 n-sample and out-of-sample performance
 
 Does a more sophisticated model always perform better? As we discussed in the video, that's only half the truth.
 
@@ -358,7 +358,7 @@ Overfitted models understand the structure of their training set perfectly but c
 ```
 
 
-# 3-2 Generate a tuning grid
+## 3-2 Generate a tuning grid
 
 The standard hyperparameters of most models provide a good fit for most datasets. Yet, they need optimization for the best performance. Otherwise, it's like driving a car with an activated hand brake. Release the brake and tune your models!
 
@@ -383,7 +383,7 @@ tree_grid
 ```
 
 
-# 3-3 Tune along the grid
+## 3-3 Tune along the grid
 
 After creating the tuning grid and a dummy specification, you need to fit a model on every grid point and evaluate the resulting model. This is very easy in the tidymodels framework using the tune_grid() function, as introduced in the slides.
 
@@ -423,7 +423,7 @@ autoplot(tune_results)
 
 
 
-# 3-4 Pick the winner
+## 3-4 Pick the winner
 
 Once tuning has been performed, it's time to pick the optimal hyperparameters from the results and build the final model. Two helpers from tidymodels come in handy:
 
@@ -449,7 +449,7 @@ final_model
 ```
 
 
-# 3-6 Calculate specificity
+## 3-6 Calculate specificity
 
 Using different measures for model performance allows you to more accurately assess it. There are several metrics for different use cases. Specificity measures the proportion of true negative outcomes correctly identified:
 
@@ -487,68 +487,72 @@ specificities <- fit_resamples(tree_spec,
 ```
 
 
-# 3-7 Draw the ROC curve
+## 3-7 Draw the ROC curve
 
 Visualizing model performance with a ROC curve allows you to gather the performance across all possible thresholds into a single plot. It shows the sensitivity and specificity for every threshold. The more "up and left" a ROC curve is, the better the model.
 
 You are going to predict class probabilities of credit card customers having churned and plot the results as a ROC curve.
 
 
-```{r}
-
 # Extract the training and test set
 customers_test <- testing(customers_split)
 
 
 # Predict probabilities on test set
-#predictions <- predict(model, customers_test, type = "prob") %>% 
+predictions <- predict(model, customers_test, type = "prob") %>% 
   # Add test set
- # bind_cols(customers_test)
+  bind_cols(customers_test)
 
 # Calculate the ROC curve for all thresholds
-#roc <- roc_curve(predictions,
-     #      estimate = .pred_yes, 
-    #       truth = still_customer)
+roc <- roc_curve(predictions,
+           estimate = .pred_yes, 
+           truth = still_customer)
 
 # Plot the ROC curve
-#autoplot(roc)
-```
+autoplot(roc)
 
 
-# 3-8 n-sample and out-of-sample performance
 
-Does a
+## 3-8 Area under the ROC curve
 
-```{r}
+The area under the ROC curve boils down many other performance estimates to one single number and allows you to assess a model's performance very quickly. For this reason, it is a very common performance measure for classification models.
 
-```
+# Calculate area under the curve
+auc_result <- roc_auc(predictions, 
+                  estimate = .pred_yes, 
+                  truth = still_customer)
 
-
-# 3-10 n-sample and out-of-sample performance
-
-Does a
-
-```{r}
-
-```
+print(paste("The area under the ROC curve is", round(auc_result$.estimate, 3)))
 
 
-# 3-11 n-sample and out-of-sample performance
-
-Does a
-
-```{r}
-
-```
 
 
-# 3-12 n-sample and out-of-sample performance
+# 3-10 Create bagged trees
 
-Does a
+Ensemble models like bagged trees are more powerful than single decision trees. Each tree in the ensemble gives a vote, and the average or majority vote is your prediction. This ensures you use swarm intelligence instead of relying on a single tree. For bagged trees, the bootstrap method ensures that in every ensemble tree, only a bootstrapped sample (sampled with replacement) of the original dataset is used to train the tree and create the prediction.
 
-```{r}
+# Create the specification
+spec_bagged <- baguette::bag_tree() %>%
+  set_mode("classification") %>%
+  set_engine("rpart", times = 20)
 
-```
+# Fit to the training data
+model_bagged <- fit(spec_bagged,
+                    formula = still_customer ~ total_trans_amt+customer_age+education_level, 
+                    data = customers_train)
+
+# Print the model
+model_bagged
+
+
+# 3-11 
+
+
+# 3-12 Check for overfitting
+
+A very high in-sample AUC like  can be an indicator of overfitting. It is also possible that your dataset is just very well structured, or your model might just be terrific!
+
+To check which of these is true, you need to produce out-of-sample estimates of your AUC, and because you don't want to touch your test set yet, you can produce these using cross-validation on your training set.
 
 
 # 3-15 n-sample and out-of-sample performance
