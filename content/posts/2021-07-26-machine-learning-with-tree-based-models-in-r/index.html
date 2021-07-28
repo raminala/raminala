@@ -134,9 +134,9 @@ counts_test &lt;- table(testing(diabetes_split)$outcome)
 prop_yes_test &lt;- counts_test[&quot;yes&quot;] / sum(counts_test)
 
 paste(&quot;Proportion of positive outcomes in training set:&quot;, round(prop_yes_train, 2))</code></pre>
-<pre><code>## [1] &quot;Proportion of positive outcomes in training set: 0.36&quot;</code></pre>
+<pre><code>## [1] &quot;Proportion of positive outcomes in training set: 0.34&quot;</code></pre>
 <pre class="r"><code>paste(&quot;Proportion of positive outcomes in test set:&quot;, round(prop_yes_test, 2))</code></pre>
-<pre><code>## [1] &quot;Proportion of positive outcomes in test set: 0.3&quot;</code></pre>
+<pre><code>## [1] &quot;Proportion of positive outcomes in test set: 0.38&quot;</code></pre>
 <pre class="r"><code># Create a split with a constant outcome distribution
 diabetes_split &lt;- initial_split(diabetes,
 prop = 0.75,
@@ -183,17 +183,23 @@ model_trained</code></pre>
 ## node), split, n, loss, yval, (yprob)
 ##       * denotes terminal node
 ## 
-##  1) root 576 201 no (0.6510417 0.3489583)  
-##    2) bmi&lt; 27.85 163  18 no (0.8895706 0.1104294) *
-##    3) bmi&gt;=27.85 413 183 no (0.5569007 0.4430993)  
-##      6) bmi&lt; 41.65 358 146 no (0.5921788 0.4078212)  
-##       12) skin_thickness&gt;=5 262 100 no (0.6183206 0.3816794) *
-##       13) skin_thickness&lt; 5 96  46 no (0.5208333 0.4791667)  
-##         26) bmi&lt; 29.95 18   6 no (0.6666667 0.3333333) *
-##         27) bmi&gt;=29.95 78  38 yes (0.4871795 0.5128205)  
-##           54) bmi&gt;=31.05 66  30 no (0.5454545 0.4545455) *
-##           55) bmi&lt; 31.05 12   2 yes (0.1666667 0.8333333) *
-##      7) bmi&gt;=41.65 55  18 yes (0.3272727 0.6727273) *</code></pre>
+##   1) root 576 201 no (0.65104167 0.34895833)  
+##     2) bmi&lt; 29.85 221  38 no (0.82805430 0.17194570) *
+##     3) bmi&gt;=29.85 355 163 no (0.54084507 0.45915493)  
+##       6) bmi&lt; 40.8 296 126 no (0.57432432 0.42567568)  
+##        12) skin_thickness&gt;=5.5 224  87 no (0.61160714 0.38839286)  
+##          24) skin_thickness&lt; 17.5 13   2 no (0.84615385 0.15384615) *
+##          25) skin_thickness&gt;=17.5 211  85 no (0.59715640 0.40284360)  
+##            50) bmi&gt;=35.25 96  33 no (0.65625000 0.34375000) *
+##            51) bmi&lt; 35.25 115  52 no (0.54782609 0.45217391)  
+##             102) bmi&lt; 34.15 90  36 no (0.60000000 0.40000000) *
+##             103) bmi&gt;=34.15 25   9 yes (0.36000000 0.64000000) *
+##        13) skin_thickness&lt; 5.5 72  33 yes (0.45833333 0.54166667)  
+##          26) bmi&gt;=31.05 61  29 no (0.52459016 0.47540984)  
+##            52) bmi&gt;=34.05 35  14 no (0.60000000 0.40000000) *
+##            53) bmi&lt; 34.05 26  11 yes (0.42307692 0.57692308) *
+##          27) bmi&lt; 31.05 11   1 yes (0.09090909 0.90909091) *
+##       7) bmi&gt;=40.8 59  22 yes (0.37288136 0.62711864) *</code></pre>
 </div>
 <div id="make-predictions" class="section level2">
 <h2>1-10 Make predictions</h2>
@@ -217,12 +223,12 @@ head(predictions_combined)</code></pre>
 <pre><code>## # A tibble: 6 x 2
 ##   .pred_class true_class
 ##   &lt;fct&gt;       &lt;chr&gt;     
-## 1 yes         yes       
-## 2 no          no        
+## 1 no          no        
+## 2 yes         yes       
 ## 3 yes         no        
-## 4 no          no        
-## 5 no          no        
-## 6 yes         no</code></pre>
+## 4 yes         yes       
+## 5 yes         no        
+## 6 no          no</code></pre>
 </div>
 <div id="crack-the-matrix" class="section level2">
 <h2>1-11 Crack the matrix</h2>
@@ -237,8 +243,8 @@ truth = true_class)</code></pre>
 print(diabetes_matrix)</code></pre>
 <pre><code>##           Truth
 ## Prediction no yes
-##        no  88  25
-##        yes 20  21</code></pre>
+##        no  75  29
+##        yes 21  29</code></pre>
 </div>
 <div id="are-you-predicting-correctly" class="section level2">
 <h2>1-12 Are you predicting correctly?</h2>
@@ -278,7 +284,7 @@ model_fit &lt;- model_spec %&gt;%
 model_fit</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  11ms 
+## Fit time:  21ms 
 ## n= 1437 
 ## 
 ## node), split, n, deviance, yval
@@ -431,7 +437,7 @@ chocolate_model &lt;- decision_tree(tree_depth = 1) %&gt;%
 chocolate_model</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  20ms 
+## Fit time:  0ms 
 ## n= 1437 
 ## 
 ## node), split, n, deviance, yval
@@ -527,35 +533,125 @@ tune_results &lt;- tune_grid(tune_spec,
 autoplot(tune_results)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 </div>
+<div id="pick-the-winner" class="section level1">
+<h1>3-4 Pick the winner</h1>
+<p>Once tuning has been performed, it’s time to pick the optimal hyperparameters from the results and build the final model. Two helpers from tidymodels come in handy:</p>
+<p>The function select_best() extracts the optimal hyperparameters from a tuning results tibble, and finalize_model() plugs these results into the specification, replacing the placeholders.</p>
+<pre class="r"><code># Select the parameters that perform best
+final_params &lt;- select_best(tune_results)
+
+final_params</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   cost_complexity tree_depth .config             
+##             &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;               
+## 1    0.0000000001         15 Preprocessor1_Model3</code></pre>
+<pre class="r"><code># Finalize the specification
+best_spec &lt;- finalize_model(tune_spec, final_params)
+
+best_spec</code></pre>
+<pre><code>## Decision Tree Model Specification (classification)
+## 
+## Main Arguments:
+##   cost_complexity = 1e-10
+##   tree_depth = 15
+## 
+## Computational engine: rpart</code></pre>
+<pre class="r"><code># Build the final model
+final_model &lt;- fit(best_spec,
+                   factor(still_customer) ~ .,
+                   customers)
+
+final_model</code></pre>
+<pre><code>## parsnip model object
+## 
+## Fit time:  50ms 
+## n= 800 
+## 
+## node), split, n, loss, yval, (yprob)
+##       * denotes terminal node
+## 
+##   1) root 800 128 no (0.84000000 0.16000000)  
+##     2) total_ct_chng_q4_q1&gt;=0.4605 723  81 no (0.88796680 0.11203320)  
+##       4) total_revolving_bal&gt;=628.5 550  28 no (0.94909091 0.05090909)  
+##         8) total_trans_ct&gt;=64.5 334   4 no (0.98802395 0.01197605) *
+##         9) total_trans_ct&lt; 64.5 216  24 no (0.88888889 0.11111111)  
+##          18) total_trans_amt&lt; 5942 209  17 no (0.91866029 0.08133971)  
+##            36) credit_limit&gt;=1794.5 194  11 no (0.94329897 0.05670103)  
+##              72) total_amt_chng_q4_q1&gt;=0.7375 104   0 no (1.00000000 0.00000000) *
+##              73) total_amt_chng_q4_q1&lt; 0.7375 90  11 no (0.87777778 0.12222222)  
+##               146) total_trans_amt&lt; 2016.5 54   2 no (0.96296296 0.03703704) *
+##               147) total_trans_amt&gt;=2016.5 36   9 no (0.75000000 0.25000000)  
+##                 294) total_trans_ct&gt;=50.5 24   1 no (0.95833333 0.04166667) *
+##                 295) total_trans_ct&lt; 50.5 12   4 yes (0.33333333 0.66666667) *
+##            37) credit_limit&lt; 1794.5 15   6 no (0.60000000 0.40000000) *
+##          19) total_trans_amt&gt;=5942 7   0 yes (0.00000000 1.00000000) *
+##       5) total_revolving_bal&lt; 628.5 173  53 no (0.69364162 0.30635838)  
+##        10) total_trans_ct&gt;=58.5 119  22 no (0.81512605 0.18487395)  
+##          20) total_trans_amt&lt; 5297.5 82   2 no (0.97560976 0.02439024) *
+##          21) total_trans_amt&gt;=5297.5 37  17 yes (0.45945946 0.54054054)  
+##            42) total_trans_ct&gt;=92 13   0 no (1.00000000 0.00000000) *
+##            43) total_trans_ct&lt; 92 24   4 yes (0.16666667 0.83333333)  
+##              86) total_trans_amt&lt; 7729 7   3 no (0.57142857 0.42857143) *
+##              87) total_trans_amt&gt;=7729 17   0 yes (0.00000000 1.00000000) *
+##        11) total_trans_ct&lt; 58.5 54  23 yes (0.42592593 0.57407407)  
+##          22) total_ct_chng_q4_q1&gt;=1.028 8   0 no (1.00000000 0.00000000) *
+##          23) total_ct_chng_q4_q1&lt; 1.028 46  15 yes (0.32608696 0.67391304)  
+##            46) total_trans_amt&lt; 1770 16   5 no (0.68750000 0.31250000) *
+##            47) total_trans_amt&gt;=1770 30   4 yes (0.13333333 0.86666667) *
+##     3) total_ct_chng_q4_q1&lt; 0.4605 77  30 yes (0.38961039 0.61038961)  
+##       6) total_trans_amt&lt; 1873.5 36  13 no (0.63888889 0.36111111)  
+##        12) total_trans_amt&gt;=1052 29   6 no (0.79310345 0.20689655)  
+##          24) avg_utilization_ratio&gt;=0.046 18   0 no (1.00000000 0.00000000) *
+##          25) avg_utilization_ratio&lt; 0.046 11   5 yes (0.45454545 0.54545455) *
+##        13) total_trans_amt&lt; 1052 7   0 yes (0.00000000 1.00000000) *
+##       7) total_trans_amt&gt;=1873.5 41   7 yes (0.17073171 0.82926829)  
+##        14) total_trans_ct&gt;=55 8   2 no (0.75000000 0.25000000) *
+##        15) total_trans_ct&lt; 55 33   1 yes (0.03030303 0.96969697) *</code></pre>
+</div>
+<div id="calculate-specificity" class="section level1">
+<h1>3-6 Calculate specificity</h1>
+<p>Using different measures for model performance allows you to more accurately assess it. There are several metrics for different use cases. Specificity measures the proportion of true negative outcomes correctly identified:</p>
+<p>This formula implies that with specificity approaching 100%, the number of false positives (FP) approaches 0.</p>
+<p>In this exercise, you are going to investigate the out-of-sample specificity of your model with cross-validation.</p>
+</div>
+<div id="draw-the-roc-curve" class="section level1">
+<h1>3-7 Draw the ROC curve</h1>
+<p>Visualizing model performance with a ROC curve allows you to gather the performance across all possible thresholds into a single plot. It shows the sensitivity and specificity for every threshold. The more “up and left” a ROC curve is, the better the model.</p>
+<p>You are going to predict class probabilities of credit card customers having churned and plot the results as a ROC curve.</p>
+<pre class="r"><code># Extract the training and test set
+customers_test &lt;- testing(customers_split)
+
+
+# Predict probabilities on test set
+#predictions &lt;- predict(model, customers_test, type = &quot;prob&quot;) %&gt;% 
+  # Add test set
+ # bind_cols(customers_test)
+
+# Calculate the ROC curve for all thresholds
+#roc &lt;- roc_curve(predictions,
+     #      estimate = .pred_yes, 
+    #       truth = still_customer)
+
+# Plot the ROC curve
+#autoplot(roc)</code></pre>
+</div>
 <div id="n-sample-and-out-of-sample-performance-1" class="section level1">
-<h1>3-4 n-sample and out-of-sample performance</h1>
-<p>Does a</p>
-</div>
-<div id="n-sample-and-out-of-sample-performance-2" class="section level1">
-<h1>3-6 n-sample and out-of-sample performance</h1>
-<p>Does a</p>
-</div>
-<div id="n-sample-and-out-of-sample-performance-3" class="section level1">
-<h1>3-7 n-sample and out-of-sample performance</h1>
-<p>Does a</p>
-</div>
-<div id="n-sample-and-out-of-sample-performance-4" class="section level1">
 <h1>3-8 n-sample and out-of-sample performance</h1>
 <p>Does a</p>
 </div>
-<div id="n-sample-and-out-of-sample-performance-5" class="section level1">
+<div id="n-sample-and-out-of-sample-performance-2" class="section level1">
 <h1>3-10 n-sample and out-of-sample performance</h1>
 <p>Does a</p>
 </div>
-<div id="n-sample-and-out-of-sample-performance-6" class="section level1">
+<div id="n-sample-and-out-of-sample-performance-3" class="section level1">
 <h1>3-11 n-sample and out-of-sample performance</h1>
 <p>Does a</p>
 </div>
-<div id="n-sample-and-out-of-sample-performance-7" class="section level1">
+<div id="n-sample-and-out-of-sample-performance-4" class="section level1">
 <h1>3-12 n-sample and out-of-sample performance</h1>
 <p>Does a</p>
 </div>
-<div id="n-sample-and-out-of-sample-performance-8" class="section level1">
+<div id="n-sample-and-out-of-sample-performance-5" class="section level1">
 <h1>3-15 n-sample and out-of-sample performance</h1>
 <p>Does a</p>
 </div>

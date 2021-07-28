@@ -423,26 +423,95 @@ autoplot(tune_results)
 
 
 
-# 3-4 n-sample and out-of-sample performance
+# 3-4 Pick the winner
 
-Does a
+Once tuning has been performed, it's time to pick the optimal hyperparameters from the results and build the final model. Two helpers from tidymodels come in handy:
 
-
-# 3-6 n-sample and out-of-sample performance
-
-Does a
+The function select_best() extracts the optimal hyperparameters from a tuning results tibble, and finalize_model() plugs these results into the specification, replacing the placeholders.
 
 ```{r}
+# Select the parameters that perform best
+final_params <- select_best(tune_results)
 
+final_params
+
+# Finalize the specification
+best_spec <- finalize_model(tune_spec, final_params)
+
+best_spec
+
+# Build the final model
+final_model <- fit(best_spec,
+                   factor(still_customer) ~ .,
+                   customers)
+
+final_model
 ```
 
 
-# 3-7 n-sample and out-of-sample performance
+# 3-6 Calculate specificity
 
-Does a
+Using different measures for model performance allows you to more accurately assess it. There are several metrics for different use cases. Specificity measures the proportion of true negative outcomes correctly identified:
+
+ 
+
+This formula implies that with specificity approaching 100%, the number of false positives (FP) approaches 0.
+
+In this exercise, you are going to investigate the out-of-sample specificity of your model with cross-validation.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# Create the split
+customers_split <- initial_split(customers, prop = 0.8)
+
+# Extract the training and test set
+customers_train <- training(customers_split)
+#------------------------------------------------------
+# Create CV folds of the training data
+folds <- vfold_cv(customers_train, v = 3)
+
+tree_spec <- decision_tree() %>% 
+                set_engine("rpart") %>%
+                set_mode("classification")
+
+#------------------------------------------------------
+
+# Calculate CV specificity
+specificities <- fit_resamples(tree_spec, 
+                     still_customer ~ .,
+                     resamples = folds,
+                     metrics = metric_set(specificity))
+
+# Collect the metrics
+#collect_metrics(specificities)
+```
+
+
+# 3-7 Draw the ROC curve
+
+Visualizing model performance with a ROC curve allows you to gather the performance across all possible thresholds into a single plot. It shows the sensitivity and specificity for every threshold. The more "up and left" a ROC curve is, the better the model.
+
+You are going to predict class probabilities of credit card customers having churned and plot the results as a ROC curve.
+
 
 ```{r}
 
+# Extract the training and test set
+customers_test <- testing(customers_split)
+
+
+# Predict probabilities on test set
+#predictions <- predict(model, customers_test, type = "prob") %>% 
+  # Add test set
+ # bind_cols(customers_test)
+
+# Calculate the ROC curve for all thresholds
+#roc <- roc_curve(predictions,
+     #      estimate = .pred_yes, 
+    #       truth = still_customer)
+
+# Plot the ROC curve
+#autoplot(roc)
 ```
 
 
