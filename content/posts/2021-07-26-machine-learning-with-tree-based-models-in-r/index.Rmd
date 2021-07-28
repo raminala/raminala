@@ -295,5 +295,65 @@ You will plot all these errors as a histogram and display the summary statistics
 
 ```{r}
 
+library(ggplot2)
+
+# Collect the errors
+#all_errors <- collect_metrics(fits_cv, summarize = FALSE)
+#all_errors
+# Plot an error histogram
+#ggplot(all_errors, aes(.estimate, fill=.metric)) +
+ #       geom_histogram()
+
+# Collect and print error statistics
+#collect_metrics(fits_cv, summarize = TRUE)
 ```
+
+## 2-15 Adjust model complexity
+
+To make good predictions, you need to adjust the complexity of your model. Simple models can only represent simple data structures, while complex models can represent fine-grained data structures.
+
+In this exercise, you are going to create trees of different complexities by altering the hyperparameters of a regression tree.
+
+```{r}
+# Create a model having only one split
+chocolate_model <- decision_tree(tree_depth = 1) %>% 
+		set_mode("regression") %>%
+		set_engine("rpart") %>% 
+		fit(final_grade ~ ., data = chocolate_train)
+chocolate_model
+```
+
+```{r}
+# Create a model with high cost for complexity
+chocolate_model <- decision_tree(cost_complexity = 0.1) %>% 
+		set_mode("regression") %>%
+		set_engine("rpart") %>% 
+		fit(final_grade ~ ., data = chocolate_train)
+chocolate_model
+```
+
+```{r}
+# Create a model that can grow arbitrarily complex
+chocolate_model <- decision_tree(min_n = 2,
+			  					 cost_complexity = 0) %>%
+		set_mode("regression") %>%
+		set_engine("rpart") %>% 
+		fit(final_grade ~ ., data = chocolate_train)
+chocolate_model
+```
+
+# 2-16 n-sample and out-of-sample performance
+
+Does a more sophisticated model always perform better? As we discussed in the video, that's only half the truth.
+
+Overfitted models understand the structure of their training set perfectly but cannot generalize to new data. That's a bummer! At the end of the day, the main purpose of a predictive model is to perform well on new data, right? Go investigate!
+
+```{r}
+# Predict on and combine with training data and calculate the error
+#predict(complex_model, new_data = chocolate_train) %>%
+#	bind_cols(chocolate_train) %>% 
+#	mae(estimate = .pred,
+#truth = final_grade)
+```
+
 

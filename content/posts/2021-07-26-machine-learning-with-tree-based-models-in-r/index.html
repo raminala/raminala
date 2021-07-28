@@ -91,7 +91,7 @@ data = diabetes)
 tree_model_bmi</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  10ms 
+## Fit time:  21ms 
 ## n= 768 
 ## 
 ## node), split, n, loss, yval, (yprob)
@@ -134,9 +134,9 @@ counts_test &lt;- table(testing(diabetes_split)$outcome)
 prop_yes_test &lt;- counts_test[&quot;yes&quot;] / sum(counts_test)
 
 paste(&quot;Proportion of positive outcomes in training set:&quot;, round(prop_yes_train, 2))</code></pre>
-<pre><code>## [1] &quot;Proportion of positive outcomes in training set: 0.35&quot;</code></pre>
+<pre><code>## [1] &quot;Proportion of positive outcomes in training set: 0.34&quot;</code></pre>
 <pre class="r"><code>paste(&quot;Proportion of positive outcomes in test set:&quot;, round(prop_yes_test, 2))</code></pre>
-<pre><code>## [1] &quot;Proportion of positive outcomes in test set: 0.33&quot;</code></pre>
+<pre><code>## [1] &quot;Proportion of positive outcomes in test set: 0.4&quot;</code></pre>
 <pre class="r"><code># Create a split with a constant outcome distribution
 diabetes_split &lt;- initial_split(diabetes,
 prop = 0.75,
@@ -177,31 +177,41 @@ model_trained &lt;- tree_spec %&gt;%
 model_trained</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  0ms 
+## Fit time:  11ms 
 ## n= 576 
 ## 
 ## node), split, n, loss, yval, (yprob)
 ##       * denotes terminal node
 ## 
-##   1) root 576 201 no (0.65104167 0.34895833)  
-##     2) bmi&lt; 27.85 166  16 no (0.90361446 0.09638554) *
-##     3) bmi&gt;=27.85 410 185 no (0.54878049 0.45121951)  
-##       6) bmi&lt; 41.65 354 148 no (0.58192090 0.41807910)  
-##        12) skin_thickness&gt;=14.5 265 102 no (0.61509434 0.38490566)  
-##          24) skin_thickness&lt; 29.5 106  31 no (0.70754717 0.29245283) *
-##          25) skin_thickness&gt;=29.5 159  71 no (0.55345912 0.44654088)  
-##            50) bmi&gt;=38.05 46  15 no (0.67391304 0.32608696) *
-##            51) bmi&lt; 38.05 113  56 no (0.50442478 0.49557522)  
-##             102) bmi&lt; 33.55 45  17 no (0.62222222 0.37777778) *
-##             103) bmi&gt;=33.55 68  29 yes (0.42647059 0.57352941)  
-##               206) bmi&gt;=35.15 37  16 no (0.56756757 0.43243243) *
-##               207) bmi&lt; 35.15 31   8 yes (0.25806452 0.74193548) *
-##        13) skin_thickness&lt; 14.5 89  43 yes (0.48314607 0.51685393)  
-##          26) bmi&gt;=33.1 39  17 no (0.56410256 0.43589744) *
-##          27) bmi&lt; 33.1 50  21 yes (0.42000000 0.58000000)  
-##            54) bmi&lt; 29.95 14   5 no (0.64285714 0.35714286) *
-##            55) bmi&gt;=29.95 36  12 yes (0.33333333 0.66666667) *
-##       7) bmi&gt;=41.65 56  19 yes (0.33928571 0.66071429) *</code></pre>
+##   1) root 576 201 no (0.6510417 0.3489583)  
+##     2) bmi&lt; 28.85 189  27 no (0.8571429 0.1428571) *
+##     3) bmi&gt;=28.85 387 174 no (0.5503876 0.4496124)  
+##       6) bmi&lt; 48.6 377 165 no (0.5623342 0.4376658)  
+##        12) skin_thickness&gt;=5 275 112 no (0.5927273 0.4072727)  
+##          24) skin_thickness&lt; 23.5 49  14 no (0.7142857 0.2857143) *
+##          25) skin_thickness&gt;=23.5 226  98 no (0.5663717 0.4336283)  
+##            50) bmi&lt; 40.8 184  75 no (0.5923913 0.4076087)  
+##             100) bmi&gt;=37.65 38  10 no (0.7368421 0.2631579) *
+##             101) bmi&lt; 37.65 146  65 no (0.5547945 0.4452055)  
+##               202) bmi&lt; 33.65 70  26 no (0.6285714 0.3714286) *
+##               203) bmi&gt;=33.65 76  37 yes (0.4868421 0.5131579)  
+##                 406) bmi&gt;=35.2 37  14 no (0.6216216 0.3783784)  
+##                   812) bmi&lt; 36.95 26   7 no (0.7307692 0.2692308) *
+##                   813) bmi&gt;=36.95 11   4 yes (0.3636364 0.6363636) *
+##                 407) bmi&lt; 35.2 39  14 yes (0.3589744 0.6410256) *
+##            51) bmi&gt;=40.8 42  19 yes (0.4523810 0.5476190)  
+##             102) skin_thickness&gt;=37.5 24  10 no (0.5833333 0.4166667)  
+##               204) skin_thickness&lt; 41.5 13   3 no (0.7692308 0.2307692) *
+##               205) skin_thickness&gt;=41.5 11   4 yes (0.3636364 0.6363636) *
+##             103) skin_thickness&lt; 37.5 18   5 yes (0.2777778 0.7222222) *
+##        13) skin_thickness&lt; 5 102  49 yes (0.4803922 0.5196078)  
+##          26) bmi&lt; 37.65 73  35 no (0.5205479 0.4794521)  
+##            52) bmi&gt;=34.05 21   6 no (0.7142857 0.2857143) *
+##            53) bmi&lt; 34.05 52  23 yes (0.4423077 0.5576923)  
+##             106) bmi&lt; 29.95 9   3 no (0.6666667 0.3333333) *
+##             107) bmi&gt;=29.95 43  17 yes (0.3953488 0.6046512) *
+##          27) bmi&gt;=37.65 29  11 yes (0.3793103 0.6206897) *
+##       7) bmi&gt;=48.6 10   1 yes (0.1000000 0.9000000) *</code></pre>
 </div>
 <div id="make-predictions" class="section level2">
 <h2>1-10 Make predictions</h2>
@@ -225,11 +235,11 @@ head(predictions_combined)</code></pre>
 <pre><code>## # A tibble: 6 x 2
 ##   .pred_class true_class
 ##   &lt;fct&gt;       &lt;chr&gt;     
-## 1 no          no        
-## 2 yes         no        
-## 3 no          yes       
-## 4 no          yes       
-## 5 no          no        
+## 1 yes         yes       
+## 2 no          no        
+## 3 no          no        
+## 4 yes         yes       
+## 5 no          yes       
 ## 6 yes         yes</code></pre>
 </div>
 <div id="crack-the-matrix" class="section level2">
@@ -245,8 +255,8 @@ truth = true_class)</code></pre>
 print(diabetes_matrix)</code></pre>
 <pre><code>##           Truth
 ## Prediction no yes
-##        no  83  17
-##        yes 20  34</code></pre>
+##        no  81  22
+##        yes 12  39</code></pre>
 </div>
 <div id="are-you-predicting-correctly" class="section level2">
 <h2>1-12 Are you predicting correctly?</h2>
@@ -286,7 +296,7 @@ model_fit &lt;- model_spec %&gt;%
 model_fit</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  20ms 
+## Fit time:  0ms 
 ## n= 1437 
 ## 
 ## node), split, n, deviance, yval
@@ -415,4 +425,1970 @@ fits_cv &lt;- fit_resamples(tree_spec,
 <h2>2-12 Evaluate the folds</h2>
 <p>Now that you fit 10 models using all 10 of your folds and calculated the MAE and RMSE of each of these models, it’s time to visualize how large the errors are. This way, you build an intuition of the out-of-sample error distribution, which is helpful in assessing your model quality.</p>
 <p>You will plot all these errors as a histogram and display the summary statistics across all folds.</p>
+<pre class="r"><code>library(ggplot2)
+
+# Collect the errors
+#all_errors &lt;- collect_metrics(fits_cv, summarize = FALSE)
+#all_errors
+# Plot an error histogram
+#ggplot(all_errors, aes(.estimate, fill=.metric)) +
+ #       geom_histogram()
+
+# Collect and print error statistics
+#collect_metrics(fits_cv, summarize = TRUE)</code></pre>
+</div>
+<div id="adjust-model-complexity" class="section level2">
+<h2>2-15 Adjust model complexity</h2>
+<p>To make good predictions, you need to adjust the complexity of your model. Simple models can only represent simple data structures, while complex models can represent fine-grained data structures.</p>
+<p>In this exercise, you are going to create trees of different complexities by altering the hyperparameters of a regression tree.</p>
+<pre class="r"><code># Create a model having only one split
+chocolate_model &lt;- decision_tree(tree_depth = 1) %&gt;% 
+        set_mode(&quot;regression&quot;) %&gt;%
+        set_engine(&quot;rpart&quot;) %&gt;% 
+        fit(final_grade ~ ., data = chocolate_train)
+chocolate_model</code></pre>
+<pre><code>## parsnip model object
+## 
+## Fit time:  20ms 
+## n= 1437 
+## 
+## node), split, n, deviance, yval
+##       * denotes terminal node
+## 
+## 1) root 1437 341.70700 3.187543  
+##   2) cocoa_percent&gt;=0.905 24  10.36458 2.229167 *
+##   3) cocoa_percent&lt; 0.905 1413 308.92440 3.203822 *</code></pre>
+<pre class="r"><code># Create a model with high cost for complexity
+chocolate_model &lt;- decision_tree(cost_complexity = 0.1) %&gt;% 
+        set_mode(&quot;regression&quot;) %&gt;%
+        set_engine(&quot;rpart&quot;) %&gt;% 
+        fit(final_grade ~ ., data = chocolate_train)
+chocolate_model</code></pre>
+<pre><code>## parsnip model object
+## 
+## Fit time:  0ms 
+## n= 1437 
+## 
+## node), split, n, deviance, yval
+##       * denotes terminal node
+## 
+## 1) root 1437 341.707 3.187543 *</code></pre>
+<pre class="r"><code># Create a model that can grow arbitrarily complex
+chocolate_model &lt;- decision_tree(min_n = 2,
+                                 cost_complexity = 0) %&gt;%
+        set_mode(&quot;regression&quot;) %&gt;%
+        set_engine(&quot;rpart&quot;) %&gt;% 
+        fit(final_grade ~ ., data = chocolate_train)
+chocolate_model</code></pre>
+<pre><code>## parsnip model object
+## 
+## Fit time:  71ms 
+## n= 1437 
+## 
+## node), split, n, deviance, yval
+##       * denotes terminal node
+## 
+##          1) root 1437 341.70700000 3.187543  
+##            2) cocoa_percent&gt;=0.905 24  10.36458000 2.229167  
+##              4) review_date&lt; 2012.5 13   4.07692300 1.865385  
+##                8) X1&lt; 492.5 6   0.30208330 1.458333  
+##                 16) broad_bean_origin=Sao Tome &amp; Principe 1   0.00000000 1.000000 *
+##                 17) broad_bean_origin=Ecuador,Venezuela 5   0.05000000 1.550000  
+##                   34) company_location=Ecuador,France,Germany 4   0.00000000 1.500000 *
+##                   35) company_location=U.K. 1   0.00000000 1.750000 *
+##                9) X1&gt;=492.5 7   1.92857100 2.214286  
+##                 18) X1&gt;=1093.5 3   0.16666670 1.833333  
+##                   36) review_date&gt;=2008.5 1   0.00000000 1.500000 *
+##                   37) review_date&lt; 2008.5 2   0.00000000 2.000000 *
+##                 19) X1&lt; 1093.5 4   1.00000000 2.500000  
+##                   38) bean_type=Forastero (Arriba) 1   0.00000000 2.000000 *
+##                   39) bean_type=Criollo 1   0.00000000 3.000000 *
+##              5) review_date&gt;=2012.5 11   2.53409100 2.659091  
+##               10) broad_bean_origin=Indonesia,St. Lucia 2   0.12500000 2.000000  
+##                 20) X1&lt; 1030 1   0.00000000 1.750000 *
+##                 21) X1&gt;=1030 1   0.00000000 2.250000 *
+##               11) broad_bean_origin=Dominican Republic,Ecuador,Madagascar,Peru,Samoa,Venezuela 9   1.34722200 2.805556  
+##                 22) X1&gt;=362.5 8   0.80468750 2.718750  
+##                   44) X1&lt; 1068.5 6   0.59375000 2.625000  
+##                     88) company_location=Canada 1   0.00000000 2.000000 *
+##                     89) company_location=Italy,New Zealand,U.K. 5   0.12500000 2.750000  
+##                      178) bean_type=Forastero (Nacional) 1   0.00000000 2.500000 *
+##                      179) bean_type=Criollo 1   0.00000000 3.000000 *
+##                   45) X1&gt;=1068.5 2   0.00000000 3.000000 *
+##                 23) X1&lt; 362.5 1   0.00000000 3.500000 *
+##            3) cocoa_percent&lt; 0.905 1413 308.92440000 3.203822  
+##              6) company_location=Austria,Belgium,Colombia,Costa Rica,Czech Republic,Domincan Republic,Ecuador,Eucador,Ghana,Grenada,Honduras,Hungary,India,Ireland,Japan,Madagascar,Martinique,Mexico,New Zealand,Niacragua,Nicaragua,Peru,Portugal,Puerto Rico,Singapore,South Africa,Sweden,U.K.,U.S.A.,Venezuela,Wales 931 196.43680000 3.135875  
+##               12) broad_bean_origin=Carribean,Carribean(DR/Jam/Tri),Congo,Cost Rica, Ven,Costa Rica,Ecuador, Mad., PNG,El Salvador,Fiji,Ghana,Ghana &amp; Madagascar,Ghana, Domin. Rep,Ghana, Panama, Ecuador,Grenada,Ivory Coast,Jamaica,Martinique,Mexico,Peru,Peru(SMartin,Pangoa,nacional),Peru, Ecuador, Venezuela,Peru, Madagascar,Philippines,Principe,Puerto Rico,Sao Tome,Sri Lanka,Uganda,Ven., Trinidad, Mad.,Venezuela, Dom. Rep.,Venezuela, Trinidad,West Africa 214  49.78271000 2.953271  
+##                 24) broad_bean_origin=Ghana &amp; Madagascar,Peru, Madagascar,Puerto Rico,Venezuela, Trinidad,West Africa 9   0.62500000 2.333333  
+##                   48) broad_bean_origin=Ghana &amp; Madagascar,West Africa 3   0.00000000 2.000000 *
+##                   49) broad_bean_origin=Peru, Madagascar,Puerto Rico,Venezuela, Trinidad 6   0.12500000 2.500000  
+##                     98) X1&lt; 792.5 5   0.05000000 2.450000  
+##                      196) X1&gt;=520 2   0.03125000 2.375000  
+##                        392) X1&lt; 656 1   0.00000000 2.250000 *
+##                        393) X1&gt;=656 1   0.00000000 2.500000 *
+##                      197) X1&lt; 520 3   0.00000000 2.500000 *
+##                     99) X1&gt;=792.5 1   0.00000000 2.750000 *
+##                 25) broad_bean_origin=Carribean,Carribean(DR/Jam/Tri),Congo,Cost Rica, Ven,Costa Rica,Ecuador, Mad., PNG,El Salvador,Fiji,Ghana,Ghana, Domin. Rep,Ghana, Panama, Ecuador,Grenada,Ivory Coast,Jamaica,Martinique,Mexico,Peru,Peru(SMartin,Pangoa,nacional),Peru, Ecuador, Venezuela,Philippines,Principe,Sao Tome,Sri Lanka,Uganda,Ven., Trinidad, Mad.,Venezuela, Dom. Rep. 205  45.54695000 2.980488  
+##                   50) X1&gt;=120.5 192  41.37370000 2.955729  
+##                    100) broad_bean_origin=Cost Rica, Ven,El Salvador,Fiji,Ghana, Domin. Rep,Ivory Coast,Martinique,Mexico,Philippines,Principe,Sao Tome,Sri Lanka,Uganda,Venezuela, Dom. Rep. 36   4.39409700 2.784722  
+##                      200) review_date&gt;=2006.5 34   2.87500000 2.750000  
+##                        400) X1&lt; 1306.5 31   1.51209700 2.709677  
+##                          800) broad_bean_origin=Cost Rica, Ven,Fiji,Martinique,Mexico,Philippines,Principe,Sri Lanka,Uganda,Venezuela, Dom. Rep. 25   1.11000000 2.660000  
+##                           1600) bean_type=Criollo, Trinitario,Forastero,Trinitario 22   0.84375000 2.625000  
+##                             3200) review_date&lt; 2015.5 19   0.65131580 2.592105  
+##                               6400) company_location=Mexico 1   0.00000000 2.000000 *
+##                               6401) company_location=Hungary,Martinique,Sweden,U.K.,U.S.A. 18   0.28125000 2.625000  
+##                                12802) broad_bean_origin=Fiji,Mexico,Philippines,Uganda 13   0.17307690 2.576923  
+##                                  25604) X1&lt; 1296 12   0.14062500 2.562500  
+##                                    51208) cocoa_percent&gt;=0.61 11   0.10227270 2.545455  
+##                                     102416) cocoa_percent&gt;=0.7225 5   0.00000000 2.500000 *
+##                                     102417) cocoa_percent&lt; 0.7225 6   0.08333333 2.583333  
+##                                       204834) X1&gt;=1040 3   0.00000000 2.500000 *
+##                                       204835) X1&lt; 1040 3   0.04166667 2.666667  
+##                                         409670) review_date&gt;=2014 1   0.00000000 2.500000 *
+##                                         409671) review_date&lt; 2014 2   0.00000000 2.750000 *
+##                                    51209) cocoa_percent&lt; 0.61 1   0.00000000 2.750000 *
+##                                  25605) X1&gt;=1296 1   0.00000000 2.750000 *
+##                                12803) broad_bean_origin=Cost Rica, Ven,Martinique,Principe,Sri Lanka,Venezuela, Dom. Rep. 5   0.00000000 2.750000 *
+##                             3201) review_date&gt;=2015.5 3   0.04166667 2.833333  
+##                               6402) X1&lt; 838 2   0.00000000 2.750000 *
+##                               6403) X1&gt;=838 1   0.00000000 3.000000 *
+##                           1601) bean_type=Criollo,Forastero, Trinitario 3   0.04166667 2.916667  
+##                             3202) review_date&gt;=2015 1   0.00000000 2.750000 *
+##                             3203) review_date&lt; 2015 2   0.00000000 3.000000 *
+##                          801) broad_bean_origin=El Salvador,Ghana, Domin. Rep,Ivory Coast,Sao Tome 6   0.08333333 2.916667  
+##                           1602) cocoa_percent&gt;=0.775 1   0.00000000 2.750000 *
+##                           1603) cocoa_percent&lt; 0.775 5   0.05000000 2.950000  
+##                             3206) cocoa_percent&lt; 0.685 2   0.03125000 2.875000  
+##                               6412) X1&gt;=912 1   0.00000000 2.750000 *
+##                               6413) X1&lt; 912 1   0.00000000 3.000000 *
+##                             3207) cocoa_percent&gt;=0.685 3   0.00000000 3.000000 *
+##                        401) X1&gt;=1306.5 3   0.79166670 3.166667  
+##                          802) X1&gt;=1326 1   0.00000000 2.500000 *
+##                          803) X1&lt; 1326 2   0.12500000 3.500000  
+##                           1606) X1&lt; 1319 1   0.00000000 3.250000 *
+##                           1607) X1&gt;=1319 1   0.00000000 3.750000 *
+##                      201) review_date&lt; 2006.5 2   0.78125000 3.375000  
+##                        402) X1&lt; 987 1   0.00000000 2.750000 *
+##                        403) X1&gt;=987 1   0.00000000 4.000000 *
+##                    101) broad_bean_origin=Carribean,Carribean(DR/Jam/Tri),Congo,Costa Rica,Ecuador, Mad., PNG,Ghana,Ghana, Panama, Ecuador,Grenada,Jamaica,Peru,Peru(SMartin,Pangoa,nacional),Peru, Ecuador, Venezuela,Ven., Trinidad, Mad. 156  35.68389000 2.995192  
+##                      202) review_date&lt; 2006.5 2   0.00000000 2.000000 *
+##                      203) review_date&gt;=2006.5 154  33.67735000 3.008117  
+##                        406) company_location=Ghana,Grenada,Ireland,Peru,U.K.,Wales 31   5.54838700 2.830645  
+##                          812) X1&lt; 1062.5 22   4.05965900 2.738636  
+##                           1624) X1&gt;=599.5 11   2.04545500 2.613636  
+##                             3248) X1&lt; 816 4   0.67187500 2.187500  
+##                               6496) X1&gt;=774.5 2   0.28125000 1.875000  
+##                                12992) X1&lt; 792.5 1   0.00000000 1.500000 *
+##                                12993) X1&gt;=792.5 1   0.00000000 2.250000 *
+##                               6497) X1&lt; 774.5 2   0.00000000 2.500000 *
+##                             3249) X1&gt;=816 7   0.23214290 2.857143  
+##                               6498) X1&gt;=1005 2   0.03125000 2.625000  
+##                                12996) X1&lt; 1015.5 1   0.00000000 2.500000 *
+##                                12997) X1&gt;=1015.5 1   0.00000000 2.750000 *
+##                               6499) X1&lt; 1005 5   0.05000000 2.950000  
+##                                12998) review_date&lt; 2011.5 1   0.00000000 2.750000 *
+##                                12999) review_date&gt;=2011.5 4   0.00000000 3.000000 *
+##                           1625) X1&lt; 599.5 11   1.67045500 2.863636  
+##                             3250) review_date&gt;=2013.5 6   0.21875000 2.625000  
+##                               6500) broad_bean_origin=Grenada 1   0.00000000 2.250000 *
+##                               6501) broad_bean_origin=Jamaica,Peru 5   0.05000000 2.700000  
+##                                13002) cocoa_percent&lt; 0.675 2   0.03125000 2.625000  
+##                                  26004) X1&lt; 319.5 1   0.00000000 2.500000 *
+##                                  26005) X1&gt;=319.5 1   0.00000000 2.750000 *
+##                                13003) cocoa_percent&gt;=0.675 3   0.00000000 2.750000 *
+##                             3251) review_date&lt; 2013.5 5   0.70000000 3.150000  
+##                               6502) company_location=Grenada,Peru,Wales 4   0.25000000 3.000000  
+##                                13004) X1&lt; 198.5 1   0.00000000 2.750000 *
+##                                13005) X1&gt;=198.5 3   0.16666670 3.083333  
+##                                  26010) review_date&lt; 2009.5 1   0.00000000 2.750000 *
+##                                  26011) review_date&gt;=2009.5 2   0.00000000 3.250000 *
+##                               6503) company_location=U.K. 1   0.00000000 3.750000 *
+##                          813) X1&gt;=1062.5 9   0.84722220 3.055556  
+##                           1626) review_date&gt;=2012.5 6   0.33333330 2.916667  
+##                             3252) company_location=Ireland,U.K. 5   0.20000000 2.850000  
+##                               6504) X1&lt; 1388.5 3   0.00000000 2.750000 *
+##                               6505) X1&gt;=1388.5 2   0.12500000 3.000000  
+##                                13010) X1&gt;=1389.5 1   0.00000000 2.750000 *
+##                                13011) X1&lt; 1389.5 1   0.00000000 3.250000 *
+##                             3253) company_location=Peru 1   0.00000000 3.250000 *
+##                           1627) review_date&lt; 2012.5 3   0.16666670 3.333333  
+##                             3254) review_date&lt; 2010 1   0.00000000 3.000000 *
+##                             3255) review_date&gt;=2010 2   0.00000000 3.500000 *
+##                        407) company_location=Austria,Belgium,Costa Rica,Hungary,Japan,New Zealand,Portugal,Sweden,U.S.A. 123  26.90650000 3.052846  
+##                          814) X1&lt; 512.5 23   2.97826100 2.858696  
+##                           1628) X1&gt;=504 1   0.00000000 2.000000 *
+##                           1629) X1&lt; 504 22   2.20738600 2.897727  
+##                             3258) company_location=Belgium,U.S.A. 17   1.19117600 2.808824  
+##                               6516) broad_bean_origin=Costa Rica,Peru 13   0.48076920 2.711538  
+##                                13032) review_date&gt;=2012.5 7   0.08928571 2.571429  
+##                                  26064) X1&lt; 303.5 4   0.00000000 2.500000 *
+##                                  26065) X1&gt;=303.5 3   0.04166667 2.666667  
+##                                    52130) review_date&gt;=2015 1   0.00000000 2.500000 *
+##                                    52131) review_date&lt; 2015 2   0.00000000 2.750000 *
+##                                13033) review_date&lt; 2012.5 6   0.09375000 2.875000  
+##                                  26066) X1&lt; 271.5 2   0.00000000 2.750000 *
+##                                  26067) X1&gt;=271.5 4   0.04687500 2.937500  
+##                                    52134) X1&gt;=462 1   0.00000000 2.750000 *
+##                                    52135) X1&lt; 462 3   0.00000000 3.000000 *
+##                               6517) broad_bean_origin=Ghana,Jamaica 4   0.18750000 3.125000  
+##                                13034) cocoa_percent&lt; 0.725 3   0.00000000 3.000000 *
+##                                13035) cocoa_percent&gt;=0.725 1   0.00000000 3.500000 *
+##                             3259) company_location=Costa Rica,Japan 5   0.42500000 3.200000  
+##                               6518) review_date&lt; 2013.5 2   0.03125000 2.875000  
+##                                13036) X1&gt;=287.5 1   0.00000000 2.750000 *
+##                                13037) X1&lt; 287.5 1   0.00000000 3.000000 *
+##                               6519) review_date&gt;=2013.5 3   0.04166667 3.416667  
+##                                13038) X1&lt; 274.5 1   0.00000000 3.250000 *
+##                                13039) X1&gt;=274.5 2   0.00000000 3.500000 *
+##                          815) X1&gt;=512.5 100  22.86187000 3.097500  
+##                           1630) X1&gt;=1166.5 27   6.19907400 2.935185  
+##                             3260) X1&lt; 1200.5 3   0.87500000 2.250000  
+##                               6520) X1&gt;=1188.5 1   0.00000000 1.500000 *
+##                               6521) X1&lt; 1188.5 2   0.03125000 2.625000  
+##                                13042) X1&lt; 1174 1   0.00000000 2.500000 *
+##                                13043) X1&gt;=1174 1   0.00000000 2.750000 *
+##                             3261) X1&gt;=1200.5 24   3.73958300 3.020833  
+##                               6522) company_location=Austria,New Zealand,Sweden,U.S.A. 23   3.18478300 2.989130  
+##                                13044) X1&lt; 1318 6   0.92708330 2.708333  
+##                                  26088) X1&gt;=1309 1   0.00000000 2.000000 *
+##                                  26089) X1&lt; 1309 5   0.32500000 2.850000  
+##                                    52178) X1&gt;=1231 4   0.12500000 2.750000  
+##                                     104356) X1&lt; 1305.5 3   0.04166667 2.666667  
+##                                       208712) X1&gt;=1298 1   0.00000000 2.500000 *
+##                                       208713) X1&lt; 1298 2   0.00000000 2.750000 *
+##                                     104357) X1&gt;=1305.5 1   0.00000000 3.000000 *
+##                                    52179) X1&lt; 1231 1   0.00000000 3.250000 *
+##                                13045) X1&gt;=1318 17   1.61764700 3.088235  
+##                                  26090) review_date&lt; 2011.5 4   0.18750000 2.875000  
+##                                    52180) company_location=New Zealand 1   0.00000000 2.500000 *
+##                                    52181) company_location=Austria,U.S.A. 3   0.00000000 3.000000 *
+##                                  26091) review_date&gt;=2011.5 13   1.19230800 3.153846  
+##                                    52182) broad_bean_origin=Congo,Costa Rica,Peru 12   0.80729170 3.104167  
+##                                     104364) company_location=Sweden,U.S.A. 8   0.37500000 3.000000  
+##                                       208728) review_date&gt;=2015.5 2   0.12500000 2.750000  
+##                                         417456) X1&gt;=1361.5 1   0.00000000 2.500000 *
+##                                         417457) X1&lt; 1361.5 1   0.00000000 3.000000 *
+##                                       208729) review_date&lt; 2015.5 6   0.08333333 3.083333  
+##                                         417458) bean_type=Forastero (Nacional) 1   0.00000000 3.000000 *
+##                                         417459) bean_type=Criollo, Trinitario,Forastero 5   0.07500000 3.100000  
+##                                           834918) cocoa_percent&lt; 0.76 4   0.04687500 3.062500  
+##                                            1669836) cocoa_percent&gt;=0.675 3   0.00000000 3.000000 *
+##                                            1669837) cocoa_percent&lt; 0.675 1   0.00000000 3.250000 *
+##                                           834919) cocoa_percent&gt;=0.76 1   0.00000000 3.250000 *
+##                                     104365) company_location=Austria,New Zealand 4   0.17187500 3.312500  
+##                                       208730) X1&gt;=1406.5 3   0.12500000 3.250000  
+##                                         417460) X1&lt; 1427.5 1   0.00000000 3.000000 *
+##                                         417461) X1&gt;=1427.5 2   0.03125000 3.375000  
+##                                           834922) X1&gt;=1431 1   0.00000000 3.250000 *
+##                                           834923) X1&lt; 1431 1   0.00000000 3.500000 *
+##                                       208731) X1&lt; 1406.5 1   0.00000000 3.500000 *
+##                                    52183) broad_bean_origin=Ghana 1   0.00000000 3.750000 *
+##                               6523) company_location=Hungary 1   0.00000000 3.750000 *
+##                           1631) X1&lt; 1166.5 73  15.68836000 3.157534  
+##                             3262) cocoa_percent&gt;=0.69 58  12.19397000 3.086207  
+##                               6524) X1&lt; 1088.5 46  10.10326000 3.021739  
+##                                13048) cocoa_percent&gt;=0.71 20   3.67500000 2.850000  
+##                                  26096) broad_bean_origin=Congo,Ghana,Grenada,Jamaica,Peru,Peru, Ecuador, Venezuela 19   2.28289500 2.789474  
+##                                    52192) X1&lt; 735 6   0.67708330 2.541667  
+##                                     104384) broad_bean_origin=Peru 3   0.12500000 2.250000  
+##                                       208768) X1&lt; 623.5 1   0.00000000 2.000000 *
+##                                       208769) X1&gt;=623.5 2   0.03125000 2.375000  
+##                                         417538) X1&lt; 714.5 1   0.00000000 2.250000 *
+##                                         417539) X1&gt;=714.5 1   0.00000000 2.500000 *
+##                                     104385) broad_bean_origin=Ghana,Jamaica 3   0.04166667 2.833333  
+##                                       208770) review_date&lt; 2013.5 2   0.00000000 2.750000 *
+##                                       208771) review_date&gt;=2013.5 1   0.00000000 3.000000 *
+##                                    52193) X1&gt;=735 13   1.06730800 2.903846  
+##                                     104386) X1&gt;=756 11   0.78409090 2.840909  
+##                                       208772) review_date&gt;=2012.5 6   0.62500000 2.750000  
+##                                         417544) cocoa_percent&lt; 0.745 2   0.03125000 2.375000  
+##                                           835088) X1&gt;=874.5 1   0.00000000 2.250000 *
+##                                           835089) X1&lt; 874.5 1   0.00000000 2.500000 *
+##                                         417545) cocoa_percent&gt;=0.745 4   0.17187500 2.937500  
+##                                           835090) X1&gt;=910 3   0.04166667 2.833333  
+##                                            1670180) broad_bean_origin=Congo,Peru 2   0.00000000 2.750000 *
+##                                            1670181) broad_bean_origin=Ghana 1   0.00000000 3.000000 *
+##                                           835091) X1&lt; 910 1   0.00000000 3.250000 *
+##                                       208773) review_date&lt; 2012.5 5   0.05000000 2.950000  
+##                                         417546) X1&gt;=1036.5 1   0.00000000 2.750000 *
+##                                         417547) X1&lt; 1036.5 4   0.00000000 3.000000 *
+##                                     104387) X1&lt; 756 2   0.00000000 3.250000 *
+##                                  26097) broad_bean_origin=Costa Rica 1   0.00000000 4.000000 *
+##                                13049) cocoa_percent&lt; 0.71 26   5.38461500 3.153846  
+##                                  26098) bean_type=Criollo,Trinitario, Criollo 5   0.95000000 2.850000  
+##                                    52196) review_date&lt; 2016.5 4   0.42187500 2.687500  
+##                                     104392) X1&lt; 748.5 2   0.03125000 2.375000  
+##                                       208784) X1&gt;=646 1   0.00000000 2.250000 *
+##                                       208785) X1&lt; 646 1   0.00000000 2.500000 *
+##                                     104393) X1&gt;=748.5 2   0.00000000 3.000000 *
+##                                    52197) review_date&gt;=2016.5 1   0.00000000 3.500000 *
+##                                  26099) bean_type=Forastero,Forastero (Nacional),Trinitario 21   3.86309500 3.226190  
+##                                    52198) review_date&lt; 2012.5 10   1.25000000 3.000000  
+##                                     104396) X1&gt;=575 5   0.17500000 2.700000  
+##                                       208792) broad_bean_origin=Jamaica,Peru 3   0.04166667 2.583333  
+##                                         417584) X1&lt; 1003.5 2   0.00000000 2.500000 *
+##                                         417585) X1&gt;=1003.5 1   0.00000000 2.750000 *
+##                                       208793) broad_bean_origin=Costa Rica 2   0.03125000 2.875000  
+##                                         417586) X1&gt;=695 1   0.00000000 2.750000 *
+##                                         417587) X1&lt; 695 1   0.00000000 3.000000 *
+##                                     104397) X1&lt; 575 5   0.17500000 3.300000  
+##                                       208794) X1&gt;=564 2   0.03125000 3.125000  
+##                                         417588) X1&lt; 567.5 1   0.00000000 3.000000 *
+##                                         417589) X1&gt;=567.5 1   0.00000000 3.250000 *
+##                                       208795) X1&lt; 564 3   0.04166667 3.416667  
+##                                         417590) X1&gt;=553 2   0.03125000 3.375000  
+##                                           835180) X1&lt; 560 1   0.00000000 3.250000 *
+##                                           835181) X1&gt;=560 1   0.00000000 3.500000 *
+##                                         417591) X1&lt; 553 1   0.00000000 3.500000 *
+##                                    52199) review_date&gt;=2012.5 11   1.63636400 3.431818  
+##                                     104398) X1&gt;=721.5 7   0.75000000 3.250000  
+##                                       208796) X1&lt; 774.5 2   0.03125000 2.875000  
+##                                         417592) X1&lt; 754 1   0.00000000 2.750000 *
+##                                         417593) X1&gt;=754 1   0.00000000 3.000000 *
+##                                       208797) X1&gt;=774.5 5   0.32500000 3.400000  
+##                                         417594) review_date&lt; 2013.5 1   0.00000000 3.000000 *
+##                                         417595) review_date&gt;=2013.5 4   0.12500000 3.500000  
+##                                           835190) X1&lt; 944.5 3   0.04166667 3.416667  
+##                                            1670380) review_date&gt;=2014.5 1   0.00000000 3.250000 *
+##                                            1670381) review_date&lt; 2014.5 2   0.00000000 3.500000 *
+##                                           835191) X1&gt;=944.5 1   0.00000000 3.750000 *
+##                                     104399) X1&lt; 721.5 4   0.25000000 3.750000  
+##                                       208798) X1&lt; 551.5 2   0.00000000 3.500000 *
+##                                       208799) X1&gt;=551.5 2   0.00000000 4.000000 *
+##                               6525) X1&gt;=1088.5 12   1.16666700 3.333333  
+##                                13050) review_date&lt; 2009.5 3   0.00000000 3.000000 *
+##                                13051) review_date&gt;=2009.5 9   0.72222220 3.444444  
+##                                  26102) review_date&gt;=2012.5 7   0.35714290 3.357143  
+##                                    52204) bean_type=Forastero (Nacional) 1   0.00000000 3.000000 *
+##                                    52205) bean_type=Criollo,Trinitario 6   0.20833330 3.416667  
+##                                     104410) review_date&gt;=2014 5   0.07500000 3.350000  
+##                                       208820) cocoa_percent&gt;=0.765 2   0.00000000 3.250000 *
+##                                       208821) cocoa_percent&lt; 0.765 3   0.04166667 3.416667  
+##                                         417642) broad_bean_origin=Jamaica 1   0.00000000 3.250000 *
+##                                         417643) broad_bean_origin=Costa Rica,Peru 2   0.00000000 3.500000 *
+##                                     104411) review_date&lt; 2014 1   0.00000000 3.750000 *
+##                                  26103) review_date&lt; 2012.5 2   0.12500000 3.750000  
+##                                    52206) X1&lt; 1123.5 1   0.00000000 3.500000 *
+##                                    52207) X1&gt;=1123.5 1   0.00000000 4.000000 *
+##                             3263) cocoa_percent&lt; 0.69 15   2.05833300 3.433333  
+##                               6526) broad_bean_origin=Costa Rica 2   0.12500000 2.750000  
+##                                13052) X1&gt;=888 1   0.00000000 2.500000 *
+##                                13053) X1&lt; 888 1   0.00000000 3.000000 *
+##                               6527) broad_bean_origin=Ghana,Grenada,Jamaica,Peru 13   0.85576920 3.538462  
+##                                13054) X1&lt; 948.5 10   0.35000000 3.450000  
+##                                  26108) review_date&lt; 2010 1   0.00000000 3.000000 *
+##                                  26109) review_date&gt;=2010 9   0.12500000 3.500000  
+##                                    52218) broad_bean_origin=Jamaica 1   0.00000000 3.250000 *
+##                                    52219) broad_bean_origin=Ghana,Peru 8   0.05468750 3.531250  
+##                                     104438) cocoa_percent&lt; 0.67 6   0.00000000 3.500000 *
+##                                     104439) cocoa_percent&gt;=0.67 2   0.03125000 3.625000  
+##                                       208878) X1&gt;=808.5 1   0.00000000 3.500000 *
+##                                       208879) X1&lt; 808.5 1   0.00000000 3.750000 *
+##                                13055) X1&gt;=948.5 3   0.16666670 3.833333  
+##                                  26110) broad_bean_origin=Grenada 1   0.00000000 3.500000 *
+##                                  26111) broad_bean_origin=Ghana,Peru 2   0.00000000 4.000000 *
+##                   51) X1&lt; 120.5 13   2.31730800 3.346154  
+##                    102) cocoa_percent&lt; 0.64 3   0.29166670 2.916667  
+##                      204) review_date&gt;=2014.5 2   0.12500000 2.750000  
+##                        408) X1&gt;=40 1   0.00000000 2.500000 *
+##                        409) X1&lt; 40 1   0.00000000 3.000000 *
+##                      205) review_date&lt; 2014.5 1   0.00000000 3.250000 *
+##                    103) cocoa_percent&gt;=0.64 10   1.30625000 3.475000  
+##                      206) company_location=Mexico,Peru,U.K. 4   0.06250000 3.125000  
+##                        412) review_date&lt; 2009.5 2   0.00000000 3.000000 *
+##                        413) review_date&gt;=2009.5 2   0.00000000 3.250000 *
+##                      207) company_location=U.S.A. 6   0.42708330 3.708333  
+##                        414) X1&gt;=94 3   0.12500000 3.500000  
+##                          828) X1&lt; 96.5 1   0.00000000 3.250000 *
+##                          829) X1&gt;=96.5 2   0.03125000 3.625000  
+##                           1658) X1&lt; 109 1   0.00000000 3.500000 *
+##                           1659) X1&gt;=109 1   0.00000000 3.750000 *
+##                        415) X1&lt; 94 3   0.04166667 3.916667  
+##                          830) X1&lt; 57.5 1   0.00000000 3.750000 *
+##                          831) X1&gt;=57.5 2   0.00000000 4.000000 *
+##               13) broad_bean_origin=Belize,Bolivia,Brazil,Central and S. America,Colombia,Cuba,Domincan Republic,Dominican Rep., Bali,Dominican Republic,Ecuador,Ecuador, Costa Rica,Guatemala,Haiti,Hawaii,Honduras,India,Indonesia,Liberia,Madagascar,Malaysia,Nicaragua,Nigeria,Panama,Papua New Guinea,Peru, Belize,Peru, Mad., Dom. Rep.,Samoa,Solomon Islands,South America,St. Lucia,Tanzania,Trinidad,Venezuela,Venezuela, Java,Venezuela/ Ghana,Vietnam 717 137.38860000 3.190377  
+##                 26) cocoa_percent&gt;=0.745 185  34.40541000 3.067568  
+##                   52) company_location=Colombia,Ecuador,Hungary,Japan,Niacragua,Portugal 27   4.12500000 2.750000  
+##                    104) review_date&gt;=2007.5 26   3.08653800 2.711538  
+##                      208) X1&lt; 1208.5 23   2.45108700 2.663043  
+##                        416) X1&gt;=235 22   2.09090900 2.636364  
+##                          832) X1&lt; 280.5 2   0.12500000 2.250000  
+##                           1664) X1&gt;=273.5 1   0.00000000 2.000000 *
+##                           1665) X1&lt; 273.5 1   0.00000000 2.500000 *
+##                          833) X1&gt;=280.5 20   1.63750000 2.675000  
+##                           1666) bean_type=Forastero (Arriba) ASS 8   0.86718750 2.656250  
+##                             3332) X1&lt; 718.5 4   0.50000000 2.500000  
+##                               6664) X1&gt;=577 3   0.16666670 2.333333  
+##                                13328) X1&lt; 654.5 1   0.00000000 2.000000 *
+##                                13329) X1&gt;=654.5 2   0.00000000 2.500000 *
+##                               6665) X1&lt; 577 1   0.00000000 3.000000 *
+##                             3333) X1&gt;=718.5 4   0.17187500 2.812500  
+##                               6666) X1&gt;=923 1   0.00000000 2.500000 *
+##                               6667) X1&lt; 923 3   0.04166667 2.916667  
+##                                13334) X1&lt; 719.5 1   0.00000000 2.750000 *
+##                                13335) X1&gt;=719.5 2   0.00000000 3.000000 *
+##                           1667) bean_type=Forastero (Arriba),Forastero (Nacional),Trinitario 12   0.76562500 2.687500  
+##                             3334) broad_bean_origin=Venezuela 2   0.03125000 2.375000  
+##                               6668) X1&gt;=822 1   0.00000000 2.250000 *
+##                               6669) X1&lt; 822 1   0.00000000 2.500000 *
+##                             3335) broad_bean_origin=Belize,Colombia,Ecuador,Nicaragua 10   0.50000000 2.750000  
+##                               6670) review_date&lt; 2009.5 7   0.21428570 2.678571  
+##                                13340) X1&gt;=719 3   0.04166667 2.583333  
+##                                  26680) X1&lt; 1116 2   0.00000000 2.500000 *
+##                                  26681) X1&gt;=1116 1   0.00000000 2.750000 *
+##                                13341) X1&lt; 719 4   0.12500000 2.750000  
+##                                  26682) X1&lt; 281.5 1   0.00000000 2.500000 *
+##                                  26683) X1&gt;=281.5 3   0.04166667 2.833333  
+##                                    53366) X1&lt; 297.5 1   0.00000000 2.750000 *
+##                                    53367) X1&gt;=297.5 2   0.03125000 2.875000  
+##                                     106734) X1&gt;=515 1   0.00000000 2.750000 *
+##                                     106735) X1&lt; 515 1   0.00000000 3.000000 *
+##                               6671) review_date&gt;=2009.5 3   0.16666670 2.916667  
+##                                13342) review_date&gt;=2011 2   0.00000000 2.750000 *
+##                                13343) review_date&lt; 2011 1   0.00000000 3.250000 *
+##                        417) X1&lt; 235 1   0.00000000 3.250000 *
+##                      209) X1&gt;=1208.5 3   0.16666670 3.083333  
+##                        418) cocoa_percent&lt; 0.79 1   0.00000000 2.750000 *
+##                        419) cocoa_percent&gt;=0.79 2   0.00000000 3.250000 *
+##                    105) review_date&lt; 2007.5 1   0.00000000 3.750000 *
+##                   53) company_location=Austria,Belgium,Domincan Republic,Eucador,Honduras,Madagascar,New Zealand,Nicaragua,Singapore,U.K.,U.S.A.,Venezuela 158  27.09217000 3.121835  
+##                    106) broad_bean_origin=Bolivia,Brazil,Colombia,Domincan Republic,Dominican Republic,Guatemala,Haiti,Honduras,Madagascar,Nicaragua,Papua New Guinea,Tanzania,Venezuela,Vietnam 111  19.76464000 3.031532  
+##                      212) review_date&lt; 2006.5 1   0.00000000 2.000000 *
+##                      213) review_date&gt;=2006.5 110  18.69091000 3.040909  
+##                        426) review_date&gt;=2007.5 108  17.96470000 3.030093  
+##                          852) review_date&lt; 2010.5 19   1.91447400 2.855263  
+##                           1704) broad_bean_origin=Bolivia,Brazil,Dominican Republic,Tanzania,Venezuela 14   1.23214300 2.785714  
+##                             3408) cocoa_percent&lt; 0.805 12   0.68229170 2.729167  
+##                               6816) X1&lt; 817.5 10   0.50625000 2.675000  
+##                                13632) X1&gt;=198.5 7   0.23214290 2.607143  
+##                                  27264) X1&lt; 296 3   0.12500000 2.500000  
+##                                    54528) X1&gt;=233.5 1   0.00000000 2.250000 *
+##                                    54529) X1&lt; 233.5 2   0.03125000 2.625000  
+##                                     109058) X1&lt; 232.5 1   0.00000000 2.500000 *
+##                                     109059) X1&gt;=232.5 1   0.00000000 2.750000 *
+##                                  27265) X1&gt;=296 4   0.04687500 2.687500  
+##                                    54530) X1&gt;=641.5 1   0.00000000 2.500000 *
+##                                    54531) X1&lt; 641.5 3   0.00000000 2.750000 *
+##                                13633) X1&lt; 198.5 3   0.16666670 2.833333  
+##                                  27266) X1&lt; 137.5 1   0.00000000 2.500000 *
+##                                  27267) X1&gt;=137.5 2   0.00000000 3.000000 *
+##                               6817) X1&gt;=817.5 2   0.00000000 3.000000 *
+##                             3409) cocoa_percent&gt;=0.805 2   0.28125000 3.125000  
+##                               6818) X1&gt;=688 1   0.00000000 2.750000 *
+##                               6819) X1&lt; 688 1   0.00000000 3.500000 *
+##                           1705) broad_bean_origin=Madagascar 5   0.42500000 3.050000  
+##                             3410) cocoa_percent&gt;=0.755 3   0.04166667 2.833333  
+##                               6820) company_location=Madagascar 2   0.00000000 2.750000 *
+##                               6821) company_location=U.K. 1   0.00000000 3.000000 *
+##                             3411) cocoa_percent&lt; 0.755 2   0.03125000 3.375000  
+##                               6822) X1&lt; 482 1   0.00000000 3.250000 *
+##                               6823) X1&gt;=482 1   0.00000000 3.500000 *
+##                          853) review_date&gt;=2010.5 89  15.34551000 3.067416  
+##                           1706) company_location=Austria,Belgium,Domincan Republic,Madagascar,U.K.,U.S.A. 84  14.84747000 3.050595  
+##                             3412) X1&lt; 1080 60   9.93645800 3.004167  
+##                               6824) review_date&lt; 2012.5 6   0.84375000 2.625000  
+##                                13648) X1&gt;=723.5 3   0.16666670 2.333333  
+##                                  27296) cocoa_percent&lt; 0.755 1   0.00000000 2.000000 *
+##                                  27297) cocoa_percent&gt;=0.755 2   0.00000000 2.500000 *
+##                                13649) X1&lt; 723.5 3   0.16666670 2.916667  
+##                                  27298) X1&lt; 504.5 2   0.00000000 2.750000 *
+##                                  27299) X1&gt;=504.5 1   0.00000000 3.250000 *
+##                               6825) review_date&gt;=2012.5 54   8.13425900 3.046296  
+##                                13650) X1&gt;=1030 7   0.30357140 2.785714  
+##                                  27300) review_date&gt;=2015.5 1   0.00000000 2.500000 *
+##                                  27301) review_date&lt; 2015.5 6   0.20833330 2.833333  
+##                                    54602) X1&lt; 1041.5 3   0.00000000 2.750000 *
+##                                    54603) X1&gt;=1041.5 3   0.16666670 2.916667  
+##                                     109206) X1&gt;=1057 2   0.00000000 2.750000 *
+##                                     109207) X1&lt; 1057 1   0.00000000 3.250000 *
+##                                13651) X1&lt; 1030 47   7.28457400 3.085106  
+##                                  27302) X1&lt; 879 41   6.11280500 3.042683  
+##                                    54604) broad_bean_origin=Colombia,Dominican Republic,Haiti,Nicaragua,Venezuela 24   4.62239600 2.947917  
+##                                     109208) X1&gt;=779 4   0.54687500 2.562500  
+##                                       218416) X1&lt; 814 1   0.00000000 2.000000 *
+##                                       218417) X1&gt;=814 3   0.12500000 2.750000  
+##                                         436834) X1&lt; 855 2   0.03125000 2.625000  
+##                                           873668) X1&gt;=845.5 1   0.00000000 2.500000 *
+##                                           873669) X1&lt; 845.5 1   0.00000000 2.750000 *
+##                                         436835) X1&gt;=855 1   0.00000000 3.000000 *
+##                                     109209) X1&lt; 779 20   3.36250000 3.025000  
+##                                       218418) review_date&gt;=2014.5 12   1.31250000 2.875000  
+##                                         436836) X1&lt; 533 10   0.68125000 2.775000  
+##                                           873672) bean_type=Criollo 1   0.00000000 2.500000 *
+##                                           873673) bean_type=Criollo (Ocumare),Criollo, Trinitario 9   0.59722220 2.805556  
+##                                            1747346) broad_bean_origin=Colombia,Nicaragua 3   0.04166667 2.666667  
+##                                              3494692) X1&lt; 244.5 1   0.00000000 2.500000 *
+##                                              3494693) X1&gt;=244.5 2   0.00000000 2.750000 *
+##                                            1747347) broad_bean_origin=Dominican Republic,Venezuela 6   0.46875000 2.875000  
+##                                              3494694) X1&gt;=269 4   0.25000000 2.750000  
+##                                                6989388) X1&lt; 327 2   0.00000000 2.500000 *
+##                                                6989389) X1&gt;=327 2   0.00000000 3.000000 *
+##                                              3494695) X1&lt; 269 2   0.03125000 3.125000  
+##                                                6989390) X1&lt; 197 1   0.00000000 3.000000 *
+##                                                6989391) X1&gt;=197 1   0.00000000 3.250000 *
+##                                         436837) X1&gt;=533 2   0.03125000 3.375000  
+##                                           873674) X1&lt; 680 1   0.00000000 3.250000 *
+##                                           873675) X1&gt;=680 1   0.00000000 3.500000 *
+##                                       218419) review_date&lt; 2014.5 8   1.37500000 3.250000  
+##                                         436838) X1&gt;=521.5 3   0.16666670 2.833333  
+##                                           873676) cocoa_percent&gt;=0.835 1   0.00000000 2.500000 *
+##                                           873677) cocoa_percent&lt; 0.835 2   0.00000000 3.000000 *
+##                                         436839) X1&lt; 521.5 5   0.37500000 3.500000  
+##                                           873678) X1&lt; 146.5 1   0.00000000 3.000000 *
+##                                           873679) X1&gt;=146.5 4   0.06250000 3.625000  
+##                                            1747358) X1&lt; 387 2   0.00000000 3.500000 *
+##                                            1747359) X1&gt;=387 2   0.00000000 3.750000 *
+##                                    54605) broad_bean_origin=Bolivia,Brazil,Guatemala,Honduras,Madagascar,Vietnam 17   0.97058820 3.176471  
+##                                     109210) X1&gt;=846.5 2   0.03125000 2.875000  
+##                                       218420) X1&lt; 856.5 1   0.00000000 2.750000 *
+##                                       218421) X1&gt;=856.5 1   0.00000000 3.000000 *
+##                                     109211) X1&lt; 846.5 15   0.73333330 3.216667  
+##                                       218422) X1&lt; 834.5 14   0.64732140 3.196429  
+##                                         436844) review_date&lt; 2015.5 6   0.33333330 3.083333  
+##                                           873688) cocoa_percent&lt; 0.76 2   0.03125000 2.875000  
+##                                            1747376) X1&lt; 232.5 1   0.00000000 2.750000 *
+##                                            1747377) X1&gt;=232.5 1   0.00000000 3.000000 *
+##                                           873689) cocoa_percent&gt;=0.76 4   0.17187500 3.187500  
+##                                            1747378) broad_bean_origin=Honduras,Vietnam 2   0.00000000 3.000000 *
+##                                            1747379) broad_bean_origin=Bolivia,Brazil 2   0.03125000 3.375000  
+##                                              3494758) X1&lt; 339.5 1   0.00000000 3.250000 *
+##                                              3494759) X1&gt;=339.5 1   0.00000000 3.500000 *
+##                                         436845) review_date&gt;=2015.5 8   0.17968750 3.281250  
+##                                           873690) X1&gt;=227 6   0.05208333 3.208333  
+##                                            1747380) X1&lt; 348.5 1   0.00000000 3.000000 *
+##                                            1747381) X1&gt;=348.5 5   0.00000000 3.250000 *
+##                                           873691) X1&lt; 227 2   0.00000000 3.500000 *
+##                                       218423) X1&gt;=834.5 1   0.00000000 3.500000 *
+##                                  27303) X1&gt;=879 6   0.59375000 3.375000  
+##                                    54606) X1&gt;=901.5 4   0.17187500 3.187500  
+##                                     109212) X1&gt;=924 2   0.00000000 3.000000 *
+##                                     109213) X1&lt; 924 2   0.03125000 3.375000  
+##                                       218426) X1&lt; 912.5 1   0.00000000 3.250000 *
+##                                       218427) X1&gt;=912.5 1   0.00000000 3.500000 *
+##                                    54607) X1&lt; 901.5 2   0.00000000 3.750000 *
+##                             3413) X1&gt;=1080 24   4.45833300 3.166667  
+##                               6826) X1&gt;=1117.5 16   1.52734400 2.953125  
+##                                13652) review_date&lt; 2015.5 15   1.20833300 2.916667  
+##                                  27304) review_date&gt;=2012.5 8   0.62500000 2.750000  
+##                                    54608) review_date&lt; 2013.5 2   0.03125000 2.375000  
+##                                     109216) X1&lt; 1301.5 1   0.00000000 2.250000 *
+##                                     109217) X1&gt;=1301.5 1   0.00000000 2.500000 *
+##                                    54609) review_date&gt;=2013.5 6   0.21875000 2.875000  
+##                                     109218) cocoa_percent&lt; 0.84 4   0.00000000 2.750000 *
+##                                     109219) cocoa_percent&gt;=0.84 2   0.03125000 3.125000  
+##                                       218438) X1&gt;=1381.5 1   0.00000000 3.000000 *
+##                                       218439) X1&lt; 1381.5 1   0.00000000 3.250000 *
+##                                  27305) review_date&lt; 2012.5 7   0.10714290 3.107143  
+##                                    54610) cocoa_percent&lt; 0.835 5   0.05000000 3.050000  
+##                                     109220) broad_bean_origin=Bolivia,Papua New Guinea,Venezuela 4   0.00000000 3.000000 *
+##                                     109221) broad_bean_origin=Dominican Republic 1   0.00000000 3.250000 *
+##                                    54611) cocoa_percent&gt;=0.835 2   0.00000000 3.250000 *
+##                                13653) review_date&gt;=2015.5 1   0.00000000 3.500000 *
+##                               6827) X1&lt; 1117.5 8   0.74218750 3.593750  
+##                                13654) X1&lt; 1112.5 6   0.50000000 3.500000  
+##                                  27308) X1&lt; 1087.5 1   0.00000000 3.250000 *
+##                                  27309) X1&gt;=1087.5 5   0.42500000 3.550000  
+##                                    54618) X1&gt;=1105.5 3   0.16666670 3.416667  
+##                                     109236) review_date&lt; 2015.5 2   0.00000000 3.250000 *
+##                                     109237) review_date&gt;=2015.5 1   0.00000000 3.750000 *
+##                                    54619) X1&lt; 1105.5 2   0.12500000 3.750000  
+##                                     109238) X1&lt; 1095.5 1   0.00000000 3.500000 *
+##                                     109239) X1&gt;=1095.5 1   0.00000000 4.000000 *
+##                                13655) X1&gt;=1112.5 2   0.03125000 3.875000  
+##                                  27310) X1&lt; 1114.5 1   0.00000000 3.750000 *
+##                                  27311) X1&gt;=1114.5 1   0.00000000 4.000000 *
+##                           1707) company_location=Honduras,New Zealand,Venezuela 5   0.07500000 3.350000  
+##                             3414) broad_bean_origin=Domincan Republic,Honduras,Papua New Guinea 3   0.00000000 3.250000 *
+##                             3415) broad_bean_origin=Nicaragua,Venezuela 2   0.00000000 3.500000 *
+##                        427) review_date&lt; 2007.5 2   0.03125000 3.625000  
+##                          854) X1&lt; 794.5 1   0.00000000 3.500000 *
+##                          855) X1&gt;=794.5 1   0.00000000 3.750000 *
+##                    107) broad_bean_origin=Belize,Central and S. America,Cuba,Ecuador,Hawaii,Indonesia,Panama,Peru, Belize,Trinidad,Venezuela/ Ghana 47   4.28457400 3.335106  
+##                      214) bean_type=Blend,Criollo, Trinitario,Forastero (Arriba),Forastero (Nacional),Forastero(Arriba, CCN),Trinitario 44   3.89062500 3.312500  
+##                        428) company_location=Austria,Eucador,Nicaragua,U.K. 11   0.67045450 3.136364  
+##                          856) cocoa_percent&gt;=0.835 2   0.03125000 2.875000  
+##                           1712) X1&gt;=1043 1   0.00000000 2.750000 *
+##                           1713) X1&lt; 1043 1   0.00000000 3.000000 *
+##                          857) cocoa_percent&lt; 0.835 9   0.47222220 3.194444  
+##                           1714) cocoa_percent&lt; 0.76 4   0.00000000 3.000000 *
+##                           1715) cocoa_percent&gt;=0.76 5   0.20000000 3.350000  
+##                             3430) review_date&lt; 2012.5 2   0.03125000 3.125000  
+##                               6860) X1&lt; 814 1   0.00000000 3.000000 *
+##                               6861) X1&gt;=814 1   0.00000000 3.250000 *
+##                             3431) review_date&gt;=2012.5 3   0.00000000 3.500000 *
+##                        429) company_location=Belgium,Singapore,U.S.A. 33   2.76515200 3.371212  
+##                          858) broad_bean_origin=Belize,Ecuador,Hawaii,Indonesia,Panama,Trinidad,Venezuela/ Ghana 31   2.45967700 3.346774  
+##                           1716) bean_type=Blend,Criollo, Trinitario,Forastero (Arriba) 5   0.70000000 3.100000  
+##                             3432) X1&lt; 808.5 1   0.00000000 2.500000 *
+##                             3433) X1&gt;=808.5 4   0.25000000 3.250000  
+##                               6866) X1&gt;=1375 2   0.00000000 3.000000 *
+##                               6867) X1&lt; 1375 2   0.00000000 3.500000 *
+##                           1717) bean_type=Forastero (Nacional),Trinitario 26   1.39663500 3.394231  
+##                             3434) review_date&lt; 2011 4   0.29687500 3.187500  
+##                               6868) cocoa_percent&gt;=0.76 1   0.00000000 2.750000 *
+##                               6869) cocoa_percent&lt; 0.76 3   0.04166667 3.333333  
+##                                13738) broad_bean_origin=Indonesia,Trinidad 2   0.00000000 3.250000 *
+##                                13739) broad_bean_origin=Panama 1   0.00000000 3.500000 *
+##                             3435) review_date&gt;=2011 22   0.89772730 3.431818  
+##                               6870) broad_bean_origin=Belize 7   0.33928570 3.321429  
+##                                13740) X1&lt; 1024 5   0.12500000 3.250000  
+##                                  27480) X1&gt;=925.5 1   0.00000000 3.000000 *
+##                                  27481) X1&lt; 925.5 4   0.04687500 3.312500  
+##                                    54962) X1&lt; 814.5 2   0.00000000 3.250000 *
+##                                    54963) X1&gt;=814.5 2   0.03125000 3.375000  
+##                                     109926) X1&gt;=901 1   0.00000000 3.250000 *
+##                                     109927) X1&lt; 901 1   0.00000000 3.500000 *
+##                                13741) X1&gt;=1024 2   0.12500000 3.500000  
+##                                  27482) X1&gt;=1187.5 1   0.00000000 3.250000 *
+##                                  27483) X1&lt; 1187.5 1   0.00000000 3.750000 *
+##                               6871) broad_bean_origin=Ecuador,Hawaii,Trinidad 15   0.43333330 3.483333  
+##                                13742) X1&gt;=1133 4   0.18750000 3.375000  
+##                                  27484) X1&lt; 1216.5 1   0.00000000 3.000000 *
+##                                  27485) X1&gt;=1216.5 3   0.00000000 3.500000 *
+##                                13743) X1&lt; 1133 11   0.18181820 3.522727  
+##                                  27486) cocoa_percent&gt;=0.755 6   0.05208333 3.458333  
+##                                    54972) review_date&gt;=2015.5 1   0.00000000 3.250000 *
+##                                    54973) review_date&lt; 2015.5 5   0.00000000 3.500000 *
+##                                  27487) cocoa_percent&lt; 0.755 5   0.07500000 3.600000  
+##                                    54974) review_date&lt; 2013.5 2   0.00000000 3.500000 *
+##                                    54975) review_date&gt;=2013.5 3   0.04166667 3.666667  
+##                                     109950) X1&lt; 661 1   0.00000000 3.500000 *
+##                                     109951) X1&gt;=661 2   0.00000000 3.750000 *
+##                          859) broad_bean_origin=Central and S. America,Peru, Belize 2   0.00000000 3.750000 *
+##                      215) bean_type=Criollo, Forastero,EET,Nacional (Arriba) 3   0.04166667 3.666667  
+##                        430) review_date&gt;=2014 1   0.00000000 3.500000 *
+##                        431) review_date&lt; 2014 2   0.00000000 3.750000 *
+##                 27) cocoa_percent&lt; 0.745 532  99.22274000 3.233083  
+##                   54) cocoa_percent&lt; 0.625 44   4.85227300 2.977273  
+##                    108) company_location=Colombia,India 2   0.12500000 2.250000  
+##                      216) X1&gt;=917.5 1   0.00000000 2.000000 *
+##                      217) X1&lt; 917.5 1   0.00000000 2.500000 *
+##                    109) company_location=Austria,Domincan Republic,Ecuador,Japan,U.S.A.,Venezuela 42   3.61904800 3.011905  
+##                      218) X1&lt; 43.5 5   0.07500000 2.650000  
+##                        436) broad_bean_origin=Bolivia,Venezuela 2   0.00000000 2.500000 *
+##                        437) broad_bean_origin=Ecuador,Nicaragua 3   0.00000000 2.750000 *
+##                      219) X1&gt;=43.5 37   2.80067600 3.060811  
+##                        438) company_location=U.S.A.,Venezuela 25   1.36500000 2.980000  
+##                          876) broad_bean_origin=Nicaragua 1   0.00000000 2.500000 *
+##                          877) broad_bean_origin=Bolivia,Dominican Republic,Hawaii,Madagascar,Venezuela 24   1.12500000 3.000000  
+##                           1754) cocoa_percent&lt; 0.59 3   0.12500000 2.750000  
+##                             3508) X1&lt; 554.5 1   0.00000000 2.500000 *
+##                             3509) X1&gt;=554.5 2   0.03125000 2.875000  
+##                               7018) X1&gt;=712.5 1   0.00000000 2.750000 *
+##                               7019) X1&lt; 712.5 1   0.00000000 3.000000 *
+##                           1755) cocoa_percent&gt;=0.59 21   0.78571430 3.035714  
+##                             3510) bean_type=Criollo,Trinitario 17   0.55882350 3.014706  
+##                               7020) review_date&lt; 2011.5 8   0.21875000 2.937500  
+##                                14040) cocoa_percent&lt; 0.6075 3   0.04166667 2.833333  
+##                                  28080) bean_type=Trinitario 1   0.00000000 2.750000 *
+##                                  28081) bean_type=Criollo 1   0.00000000 3.000000 *
+##                                14041) cocoa_percent&gt;=0.6075 5   0.12500000 3.000000  
+##                                  28082) X1&lt; 561 3   0.04166667 2.916667  
+##                                    56164) X1&gt;=506 1   0.00000000 2.750000 *
+##                                    56165) X1&lt; 506 2   0.00000000 3.000000 *
+##                                  28083) X1&gt;=561 2   0.03125000 3.125000  
+##                                    56166) X1&gt;=880 1   0.00000000 3.000000 *
+##                                    56167) X1&lt; 880 1   0.00000000 3.250000 *
+##                               7021) review_date&gt;=2011.5 9   0.25000000 3.083333  
+##                                14042) review_date&gt;=2012.5 8   0.05468750 3.031250  
+##                                  28084) broad_bean_origin=Bolivia,Dominican Republic,Venezuela 7   0.00000000 3.000000 *
+##                                  28085) broad_bean_origin=Madagascar 1   0.00000000 3.250000 *
+##                                14043) review_date&lt; 2012.5 1   0.00000000 3.500000 *
+##                             3511) bean_type=Blend 4   0.18750000 3.125000  
+##                               7022) X1&gt;=620.5 3   0.00000000 3.000000 *
+##                               7023) X1&lt; 620.5 1   0.00000000 3.500000 *
+##                        439) company_location=Austria,Domincan Republic,Ecuador,Japan 12   0.93229170 3.229167  
+##                          878) X1&lt; 642.5 4   0.37500000 3.000000  
+##                           1756) X1&gt;=298 2   0.00000000 2.750000 *
+##                           1757) X1&lt; 298 2   0.12500000 3.250000  
+##                             3514) X1&lt; 283.5 1   0.00000000 3.000000 *
+##                             3515) X1&gt;=283.5 1   0.00000000 3.500000 *
+##                          879) X1&gt;=642.5 8   0.24218750 3.343750  
+##                           1758) X1&lt; 1361.5 6   0.05208333 3.291667  
+##                             3516) X1&gt;=684 4   0.00000000 3.250000 *
+##                             3517) X1&lt; 684 2   0.03125000 3.375000  
+##                               7034) X1&lt; 656.5 1   0.00000000 3.250000 *
+##                               7035) X1&gt;=656.5 1   0.00000000 3.500000 *
+##                           1759) X1&gt;=1361.5 2   0.12500000 3.500000  
+##                             3518) X1&gt;=1433 1   0.00000000 3.250000 *
+##                             3519) X1&lt; 1433 1   0.00000000 3.750000 *
+##                   55) cocoa_percent&gt;=0.625 488  91.23156000 3.256148  
+##                    110) bean_type=Amazon,Criollo,Criollo (Porcelana),Forastero (Arriba),Forastero (Nacional),Nacional (Arriba),Trinitario,Trinitario (Amelonado),Trinitario, Forastero 423  80.40426000 3.241135  
+##                      220) X1&gt;=267.5 344  67.01381000 3.207849  
+##                        440) X1&lt; 273 1   0.00000000 1.000000 *
+##                        441) X1&gt;=273 343  62.12500000 3.214286  
+##                          882) broad_bean_origin=Brazil,Central and S. America,Dominican Republic,Ecuador,Ecuador, Costa Rica,Haiti,Indonesia,Liberia,Madagascar,Nicaragua,Nigeria,Papua New Guinea,Tanzania,Trinidad,Venezuela 281  53.25445000 3.177046  
+##                           1764) company_location=Czech Republic,Nicaragua,Singapore,South Africa 7   0.17857140 2.785714  
+##                             3528) cocoa_percent&gt;=0.71 1   0.00000000 2.500000 *
+##                             3529) cocoa_percent&lt; 0.71 6   0.08333333 2.833333  
+##                               7058) X1&lt; 934 5   0.05000000 2.800000  
+##                                14116) X1&gt;=480 4   0.00000000 2.750000 *
+##                                14117) X1&lt; 480 1   0.00000000 3.000000 *
+##                               7059) X1&gt;=934 1   0.00000000 3.000000 *
+##                           1765) company_location=Austria,Belgium,Domincan Republic,Ecuador,Hungary,Japan,Madagascar,New Zealand,Sweden,U.K.,U.S.A.,Venezuela 274  51.97651000 3.187044  
+##                             3530) review_date&lt; 2006.5 6   5.33333300 2.833333  
+##                               7060) X1&lt; 489.5 1   0.00000000 1.000000 *
+##                               7061) X1&gt;=489.5 5   1.30000000 3.200000  
+##                                14122) X1&lt; 1035.5 4   0.50000000 3.000000  
+##                                  28244) X1&lt; 607.5 1   0.00000000 2.500000 *
+##                                  28245) X1&gt;=607.5 3   0.16666670 3.166667  
+##                                    56490) X1&gt;=780 2   0.00000000 3.000000 *
+##                                    56491) X1&lt; 780 1   0.00000000 3.500000 *
+##                                14123) X1&gt;=1035.5 1   0.00000000 4.000000 *
+##                             3531) review_date&gt;=2006.5 268  45.87570000 3.194963  
+##                               7062) X1&gt;=605.5 191  32.44372000 3.154450  
+##                                14124) review_date&gt;=2007.5 183  30.20355000 3.137978  
+##                                  28248) cocoa_percent&gt;=0.705 53   8.20754700 3.028302  
+##                                    56496) broad_bean_origin=Madagascar,Nicaragua,Venezuela 31   4.17741900 2.951613  
+##                                     112992) company_location=Hungary,Madagascar,New Zealand,U.S.A. 23   2.48369600 2.880435  
+##                                       225984) X1&gt;=646 22   2.08238600 2.852273  
+##                                         451968) X1&lt; 1126.5 12   0.87500000 2.750000  
+##                                           903936) X1&gt;=873.5 4   0.04687500 2.437500  
+##                                            1807872) review_date&gt;=2014.5 1   0.00000000 2.250000 *
+##                                            1807873) review_date&lt; 2014.5 3   0.00000000 2.500000 *
+##                                           903937) X1&lt; 873.5 8   0.24218750 2.906250  
+##                                            1807874) broad_bean_origin=Venezuela 5   0.05000000 2.800000  
+##                                              3615748) review_date&gt;=2011 4   0.00000000 2.750000 *
+##                                              3615749) review_date&lt; 2011 1   0.00000000 3.000000 *
+##                                            1807875) broad_bean_origin=Madagascar 3   0.04166667 3.083333  
+##                                              3615750) cocoa_percent&gt;=0.7225 2   0.00000000 3.000000 *
+##                                              3615751) cocoa_percent&lt; 0.7225 1   0.00000000 3.250000 *
+##                                         451969) X1&gt;=1126.5 10   0.93125000 2.975000  
+##                                           903938) X1&gt;=1127.5 9   0.62500000 2.916667  
+##                                            1807876) X1&lt; 1155 1   0.00000000 2.500000 *
+##                                            1807877) X1&gt;=1155 8   0.42968750 2.968750  
+##                                              3615754) X1&gt;=1340 4   0.06250000 2.875000  
+##                                                7231508) review_date&lt; 2015 2   0.00000000 2.750000 *
+##                                                7231509) review_date&gt;=2015 2   0.00000000 3.000000 *
+##                                              3615755) X1&lt; 1340 4   0.29687500 3.062500  
+##                                                7231510) X1&lt; 1336 3   0.04166667 2.916667  
+##                                                 14463020) X1&gt;=1266.5 1   0.00000000 2.750000 *
+##                                                 14463021) X1&lt; 1266.5 2   0.00000000 3.000000 *
+##                                                7231511) X1&gt;=1336 1   0.00000000 3.500000 *
+##                                           903939) X1&lt; 1127.5 1   0.00000000 3.500000 *
+##                                       225985) X1&lt; 646 1   0.00000000 3.500000 *
+##                                     112993) company_location=Sweden,U.K. 8   1.24218800 3.156250  
+##                                       225986) X1&lt; 1046 3   0.79166670 2.916667  
+##                                         451972) X1&gt;=955.5 1   0.00000000 2.250000 *
+##                                         451973) X1&lt; 955.5 2   0.12500000 3.250000  
+##                                           903946) X1&lt; 780 1   0.00000000 3.000000 *
+##                                           903947) X1&gt;=780 1   0.00000000 3.500000 *
+##                                       225987) X1&gt;=1046 5   0.17500000 3.300000  
+##                                         451974) cocoa_percent&lt; 0.715 1   0.00000000 3.000000 *
+##                                         451975) cocoa_percent&gt;=0.715 4   0.06250000 3.375000  
+##                                           903950) bean_type=Trinitario 3   0.04166667 3.333333  
+##                                            1807900) X1&lt; 1235 1   0.00000000 3.250000 *
+##                                            1807901) X1&gt;=1235 2   0.03125000 3.375000  
+##                                              3615802) X1&gt;=1396.5 1   0.00000000 3.250000 *
+##                                              3615803) X1&lt; 1396.5 1   0.00000000 3.500000 *
+##                                           903951) bean_type=Criollo 1   0.00000000 3.500000 *
+##                                    56497) broad_bean_origin=Dominican Republic,Ecuador,Liberia,Papua New Guinea,Tanzania 22   3.59090900 3.136364  
+##                                     112994) cocoa_percent&lt; 0.7275 11   1.05681800 2.977273  
+##                                       225988) X1&gt;=841.5 5   0.17500000 2.800000  
+##                                         451976) review_date&gt;=2010.5 3   0.04166667 2.666667  
+##                                           903952) X1&lt; 863.5 1   0.00000000 2.500000 *
+##                                           903953) X1&gt;=863.5 2   0.00000000 2.750000 *
+##                                         451977) review_date&lt; 2010.5 2   0.00000000 3.000000 *
+##                                       225989) X1&lt; 841.5 6   0.59375000 3.125000  
+##                                         451978) broad_bean_origin=Ecuador 1   0.00000000 2.500000 *
+##                                         451979) broad_bean_origin=Dominican Republic,Liberia,Papua New Guinea 5   0.12500000 3.250000  
+##                                           903958) review_date&lt; 2014.5 4   0.04687500 3.187500  
+##                                            1807916) cocoa_percent&gt;=0.7225 1   0.00000000 3.000000 *
+##                                            1807917) cocoa_percent&lt; 0.7225 3   0.00000000 3.250000 *
+##                                           903959) review_date&gt;=2014.5 1   0.00000000 3.500000 *
+##                                     112995) cocoa_percent&gt;=0.7275 11   1.97727300 3.295455  
+##                                       225990) broad_bean_origin=Dominican Republic,Tanzania 7   1.58928600 3.178571  
+##                                         451980) review_date&gt;=2012.5 2   0.50000000 2.750000  
+##                                           903960) X1&lt; 856 1   0.00000000 2.250000 *
+##                                           903961) X1&gt;=856 1   0.00000000 3.250000 *
+##                                         451981) review_date&lt; 2012.5 5   0.57500000 3.350000  
+##                                           903962) X1&lt; 800.5 1   0.00000000 3.000000 *
+##                                           903963) X1&gt;=800.5 4   0.42187500 3.437500  
+##                                            1807926) X1&gt;=1101.5 1   0.00000000 3.000000 *
+##                                            1807927) X1&lt; 1101.5 3   0.16666670 3.583333  
+##                                              3615854) cocoa_percent&lt; 0.735 1   0.00000000 3.250000 *
+##                                              3615855) cocoa_percent&gt;=0.735 2   0.00000000 3.750000 *
+##                                       225991) broad_bean_origin=Ecuador,Papua New Guinea 4   0.12500000 3.500000  
+##                                         451982) X1&lt; 696 1   0.00000000 3.250000 *
+##                                         451983) X1&gt;=696 3   0.04166667 3.583333  
+##                                           903966) X1&gt;=855 2   0.00000000 3.500000 *
+##                                           903967) X1&lt; 855 1   0.00000000 3.750000 *
+##                                  28249) cocoa_percent&lt; 0.705 130  21.09856000 3.182692  
+##                                    56498) company_location=Austria,Belgium,Domincan Republic,New Zealand,Sweden,U.K.,U.S.A.,Venezuela 106  18.01002000 3.139151  
+##                                     112996) bean_type=Criollo,Forastero (Nacional),Nacional (Arriba) 22   3.57954500 3.045455  
+##                                       225992) cocoa_percent&gt;=0.695 18   2.15625000 2.958333  
+##                                         451984) review_date&lt; 2015.5 15   1.10833300 2.883333  
+##                                           903968) X1&lt; 943 5   0.07500000 2.600000  
+##                                            1807936) review_date&lt; 2014 4   0.04687500 2.562500  
+##                                              3615872) X1&gt;=792.5 3   0.00000000 2.500000 *
+##                                              3615873) X1&lt; 792.5 1   0.00000000 2.750000 *
+##                                            1807937) review_date&gt;=2014 1   0.00000000 2.750000 *
+##                                           903969) X1&gt;=943 10   0.43125000 3.025000  
+##                                            1807938) X1&gt;=1362.5 2   0.12500000 2.750000  
+##                                              3615876) X1&lt; 1407.5 1   0.00000000 2.500000 *
+##                                              3615877) X1&gt;=1407.5 1   0.00000000 3.000000 *
+##                                            1807939) X1&lt; 1362.5 8   0.11718750 3.093750  
+##                                              3615878) X1&lt; 1309 5   0.00000000 3.000000 *
+##                                              3615879) X1&gt;=1309 3   0.00000000 3.250000 *
+##                                         451985) review_date&gt;=2015.5 3   0.54166670 3.333333  
+##                                           903970) company_location=Austria 1   0.00000000 2.750000 *
+##                                           903971) company_location=U.S.A. 2   0.03125000 3.625000  
+##                                            1807942) X1&gt;=996 1   0.00000000 3.500000 *
+##                                            1807943) X1&lt; 996 1   0.00000000 3.750000 *
+##                                       225993) cocoa_percent&lt; 0.695 4   0.67187500 3.437500  
+##                                         451986) review_date&gt;=2013.5 1   0.00000000 2.750000 *
+##                                         451987) review_date&lt; 2013.5 3   0.04166667 3.666667  
+##                                           903974) review_date&gt;=2012 1   0.00000000 3.500000 *
+##                                           903975) review_date&lt; 2012 2   0.00000000 3.750000 *
+##                                     112997) bean_type=Trinitario,Trinitario (Amelonado) 84  14.18676000 3.163690  
+##                                       225994) company_location=Domincan Republic,New Zealand,Sweden,U.K.,U.S.A.,Venezuela 82  13.48247000 3.149390  
+##                                         451988) cocoa_percent&lt; 0.665 9   2.87500000 2.916667  
+##                                           903976) review_date&gt;=2011 4   1.37500000 2.500000  
+##                                            1807952) review_date&lt; 2012.5 1   0.00000000 1.500000 *
+##                                            1807953) review_date&gt;=2012.5 3   0.04166667 2.833333  
+##                                              3615906) X1&lt; 1215 2   0.00000000 2.750000 *
+##                                              3615907) X1&gt;=1215 1   0.00000000 3.000000 *
+##                                           903977) review_date&lt; 2011 5   0.25000000 3.250000  
+##                                            1807954) X1&lt; 615.5 2   0.00000000 3.000000 *
+##                                            1807955) X1&gt;=615.5 3   0.04166667 3.416667  
+##                                              3615910) X1&gt;=799 1   0.00000000 3.250000 *
+##                                              3615911) X1&lt; 799 2   0.00000000 3.500000 *
+##                                         451989) cocoa_percent&gt;=0.665 73  10.05993000 3.178082  
+##                                           903978) review_date&lt; 2008.5 4   0.04687500 2.812500  
+##                                            1807956) broad_bean_origin=Dominican Republic,Madagascar 3   0.00000000 2.750000 *
+##                                            1807957) broad_bean_origin=Trinidad 1   0.00000000 3.000000 *
+##                                           903979) review_date&gt;=2008.5 69   9.44746400 3.199275  
+##                                            1807958) review_date&gt;=2015.5 12   1.75000000 3.000000  
+##                                              3615916) broad_bean_origin=Madagascar,Venezuela 5   0.12500000 2.750000  
+##                                                7231832) company_location=New Zealand,U.S.A.,Venezuela 4   0.04687500 2.687500  
+##                                                 14463664) X1&gt;=1329.5 2   0.03125000 2.625000  
+##                                                   28927328) X1&lt; 1396 1   0.00000000 2.500000 *
+##                                                   28927329) X1&gt;=1396 1   0.00000000 2.750000 *
+##                                                 14463665) X1&lt; 1329.5 2   0.00000000 2.750000 *
+##                                                7231833) company_location=Sweden 1   0.00000000 3.000000 *
+##                                              3615917) broad_bean_origin=Dominican Republic,Haiti,Liberia,Tanzania 7   1.08928600 3.178571  
+##                                                7231834) X1&gt;=1397.5 1   0.00000000 2.500000 *
+##                                                7231835) X1&lt; 1397.5 6   0.55208330 3.291667  
+##                                                 14463670) cocoa_percent&lt; 0.69 1   0.00000000 2.750000 *
+##                                                 14463671) cocoa_percent&gt;=0.69 5   0.20000000 3.400000  
+##                                                   28927342) X1&lt; 1133.5 3   0.00000000 3.250000 *
+##                                                   28927343) X1&gt;=1133.5 2   0.03125000 3.625000  
+##                                                     57854686) X1&gt;=1320 1   0.00000000 3.500000 *
+##                                                     57854687) X1&lt; 1320 1   0.00000000 3.750000 *
+##                                            1807959) review_date&lt; 2015.5 57   7.12061400 3.241228  
+##                                              3615918) X1&lt; 1316.5 50   5.75000000 3.200000  
+##                                                7231836) X1&gt;=1165 12   0.35416670 3.041667  
+##                                                 14463672) X1&lt; 1307.5 10   0.12500000 3.000000  
+##                                                   28927344) X1&gt;=1304.5 1   0.00000000 2.750000 *
+##                                                   28927345) X1&lt; 1304.5 9   0.05555556 3.027778  
+##                                                     57854690) broad_bean_origin=Dominican Republic,Madagascar,Venezuela 7   0.00000000 3.000000 *
+##                                                     57854691) broad_bean_origin=Nicaragua 2   0.03125000 3.125000  
+##                                                      115709382) X1&gt;=1257 1   0.00000000 3.000000 *
+##                                                      115709383) X1&lt; 1257 1   0.00000000 3.250000 *
+##                                                 14463673) X1&gt;=1307.5 2   0.12500000 3.250000  
+##                                                   28927346) X1&gt;=1311 1   0.00000000 3.000000 *
+##                                                   28927347) X1&lt; 1311 1   0.00000000 3.500000 *
+##                                                7231837) X1&lt; 1165 38   5.00000000 3.250000  
+##                                                 14463674) X1&lt; 991.5 30   4.01875000 3.175000  
+##                                                   28927348) broad_bean_origin=Dominican Republic,Ecuador,Tanzania,Trinidad,Venezuela 24   3.37239600 3.114583  
+##                                                     57854696) review_date&lt; 2012.5 7   0.42857140 2.964286  
+##                                                      115709392) X1&lt; 835 4   0.31250000 2.875000  
+##                                                        231418784) X1&gt;=697.5 2   0.03125000 2.625000  
+##                                                          462837568) X1&gt;=752 1   0.00000000 2.500000 *
+##                                                          462837569) X1&lt; 752 1   0.00000000 2.750000 *
+##                                                        231418785) X1&lt; 697.5 2   0.03125000 3.125000  
+##                                                          462837570) X1&lt; 688 1   0.00000000 3.000000 *
+##                                                          462837571) X1&gt;=688 1   0.00000000 3.250000 *
+##                                                      115709393) X1&gt;=835 3   0.04166667 3.083333  
+##                                                        231418786) broad_bean_origin=Venezuela 2   0.00000000 3.000000 *
+##                                                        231418787) broad_bean_origin=Dominican Republic 1   0.00000000 3.250000 *
+##                                                     57854697) review_date&gt;=2012.5 17   2.72058800 3.176471  
+##                                                      115709394) review_date&gt;=2013.5 15   2.23333300 3.116667  
+##                                                        231418788) X1&gt;=916.5 5   0.92500000 2.950000  
+##                                                          462837576) X1&lt; 955.5 2   0.03125000 2.625000  
+##                                                            925675152) X1&lt; 944 1   0.00000000 2.500000 *
+##                                                            925675153) X1&gt;=944 1   0.00000000 2.750000 *
+##                                                          462837577) X1&gt;=955.5 3   0.54166670 3.166667  
+##                                                            925675154) X1&gt;=962.5 2   0.03125000 2.875000  
+##                                                             1851350308) X1&lt; 968.5 1   0.00000000 2.750000 *
+##                                                             1851350309) X1&gt;=968.5 1   0.00000000 3.000000 *
+##                                                            925675155) X1&lt; 962.5 1   0.00000000 3.750000 *
+##                                                        231418789) X1&lt; 916.5 10   1.10000000 3.200000  
+##                                                          462837578) broad_bean_origin=Tanzania,Venezuela 4   0.37500000 3.000000  
+##                                                            925675156) X1&lt; 647 1   0.00000000 2.750000 *
+##                                                            925675157) X1&gt;=647 3   0.29166670 3.083333  
+##                                                             1851350314) broad_bean_origin=Venezuela 2   0.03125000 2.875000 *
+##                                                             1851350315) broad_bean_origin=Tanzania 1   0.00000000 3.500000 *
+##                                                          462837579) broad_bean_origin=Dominican Republic,Ecuador,Trinidad 6   0.45833330 3.333333  
+##                                                            925675158) X1&lt; 878.5 4   0.37500000 3.250000  
+##                                                             1851350316) X1&gt;=833.5 2   0.12500000 3.000000 *
+##                                                             1851350317) X1&lt; 833.5 2   0.00000000 3.500000 *
+##                                                            925675159) X1&gt;=878.5 2   0.00000000 3.500000 *
+##                                                      115709395) review_date&lt; 2013.5 2   0.03125000 3.625000  
+##                                                        231418790) X1&lt; 717 1   0.00000000 3.500000 *
+##                                                        231418791) X1&gt;=717 1   0.00000000 3.750000 *
+##                                                   28927349) broad_bean_origin=Madagascar,Nicaragua 6   0.20833330 3.416667  
+##                                                     57854698) review_date&lt; 2014.5 2   0.12500000 3.250000  
+##                                                      115709396) X1&gt;=794 1   0.00000000 3.000000 *
+##                                                      115709397) X1&lt; 794 1   0.00000000 3.500000 *
+##                                                     57854699) review_date&gt;=2014.5 4   0.00000000 3.500000 *
+##                                                 14463675) X1&gt;=991.5 8   0.17968750 3.531250  
+##                                                   28927350) X1&gt;=1126.5 1   0.00000000 3.250000 *
+##                                                   28927351) X1&lt; 1126.5 7   0.08928571 3.571429  
+##                                                     57854702) review_date&lt; 2013.5 4   0.00000000 3.500000 *
+##                                                     57854703) review_date&gt;=2013.5 3   0.04166667 3.666667  
+##                                                      115709406) X1&lt; 1031 1   0.00000000 3.500000 *
+##                                                      115709407) X1&gt;=1031 2   0.00000000 3.750000 *
+##                                              3615919) X1&gt;=1316.5 7   0.67857140 3.535714  
+##                                                7231838) broad_bean_origin=Dominican Republic,Madagascar,Trinidad 6   0.42708330 3.458333  
+##                                                 14463676) X1&gt;=1333.5 4   0.17187500 3.312500  
+##                                                   28927352) review_date&gt;=2013.5 2   0.03125000 3.125000  
+##                                                     57854704) X1&lt; 1378.5 1   0.00000000 3.000000 *
+##                                                     57854705) X1&gt;=1378.5 1   0.00000000 3.250000 *
+##                                                   28927353) review_date&lt; 2013.5 2   0.00000000 3.500000 *
+##                                                 14463677) X1&lt; 1333.5 2   0.00000000 3.750000 *
+##                                                7231839) broad_bean_origin=Venezuela 1   0.00000000 4.000000 *
+##                                       225995) company_location=Austria,Belgium 2   0.00000000 3.750000 *
+##                                    56499) company_location=Ecuador,Hungary,Madagascar 24   2.00000000 3.375000  
+##                                     112998) X1&gt;=1286.5 7   0.10714290 3.142857  
+##                                       225996) X1&gt;=1290 4   0.04687500 3.062500  
+##                                         451992) X1&lt; 1368.5 3   0.00000000 3.000000 *
+##                                         451993) X1&gt;=1368.5 1   0.00000000 3.250000 *
+##                                       225997) X1&lt; 1290 3   0.00000000 3.250000 *
+##                                     112999) X1&lt; 1286.5 17   1.36029400 3.470588  
+##                                       225998) X1&lt; 715.5 2   0.00000000 3.000000 *
+##                                       225999) X1&gt;=715.5 15   0.85833330 3.533333  
+##                                         451998) review_date&gt;=2014.5 3   0.00000000 3.250000 *
+##                                         451999) review_date&lt; 2014.5 12   0.55729170 3.604167  
+##                                           903998) cocoa_percent&gt;=0.65 11   0.38636360 3.568182  
+##                                            1807996) X1&lt; 997.5 5   0.12500000 3.500000  
+##                                              3615992) X1&gt;=895.5 2   0.03125000 3.375000  
+##                                                7231984) X1&lt; 996.5 1   0.00000000 3.250000 *
+##                                                7231985) X1&gt;=996.5 1   0.00000000 3.500000 *
+##                                              3615993) X1&lt; 895.5 3   0.04166667 3.583333  
+##                                                7231986) X1&lt; 794.5 2   0.00000000 3.500000 *
+##                                                7231987) X1&gt;=794.5 1   0.00000000 3.750000 *
+##                                            1807997) X1&gt;=997.5 6   0.21875000 3.625000  
+##                                              3615994) X1&gt;=1064 4   0.00000000 3.500000 *
+##                                              3615995) X1&lt; 1064 2   0.03125000 3.875000  
+##                                                7231990) X1&lt; 998.5 1   0.00000000 3.750000 *
+##                                                7231991) X1&gt;=998.5 1   0.00000000 4.000000 *
+##                                           903999) cocoa_percent&lt; 0.65 1   0.00000000 4.000000 *
+##                                14125) review_date&lt; 2007.5 8   1.05468800 3.531250  
+##                                  28250) X1&gt;=1198 3   0.16666670 3.166667  
+##                                    56500) broad_bean_origin=Dominican Republic,Ecuador 2   0.00000000 3.000000 *
+##                                    56501) broad_bean_origin=Madagascar 1   0.00000000 3.500000 *
+##                                  28251) X1&lt; 1198 5   0.25000000 3.750000  
+##                                    56502) company_location=Ecuador,Madagascar 2   0.00000000 3.500000 *
+##                                    56503) company_location=Belgium,U.S.A. 3   0.04166667 3.916667  
+##                                     113006) bean_type=Forastero (Nacional) 1   0.00000000 3.750000 *
+##                                     113007) bean_type=Trinitario 2   0.00000000 4.000000 *
+##                               7063) X1&lt; 605.5 77  12.34091000 3.295455  
+##                                14126) X1&lt; 531 55   8.34545500 3.209091  
+##                                  28252) review_date&lt; 2008.5 3   0.16666670 2.666667  
+##                                    56504) X1&lt; 503.5 2   0.00000000 2.500000 *
+##                                    56505) X1&gt;=503.5 1   0.00000000 3.000000 *
+##                                  28253) review_date&gt;=2008.5 52   7.24519200 3.240385  
+##                                    56506) X1&lt; 473.5 40   4.96875000 3.187500  
+##                                     113012) X1&gt;=423.5 7   0.46428570 2.928571  
+##                                       226024) X1&gt;=460.5 1   0.00000000 2.500000 *
+##                                       226025) X1&lt; 460.5 6   0.25000000 3.000000  
+##                                         452050) X1&lt; 432.5 2   0.00000000 2.750000 *
+##                                         452051) X1&gt;=432.5 4   0.06250000 3.125000  
+##                                           904102) review_date&lt; 2012 2   0.00000000 3.000000 *
+##                                           904103) review_date&gt;=2012 2   0.00000000 3.250000 *
+##                                     113013) X1&lt; 423.5 33   3.93560600 3.242424  
+##                                       226026) broad_bean_origin=Liberia,Nicaragua,Tanzania 6   0.30208330 2.958333  
+##                                         452052) review_date&gt;=2013.5 4   0.04687500 2.812500  
+##                                           904104) X1&lt; 410 3   0.00000000 2.750000 *
+##                                           904105) X1&gt;=410 1   0.00000000 3.000000 *
+##                                         452053) review_date&lt; 2013.5 2   0.00000000 3.250000 *
+##                                       226027) broad_bean_origin=Brazil,Dominican Republic,Ecuador,Ecuador, Costa Rica,Madagascar,Papua New Guinea,Venezuela 27   3.04166700 3.305556  
+##                                         452054) review_date&gt;=2012.5 22   2.37500000 3.250000  
+##                                           904108) review_date&gt;=2016.5 1   0.00000000 2.750000 *
+##                                           904109) review_date&lt; 2016.5 21   2.11309500 3.273810  
+##                                            1808218) X1&lt; 346.5 10   1.00625000 3.175000  
+##                                              3616436) X1&gt;=297.5 7   0.71428570 3.071429  
+##                                                7232872) cocoa_percent&lt; 0.725 6   0.50000000 3.000000  
+##                                                 14465744) X1&lt; 311 4   0.31250000 2.875000  
+##                                                   28931488) review_date&gt;=2013.5 2   0.03125000 2.625000  
+##                                                     57862976) X1&gt;=303 1   0.00000000 2.500000 *
+##                                                     57862977) X1&lt; 303 1   0.00000000 2.750000 *
+##                                                   28931489) review_date&lt; 2013.5 2   0.03125000 3.125000  
+##                                                     57862978) X1&gt;=304.5 1   0.00000000 3.000000 *
+##                                                     57862979) X1&lt; 304.5 1   0.00000000 3.250000 *
+##                                                 14465745) X1&gt;=311 2   0.00000000 3.250000 *
+##                                                7232873) cocoa_percent&gt;=0.725 1   0.00000000 3.500000 *
+##                                              3616437) X1&lt; 297.5 3   0.04166667 3.416667  
+##                                                7232874) review_date&gt;=2015.5 1   0.00000000 3.250000 *
+##                                                7232875) review_date&lt; 2015.5 2   0.00000000 3.500000 *
+##                                            1808219) X1&gt;=346.5 11   0.92045450 3.363636  
+##                                              3616438) X1&gt;=399.5 7   0.42857140 3.214286  
+##                                                7232876) X1&lt; 400.5 1   0.00000000 2.750000 *
+##                                                7232877) X1&gt;=400.5 6   0.17708330 3.291667  
+##                                                 14465754) X1&gt;=410 4   0.04687500 3.187500  
+##                                                   28931508) broad_bean_origin=Madagascar 1   0.00000000 3.000000 *
+##                                                   28931509) broad_bean_origin=Ecuador,Ecuador, Costa Rica,Venezuela 3   0.00000000 3.250000 *
+##                                                 14465755) X1&lt; 410 2   0.00000000 3.500000 *
+##                                              3616439) X1&lt; 399.5 4   0.06250000 3.625000  
+##                                                7232878) broad_bean_origin=Ecuador 3   0.04166667 3.583333  
+##                                                 14465756) review_date&lt; 2015.5 2   0.00000000 3.500000 *
+##                                                 14465757) review_date&gt;=2015.5 1   0.00000000 3.750000 *
+##                                                7232879) broad_bean_origin=Dominican Republic 1   0.00000000 3.750000 *
+##                                         452055) review_date&lt; 2012.5 5   0.30000000 3.550000  
+##                                           904110) X1&gt;=405.5 2   0.00000000 3.250000 *
+##                                           904111) X1&lt; 405.5 3   0.00000000 3.750000 *
+##                                    56507) X1&gt;=473.5 12   1.79166700 3.416667  
+##                                     113014) X1&gt;=495 3   0.29166670 2.916667  
+##                                       226028) X1&lt; 520 2   0.12500000 2.750000  
+##                                         452056) X1&gt;=504 1   0.00000000 2.500000 *
+##                                         452057) X1&lt; 504 1   0.00000000 3.000000 *
+##                                       226029) X1&gt;=520 1   0.00000000 3.250000 *
+##                                     113015) X1&lt; 495 9   0.50000000 3.583333  
+##                                       226030) X1&lt; 487.5 7   0.25000000 3.500000  
+##                                         452060) X1&gt;=483 2   0.00000000 3.250000 *
+##                                         452061) X1&lt; 483 5   0.07500000 3.600000  
+##                                           904122) cocoa_percent&lt; 0.715 3   0.00000000 3.500000 *
+##                                           904123) cocoa_percent&gt;=0.715 2   0.00000000 3.750000 *
+##                                       226031) X1&gt;=487.5 2   0.03125000 3.875000  
+##                                         452062) X1&gt;=491 1   0.00000000 3.750000 *
+##                                         452063) X1&lt; 491 1   0.00000000 4.000000 *
+##                                14127) X1&gt;=531 22   2.55965900 3.511364  
+##                                  28254) broad_bean_origin=Brazil,Madagascar,Nicaragua 7   1.05357100 3.285714  
+##                                    56508) review_date&lt; 2011.5 2   0.03125000 2.875000  
+##                                     113016) X1&lt; 562.5 1   0.00000000 2.750000 *
+##                                     113017) X1&gt;=562.5 1   0.00000000 3.000000 *
+##                                    56509) review_date&gt;=2011.5 5   0.55000000 3.450000  
+##                                     113018) cocoa_percent&lt; 0.72 4   0.17187500 3.312500  
+##                                       226036) company_location=U.S.A. 2   0.03125000 3.125000  
+##                                         452072) X1&gt;=566.5 1   0.00000000 3.000000 *
+##                                         452073) X1&lt; 566.5 1   0.00000000 3.250000 *
+##                                       226037) company_location=Belgium,Japan 2   0.00000000 3.500000 *
+##                                     113019) cocoa_percent&gt;=0.72 1   0.00000000 4.000000 *
+##                                  28255) broad_bean_origin=Dominican Republic,Papua New Guinea,Trinidad,Venezuela 15   0.98333330 3.616667  
+##                                    56510) X1&lt; 562.5 10   0.72500000 3.550000  
+##                                     113020) X1&gt;=556.5 2   0.12500000 3.250000  
+##                                       226040) X1&lt; 558.5 1   0.00000000 3.000000 *
+##                                       226041) X1&gt;=558.5 1   0.00000000 3.500000 *
+##                                     113021) X1&lt; 556.5 8   0.37500000 3.625000  
+##                                       226042) X1&lt; 555 7   0.21428570 3.571429  
+##                                         452084) company_location=U.S.A. 4   0.12500000 3.500000  
+##                                           904168) X1&lt; 551.5 2   0.03125000 3.375000  
+##                                            1808336) X1&gt;=549.5 1   0.00000000 3.250000 *
+##                                            1808337) X1&lt; 549.5 1   0.00000000 3.500000 *
+##                                           904169) X1&gt;=551.5 2   0.03125000 3.625000  
+##                                            1808338) X1&gt;=553 1   0.00000000 3.500000 *
+##                                            1808339) X1&lt; 553 1   0.00000000 3.750000 *
+##                                         452085) company_location=Venezuela 3   0.04166667 3.666667  
+##                                           904170) X1&lt; 534.5 1   0.00000000 3.500000 *
+##                                           904171) X1&gt;=534.5 2   0.00000000 3.750000 *
+##                                       226043) X1&gt;=555 1   0.00000000 4.000000 *
+##                                    56511) X1&gt;=562.5 5   0.12500000 3.750000  
+##                                     113022) bean_type=Criollo 1   0.00000000 3.500000 *
+##                                     113023) bean_type=Trinitario 4   0.04687500 3.812500  
+##                                       226046) X1&gt;=572.5 3   0.00000000 3.750000 *
+##                                       226047) X1&lt; 572.5 1   0.00000000 4.000000 *
+##                          883) broad_bean_origin=Belize,Bolivia,Colombia,Cuba,Guatemala,Hawaii,Honduras,Panama,Samoa,Solomon Islands,South America,St. Lucia,Vietnam 62   6.71471800 3.383065  
+##                           1766) company_location=Austria,Colombia,New Zealand,U.S.A. 52   5.00360600 3.341346  
+##                             3532) review_date&lt; 2013.5 20   2.75000000 3.250000  
+##                               7064) X1&lt; 1139 18   1.85069400 3.180556  
+##                                14128) bean_type=Forastero (Nacional),Trinitario 15   1.60833300 3.133333  
+##                                  28256) broad_bean_origin=Belize,Bolivia,Colombia 7   0.25000000 3.000000  
+##                                    56512) cocoa_percent&lt; 0.725 6   0.17708330 2.958333  
+##                                     113024) broad_bean_origin=Belize 2   0.00000000 2.750000 *
+##                                     113025) broad_bean_origin=Bolivia,Colombia 4   0.04687500 3.062500  
+##                                       226050) X1&gt;=510.5 2   0.00000000 3.000000 *
+##                                       226051) X1&lt; 510.5 2   0.03125000 3.125000  
+##                                         452102) X1&lt; 352 1   0.00000000 3.000000 *
+##                                         452103) X1&gt;=352 1   0.00000000 3.250000 *
+##                                    56513) cocoa_percent&gt;=0.725 1   0.00000000 3.250000 *
+##                                  28257) broad_bean_origin=Hawaii 8   1.12500000 3.250000  
+##                                    56514) X1&gt;=620.5 7   0.83928570 3.178571  
+##                                     113028) X1&lt; 802 2   0.03125000 2.875000  
+##                                       226056) X1&gt;=795.5 1   0.00000000 2.750000 *
+##                                       226057) X1&lt; 795.5 1   0.00000000 3.000000 *
+##                                     113029) X1&gt;=802 5   0.55000000 3.300000  
+##                                       226058) X1&gt;=821 2   0.12500000 3.000000  
+##                                         452116) X1&lt; 823 1   0.00000000 2.750000 *
+##                                         452117) X1&gt;=823 1   0.00000000 3.250000 *
+##                                       226059) X1&lt; 821 3   0.12500000 3.500000  
+##                                         452118) X1&lt; 804 1   0.00000000 3.250000 *
+##                                         452119) X1&gt;=804 2   0.03125000 3.625000  
+##                                           904238) X1&lt; 812.5 1   0.00000000 3.500000 *
+##                                           904239) X1&gt;=812.5 1   0.00000000 3.750000 *
+##                                    56515) X1&lt; 620.5 1   0.00000000 3.750000 *
+##                                14129) bean_type=Criollo 3   0.04166667 3.416667  
+##                                  28258) X1&gt;=794 1   0.00000000 3.250000 *
+##                                  28259) X1&lt; 794 2   0.00000000 3.500000 *
+##                               7065) X1&gt;=1139 2   0.03125000 3.875000  
+##                                14130) X1&gt;=1144 1   0.00000000 3.750000 *
+##                                14131) X1&lt; 1144 1   0.00000000 4.000000 *
+##                             3533) review_date&gt;=2013.5 32   1.98242200 3.398438  
+##                               7066) broad_bean_origin=Colombia,Vietnam 6   0.17708330 3.208333  
+##                                14132) X1&lt; 289.5 1   0.00000000 3.000000 *
+##                                14133) X1&gt;=289.5 5   0.12500000 3.250000  
+##                                  28266) company_location=U.S.A. 1   0.00000000 3.000000 *
+##                                  28267) company_location=Austria,Colombia 4   0.04687500 3.312500  
+##                                    56534) X1&lt; 291.5 2   0.00000000 3.250000 *
+##                                    56535) X1&gt;=291.5 2   0.03125000 3.375000  
+##                                     113070) X1&gt;=574.5 1   0.00000000 3.250000 *
+##                                     113071) X1&lt; 574.5 1   0.00000000 3.500000 *
+##                               7067) broad_bean_origin=Belize,Guatemala,Hawaii,Honduras,Samoa,Solomon Islands,South America 26   1.53846200 3.442308  
+##                                14134) X1&gt;=293.5 25   1.21500000 3.420000  
+##                                  28268) broad_bean_origin=Belize,Guatemala,Solomon Islands 16   0.87109380 3.359375  
+##                                    56536) X1&lt; 1308 14   0.67857140 3.321429  
+##                                     113072) X1&gt;=1233 2   0.00000000 3.000000 *
+##                                     113073) X1&lt; 1233 12   0.43750000 3.375000  
+##                                       226146) broad_bean_origin=Belize,Solomon Islands 11   0.28409090 3.340909  
+##                                         452292) X1&lt; 395.5 2   0.03125000 3.125000  
+##                                           904584) X1&gt;=353 1   0.00000000 3.000000 *
+##                                           904585) X1&lt; 353 1   0.00000000 3.250000 *
+##                                         452293) X1&gt;=395.5 9   0.13888890 3.388889  
+##                                           904586) X1&gt;=836 2   0.00000000 3.250000 *
+##                                           904587) X1&lt; 836 7   0.08928571 3.428571  
+##                                            1809174) bean_type=Amazon 1   0.00000000 3.250000 *
+##                                            1809175) bean_type=Trinitario 6   0.05208333 3.458333  
+##                                              3618350) cocoa_percent&gt;=0.71 2   0.03125000 3.375000  
+##                                                7236700) X1&lt; 750 1   0.00000000 3.250000 *
+##                                                7236701) X1&gt;=750 1   0.00000000 3.500000 *
+##                                              3618351) cocoa_percent&lt; 0.71 4   0.00000000 3.500000 *
+##                                       226147) broad_bean_origin=Guatemala 1   0.00000000 3.750000 *
+##                                    56537) X1&gt;=1308 2   0.03125000 3.625000  
+##                                     113074) X1&gt;=1366.5 1   0.00000000 3.500000 *
+##                                     113075) X1&lt; 1366.5 1   0.00000000 3.750000 *
+##                                  28269) broad_bean_origin=Hawaii,Honduras,Samoa,South America 9   0.18055560 3.527778  
+##                                    56538) cocoa_percent&lt; 0.66 2   0.03125000 3.375000  
+##                                     113076) X1&lt; 899.5 1   0.00000000 3.250000 *
+##                                     113077) X1&gt;=899.5 1   0.00000000 3.500000 *
+##                                    56539) cocoa_percent&gt;=0.66 7   0.08928571 3.571429  
+##                                     113078) review_date&gt;=2014.5 4   0.00000000 3.500000 *
+##                                     113079) review_date&lt; 2014.5 3   0.04166667 3.666667  
+##                                       226158) X1&gt;=1017.5 1   0.00000000 3.500000 *
+##                                       226159) X1&lt; 1017.5 2   0.00000000 3.750000 *
+##                                14135) X1&lt; 293.5 1   0.00000000 4.000000 *
+##                           1767) company_location=Honduras,Hungary,U.K. 10   1.15000000 3.600000  
+##                             3534) broad_bean_origin=Honduras,Panama,St. Lucia 7   0.67857140 3.464286  
+##                               7068) review_date&lt; 2009 1   0.00000000 3.000000 *
+##                               7069) review_date&gt;=2009 6   0.42708330 3.541667  
+##                                14138) X1&lt; 463 1   0.00000000 3.250000 *
+##                                14139) X1&gt;=463 5   0.32500000 3.600000  
+##                                  28278) X1&gt;=671.5 2   0.03125000 3.375000  
+##                                    56556) X1&lt; 782.5 1   0.00000000 3.250000 *
+##                                    56557) X1&gt;=782.5 1   0.00000000 3.500000 *
+##                                  28279) X1&lt; 671.5 3   0.12500000 3.750000  
+##                                    56558) X1&lt; 573.5 2   0.03125000 3.625000  
+##                                     113116) X1&gt;=479.5 1   0.00000000 3.500000 *
+##                                     113117) X1&lt; 479.5 1   0.00000000 3.750000 *
+##                                    56559) X1&gt;=573.5 1   0.00000000 4.000000 *
+##                             3535) broad_bean_origin=Colombia,Cuba,Guatemala 3   0.04166667 3.916667  
+##                               7070) review_date&lt; 2014.5 1   0.00000000 3.750000 *
+##                               7071) review_date&gt;=2014.5 2   0.00000000 4.000000 *
+##                      221) X1&lt; 267.5 79  11.34968000 3.386076  
+##                        442) broad_bean_origin=Belize,Colombia,Dominican Republic,Ecuador,Guatemala,Honduras,Indonesia,Madagascar,Malaysia,Panama,Papua New Guinea,Trinidad,Venezuela,Vietnam 73  10.22945000 3.352740  
+##                          884) broad_bean_origin=Indonesia,Malaysia,Panama 8   1.49218800 3.093750  
+##                           1768) company_location=U.K.,U.S.A. 7   0.55357140 2.964286  
+##                             3536) X1&lt; 108 2   0.00000000 2.750000 *
+##                             3537) X1&gt;=108 5   0.42500000 3.050000  
+##                               7074) X1&gt;=111 4   0.17187500 2.937500  
+##                                14148) review_date&lt; 2013.5 2   0.00000000 2.750000 *
+##                                14149) review_date&gt;=2013.5 2   0.03125000 3.125000  
+##                                  28298) X1&lt; 135.5 1   0.00000000 3.000000 *
+##                                  28299) X1&gt;=135.5 1   0.00000000 3.250000 *
+##                               7075) X1&lt; 111 1   0.00000000 3.500000 *
+##                           1769) company_location=Belgium 1   0.00000000 4.000000 *
+##                          885) broad_bean_origin=Belize,Colombia,Dominican Republic,Ecuador,Guatemala,Honduras,Madagascar,Papua New Guinea,Trinidad,Venezuela,Vietnam 65   8.13461500 3.384615  
+##                           1770) X1&gt;=50.5 61   7.07172100 3.364754  
+##                             3540) review_date&lt; 2010.5 14   1.48214300 3.214286  
+##                               7080) bean_type=Forastero (Arriba),Trinitario 13   1.17307700 3.173077  
+##                                14160) broad_bean_origin=Papua New Guinea,Venezuela 4   0.04687500 2.937500  
+##                                  28320) X1&gt;=97 1   0.00000000 2.750000 *
+##                                  28321) X1&lt; 97 3   0.00000000 3.000000 *
+##                                14161) broad_bean_origin=Dominican Republic,Ecuador,Madagascar,Vietnam 9   0.80555560 3.277778  
+##                                  28322) cocoa_percent&gt;=0.69 6   0.34375000 3.125000  
+##                                    56644) X1&gt;=119 3   0.04166667 2.916667  
+##                                     113288) X1&gt;=170 1   0.00000000 2.750000 *
+##                                     113289) X1&lt; 170 2   0.00000000 3.000000 *
+##                                    56645) X1&lt; 119 3   0.04166667 3.333333  
+##                                     113290) company_location=U.K. 2   0.00000000 3.250000 *
+##                                     113291) company_location=U.S.A. 1   0.00000000 3.500000 *
+##                                  28323) cocoa_percent&lt; 0.69 3   0.04166667 3.583333  
+##                                    56646) cocoa_percent&lt; 0.665 2   0.00000000 3.500000 *
+##                                    56647) cocoa_percent&gt;=0.665 1   0.00000000 3.750000 *
+##                               7081) bean_type=Criollo 1   0.00000000 3.750000 *
+##                             3541) review_date&gt;=2010.5 47   5.17819100 3.409574  
+##                               7082) company_location=Colombia,Japan,U.K.,U.S.A.,Venezuela 44   4.68181800 3.386364  
+##                                14164) broad_bean_origin=Belize,Colombia,Dominican Republic,Ecuador,Trinidad 27   3.47685200 3.324074  
+##                                  28328) review_date&lt; 2014.5 20   2.55937500 3.237500  
+##                                    56656) review_date&gt;=2012.5 14   1.58928600 3.142857  
+##                                     113312) X1&lt; 208 4   0.18750000 2.875000  
+##                                       226624) X1&gt;=110 3   0.00000000 2.750000 *
+##                                       226625) X1&lt; 110 1   0.00000000 3.250000 *
+##                                     113313) X1&gt;=208 10   1.00000000 3.250000  
+##                                       226626) broad_bean_origin=Dominican Republic 2   0.03125000 2.875000  
+##                                         453252) X1&gt;=219 1   0.00000000 2.750000 *
+##                                         453253) X1&lt; 219 1   0.00000000 3.000000 *
+##                                       226627) broad_bean_origin=Belize,Colombia,Ecuador,Trinidad 8   0.61718750 3.343750  
+##                                         453254) X1&gt;=247.5 2   0.12500000 3.000000  
+##                                           906508) X1&lt; 248.5 1   0.00000000 2.750000 *
+##                                           906509) X1&gt;=248.5 1   0.00000000 3.250000 *
+##                                         453255) X1&lt; 247.5 6   0.17708330 3.458333  
+##                                           906510) broad_bean_origin=Colombia,Ecuador,Trinidad 5   0.07500000 3.400000  
+##                                            1813020) X1&lt; 227.5 2   0.00000000 3.250000 *
+##                                            1813021) X1&gt;=227.5 3   0.00000000 3.500000 *
+##                                           906511) broad_bean_origin=Belize 1   0.00000000 3.750000 *
+##                                    56657) review_date&lt; 2012.5 6   0.55208330 3.458333  
+##                                     113314) company_location=U.S.A. 5   0.45000000 3.400000  
+##                                       226628) X1&gt;=251.5 3   0.29166670 3.333333  
+##                                         453256) X1&lt; 252.5 1   0.00000000 3.000000 *
+##                                         453257) X1&gt;=252.5 2   0.12500000 3.500000  
+##                                           906514) X1&gt;=253.5 1   0.00000000 3.250000 *
+##                                           906515) X1&lt; 253.5 1   0.00000000 3.750000 *
+##                                       226629) X1&lt; 251.5 2   0.12500000 3.500000  
+##                                         453258) X1&lt; 190.5 1   0.00000000 3.250000 *
+##                                         453259) X1&gt;=190.5 1   0.00000000 3.750000 *
+##                                     113315) company_location=U.K. 1   0.00000000 3.750000 *
+##                                  28329) review_date&gt;=2014.5 7   0.33928570 3.571429  
+##                                    56658) X1&lt; 91 3   0.04166667 3.333333  
+##                                     113316) broad_bean_origin=Ecuador 2   0.00000000 3.250000 *
+##                                     113317) broad_bean_origin=Trinidad 1   0.00000000 3.500000 *
+##                                    56659) X1&gt;=91 4   0.00000000 3.750000 *
+##                                14165) broad_bean_origin=Guatemala,Honduras,Madagascar,Venezuela,Vietnam 17   0.93382350 3.485294  
+##                                  28330) review_date&gt;=2014.5 11   0.29545450 3.386364  
+##                                    56660) broad_bean_origin=Madagascar 1   0.00000000 3.000000 *
+##                                    56661) broad_bean_origin=Guatemala,Honduras,Venezuela,Vietnam 10   0.13125000 3.425000  
+##                                     113322) cocoa_percent&gt;=0.715 3   0.04166667 3.333333  
+##                                       226644) X1&gt;=91 2   0.00000000 3.250000 *
+##                                       226645) X1&lt; 91 1   0.00000000 3.500000 *
+##                                     113323) cocoa_percent&lt; 0.715 7   0.05357143 3.464286  
+##                                       226646) X1&lt; 154.5 3   0.04166667 3.416667  
+##                                         453292) X1&gt;=96.5 1   0.00000000 3.250000 *
+##                                         453293) X1&lt; 96.5 2   0.00000000 3.500000 *
+##                                       226647) X1&gt;=154.5 4   0.00000000 3.500000 *
+##                                  28331) review_date&lt; 2014.5 6   0.33333330 3.666667  
+##                                    56662) cocoa_percent&gt;=0.72 1   0.00000000 3.250000 *
+##                                    56663) cocoa_percent&lt; 0.72 5   0.12500000 3.750000  
+##                                     113326) broad_bean_origin=Guatemala 1   0.00000000 3.500000 *
+##                                     113327) broad_bean_origin=Madagascar,Venezuela 4   0.04687500 3.812500  
+##                                       226654) X1&lt; 195 2   0.00000000 3.750000 *
+##                                       226655) X1&gt;=195 2   0.03125000 3.875000  
+##                                         453310) X1&gt;=226.5 1   0.00000000 3.750000 *
+##                                         453311) X1&lt; 226.5 1   0.00000000 4.000000 *
+##                               7083) company_location=Belgium 3   0.12500000 3.750000  
+##                                14166) X1&lt; 147.5 1   0.00000000 3.500000 *
+##                                14167) X1&gt;=147.5 2   0.03125000 3.875000  
+##                                  28334) X1&gt;=149 1   0.00000000 3.750000 *
+##                                  28335) X1&lt; 149 1   0.00000000 4.000000 *
+##                           1771) X1&lt; 50.5 4   0.67187500 3.687500  
+##                             3542) X1&lt; 38 1   0.00000000 3.000000 *
+##                             3543) X1&gt;=38 3   0.04166667 3.916667  
+##                               7086) broad_bean_origin=Dominican Republic 1   0.00000000 3.750000 *
+##                               7087) broad_bean_origin=Ecuador,Papua New Guinea 2   0.00000000 4.000000 *
+##                        443) broad_bean_origin=Haiti,Nicaragua,Tanzania 6   0.05208333 3.791667  
+##                          886) company_location=U.S.A. 5   0.00000000 3.750000 *
+##                          887) company_location=U.K. 1   0.00000000 4.000000 *
+##                    111) bean_type=Amazon, ICS,Beniano,Blend,Criollo, +,Criollo, Trinitario,Forastero,Forastero (Parazinho),Trinitario, Criollo 65  10.11154000 3.353846  
+##                      222) broad_bean_origin=Belize,Bolivia,Brazil,Domincan Republic 50   8.45500000 3.280000  
+##                        444) company_location=U.K. 1   0.00000000 1.750000 *
+##                        445) company_location=Belgium,Hungary,Japan,Puerto Rico,U.S.A. 49   6.06632700 3.311224  
+##                          890) company_location=Belgium,Japan,Puerto Rico 3   0.04166667 2.916667  
+##                           1780) X1&lt; 640.5 1   0.00000000 2.750000 *
+##                           1781) X1&gt;=640.5 2   0.00000000 3.000000 *
+##                          891) company_location=Hungary,U.S.A. 46   5.52717400 3.336957  
+##                           1782) broad_bean_origin=Bolivia,Domincan Republic 35   4.35000000 3.300000  
+##                             3564) X1&gt;=695 18   1.61111100 3.222222  
+##                               7128) X1&lt; 1015 7   0.37500000 3.000000  
+##                                14256) X1&gt;=826 4   0.18750000 2.875000  
+##                                  28512) X1&lt; 896.5 2   0.12500000 2.750000  
+##                                    57024) X1&gt;=878.5 1   0.00000000 2.500000 *
+##                                    57025) X1&lt; 878.5 1   0.00000000 3.000000 *
+##                                  28513) X1&gt;=896.5 2   0.00000000 3.000000 *
+##                                14257) X1&lt; 826 3   0.04166667 3.166667  
+##                                  28514) X1&lt; 759 1   0.00000000 3.000000 *
+##                                  28515) X1&gt;=759 2   0.00000000 3.250000 *
+##                               7129) X1&gt;=1015 11   0.67045450 3.363636  
+##                                14258) X1&gt;=1179.5 7   0.17857140 3.214286  
+##                                  28516) review_date&gt;=2015.5 1   0.00000000 3.000000 *
+##                                  28517) review_date&lt; 2015.5 6   0.12500000 3.250000  
+##                                    57034) X1&lt; 1291 2   0.03125000 3.125000  
+##                                     114068) X1&gt;=1234.5 1   0.00000000 3.000000 *
+##                                     114069) X1&lt; 1234.5 1   0.00000000 3.250000 *
+##                                    57035) X1&gt;=1291 4   0.04687500 3.312500  
+##                                     114070) X1&gt;=1346 2   0.00000000 3.250000 *
+##                                     114071) X1&lt; 1346 2   0.03125000 3.375000  
+##                                       228142) X1&lt; 1319.5 1   0.00000000 3.250000 *
+##                                       228143) X1&gt;=1319.5 1   0.00000000 3.500000 *
+##                                14259) X1&lt; 1179.5 4   0.06250000 3.625000  
+##                                  28518) X1&gt;=1073.5 2   0.00000000 3.500000 *
+##                                  28519) X1&lt; 1073.5 2   0.00000000 3.750000 *
+##                             3565) X1&lt; 695 17   2.51470600 3.382353  
+##                               7130) X1&lt; 640 15   1.93333300 3.316667  
+##                                14260) cocoa_percent&lt; 0.73 14   1.73214300 3.285714  
+##                                  28520) review_date&gt;=2015.5 5   0.82500000 3.100000  
+##                                    57040) X1&gt;=234.5 1   0.00000000 2.500000 *
+##                                    57041) X1&lt; 234.5 4   0.37500000 3.250000  
+##                                     114082) X1&gt;=135 3   0.29166670 3.166667  
+##                                       228164) X1&lt; 139.5 1   0.00000000 2.750000 *
+##                                       228165) X1&gt;=139.5 2   0.03125000 3.375000  
+##                                         456330) X1&lt; 142.5 1   0.00000000 3.250000 *
+##                                         456331) X1&gt;=142.5 1   0.00000000 3.500000 *
+##                                     114083) X1&lt; 135 1   0.00000000 3.500000 *
+##                                  28521) review_date&lt; 2015.5 9   0.63888890 3.388889  
+##                                    57042) review_date&lt; 2014.5 5   0.25000000 3.250000  
+##                                     114084) bean_type=Beniano 1   0.00000000 3.000000 *
+##                                     114085) bean_type=Amazon, ICS,Blend 4   0.17187500 3.312500  
+##                                       228170) X1&lt; 460.5 2   0.03125000 3.125000  
+##                                         456340) X1&gt;=268.5 1   0.00000000 3.000000 *
+##                                         456341) X1&lt; 268.5 1   0.00000000 3.250000 *
+##                                       228171) X1&gt;=460.5 2   0.00000000 3.500000 *
+##                                    57043) review_date&gt;=2014.5 4   0.17187500 3.562500  
+##                                     114086) X1&gt;=462.5 1   0.00000000 3.250000 *
+##                                     114087) X1&lt; 462.5 3   0.04166667 3.666667  
+##                                       228174) X1&lt; 197 1   0.00000000 3.500000 *
+##                                       228175) X1&gt;=197 2   0.00000000 3.750000 *
+##                                14261) cocoa_percent&gt;=0.73 1   0.00000000 3.750000 *
+##                               7131) X1&gt;=640 2   0.03125000 3.875000  
+##                                14262) X1&lt; 642.5 1   0.00000000 3.750000 *
+##                                14263) X1&gt;=642.5 1   0.00000000 4.000000 *
+##                           1783) broad_bean_origin=Brazil 11   0.97727270 3.454545  
+##                             3566) X1&gt;=1298.5 2   0.28125000 3.125000  
+##                               7132) X1&lt; 1316.5 1   0.00000000 2.750000 *
+##                               7133) X1&gt;=1316.5 1   0.00000000 3.500000 *
+##                             3567) X1&lt; 1298.5 9   0.43055560 3.527778  
+##                               7134) cocoa_percent&lt; 0.675 1   0.00000000 3.000000 *
+##                               7135) cocoa_percent&gt;=0.675 8   0.11718750 3.593750  
+##                                14270) review_date&lt; 2015.5 6   0.05208333 3.541667  
+##                                  28540) review_date&gt;=2011 5   0.00000000 3.500000 *
+##                                  28541) review_date&lt; 2011 1   0.00000000 3.750000 *
+##                                14271) review_date&gt;=2015.5 2   0.00000000 3.750000 *
+##                      223) broad_bean_origin=Colombia,Dominican Rep., Bali,Dominican Republic,India,Madagascar,Nicaragua,Panama,Peru, Mad., Dom. Rep.,Tanzania,Venezuela, Java 15   0.47500000 3.600000  
+##                        446) broad_bean_origin=Colombia,Dominican Republic,India,Madagascar,Panama,Peru, Mad., Dom. Rep.,Tanzania 11   0.05681818 3.522727  
+##                          892) review_date&gt;=2010.5 9   0.00000000 3.500000 *
+##                          893) review_date&lt; 2010.5 2   0.03125000 3.625000  
+##                           1786) X1&lt; 881.5 1   0.00000000 3.500000 *
+##                           1787) X1&gt;=881.5 1   0.00000000 3.750000 *
+##                        447) broad_bean_origin=Dominican Rep., Bali,Nicaragua,Venezuela, Java 4   0.17187500 3.812500  
+##                          894) cocoa_percent&gt;=0.71 1   0.00000000 3.500000 *
+##                          895) cocoa_percent&lt; 0.71 3   0.04166667 3.916667  
+##                           1790) broad_bean_origin=Dominican Rep., Bali 1   0.00000000 3.750000 *
+##                           1791) broad_bean_origin=Nicaragua,Venezuela, Java 2   0.00000000 4.000000 *
+##              7) company_location=Amsterdam,Argentina,Australia,Bolivia,Brazil,Canada,Chile,Denmark,Fiji,Finland,France,Germany,Guatemala,Iceland,Israel,Italy,Lithuania,Netherlands,Poland,Russia,Sao Tome,Scotland,South Korea,Spain,Suriname,Switzerland,Vietnam 482  99.88745000 3.335062  
+##               14) broad_bean_origin=Australia,Belize,Bolivia,Brazil,Burma,Carribean,Colombia,Costa Rica,Cuba,Dominican Republic,Ecuador,Fiji,Gabon,Grenada,Guatemala,Honduras,India,Ivory Coast,Mexico,Nicaragua,Panama,Papua New Guinea,Sao Tome,South America, Africa,Sri Lanka,Suriname,Tanzania,Togo,Trinidad,Trinidad-Tobago,Uganda,Ven, Trinidad, Ecuador,Venezuela, Carribean,Venezuela, Ghana,West Africa 258  49.44404000 3.212209  
+##                 28) company_location=Canada,France,Germany,Italy,Spain 165  34.43182000 3.136364  
+##                   56) cocoa_percent&gt;=0.84 6   1.58333300 2.416667  
+##                    112) review_date&lt; 2008 3   0.50000000 2.000000  
+##                      224) X1&lt; 1357.5 2   0.12500000 1.750000  
+##                        448) X1&gt;=1125.5 1   0.00000000 1.500000 *
+##                        449) X1&lt; 1125.5 1   0.00000000 2.000000 *
+##                      225) X1&gt;=1357.5 1   0.00000000 2.500000 *
+##                    113) review_date&gt;=2008 3   0.04166667 2.833333  
+##                      226) X1&lt; 977.5 2   0.00000000 2.750000 *
+##                      227) X1&gt;=977.5 1   0.00000000 3.000000 *
+##                   57) cocoa_percent&lt; 0.84 159  29.62343000 3.163522  
+##                    114) X1&lt; 1056.5 118  23.77966000 3.101695  
+##                      228) broad_bean_origin=Belize,Burma,Carribean,Colombia,Ecuador,Fiji,Guatemala,Ivory Coast,Nicaragua,Panama,Sri Lanka,Tanzania,Togo,Trinidad-Tobago,Uganda 47   9.12234000 2.962766  
+##                        456) X1&gt;=614.5 17   2.02941200 2.794118  
+##                          912) review_date&lt; 2012 6   0.87500000 2.500000  
+##                           1824) X1&gt;=810.5 3   0.37500000 2.250000  
+##                             3648) X1&lt; 975.5 2   0.00000000 2.000000 *
+##                             3649) X1&gt;=975.5 1   0.00000000 2.750000 *
+##                           1825) X1&lt; 810.5 3   0.12500000 2.750000  
+##                             3650) bean_type=Forastero (Arriba) 1   0.00000000 2.500000 *
+##                             3651) bean_type=Forastero (Nacional) 1   0.00000000 3.000000 *
+##                          913) review_date&gt;=2012 11   0.35227270 2.954545  
+##                           1826) broad_bean_origin=Belize,Guatemala,Nicaragua,Trinidad-Tobago 6   0.08333333 2.833333  
+##                             3652) X1&lt; 1002.5 5   0.05000000 2.800000  
+##                               7304) X1&gt;=725 4   0.00000000 2.750000 *
+##                               7305) X1&lt; 725 1   0.00000000 3.000000 *
+##                             3653) X1&gt;=1002.5 1   0.00000000 3.000000 *
+##                           1827) broad_bean_origin=Ecuador,Fiji,Ivory Coast 5   0.07500000 3.100000  
+##                             3654) X1&gt;=914 2   0.00000000 3.000000 *
+##                             3655) X1&lt; 914 3   0.04166667 3.166667  
+##                               7310) broad_bean_origin=Ivory Coast 1   0.00000000 3.000000 *
+##                               7311) broad_bean_origin=Ecuador 1   0.00000000 3.250000 *
+##                        457) X1&lt; 614.5 30   6.33541700 3.058333  
+##                          914) company_location=Canada,France,Germany,Spain 26   4.61538500 2.980769  
+##                           1828) broad_bean_origin=Tanzania 2   0.12500000 2.250000  
+##                             3656) X1&lt; 336 1   0.00000000 2.000000 *
+##                             3657) X1&gt;=336 1   0.00000000 2.500000 *
+##                           1829) broad_bean_origin=Belize,Burma,Carribean,Colombia,Ecuador,Panama,Sri Lanka,Togo,Uganda 24   3.33333300 3.041667  
+##                             3658) bean_type=Forastero,Forastero (Arriba) 4   0.17187500 2.687500  
+##                               7316) broad_bean_origin=Ecuador 2   0.00000000 2.500000 *
+##                               7317) broad_bean_origin=Sri Lanka,Uganda 2   0.03125000 2.875000  
+##                                14634) X1&gt;=255.5 1   0.00000000 2.750000 *
+##                                14635) X1&lt; 255.5 1   0.00000000 3.000000 *
+##                             3659) bean_type=Forastero (Nacional),Trinitario 20   2.55937500 3.112500  
+##                               7318) X1&lt; 145.5 12   1.18229200 2.979167  
+##                                14636) X1&gt;=13.5 7   0.10714290 2.857143  
+##                                  29272) broad_bean_origin=Colombia,Ecuador 3   0.00000000 2.750000 *
+##                                  29273) broad_bean_origin=Belize,Burma 4   0.04687500 2.937500  
+##                                    58546) cocoa_percent&gt;=0.805 1   0.00000000 2.750000 *
+##                                    58547) cocoa_percent&lt; 0.805 3   0.00000000 3.000000 *
+##                                14637) X1&lt; 13.5 5   0.82500000 3.150000  
+##                                  29274) X1&lt; 12 4   0.37500000 3.000000  
+##                                    58548) X1&lt; 2.5 1   0.00000000 2.750000 *
+##                                    58549) X1&gt;=2.5 3   0.29166670 3.083333  
+##                                     117098) review_date&lt; 2014 1   0.00000000 2.750000 *
+##                                     117099) review_date&gt;=2014 2   0.12500000 3.250000  
+##                                       234198) X1&lt; 3.5 1   0.00000000 3.000000 *
+##                                       234199) X1&gt;=3.5 1   0.00000000 3.500000 *
+##                                  29275) X1&gt;=12 1   0.00000000 3.750000 *
+##                               7319) X1&gt;=145.5 8   0.84375000 3.312500  
+##                                14638) X1&gt;=282.5 5   0.20000000 3.100000  
+##                                  29276) X1&lt; 316.5 2   0.03125000 2.875000  
+##                                    58552) X1&lt; 312.5 1   0.00000000 2.750000 *
+##                                    58553) X1&gt;=312.5 1   0.00000000 3.000000 *
+##                                  29277) X1&gt;=316.5 3   0.00000000 3.250000 *
+##                                14639) X1&lt; 282.5 3   0.04166667 3.666667  
+##                                  29278) review_date&gt;=2013 1   0.00000000 3.500000 *
+##                                  29279) review_date&lt; 2013 2   0.00000000 3.750000 *
+##                          915) company_location=Italy 4   0.54687500 3.562500  
+##                           1830) bean_type=Forastero (Arriba) ASS 1   0.00000000 3.000000 *
+##                           1831) bean_type=Forastero (Arriba) 1   0.00000000 4.000000 *
+##                      229) broad_bean_origin=Bolivia,Brazil,Cuba,Dominican Republic,Gabon,Grenada,Mexico,Papua New Guinea,Sao Tome,Trinidad,Ven, Trinidad, Ecuador 71  13.14965000 3.193662  
+##                        458) X1&gt;=1055 1   0.00000000 2.000000 *
+##                        459) X1&lt; 1055 70  11.70446000 3.210714  
+##                          918) cocoa_percent&gt;=0.765 4   0.37500000 2.750000  
+##                           1836) X1&lt; 313.5 1   0.00000000 2.250000 *
+##                           1837) X1&gt;=313.5 3   0.04166667 2.916667  
+##                             3674) broad_bean_origin=Papua New Guinea 1   0.00000000 2.750000 *
+##                             3675) broad_bean_origin=Brazil 1   0.00000000 3.000000 *
+##                          919) cocoa_percent&lt; 0.765 66  10.42898000 3.238636  
+##                           1838) broad_bean_origin=Bolivia,Cuba,Gabon,Grenada,Mexico,Trinidad,Ven, Trinidad, Ecuador 37   6.15202700 3.162162  
+##                             3676) review_date&gt;=2013.5 14   2.18303600 2.982143  
+##                               7352) X1&lt; 1008 13   1.54807700 2.923077  
+##                                14704) review_date&lt; 2014.5 10   0.85000000 2.800000  
+##                                  29408) X1&gt;=19.5 9   0.30555560 2.722222  
+##                                    58816) X1&lt; 482.5 4   0.04687500 2.562500  
+##                                     117632) X1&gt;=56.5 3   0.00000000 2.500000 *
+##                                     117633) X1&lt; 56.5 1   0.00000000 2.750000 *
+##                                    58817) X1&gt;=482.5 5   0.07500000 2.850000  
+##                                     117634) X1&gt;=724 2   0.00000000 2.750000 *
+##                                     117635) X1&lt; 724 3   0.04166667 2.916667  
+##                                       235270) X1&lt; 624.5 1   0.00000000 2.750000 *
+##                                       235271) X1&gt;=624.5 2   0.00000000 3.000000 *
+##                                  29409) X1&lt; 19.5 1   0.00000000 3.500000 *
+##                                14705) review_date&gt;=2014.5 3   0.04166667 3.333333  
+##                                  29410) review_date&lt; 2015.5 2   0.00000000 3.250000 *
+##                                  29411) review_date&gt;=2015.5 1   0.00000000 3.500000 *
+##                               7353) X1&gt;=1008 1   0.00000000 3.750000 *
+##                             3677) review_date&lt; 2013.5 23   3.23913000 3.271739  
+##                               7354) X1&lt; 738 18   2.56944400 3.194444  
+##                                14708) X1&gt;=268 8   1.05468800 3.031250  
+##                                  29416) X1&lt; 294.5 1   0.00000000 2.500000 *
+##                                  29417) X1&gt;=294.5 7   0.73214290 3.107143  
+##                                    58834) review_date&lt; 2008 1   0.00000000 2.500000 *
+##                                    58835) review_date&gt;=2008 6   0.30208330 3.208333  
+##                                     117670) X1&gt;=663.5 1   0.00000000 2.750000 *
+##                                     117671) X1&lt; 663.5 5   0.05000000 3.300000  
+##                                       235342) X1&gt;=328 4   0.00000000 3.250000 *
+##                                       235343) X1&lt; 328 1   0.00000000 3.500000 *
+##                                14709) X1&lt; 268 10   1.13125000 3.325000  
+##                                  29418) X1&lt; 259.5 9   0.62500000 3.250000  
+##                                    58836) cocoa_percent&lt; 0.68 2   0.03125000 2.875000  
+##                                     117672) X1&lt; 195 1   0.00000000 2.750000 *
+##                                     117673) X1&gt;=195 1   0.00000000 3.000000 *
+##                                    58837) cocoa_percent&gt;=0.68 7   0.23214290 3.357143  
+##                                     117674) bean_type=Criollo 1   0.00000000 3.000000 *
+##                                     117675) bean_type=Trinitario 6   0.08333333 3.416667  
+##                                       235350) X1&gt;=127.5 3   0.04166667 3.333333  
+##                                         470700) broad_bean_origin=Gabon,Grenada 2   0.00000000 3.250000 *
+##                                         470701) broad_bean_origin=Cuba 1   0.00000000 3.500000 *
+##                                       235351) X1&lt; 127.5 3   0.00000000 3.500000 *
+##                                  29419) X1&gt;=259.5 1   0.00000000 4.000000 *
+##                               7355) X1&gt;=738 5   0.17500000 3.550000  
+##                                14710) cocoa_percent&gt;=0.67 3   0.04166667 3.416667  
+##                                  29420) review_date&lt; 2009.5 1   0.00000000 3.250000 *
+##                                  29421) review_date&gt;=2009.5 2   0.00000000 3.500000 *
+##                                14711) cocoa_percent&lt; 0.67 2   0.00000000 3.750000 *
+##                           1839) broad_bean_origin=Brazil,Dominican Republic,Papua New Guinea,Sao Tome 29   3.78448300 3.336207  
+##                             3678) X1&gt;=951.5 3   0.04166667 2.916667  
+##                               7356) X1&lt; 985 1   0.00000000 2.750000 *
+##                               7357) X1&gt;=985 2   0.00000000 3.000000 *
+##                             3679) X1&lt; 951.5 26   3.15384600 3.384615  
+##                               7358) review_date&lt; 2009.5 7   0.71428570 3.178571  
+##                                14716) company_location=Canada,France,Spain 6   0.33333330 3.083333  
+##                                  29432) X1&lt; 260 1   0.00000000 2.750000 *
+##                                  29433) X1&gt;=260 5   0.20000000 3.150000  
+##                                    58866) broad_bean_origin=Brazil,Papua New Guinea 3   0.04166667 3.083333  
+##                                     117732) cocoa_percent&lt; 0.725 2   0.00000000 3.000000 *
+##                                     117733) cocoa_percent&gt;=0.725 1   0.00000000 3.250000 *
+##                                    58867) broad_bean_origin=Sao Tome 2   0.12500000 3.250000  
+##                                     117734) X1&gt;=894 1   0.00000000 3.000000 *
+##                                     117735) X1&lt; 894 1   0.00000000 3.500000 *
+##                                14717) company_location=Italy 1   0.00000000 3.750000 *
+##                               7359) review_date&gt;=2009.5 19   2.03289500 3.460526  
+##                                14718) company_location=Canada,France,Italy 18   1.72569400 3.430556  
+##                                  29436) broad_bean_origin=Dominican Republic,Papua New Guinea 10   0.65625000 3.375000  
+##                                    58872) X1&lt; 380.5 5   0.07500000 3.150000  
+##                                     117744) X1&gt;=209 2   0.00000000 3.000000 *
+##                                     117745) X1&lt; 209 3   0.00000000 3.250000 *
+##                                    58873) X1&gt;=380.5 5   0.07500000 3.600000  
+##                                     117746) X1&gt;=686.5 3   0.00000000 3.500000 *
+##                                     117747) X1&lt; 686.5 2   0.00000000 3.750000 *
+##                                  29437) broad_bean_origin=Brazil,Sao Tome 8   1.00000000 3.500000  
+##                                    58874) company_location=Canada 1   0.00000000 2.750000 *
+##                                    58875) company_location=France 7   0.35714290 3.607143  
+##                                     117750) X1&gt;=182.5 5   0.12500000 3.500000  
+##                                       235500) X1&gt;=761.5 1   0.00000000 3.250000 *
+##                                       235501) X1&lt; 761.5 4   0.04687500 3.562500  
+##                                         471002) X1&gt;=190.5 2   0.00000000 3.500000 *
+##                                         471003) X1&lt; 190.5 2   0.03125000 3.625000  
+##                                           942006) X1&lt; 186.5 1   0.00000000 3.500000 *
+##                                           942007) X1&gt;=186.5 1   0.00000000 3.750000 *
+##                                     117751) X1&lt; 182.5 2   0.03125000 3.875000  
+##                                       235502) X1&lt; 91 1   0.00000000 3.750000 *
+##                                       235503) X1&gt;=91 1   0.00000000 4.000000 *
+##                                14719) company_location=Spain 1   0.00000000 4.000000 *
+##                    115) X1&gt;=1056.5 41   4.09451200 3.341463  
+##                      230) broad_bean_origin=Belize,Carribean,Cuba,Grenada,Sao Tome,Venezuela, Carribean,Venezuela, Ghana,West Africa 9   0.22222220 2.944444  
+##                        460) cocoa_percent&gt;=0.655 8   0.11718750 2.906250  
+##                          920) broad_bean_origin=Grenada,Sao Tome,West Africa 3   0.00000000 2.750000 *
+##                          921) broad_bean_origin=Belize,Carribean,Cuba,Venezuela, Carribean,Venezuela, Ghana 5   0.00000000 3.000000 *
+##                        461) cocoa_percent&lt; 0.655 1   0.00000000 3.250000 *
+##                      231) broad_bean_origin=Bolivia,Brazil,Colombia,Dominican Republic,Ecuador,Guatemala,Nicaragua,Papua New Guinea,Tanzania,Trinidad 32   2.05468800 3.453125  
+##                        462) cocoa_percent&lt; 0.76 29   1.63793100 3.422414  
+##                          924) broad_bean_origin=Brazil,Colombia,Dominican Republic,Guatemala 14   0.95089290 3.339286  
+##                           1848) X1&lt; 1295.5 12   0.72916670 3.291667  
+##                             3696) X1&gt;=1240 3   0.04166667 3.083333  
+##                               7392) X1&lt; 1246 2   0.00000000 3.000000 *
+##                               7393) X1&gt;=1246 1   0.00000000 3.250000 *
+##                             3697) X1&lt; 1240 9   0.51388890 3.361111  
+##                               7394) X1&lt; 1192.5 6   0.25000000 3.250000  
+##                                14788) bean_type=Criollo, Trinitario,Forastero 2   0.00000000 3.000000 *
+##                                14789) bean_type=Trinitario 2   0.03125000 3.375000  
+##                                  29578) X1&gt;=1117.5 1   0.00000000 3.250000 *
+##                                  29579) X1&lt; 1117.5 1   0.00000000 3.500000 *
+##                               7395) X1&gt;=1192.5 3   0.04166667 3.583333  
+##                                14790) X1&lt; 1236 2   0.00000000 3.500000 *
+##                                14791) X1&gt;=1236 1   0.00000000 3.750000 *
+##                           1849) X1&gt;=1295.5 2   0.03125000 3.625000  
+##                             3698) X1&gt;=1345.5 1   0.00000000 3.500000 *
+##                             3699) X1&lt; 1345.5 1   0.00000000 3.750000 *
+##                          925) broad_bean_origin=Bolivia,Ecuador,Nicaragua,Papua New Guinea,Tanzania,Trinidad 15   0.50000000 3.500000  
+##                           1850) X1&gt;=1211 9   0.34722220 3.444444  
+##                             3700) review_date&gt;=2013.5 4   0.04687500 3.312500  
+##                               7400) X1&gt;=1216 2   0.00000000 3.250000 *
+##                               7401) X1&lt; 1216 2   0.03125000 3.375000  
+##                                14802) X1&lt; 1213.5 1   0.00000000 3.250000 *
+##                                14803) X1&gt;=1213.5 1   0.00000000 3.500000 *
+##                             3701) review_date&lt; 2013.5 5   0.17500000 3.550000  
+##                               7402) X1&gt;=1222.5 4   0.12500000 3.500000  
+##                                14804) X1&lt; 1233.5 1   0.00000000 3.250000 *
+##                                14805) X1&gt;=1233.5 3   0.04166667 3.583333  
+##                                  29610) X1&lt; 1350 2   0.00000000 3.500000 *
+##                                  29611) X1&gt;=1350 1   0.00000000 3.750000 *
+##                               7403) X1&lt; 1222.5 1   0.00000000 3.750000 *
+##                           1851) X1&lt; 1211 6   0.08333333 3.583333  
+##                             3702) X1&lt; 1173.5 4   0.00000000 3.500000 *
+##                             3703) X1&gt;=1173.5 2   0.00000000 3.750000 *
+##                        463) cocoa_percent&gt;=0.76 3   0.12500000 3.750000  
+##                          926) X1&gt;=1142 2   0.03125000 3.625000  
+##                           1852) X1&lt; 1219 1   0.00000000 3.500000 *
+##                           1853) X1&gt;=1219 1   0.00000000 3.750000 *
+##                          927) X1&lt; 1142 1   0.00000000 4.000000 *
+##                 29) company_location=Amsterdam,Argentina,Australia,Bolivia,Brazil,Denmark,Fiji,Guatemala,Iceland,Israel,Lithuania,Netherlands,Poland,Russia,South Korea,Suriname,Switzerland 93  12.37903000 3.346774  
+##                   58) bean_type=Blend,Forastero,Forastero (Nacional) 9   1.47222200 3.055556  
+##                    116) company_location=Australia,Switzerland 4   0.37500000 2.750000  
+##                      232) X1&lt; 384.5 3   0.04166667 2.583333  
+##                        464) cocoa_percent&lt; 0.725 2   0.00000000 2.500000 *
+##                        465) cocoa_percent&gt;=0.725 1   0.00000000 2.750000 *
+##                      233) X1&gt;=384.5 1   0.00000000 3.250000 *
+##                    117) company_location=Argentina,Netherlands 5   0.42500000 3.300000  
+##                      234) cocoa_percent&gt;=0.8 1   0.00000000 2.750000 *
+##                      235) cocoa_percent&lt; 0.8 4   0.04687500 3.437500  
+##                        470) cocoa_percent&gt;=0.71 1   0.00000000 3.250000 *
+##                        471) cocoa_percent&lt; 0.71 3   0.00000000 3.500000 *
+##                   59) bean_type=Criollo,Criollo (Wild),Criollo, Trinitario,Forastero (Arriba),Forastero (Arriba) ASSS,Forastero (Catongo),Forastero (Parazinho),Trinitario 84  10.06176000 3.377976  
+##                    118) broad_bean_origin=Australia,Bolivia,Brazil,Costa Rica,Dominican Republic,Fiji,Guatemala,Honduras,India,Nicaragua,Papua New Guinea,South America, Africa,Suriname,Trinidad 69   8.01268100 3.322464  
+##                      236) bean_type=Criollo,Criollo, Trinitario,Forastero (Catongo),Trinitario 55   5.88181800 3.281818  
+##                        472) broad_bean_origin=Brazil,South America, Africa,Trinidad 7   0.75000000 3.000000  
+##                          944) company_location=Australia,Switzerland 5   0.32500000 2.850000  
+##                           1888) cocoa_percent&gt;=0.665 4   0.12500000 2.750000  
+##                             3776) X1&lt; 175 1   0.00000000 2.500000 *
+##                             3777) X1&gt;=175 3   0.04166667 2.833333  
+##                               7554) cocoa_percent&lt; 0.69 2   0.00000000 2.750000 *
+##                               7555) cocoa_percent&gt;=0.69 1   0.00000000 3.000000 *
+##                           1889) cocoa_percent&lt; 0.665 1   0.00000000 3.250000 *
+##                          945) company_location=Brazil,Israel 2   0.03125000 3.375000  
+##                           1890) X1&lt; 367.5 1   0.00000000 3.250000 *
+##                           1891) X1&gt;=367.5 1   0.00000000 3.500000 *
+##                        473) broad_bean_origin=Australia,Bolivia,Costa Rica,Dominican Republic,Fiji,Guatemala,Honduras,India,Nicaragua,Papua New Guinea,Suriname 48   4.49479200 3.322917  
+##                          946) review_date&gt;=2013.5 20   1.28437500 3.212500  
+##                           1892) review_date&lt; 2015.5 12   0.68229170 3.104167  
+##                             3784) X1&gt;=984.5 2   0.00000000 2.750000 *
+##                             3785) X1&lt; 984.5 10   0.38125000 3.175000  
+##                               7570) broad_bean_origin=Australia 1   0.00000000 2.750000 *
+##                               7571) broad_bean_origin=Dominican Republic,Guatemala,Nicaragua,Papua New Guinea 9   0.18055560 3.222222  
+##                                15142) company_location=Denmark,Iceland 3   0.04166667 3.083333  
+##                                  30284) cocoa_percent&lt; 0.775 2   0.00000000 3.000000 *
+##                                  30285) cocoa_percent&gt;=0.775 1   0.00000000 3.250000 *
+##                                15143) company_location=Amsterdam,Australia,Guatemala,Lithuania 6   0.05208333 3.291667  
+##                                  30286) X1&gt;=228.5 4   0.00000000 3.250000 *
+##                                  30287) X1&lt; 228.5 2   0.03125000 3.375000  
+##                                    60574) X1&lt; 123.5 1   0.00000000 3.250000 *
+##                                    60575) X1&gt;=123.5 1   0.00000000 3.500000 *
+##                           1893) review_date&gt;=2015.5 8   0.25000000 3.375000  
+##                             3786) broad_bean_origin=Costa Rica,Guatemala,Suriname 5   0.00000000 3.250000 *
+##                             3787) broad_bean_origin=Australia,Dominican Republic,Nicaragua 3   0.04166667 3.583333  
+##                               7574) X1&lt; 1185.5 2   0.00000000 3.500000 *
+##                               7575) X1&gt;=1185.5 1   0.00000000 3.750000 *
+##                          947) review_date&lt; 2013.5 28   2.79241100 3.401786  
+##                           1894) review_date&lt; 2010.5 6   0.71875000 3.125000  
+##                             3788) cocoa_percent&lt; 0.725 4   0.25000000 3.000000  
+##                               7576) cocoa_percent&gt;=0.69 2   0.00000000 2.750000 *
+##                               7577) cocoa_percent&lt; 0.69 2   0.00000000 3.250000 *
+##                             3789) cocoa_percent&gt;=0.725 2   0.28125000 3.375000  
+##                               7578) X1&lt; 539.5 1   0.00000000 3.000000 *
+##                               7579) X1&gt;=539.5 1   0.00000000 3.750000 *
+##                           1895) review_date&gt;=2010.5 22   1.48863600 3.477273  
+##                             3790) company_location=Denmark,Fiji,Poland,Switzerland 12   0.43229170 3.354167  
+##                               7580) broad_bean_origin=Bolivia,Dominican Republic,Honduras,India 4   0.04687500 3.187500  
+##                                15160) review_date&gt;=2012.5 1   0.00000000 3.000000 *
+##                                15161) review_date&lt; 2012.5 3   0.00000000 3.250000 *
+##                               7581) broad_bean_origin=Fiji,Nicaragua 8   0.21875000 3.437500  
+##                                15162) X1&lt; 24.5 1   0.00000000 3.250000 *
+##                                15163) X1&gt;=24.5 7   0.17857140 3.464286  
+##                                  30326) bean_type=Criollo, Trinitario 5   0.17500000 3.450000  
+##                                    60652) X1&lt; 573.5 1   0.00000000 3.250000 *
+##                                    60653) X1&gt;=573.5 4   0.12500000 3.500000  
+##                                     121306) X1&gt;=574.5 3   0.04166667 3.416667  
+##                                       242612) X1&lt; 575.5 1   0.00000000 3.250000 *
+##                                       242613) X1&gt;=575.5 2   0.00000000 3.500000 *
+##                                     121307) X1&lt; 574.5 1   0.00000000 3.750000 *
+##                                  30327) bean_type=Trinitario 2   0.00000000 3.500000 *
+##                             3791) company_location=Australia,Bolivia,Guatemala 10   0.65625000 3.625000  
+##                               7582) cocoa_percent&lt; 0.69 4   0.04687500 3.437500  
+##                                15164) X1&lt; 400.5 1   0.00000000 3.250000 *
+##                                15165) X1&gt;=400.5 3   0.00000000 3.500000 *
+##                               7583) cocoa_percent&gt;=0.69 6   0.37500000 3.750000  
+##                                15166) review_date&lt; 2012.5 5   0.30000000 3.700000  
+##                                  30332) X1&gt;=412.5 3   0.16666670 3.583333  
+##                                    60664) X1&lt; 453 1   0.00000000 3.250000 *
+##                                    60665) X1&gt;=453 2   0.00000000 3.750000 *
+##                                  30333) X1&lt; 412.5 2   0.03125000 3.875000  
+##                                    60666) X1&lt; 411 1   0.00000000 3.750000 *
+##                                    60667) X1&gt;=411 1   0.00000000 4.000000 *
+##                                15167) review_date&gt;=2012.5 1   0.00000000 4.000000 *
+##                      237) bean_type=Criollo (Wild),Forastero (Parazinho) 14   1.68303600 3.482143  
+##                        474) X1&gt;=994 6   0.33333330 3.166667  
+##                          948) cocoa_percent&lt; 0.625 2   0.03125000 2.875000  
+##                           1896) X1&lt; 1080 1   0.00000000 2.750000 *
+##                           1897) X1&gt;=1080 1   0.00000000 3.000000 *
+##                          949) cocoa_percent&gt;=0.625 4   0.04687500 3.312500  
+##                           1898) cocoa_percent&lt; 0.825 3   0.00000000 3.250000 *
+##                           1899) cocoa_percent&gt;=0.825 1   0.00000000 3.500000 *
+##                        475) X1&lt; 994 8   0.30468750 3.718750  
+##                          950) review_date&gt;=2012.5 4   0.04687500 3.562500  
+##                           1900) review_date&lt; 2015.5 3   0.00000000 3.500000 *
+##                           1901) review_date&gt;=2015.5 1   0.00000000 3.750000 *
+##                          951) review_date&lt; 2012.5 4   0.06250000 3.875000  
+##                           1902) X1&lt; 76.5 2   0.00000000 3.750000 *
+##                           1903) X1&gt;=76.5 2   0.00000000 4.000000 *
+##                    119) broad_bean_origin=Belize,Colombia,Ecuador,Grenada,Tanzania 15   0.85833330 3.633333  
+##                      238) company_location=Argentina,Israel,Poland,Russia 5   0.07500000 3.400000  
+##                        476) company_location=Poland,Russia 3   0.04166667 3.333333  
+##                          952) cocoa_percent&lt; 0.775 2   0.00000000 3.250000 *
+##                          953) cocoa_percent&gt;=0.775 1   0.00000000 3.500000 *
+##                        477) company_location=Argentina,Israel 2   0.00000000 3.500000 *
+##                      239) company_location=Australia,Iceland,Switzerland 10   0.37500000 3.750000  
+##                        478) review_date&lt; 2010.5 2   0.00000000 3.500000 *
+##                        479) review_date&gt;=2010.5 8   0.21875000 3.812500  
+##                          958) X1&gt;=188 7   0.17857140 3.785714  
+##                           1916) X1&lt; 601.5 1   0.00000000 3.500000 *
+##                           1917) X1&gt;=601.5 6   0.08333333 3.833333  
+##                             3834) broad_bean_origin=Belize,Tanzania 3   0.00000000 3.750000 *
+##                             3835) broad_bean_origin=Ecuador 3   0.04166667 3.916667  
+##                               7670) X1&gt;=1225.5 1   0.00000000 3.750000 *
+##                               7671) X1&lt; 1225.5 2   0.00000000 4.000000 *
+##                          959) X1&lt; 188 1   0.00000000 4.000000 *
+##               15) broad_bean_origin=Congo,Dom. Rep., Madagascar,Domincan Republic,DR, Ecuador, Peru,Ghana,Gre., PNG, Haw., Haiti, Mad,Guat., D.R., Peru, Mad., PNG,Haiti,Hawaii,Indonesia,Indonesia, Ghana,Jamaica,Mad., Java, PNG,Madagascar,Malaysia,Peru,Peru, Dom. Rep,PNG, Vanuatu, Mad,Sao Tome &amp; Principe,South America,Tobago,Trinidad, Ecuador,Trinidad, Tobago,Vanuatu,Ven, Bolivia, D.R.,Ven., Indonesia, Ecuad.,Ven.,Ecu.,Peru,Nic.,Venez,Africa,Brasil,Peru,Mex,Venezuela,Vietnam 224  42.06445000 3.476562  
+##                 30) broad_bean_origin=Congo,Domincan Republic,Ghana,Haiti,Indonesia,Indonesia, Ghana,Jamaica,Mad., Java, PNG,Madagascar,Malaysia,Peru,Sao Tome &amp; Principe,Trinidad, Ecuador,Vanuatu,Ven., Indonesia, Ecuad.,Venezuela,Vietnam 210  39.56220000 3.451190  
+##                   60) cocoa_percent&lt; 0.625 5   1.57500000 2.900000  
+##                    120) company_location=Denmark,Switzerland 2   0.12500000 2.250000  
+##                      240) X1&lt; 898.5 1   0.00000000 2.000000 *
+##                      241) X1&gt;=898.5 1   0.00000000 2.500000 *
+##                    121) company_location=Canada,Germany,Italy 3   0.04166667 3.333333  
+##                      242) X1&lt; 834.5 2   0.00000000 3.250000 *
+##                      243) X1&gt;=834.5 1   0.00000000 3.500000 *
+##                   61) cocoa_percent&gt;=0.625 205  36.43110000 3.464634  
+##                    122) cocoa_percent&gt;=0.79 16   1.96484400 3.171875  
+##                      244) company_location=Argentina,Canada,France,Italy,Sao Tome,Switzerland,Vietnam 10   0.47500000 2.950000  
+##                        488) company_location=Argentina,Canada,France 4   0.12500000 2.750000  
+##                          976) X1&lt; 358.5 1   0.00000000 2.500000 *
+##                          977) X1&gt;=358.5 3   0.04166667 2.833333  
+##                           1954) X1&lt; 495 2   0.00000000 2.750000 *
+##                           1955) X1&gt;=495 1   0.00000000 3.000000 *
+##                        489) company_location=Italy,Sao Tome,Switzerland,Vietnam 6   0.08333333 3.083333  
+##                          978) review_date&lt; 2013 4   0.00000000 3.000000 *
+##                          979) review_date&gt;=2013 2   0.00000000 3.250000 *
+##                      245) company_location=Amsterdam,Germany,Scotland,Spain 6   0.17708330 3.541667  
+##                        490) company_location=Germany,Spain 4   0.04687500 3.437500  
+##                          980) review_date&lt; 2011 1   0.00000000 3.250000 *
+##                          981) review_date&gt;=2011 3   0.00000000 3.500000 *
+##                        491) company_location=Amsterdam,Scotland 2   0.00000000 3.750000 *
+##                    123) cocoa_percent&lt; 0.79 189  32.97884000 3.489418  
+##                      246) bean_type=Criollo,Criollo (Ocumare 61),Criollo (Porcelana),Criollo, Forastero,Forastero,Forastero (Nacional),Trinitario,Trinitario, Criollo 175  29.33929000 3.464286  
+##                        492) company_location=Australia,Finland,Germany,Israel,Lithuania 29   3.88362100 3.293103  
+##                          984) bean_type=Criollo (Porcelana),Forastero (Nacional),Trinitario 25   2.79000000 3.220000  
+##                           1968) broad_bean_origin=Peru,Venezuela,Vietnam 9   1.09722200 3.055556  
+##                             3936) cocoa_percent&lt; 0.75 8   0.55468750 2.968750  
+##                               7872) cocoa_percent&lt; 0.655 1   0.00000000 2.500000 *
+##                               7873) cocoa_percent&gt;=0.655 7   0.30357140 3.035714  
+##                                15746) review_date&gt;=2009.5 5   0.05000000 2.950000  
+##                                  31492) company_location=Israel 1   0.00000000 2.750000 *
+##                                  31493) company_location=Australia,Germany,Lithuania 4   0.00000000 3.000000 *
+##                                15747) review_date&lt; 2009.5 2   0.12500000 3.250000  
+##                                  31494) X1&lt; 522 1   0.00000000 3.000000 *
+##                                  31495) X1&gt;=522 1   0.00000000 3.500000 *
+##                             3937) cocoa_percent&gt;=0.75 1   0.00000000 3.750000 *
+##                           1969) broad_bean_origin=Domincan Republic,Madagascar,Vanuatu 16   1.31250000 3.312500  
+##                             3938) X1&gt;=1259.5 1   0.00000000 2.750000 *
+##                             3939) X1&lt; 1259.5 15   0.97500000 3.350000  
+##                               7878) X1&lt; 586 6   0.20833330 3.166667  
+##                                15756) cocoa_percent&gt;=0.71 2   0.00000000 3.000000 *
+##                                15757) cocoa_percent&lt; 0.71 4   0.12500000 3.250000  
+##                                  31514) X1&lt; 250 1   0.00000000 3.000000 *
+##                                  31515) X1&gt;=250 3   0.04166667 3.333333  
+##                                    63030) cocoa_percent&lt; 0.675 2   0.00000000 3.250000 *
+##                                    63031) cocoa_percent&gt;=0.675 1   0.00000000 3.500000 *
+##                               7879) X1&gt;=586 9   0.43055560 3.472222  
+##                                15758) company_location=Finland 1   0.00000000 3.000000 *
+##                                15759) company_location=Australia,Germany,Israel 8   0.17968750 3.531250  
+##                                  31518) X1&lt; 1225 7   0.12500000 3.500000  
+##                                    63036) review_date&gt;=2011 6   0.05208333 3.458333  
+##                                     126072) cocoa_percent&lt; 0.675 1   0.00000000 3.250000 *
+##                                     126073) cocoa_percent&gt;=0.675 5   0.00000000 3.500000 *
+##                                    63037) review_date&lt; 2011 1   0.00000000 3.750000 *
+##                                  31519) X1&gt;=1225 1   0.00000000 3.750000 *
+##                          985) bean_type=Criollo,Forastero 4   0.12500000 3.750000  
+##                           1970) company_location=Finland 1   0.00000000 3.500000 *
+##                           1971) company_location=Australia,Germany 3   0.04166667 3.833333  
+##                             3942) broad_bean_origin=Sao Tome &amp; Principe,Venezuela 2   0.00000000 3.750000 *
+##                             3943) broad_bean_origin=Ghana 1   0.00000000 4.000000 *
+##                        493) company_location=Amsterdam,Argentina,Canada,Chile,France,Guatemala,Iceland,Italy,Netherlands,Poland,Sao Tome,Scotland,South Korea,Spain,Switzerland,Vietnam 146  24.43707000 3.498288  
+##                          986) X1&lt; 1178.5 119  21.24055000 3.466387  
+##                           1972) review_date&gt;=2008.5 91  12.71154000 3.423077  
+##                             3944) review_date&lt; 2009.5 7   0.98214290 2.857143  
+##                               7888) X1&gt;=1021.5 1   0.00000000 2.000000 *
+##                               7889) X1&lt; 1021.5 6   0.12500000 3.000000  
+##                                15778) X1&lt; 273.5 1   0.00000000 2.750000 *
+##                                15779) X1&gt;=273.5 5   0.05000000 3.050000  
+##                                  31558) company_location=Canada,Italy,Switzerland 4   0.00000000 3.000000 *
+##                                  31559) company_location=France 1   0.00000000 3.250000 *
+##                             3945) review_date&gt;=2009.5 84   9.30059500 3.470238  
+##                               7890) company_location=Amsterdam,Argentina,Canada,France,Iceland,Italy,Netherlands,Scotland,South Korea,Spain,Vietnam 66   7.47064400 3.428030  
+##                                15780) bean_type=Criollo,Criollo (Porcelana),Trinitario,Trinitario, Criollo 59   6.88983100 3.398305  
+##                                  31560) cocoa_percent&gt;=0.635 57   6.38815800 3.381579  
+##                                    63120) company_location=Argentina,Italy,Scotland 10   1.75000000 3.250000  
+##                                     126240) review_date&lt; 2013.5 9   1.12500000 3.166667  
+##                                       252480) broad_bean_origin=Peru 2   0.00000000 2.750000 *
+##                                       252481) broad_bean_origin=Madagascar,Venezuela 7   0.67857140 3.285714  
+##                                         504962) cocoa_percent&gt;=0.725 1   0.00000000 2.750000 *
+##                                         504963) cocoa_percent&lt; 0.725 6   0.34375000 3.375000  
+##                                          1009926) review_date&lt; 2010.5 3   0.12500000 3.250000  
+##                                            2019852) X1&lt; 794 2   0.03125000 3.125000  
+##                                              4039704) X1&gt;=411 1   0.00000000 3.000000 *
+##                                              4039705) X1&lt; 411 1   0.00000000 3.250000 *
+##                                            2019853) X1&gt;=794 1   0.00000000 3.500000 *
+##                                          1009927) review_date&gt;=2010.5 3   0.12500000 3.500000  
+##                                            2019854) X1&lt; 397.5 1   0.00000000 3.250000 *
+##                                            2019855) X1&gt;=397.5 2   0.03125000 3.625000  
+##                                              4039710) X1&gt;=455.5 1   0.00000000 3.500000 *
+##                                              4039711) X1&lt; 455.5 1   0.00000000 3.750000 *
+##                                     126241) review_date&gt;=2013.5 1   0.00000000 4.000000 *
+##                                    63121) company_location=Canada,France,Iceland,Netherlands,South Korea,Spain,Vietnam 47   4.42819100 3.409574  
+##                                     126242) review_date&gt;=2012.5 34   3.40441200 3.367647  
+##                                       252484) cocoa_percent&gt;=0.725 11   0.90909090 3.159091  
+##                                         504968) X1&lt; 761 6   0.17708330 2.958333  
+##                                          1009936) cocoa_percent&gt;=0.745 5   0.07500000 2.900000  
+##                                            2019872) X1&gt;=421 1   0.00000000 2.750000 *
+##                                            2019873) X1&lt; 421 4   0.04687500 2.937500  
+##                                              4039746) X1&lt; 33.5 1   0.00000000 2.750000 *
+##                                              4039747) X1&gt;=33.5 3   0.00000000 3.000000 *
+##                                          1009937) cocoa_percent&lt; 0.745 1   0.00000000 3.250000 *
+##                                         504969) X1&gt;=761 5   0.20000000 3.400000  
+##                                          1009938) X1&gt;=947.5 3   0.00000000 3.250000 *
+##                                          1009939) X1&lt; 947.5 2   0.03125000 3.625000  
+##                                            2019878) X1&gt;=804 1   0.00000000 3.500000 *
+##                                            2019879) X1&lt; 804 1   0.00000000 3.750000 *
+##                                       252485) cocoa_percent&lt; 0.725 23   1.78804300 3.467391  
+##                                         504970) X1&lt; 7 2   0.28125000 3.125000  
+##                                          1009940) X1&gt;=5.5 1   0.00000000 2.750000 *
+##                                          1009941) X1&lt; 5.5 1   0.00000000 3.500000 *
+##                                         504971) X1&gt;=7 21   1.25000000 3.500000  
+##                                          1009942) X1&gt;=11 18   0.90625000 3.458333  
+##                                            2019884) bean_type=Criollo 1   0.00000000 3.000000 *
+##                                            2019885) bean_type=Trinitario,Trinitario, Criollo 17   0.68382350 3.485294  
+##                                              4039770) X1&gt;=17.5 16   0.40234380 3.453125  
+##                                                8079540) X1&lt; 843.5 13   0.19230770 3.403846  
+##                                                 16159080) broad_bean_origin=Venezuela 2   0.00000000 3.250000 *
+##                                                 16159081) broad_bean_origin=Haiti,Madagascar,Malaysia,Peru,Vietnam 11   0.13636360 3.431818  
+##                                                   32318162) X1&lt; 18.5 1   0.00000000 3.250000 *
+##                                                   32318163) X1&gt;=18.5 10   0.10000000 3.450000  
+##                                                     64636326) broad_bean_origin=Madagascar,Vietnam 6   0.08333333 3.416667  
+##                                                      129272652) cocoa_percent&lt; 0.67 1   0.00000000 3.250000 *
+##                                                      129272653) cocoa_percent&gt;=0.67 5   0.05000000 3.450000  
+##                                                        258545306) company_location=France 1   0.00000000 3.250000 *
+##                                                        258545307) company_location=Canada,Netherlands,Vietnam 4   0.00000000 3.500000 *
+##                                                     64636327) broad_bean_origin=Haiti,Malaysia,Peru 4   0.00000000 3.500000 *
+##                                                8079541) X1&gt;=843.5 3   0.04166667 3.666667  
+##                                                 16159082) review_date&lt; 2014.5 1   0.00000000 3.500000 *
+##                                                 16159083) review_date&gt;=2014.5 2   0.00000000 3.750000 *
+##                                              4039771) X1&lt; 17.5 1   0.00000000 4.000000 *
+##                                          1009943) X1&lt; 11 3   0.12500000 3.750000  
+##                                            2019886) X1&lt; 8.5 1   0.00000000 3.500000 *
+##                                            2019887) X1&gt;=8.5 2   0.03125000 3.875000  
+##                                              4039774) X1&lt; 9.5 1   0.00000000 3.750000 *
+##                                              4039775) X1&gt;=9.5 1   0.00000000 4.000000 *
+##                                     126243) review_date&lt; 2012.5 13   0.80769230 3.519231  
+##                                       252486) X1&gt;=223 10   0.25625000 3.425000  
+##                                         504972) review_date&gt;=2010.5 5   0.20000000 3.350000  
+##                                          1009944) review_date&lt; 2011.5 2   0.03125000 3.125000  
+##                                            2019888) X1&lt; 823 1   0.00000000 3.000000 *
+##                                            2019889) X1&gt;=823 1   0.00000000 3.250000 *
+##                                          1009945) review_date&gt;=2011.5 3   0.00000000 3.500000 *
+##                                         504973) review_date&lt; 2010.5 5   0.00000000 3.500000 *
+##                                       252487) X1&lt; 223 3   0.16666670 3.833333  
+##                                         504974) X1&lt; 188.5 1   0.00000000 3.500000 *
+##                                         504975) X1&gt;=188.5 2   0.00000000 4.000000 *
+##                                  31561) cocoa_percent&lt; 0.635 2   0.03125000 3.875000  
+##                                    63122) X1&gt;=21 1   0.00000000 3.750000 *
+##                                    63123) X1&lt; 21 1   0.00000000 4.000000 *
+##                                15781) bean_type=Forastero,Forastero (Nacional) 7   0.08928571 3.678571  
+##                                  31562) X1&lt; 335 2   0.00000000 3.500000 *
+##                                  31563) X1&gt;=335 5   0.00000000 3.750000 *
+##                               7891) company_location=Chile,Guatemala,Poland,Sao Tome,Switzerland 18   1.28125000 3.625000  
+##                                15782) X1&lt; 258 6   0.34375000 3.375000  
+##                                  31564) broad_bean_origin=Madagascar,Venezuela 4   0.12500000 3.250000  
+##                                    63128) X1&lt; 153 1   0.00000000 3.000000 *
+##                                    63129) X1&gt;=153 3   0.04166667 3.333333  
+##                                     126258) X1&lt; 156 2   0.00000000 3.250000 *
+##                                     126259) X1&gt;=156 1   0.00000000 3.500000 *
+##                                  31565) broad_bean_origin=Indonesia 2   0.03125000 3.625000  
+##                                    63130) X1&gt;=93 1   0.00000000 3.500000 *
+##                                    63131) X1&lt; 93 1   0.00000000 3.750000 *
+##                                15783) X1&gt;=258 12   0.37500000 3.750000  
+##                                  31566) company_location=Poland 3   0.04166667 3.583333  
+##                                    63132) broad_bean_origin=Ghana,Peru 2   0.00000000 3.500000 *
+##                                    63133) broad_bean_origin=Venezuela 1   0.00000000 3.750000 *
+##                                  31567) company_location=Chile,Guatemala,Sao Tome,Switzerland 9   0.22222220 3.805556  
+##                                    63134) X1&lt; 693.5 6   0.12500000 3.750000  
+##                                     126268) X1&gt;=692.5 1   0.00000000 3.500000 *
+##                                     126269) X1&lt; 692.5 5   0.05000000 3.800000  
+##                                       252538) X1&lt; 691.5 4   0.00000000 3.750000 *
+##                                       252539) X1&gt;=691.5 1   0.00000000 4.000000 *
+##                                    63135) X1&gt;=693.5 3   0.04166667 3.916667  
+##                                     126270) X1&gt;=827 1   0.00000000 3.750000 *
+##                                     126271) X1&lt; 827 2   0.00000000 4.000000 *
+##                           1973) review_date&lt; 2008.5 28   7.80357100 3.607143  
+##                             3946) X1&gt;=67.5 26   5.58653800 3.538462  
+##                               7892) cocoa_percent&lt; 0.735 15   3.73333300 3.366667  
+##                                15784) cocoa_percent&gt;=0.715 1   0.00000000 2.000000 *
+##                                15785) cocoa_percent&lt; 0.715 14   1.73214300 3.464286  
+##                                  31570) company_location=Italy,Spain,Switzerland 11   1.17045500 3.363636  
+##                                    63140) bean_type=Criollo,Trinitario 10   0.72500000 3.300000  
+##                                     126280) broad_bean_origin=Jamaica,Madagascar,Peru,Venezuela 9   0.50000000 3.250000  
+##                                       252560) X1&lt; 207 1   0.00000000 3.000000 *
+##                                       252561) X1&gt;=207 8   0.42968750 3.281250  
+##                                         505122) X1&gt;=497 1   0.00000000 3.000000 *
+##                                         505123) X1&lt; 497 7   0.33928570 3.321429  
+##                                          1010246) bean_type=Trinitario 5   0.25000000 3.250000  
+##                                            2020492) X1&lt; 461 1   0.00000000 3.000000 *
+##                                            2020493) X1&gt;=461 4   0.17187500 3.312500  
+##                                              4040986) X1&gt;=466.5 3   0.12500000 3.250000  
+##                                                8081972) X1&lt; 469.5 1   0.00000000 3.000000 *
+##                                                8081973) X1&gt;=469.5 2   0.03125000 3.375000  
+##                                                 16163946) X1&lt; 470.5 1   0.00000000 3.250000 *
+##                                                 16163947) X1&gt;=470.5 1   0.00000000 3.500000 *
+##                                              4040987) X1&lt; 466.5 1   0.00000000 3.500000 *
+##                                          1010247) bean_type=Criollo 2   0.00000000 3.500000 *
+##                                     126281) broad_bean_origin=Indonesia 1   0.00000000 3.750000 *
+##                                    63141) bean_type=Criollo (Porcelana) 1   0.00000000 4.000000 *
+##                                  31571) company_location=Argentina,France 3   0.04166667 3.833333  
+##                                    63142) X1&lt; 665 2   0.00000000 3.750000 *
+##                                    63143) X1&gt;=665 1   0.00000000 4.000000 *
+##                               7893) cocoa_percent&gt;=0.735 11   0.80681820 3.772727  
+##                                15786) X1&gt;=411.5 6   0.33333330 3.583333  
+##                                  31572) broad_bean_origin=Indonesia,Indonesia, Ghana,Venezuela 4   0.04687500 3.437500  
+##                                    63144) X1&lt; 762 1   0.00000000 3.250000 *
+##                                    63145) X1&gt;=762 3   0.00000000 3.500000 *
+##                                  31573) broad_bean_origin=Jamaica,Madagascar 2   0.03125000 3.875000  
+##                                    63146) X1&lt; 1062.5 1   0.00000000 3.750000 *
+##                                    63147) X1&gt;=1062.5 1   0.00000000 4.000000 *
+##                                15787) X1&lt; 411.5 5   0.00000000 4.000000 *
+##                             3947) X1&lt; 67.5 2   0.50000000 4.500000  
+##                               7894) X1&lt; 66 1   0.00000000 4.000000 *
+##                               7895) X1&gt;=66 1   0.00000000 5.000000 *
+##                          987) X1&gt;=1178.5 27   2.54166700 3.638889  
+##                           1974) bean_type=Criollo (Porcelana),Forastero 4   0.06250000 3.375000  
+##                             3948) broad_bean_origin=Venezuela 2   0.00000000 3.250000 *
+##                             3949) broad_bean_origin=Ghana 2   0.00000000 3.500000 *
+##                           1975) bean_type=Criollo,Forastero (Nacional),Trinitario 23   2.15217400 3.684783  
+##                             3950) company_location=Italy 1   0.00000000 3.250000 *
+##                             3951) company_location=Canada,France 22   1.95454500 3.704545  
+##                               7902) broad_bean_origin=Haiti,Madagascar,Peru 11   1.28409100 3.590909  
+##                                15804) cocoa_percent&gt;=0.685 7   0.80357140 3.464286  
+##                                  31608) review_date&lt; 2013.5 3   0.50000000 3.250000  
+##                                    63216) X1&lt; 1225 1   0.00000000 2.750000 *
+##                                    63217) X1&gt;=1225 2   0.12500000 3.500000  
+##                                     126434) X1&lt; 1237 1   0.00000000 3.250000 *
+##                                     126435) X1&gt;=1237 1   0.00000000 3.750000 *
+##                                  31609) review_date&gt;=2013.5 4   0.06250000 3.625000  
+##                                    63218) review_date&gt;=2015 2   0.00000000 3.500000 *
+##                                    63219) review_date&lt; 2015 2   0.00000000 3.750000 *
+##                                15805) cocoa_percent&lt; 0.685 4   0.17187500 3.812500  
+##                                  31610) broad_bean_origin=Madagascar 2   0.03125000 3.625000  
+##                                    63220) X1&gt;=1271 1   0.00000000 3.500000 *
+##                                    63221) X1&lt; 1271 1   0.00000000 3.750000 *
+##                                  31611) broad_bean_origin=Peru 2   0.00000000 4.000000 *
+##                               7903) broad_bean_origin=Venezuela,Vietnam 11   0.38636360 3.818182  
+##                                15806) review_date&gt;=2016.5 1   0.00000000 3.500000 *
+##                                15807) review_date&lt; 2016.5 10   0.27500000 3.850000  
+##                                  31614) review_date&lt; 2015.5 9   0.25000000 3.833333  
+##                                    63228) X1&lt; 1213.5 1   0.00000000 3.500000 *
+##                                    63229) X1&gt;=1213.5 8   0.12500000 3.875000  
+##                                     126458) review_date&lt; 2010 2   0.00000000 3.750000 *
+##                                     126459) review_date&gt;=2010 6   0.08333333 3.916667  
+##                                       252918) cocoa_percent&gt;=0.695 4   0.06250000 3.875000  
+##                                         505836) X1&gt;=1219 3   0.04166667 3.833333  
+##                                          1011672) X1&lt; 1225 1   0.00000000 3.750000 *
+##                                          1011673) X1&gt;=1225 2   0.03125000 3.875000  
+##                                            2023346) X1&gt;=1230 1   0.00000000 3.750000 *
+##                                            2023347) X1&lt; 1230 1   0.00000000 4.000000 *
+##                                         505837) X1&lt; 1219 1   0.00000000 4.000000 *
+##                                       252919) cocoa_percent&lt; 0.695 2   0.00000000 4.000000 *
+##                                  31615) review_date&gt;=2015.5 1   0.00000000 4.000000 *
+##                      247) bean_type=Blend,Criollo (Ocumare 67),Criollo, Trinitario,Forastero (Amelonado) 14   2.14732100 3.803571  
+##                        494) review_date&gt;=2006.5 12   0.51562500 3.687500  
+##                          988) review_date&gt;=2007.5 8   0.11718750 3.593750  
+##                           1976) cocoa_percent&gt;=0.72 3   0.00000000 3.500000 *
+##                           1977) cocoa_percent&lt; 0.72 5   0.07500000 3.650000  
+##                             3954) X1&gt;=1227 1   0.00000000 3.500000 *
+##                             3955) X1&lt; 1227 4   0.04687500 3.687500  
+##                               7910) X1&lt; 379.5 1   0.00000000 3.500000 *
+##                               7911) X1&gt;=379.5 3   0.00000000 3.750000 *
+##                          989) review_date&lt; 2007.5 4   0.18750000 3.875000  
+##                           1978) cocoa_percent&lt; 0.635 1   0.00000000 3.500000 *
+##                           1979) cocoa_percent&gt;=0.635 3   0.00000000 4.000000 *
+##                        495) review_date&lt; 2006.5 2   0.50000000 4.500000  
+##                          990) X1&gt;=72.5 1   0.00000000 4.000000 *
+##                          991) X1&lt; 72.5 1   0.00000000 5.000000 *
+##                 31) broad_bean_origin=Dom. Rep., Madagascar,DR, Ecuador, Peru,Gre., PNG, Haw., Haiti, Mad,Guat., D.R., Peru, Mad., PNG,Hawaii,Peru, Dom. Rep,PNG, Vanuatu, Mad,South America,Tobago,Trinidad, Tobago,Ven, Bolivia, D.R.,Ven.,Ecu.,Peru,Nic.,Venez,Africa,Brasil,Peru,Mex 14   0.33928570 3.857143  
+##                   62) broad_bean_origin=DR, Ecuador, Peru,Hawaii,PNG, Vanuatu, Mad,South America,Trinidad, Tobago,Ven.,Ecu.,Peru,Nic.,Venez,Africa,Brasil,Peru,Mex 8   0.12500000 3.750000  
+##                    124) bean_type=Trinitario,Trinitario, Nacional 7   0.05357143 3.714286  
+##                      248) company_location=Amsterdam 1   0.00000000 3.500000 *
+##                      249) company_location=Australia,Canada,France,Lithuania 6   0.00000000 3.750000 *
+##                    125) bean_type=Criollo, Trinitario 1   0.00000000 4.000000 *
+##                   63) broad_bean_origin=Dom. Rep., Madagascar,Gre., PNG, Haw., Haiti, Mad,Guat., D.R., Peru, Mad., PNG,Peru, Dom. Rep,Tobago,Ven, Bolivia, D.R. 6   0.00000000 4.000000 *</code></pre>
+</div>
+<div id="n-sample-and-out-of-sample-performance" class="section level1">
+<h1>2-16 n-sample and out-of-sample performance</h1>
+<p>Does a more sophisticated model always perform better? As we discussed in the video, that’s only half the truth.</p>
+<p>Overfitted models understand the structure of their training set perfectly but cannot generalize to new data. That’s a bummer! At the end of the day, the main purpose of a predictive model is to perform well on new data, right? Go investigate!</p>
+<pre class="r"><code># Predict on and combine with training data and calculate the error
+#predict(complex_model, new_data = chocolate_train) %&gt;%
+#   bind_cols(chocolate_train) %&gt;% 
+#   mae(estimate = .pred,
+#truth = final_grade)</code></pre>
 </div>
