@@ -332,14 +332,15 @@ chocolate_model <- decision_tree(cost_complexity = 0.1) %>%
 chocolate_model
 ```
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # Create a model that can grow arbitrarily complex
 chocolate_model <- decision_tree(min_n = 2,
 			  					 cost_complexity = 0) %>%
 		set_mode("regression") %>%
 		set_engine("rpart") %>% 
 		fit(final_grade ~ ., data = chocolate_train)
-chocolate_model
+
+#chocolate_model
 ```
 
 # 2-16 n-sample and out-of-sample performance
@@ -355,5 +356,139 @@ Overfitted models understand the structure of their training set perfectly but c
 #	mae(estimate = .pred,
 #truth = final_grade)
 ```
+
+
+# 3-2 Generate a tuning grid
+
+The standard hyperparameters of most models provide a good fit for most datasets. Yet, they need optimization for the best performance. Otherwise, it's like driving a car with an activated hand brake. Release the brake and tune your models!
+
+In this exercise, you'll create two objects that serve as a starting point: a tuning grid (a set of hyperparameter combinations) and a model specification that you later train with every value of the grid.
+
+```{r}
+# Create a specification with tuning placeholders
+tune_spec <- decision_tree(tree_depth = tune(),
+                           cost_complexity = tune()) %>% 
+  # Specify mode
+  set_mode("classification") %>%
+  # Specify engine
+  set_engine("rpart") 
+
+tune_spec
+
+# Create a regular grid
+tree_grid <- grid_regular(parameters(tune_spec),
+                 levels = 2)
+
+tree_grid
+```
+
+
+# 3-3 Tune along the grid
+
+After creating the tuning grid and a dummy specification, you need to fit a model on every grid point and evaluate the resulting model. This is very easy in the tidymodels framework using the tune_grid() function, as introduced in the slides.
+
+In the remaining exercises, you will use the credit card customers dataset, which has the following columns:
+
+still_customer: flag (yes or no) that indicates if a customer is still an active customer
+
+total_trans_amt: total sum of transactions in USD
+
+customer_age: age of the customer
+
+income_category: labels like $60K - $80K or Less than $40K to indicate the category of yearly income
+… and 16 more columns.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+customers <- read_csv("customers.csv")
+
+
+```
+
+```{r}
+set.seed(275)
+
+# Create CV folds of the customers tibble
+folds <- vfold_cv(customers, v = 3)
+
+# Tune along the grid
+tune_results <- tune_grid(tune_spec, 
+                          factor(still_customer) ~ .,
+                          resamples = folds,
+                          grid = tree_grid,
+                          metrics = metric_set(accuracy))
+
+# Plot the tuning results
+autoplot(tune_results)
+```
+
+
+
+# 3-4 n-sample and out-of-sample performance
+
+Does a
+
+
+# 3-6 n-sample and out-of-sample performance
+
+Does a
+
+```{r}
+
+```
+
+
+# 3-7 n-sample and out-of-sample performance
+
+Does a
+
+```{r}
+
+```
+
+
+# 3-8 n-sample and out-of-sample performance
+
+Does a
+
+```{r}
+
+```
+
+
+# 3-10 n-sample and out-of-sample performance
+
+Does a
+
+```{r}
+
+```
+
+
+# 3-11 n-sample and out-of-sample performance
+
+Does a
+
+```{r}
+
+```
+
+
+# 3-12 n-sample and out-of-sample performance
+
+Does a
+
+```{r}
+
+```
+
+
+# 3-15 n-sample and out-of-sample performance
+
+Does a
+
+```{r}
+
+```
+
 
 
