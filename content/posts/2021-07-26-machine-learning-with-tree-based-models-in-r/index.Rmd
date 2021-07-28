@@ -236,3 +236,8 @@ chocolate_model <- model_spec %>%
 #predictions
 ```
 
+## 2-6 In-sample performance
+
+It's very important to know whether your regression model is useful or not. A useful model can be one that captures the structure of your training set well. One way to assess this in-sample performance is to predict on training data and calculate the mean absolute error of all predicted data points.
+
+In this exercise, you will evaluate your in-sample predictions using MAE (mean absolute error). MAE tells you approximately how far away the predictions are from the true values.

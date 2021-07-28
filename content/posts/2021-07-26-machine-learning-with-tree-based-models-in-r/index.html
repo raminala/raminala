@@ -91,7 +91,7 @@ data = diabetes)
 tree_model_bmi</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  10ms 
+## Fit time:  0ms 
 ## n= 768 
 ## 
 ## node), split, n, loss, yval, (yprob)
@@ -134,9 +134,9 @@ counts_test &lt;- table(testing(diabetes_split)$outcome)
 prop_yes_test &lt;- counts_test[&quot;yes&quot;] / sum(counts_test)
 
 paste(&quot;Proportion of positive outcomes in training set:&quot;, round(prop_yes_train, 2))</code></pre>
-<pre><code>## [1] &quot;Proportion of positive outcomes in training set: 0.36&quot;</code></pre>
+<pre><code>## [1] &quot;Proportion of positive outcomes in training set: 0.35&quot;</code></pre>
 <pre class="r"><code>paste(&quot;Proportion of positive outcomes in test set:&quot;, round(prop_yes_test, 2))</code></pre>
-<pre><code>## [1] &quot;Proportion of positive outcomes in test set: 0.32&quot;</code></pre>
+<pre><code>## [1] &quot;Proportion of positive outcomes in test set: 0.34&quot;</code></pre>
 <pre class="r"><code># Create a split with a constant outcome distribution
 diabetes_split &lt;- initial_split(diabetes,
 prop = 0.75,
@@ -177,31 +177,39 @@ model_trained &lt;- tree_spec %&gt;%
 model_trained</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  10ms 
+## Fit time:  21ms 
 ## n= 576 
 ## 
 ## node), split, n, loss, yval, (yprob)
 ##       * denotes terminal node
 ## 
-##   1) root 576 201 no (0.65104167 0.34895833)  
-##     2) bmi&lt; 26.75 135  10 no (0.92592593 0.07407407) *
-##     3) bmi&gt;=26.75 441 191 no (0.56689342 0.43310658)  
-##       6) bmi&lt; 42.25 386 156 no (0.59585492 0.40414508)  
-##        12) bmi&lt; 29.85 91  27 no (0.70329670 0.29670330) *
-##        13) bmi&gt;=29.85 295 129 no (0.56271186 0.43728814)  
-##          26) skin_thickness&gt;=6.5 218  88 no (0.59633028 0.40366972)  
-##            52) bmi&gt;=35.25 86  30 no (0.65116279 0.34883721) *
-##            53) bmi&lt; 35.25 132  58 no (0.56060606 0.43939394)  
-##             106) bmi&lt; 33.65 83  30 no (0.63855422 0.36144578) *
-##             107) bmi&gt;=33.65 49  21 yes (0.42857143 0.57142857)  
-##               214) skin_thickness&lt; 23.5 7   0 no (1.00000000 0.00000000) *
-##               215) skin_thickness&gt;=23.5 42  14 yes (0.33333333 0.66666667) *
-##          27) skin_thickness&lt; 6.5 77  36 yes (0.46753247 0.53246753)  
-##            54) bmi&gt;=33.05 42  18 no (0.57142857 0.42857143)  
-##             108) bmi&lt; 37.65 25   7 no (0.72000000 0.28000000) *
-##             109) bmi&gt;=37.65 17   6 yes (0.35294118 0.64705882) *
-##            55) bmi&lt; 33.05 35  12 yes (0.34285714 0.65714286) *
-##       7) bmi&gt;=42.25 55  20 yes (0.36363636 0.63636364) *</code></pre>
+##   1) root 576 201 no (0.6510417 0.3489583)  
+##     2) bmi&lt; 29.95 213  37 no (0.8262911 0.1737089) *
+##     3) bmi&gt;=29.95 363 164 no (0.5482094 0.4517906)  
+##       6) skin_thickness&gt;=5.5 273 113 no (0.5860806 0.4139194)  
+##        12) bmi&lt; 33.25 72  21 no (0.7083333 0.2916667) *
+##        13) bmi&gt;=33.25 201  92 no (0.5422886 0.4577114)  
+##          26) skin_thickness&lt; 23.5 15   2 no (0.8666667 0.1333333) *
+##          27) skin_thickness&gt;=23.5 186  90 no (0.5161290 0.4838710)  
+##            54) bmi&gt;=35.15 135  59 no (0.5629630 0.4370370)  
+##             108) bmi&lt; 41.65 91  33 no (0.6373626 0.3626374) *
+##             109) bmi&gt;=41.65 44  18 yes (0.4090909 0.5909091) *
+##            55) bmi&lt; 35.15 51  20 yes (0.3921569 0.6078431)  
+##             110) skin_thickness&lt; 31.5 25  11 no (0.5600000 0.4400000)  
+##               220) bmi&lt; 34.25 13   3 no (0.7692308 0.2307692) *
+##               221) bmi&gt;=34.25 12   4 yes (0.3333333 0.6666667) *
+##             111) skin_thickness&gt;=31.5 26   6 yes (0.2307692 0.7692308) *
+##       7) skin_thickness&lt; 5.5 90  39 yes (0.4333333 0.5666667)  
+##        14) bmi&gt;=31 80  38 yes (0.4750000 0.5250000)  
+##          28) bmi&lt; 37.7 49  22 no (0.5510204 0.4489796)  
+##            56) bmi&gt;=34.25 15   3 no (0.8000000 0.2000000) *
+##            57) bmi&lt; 34.25 34  15 yes (0.4411765 0.5588235) *
+##          29) bmi&gt;=37.7 31  11 yes (0.3548387 0.6451613)  
+##            58) bmi&gt;=40.05 21  10 yes (0.4761905 0.5238095)  
+##             116) bmi&lt; 42.8 7   1 no (0.8571429 0.1428571) *
+##             117) bmi&gt;=42.8 14   4 yes (0.2857143 0.7142857) *
+##            59) bmi&lt; 40.05 10   1 yes (0.1000000 0.9000000) *
+##        15) bmi&lt; 31 10   1 yes (0.1000000 0.9000000) *</code></pre>
 </div>
 <div id="make-predictions" class="section level2">
 <h2>1-10 Make predictions</h2>
@@ -225,12 +233,12 @@ head(predictions_combined)</code></pre>
 <pre><code>## # A tibble: 6 x 2
 ##   .pred_class true_class
 ##   &lt;fct&gt;       &lt;chr&gt;     
-## 1 no          yes       
+## 1 yes         yes       
 ## 2 no          no        
 ## 3 no          no        
-## 4 yes         no        
-## 5 yes         yes       
-## 6 no          yes</code></pre>
+## 4 no          yes       
+## 5 no          yes       
+## 6 yes         yes</code></pre>
 </div>
 <div id="crack-the-matrix" class="section level2">
 <h2>1-11 Crack the matrix</h2>
@@ -245,8 +253,8 @@ truth = true_class)</code></pre>
 print(diabetes_matrix)</code></pre>
 <pre><code>##           Truth
 ## Prediction no yes
-##        no  83  24
-##        yes 21  26</code></pre>
+##        no  84  21
+##        yes 17  32</code></pre>
 </div>
 <div id="are-you-predicting-correctly" class="section level2">
 <h2>1-12 Are you predicting correctly?</h2>
@@ -286,7 +294,7 @@ model_fit &lt;- model_spec %&gt;%
 model_fit</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  0ms 
+## Fit time:  11ms 
 ## n= 1437 
 ## 
 ## node), split, n, deviance, yval
@@ -329,4 +337,9 @@ chocolate_model &lt;- model_spec %&gt;%
  # bind_cols(chocolate_test)
 
 #predictions</code></pre>
+</div>
+<div id="in-sample-performance" class="section level2">
+<h2>2-6 In-sample performance</h2>
+<p>It’s very important to know whether your regression model is useful or not. A useful model can be one that captures the structure of your training set well. One way to assess this in-sample performance is to predict on training data and calculate the mean absolute error of all predicted data points.</p>
+<p>In this exercise, you will evaluate your in-sample predictions using MAE (mean absolute error). MAE tells you approximately how far away the predictions are from the true values.</p>
 </div>

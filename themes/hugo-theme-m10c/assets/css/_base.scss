@@ -32,14 +32,14 @@ a {
 // small inline code-blocks in the middle of normal text (mainly because of
 // the very noticeable difference in x-height). This CSS corrects that problem.
 code {
-  font-family: monospace,monospace;
-  font-size: 1em;
-  color: rgba($light-color, .8);
+  font-family: sans-serif,monospace;
+  font-size: 1.5em;
+  color: rgba($light-color, 1);
 }
 
 pre {
   font-size: 1rem;
-  line-height: 1.2em;
+  line-height: 1.4em;
   margin: 0;
   overflow: auto;
 
