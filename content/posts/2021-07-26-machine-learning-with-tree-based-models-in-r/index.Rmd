@@ -241,3 +241,59 @@ chocolate_model <- model_spec %>%
 It's very important to know whether your regression model is useful or not. A useful model can be one that captures the structure of your training set well. One way to assess this in-sample performance is to predict on training data and calculate the mean absolute error of all predicted data points.
 
 In this exercise, you will evaluate your in-sample predictions using MAE (mean absolute error). MAE tells you approximately how far away the predictions are from the true values.
+
+## 2-7 Out-of-sample performance
+
+In-sample performance provides insights about how well a model captures the data it is modeling. For predictive models, it's also important to check model performance on new, unseen data, the out-of-sample performance.
+
+In this exercise, you will check the test set predictions of your model using MAE (mean absolute error).
+
+```{r}
+
+```
+
+## 2-10 Create the folds
+
+Splitting data only once into training and test sets has statistical insecurities - there is a small chance that your test set contains only high-rated beans, while all the low-rated beans are in your training set. It also means that you can only measure the performance of your model once.
+
+Cross-validation gives you a more robust estimate of your out-of-sample performance without the statistical pitfalls - it assesses your model more profoundly.
+
+```{r}
+# Set seed for reproducibility
+set.seed(20)
+
+# Build 10 folds
+chocolate_folds <- vfold_cv(chocolate_train, v = 10)
+
+chocolate_folds
+```
+
+## 2-11 Fit the folds
+
+Now that you split your data into folds, it's time to use them for model training and calculating the out-of-sample error of every single model. This way, you gain a balanced estimation of the performance of your model specification because you evaluated it out-of-sample several times.
+
+```{r}
+# Create a specification
+tree_spec <- decision_tree() %>%
+    set_engine("rpart") %>%
+    set_mode("regression")
+
+# Fit all folds to the specification
+fits_cv <- fit_resamples(tree_spec,
+               final_grade ~ .,
+               resamples = chocolate_folds,
+               metrics = metric_set(mae, rmse))
+
+fits_cv
+```
+
+## 2-12 Evaluate the folds
+
+Now that you fit 10 models using all 10 of your folds and calculated the MAE and RMSE of each of these models, it's time to visualize how large the errors are. This way, you build an intuition of the out-of-sample error distribution, which is helpful in assessing your model quality.
+
+You will plot all these errors as a histogram and display the summary statistics across all folds.
+
+```{r}
+
+```
+

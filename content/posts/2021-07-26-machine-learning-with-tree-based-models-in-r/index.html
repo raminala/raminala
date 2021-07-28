@@ -91,7 +91,7 @@ data = diabetes)
 tree_model_bmi</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  0ms 
+## Fit time:  10ms 
 ## n= 768 
 ## 
 ## node), split, n, loss, yval, (yprob)
@@ -136,7 +136,7 @@ prop_yes_test &lt;- counts_test[&quot;yes&quot;] / sum(counts_test)
 paste(&quot;Proportion of positive outcomes in training set:&quot;, round(prop_yes_train, 2))</code></pre>
 <pre><code>## [1] &quot;Proportion of positive outcomes in training set: 0.35&quot;</code></pre>
 <pre class="r"><code>paste(&quot;Proportion of positive outcomes in test set:&quot;, round(prop_yes_test, 2))</code></pre>
-<pre><code>## [1] &quot;Proportion of positive outcomes in test set: 0.34&quot;</code></pre>
+<pre><code>## [1] &quot;Proportion of positive outcomes in test set: 0.33&quot;</code></pre>
 <pre class="r"><code># Create a split with a constant outcome distribution
 diabetes_split &lt;- initial_split(diabetes,
 prop = 0.75,
@@ -177,39 +177,31 @@ model_trained &lt;- tree_spec %&gt;%
 model_trained</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  21ms 
+## Fit time:  0ms 
 ## n= 576 
 ## 
 ## node), split, n, loss, yval, (yprob)
 ##       * denotes terminal node
 ## 
-##   1) root 576 201 no (0.6510417 0.3489583)  
-##     2) bmi&lt; 29.95 213  37 no (0.8262911 0.1737089) *
-##     3) bmi&gt;=29.95 363 164 no (0.5482094 0.4517906)  
-##       6) skin_thickness&gt;=5.5 273 113 no (0.5860806 0.4139194)  
-##        12) bmi&lt; 33.25 72  21 no (0.7083333 0.2916667) *
-##        13) bmi&gt;=33.25 201  92 no (0.5422886 0.4577114)  
-##          26) skin_thickness&lt; 23.5 15   2 no (0.8666667 0.1333333) *
-##          27) skin_thickness&gt;=23.5 186  90 no (0.5161290 0.4838710)  
-##            54) bmi&gt;=35.15 135  59 no (0.5629630 0.4370370)  
-##             108) bmi&lt; 41.65 91  33 no (0.6373626 0.3626374) *
-##             109) bmi&gt;=41.65 44  18 yes (0.4090909 0.5909091) *
-##            55) bmi&lt; 35.15 51  20 yes (0.3921569 0.6078431)  
-##             110) skin_thickness&lt; 31.5 25  11 no (0.5600000 0.4400000)  
-##               220) bmi&lt; 34.25 13   3 no (0.7692308 0.2307692) *
-##               221) bmi&gt;=34.25 12   4 yes (0.3333333 0.6666667) *
-##             111) skin_thickness&gt;=31.5 26   6 yes (0.2307692 0.7692308) *
-##       7) skin_thickness&lt; 5.5 90  39 yes (0.4333333 0.5666667)  
-##        14) bmi&gt;=31 80  38 yes (0.4750000 0.5250000)  
-##          28) bmi&lt; 37.7 49  22 no (0.5510204 0.4489796)  
-##            56) bmi&gt;=34.25 15   3 no (0.8000000 0.2000000) *
-##            57) bmi&lt; 34.25 34  15 yes (0.4411765 0.5588235) *
-##          29) bmi&gt;=37.7 31  11 yes (0.3548387 0.6451613)  
-##            58) bmi&gt;=40.05 21  10 yes (0.4761905 0.5238095)  
-##             116) bmi&lt; 42.8 7   1 no (0.8571429 0.1428571) *
-##             117) bmi&gt;=42.8 14   4 yes (0.2857143 0.7142857) *
-##            59) bmi&lt; 40.05 10   1 yes (0.1000000 0.9000000) *
-##        15) bmi&lt; 31 10   1 yes (0.1000000 0.9000000) *</code></pre>
+##   1) root 576 201 no (0.65104167 0.34895833)  
+##     2) bmi&lt; 27.85 166  16 no (0.90361446 0.09638554) *
+##     3) bmi&gt;=27.85 410 185 no (0.54878049 0.45121951)  
+##       6) bmi&lt; 41.65 354 148 no (0.58192090 0.41807910)  
+##        12) skin_thickness&gt;=14.5 265 102 no (0.61509434 0.38490566)  
+##          24) skin_thickness&lt; 29.5 106  31 no (0.70754717 0.29245283) *
+##          25) skin_thickness&gt;=29.5 159  71 no (0.55345912 0.44654088)  
+##            50) bmi&gt;=38.05 46  15 no (0.67391304 0.32608696) *
+##            51) bmi&lt; 38.05 113  56 no (0.50442478 0.49557522)  
+##             102) bmi&lt; 33.55 45  17 no (0.62222222 0.37777778) *
+##             103) bmi&gt;=33.55 68  29 yes (0.42647059 0.57352941)  
+##               206) bmi&gt;=35.15 37  16 no (0.56756757 0.43243243) *
+##               207) bmi&lt; 35.15 31   8 yes (0.25806452 0.74193548) *
+##        13) skin_thickness&lt; 14.5 89  43 yes (0.48314607 0.51685393)  
+##          26) bmi&gt;=33.1 39  17 no (0.56410256 0.43589744) *
+##          27) bmi&lt; 33.1 50  21 yes (0.42000000 0.58000000)  
+##            54) bmi&lt; 29.95 14   5 no (0.64285714 0.35714286) *
+##            55) bmi&gt;=29.95 36  12 yes (0.33333333 0.66666667) *
+##       7) bmi&gt;=41.65 56  19 yes (0.33928571 0.66071429) *</code></pre>
 </div>
 <div id="make-predictions" class="section level2">
 <h2>1-10 Make predictions</h2>
@@ -233,11 +225,11 @@ head(predictions_combined)</code></pre>
 <pre><code>## # A tibble: 6 x 2
 ##   .pred_class true_class
 ##   &lt;fct&gt;       &lt;chr&gt;     
-## 1 yes         yes       
-## 2 no          no        
-## 3 no          no        
+## 1 no          no        
+## 2 yes         no        
+## 3 no          yes       
 ## 4 no          yes       
-## 5 no          yes       
+## 5 no          no        
 ## 6 yes         yes</code></pre>
 </div>
 <div id="crack-the-matrix" class="section level2">
@@ -253,8 +245,8 @@ truth = true_class)</code></pre>
 print(diabetes_matrix)</code></pre>
 <pre><code>##           Truth
 ## Prediction no yes
-##        no  84  21
-##        yes 17  32</code></pre>
+##        no  83  17
+##        yes 20  34</code></pre>
 </div>
 <div id="are-you-predicting-correctly" class="section level2">
 <h2>1-12 Are you predicting correctly?</h2>
@@ -294,7 +286,7 @@ model_fit &lt;- model_spec %&gt;%
 model_fit</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  11ms 
+## Fit time:  20ms 
 ## n= 1437 
 ## 
 ## node), split, n, deviance, yval
@@ -342,4 +334,85 @@ chocolate_model &lt;- model_spec %&gt;%
 <h2>2-6 In-sample performance</h2>
 <p>It’s very important to know whether your regression model is useful or not. A useful model can be one that captures the structure of your training set well. One way to assess this in-sample performance is to predict on training data and calculate the mean absolute error of all predicted data points.</p>
 <p>In this exercise, you will evaluate your in-sample predictions using MAE (mean absolute error). MAE tells you approximately how far away the predictions are from the true values.</p>
+</div>
+<div id="out-of-sample-performance" class="section level2">
+<h2>2-7 Out-of-sample performance</h2>
+<p>In-sample performance provides insights about how well a model captures the data it is modeling. For predictive models, it’s also important to check model performance on new, unseen data, the out-of-sample performance.</p>
+<p>In this exercise, you will check the test set predictions of your model using MAE (mean absolute error).</p>
+</div>
+<div id="create-the-folds" class="section level2">
+<h2>2-10 Create the folds</h2>
+<p>Splitting data only once into training and test sets has statistical insecurities - there is a small chance that your test set contains only high-rated beans, while all the low-rated beans are in your training set. It also means that you can only measure the performance of your model once.</p>
+<p>Cross-validation gives you a more robust estimate of your out-of-sample performance without the statistical pitfalls - it assesses your model more profoundly.</p>
+<pre class="r"><code># Set seed for reproducibility
+set.seed(20)
+
+# Build 10 folds
+chocolate_folds &lt;- vfold_cv(chocolate_train, v = 10)
+
+chocolate_folds</code></pre>
+<pre><code>## #  10-fold cross-validation 
+## # A tibble: 10 x 2
+##    splits             id    
+##    &lt;list&gt;             &lt;chr&gt; 
+##  1 &lt;split [1293/144]&gt; Fold01
+##  2 &lt;split [1293/144]&gt; Fold02
+##  3 &lt;split [1293/144]&gt; Fold03
+##  4 &lt;split [1293/144]&gt; Fold04
+##  5 &lt;split [1293/144]&gt; Fold05
+##  6 &lt;split [1293/144]&gt; Fold06
+##  7 &lt;split [1293/144]&gt; Fold07
+##  8 &lt;split [1294/143]&gt; Fold08
+##  9 &lt;split [1294/143]&gt; Fold09
+## 10 &lt;split [1294/143]&gt; Fold10</code></pre>
+</div>
+<div id="fit-the-folds" class="section level2">
+<h2>2-11 Fit the folds</h2>
+<p>Now that you split your data into folds, it’s time to use them for model training and calculating the out-of-sample error of every single model. This way, you gain a balanced estimation of the performance of your model specification because you evaluated it out-of-sample several times.</p>
+<pre class="r"><code># Create a specification
+tree_spec &lt;- decision_tree() %&gt;%
+    set_engine(&quot;rpart&quot;) %&gt;%
+    set_mode(&quot;regression&quot;)
+
+# Fit all folds to the specification
+fits_cv &lt;- fit_resamples(tree_spec,
+               final_grade ~ .,
+               resamples = chocolate_folds,
+               metrics = metric_set(mae, rmse))</code></pre>
+<pre><code>## x Fold01: preprocessor 1/1, model 1/1 (predictions): Error in model.frame.default(...</code></pre>
+<pre><code>## x Fold02: preprocessor 1/1, model 1/1 (predictions): Error in model.frame.default(...</code></pre>
+<pre><code>## x Fold03: preprocessor 1/1, model 1/1 (predictions): Error in model.frame.default(...</code></pre>
+<pre><code>## x Fold04: preprocessor 1/1, model 1/1 (predictions): Error in model.frame.default(...</code></pre>
+<pre><code>## x Fold05: preprocessor 1/1, model 1/1 (predictions): Error in model.frame.default(...</code></pre>
+<pre><code>## x Fold06: preprocessor 1/1, model 1/1 (predictions): Error in model.frame.default(...</code></pre>
+<pre><code>## x Fold07: preprocessor 1/1, model 1/1 (predictions): Error in model.frame.default(...</code></pre>
+<pre><code>## x Fold08: preprocessor 1/1, model 1/1 (predictions): Error in model.frame.default(...</code></pre>
+<pre><code>## x Fold09: preprocessor 1/1, model 1/1 (predictions): Error in model.frame.default(...</code></pre>
+<pre><code>## x Fold10: preprocessor 1/1, model 1/1 (predictions): Error in model.frame.default(...</code></pre>
+<pre><code>## Warning: All models failed. See the `.notes` column.</code></pre>
+<pre class="r"><code>fits_cv</code></pre>
+<pre><code>## Warning: This tuning result has notes. Example notes on model fitting include:
+## preprocessor 1/1, model 1/1 (predictions): Error in model.frame.default(Terms, newdata, na.action = na.action, xlev = attr(object, : factor company_location has new levels Martinique
+## preprocessor 1/1, model 1/1 (predictions): Error in model.frame.default(Terms, newdata, na.action = na.action, xlev = attr(object, : factor bean_type has new levels Amazon mix, Blend-Forastero,Criollo
+## preprocessor 1/1, model 1/1 (predictions): Error in model.frame.default(Terms, newdata, na.action = na.action, xlev = attr(object, : factor company_location has new levels India, Singapore</code></pre>
+<pre><code>## # Resampling results
+## # 10-fold cross-validation 
+## # A tibble: 10 x 4
+##    splits             id     .metrics .notes          
+##    &lt;list&gt;             &lt;chr&gt;  &lt;list&gt;   &lt;list&gt;          
+##  1 &lt;split [1293/144]&gt; Fold01 &lt;NULL&gt;   &lt;tibble [1 x 1]&gt;
+##  2 &lt;split [1293/144]&gt; Fold02 &lt;NULL&gt;   &lt;tibble [1 x 1]&gt;
+##  3 &lt;split [1293/144]&gt; Fold03 &lt;NULL&gt;   &lt;tibble [1 x 1]&gt;
+##  4 &lt;split [1293/144]&gt; Fold04 &lt;NULL&gt;   &lt;tibble [1 x 1]&gt;
+##  5 &lt;split [1293/144]&gt; Fold05 &lt;NULL&gt;   &lt;tibble [1 x 1]&gt;
+##  6 &lt;split [1293/144]&gt; Fold06 &lt;NULL&gt;   &lt;tibble [1 x 1]&gt;
+##  7 &lt;split [1293/144]&gt; Fold07 &lt;NULL&gt;   &lt;tibble [1 x 1]&gt;
+##  8 &lt;split [1294/143]&gt; Fold08 &lt;NULL&gt;   &lt;tibble [1 x 1]&gt;
+##  9 &lt;split [1294/143]&gt; Fold09 &lt;NULL&gt;   &lt;tibble [1 x 1]&gt;
+## 10 &lt;split [1294/143]&gt; Fold10 &lt;NULL&gt;   &lt;tibble [1 x 1]&gt;</code></pre>
+</div>
+<div id="evaluate-the-folds" class="section level2">
+<h2>2-12 Evaluate the folds</h2>
+<p>Now that you fit 10 models using all 10 of your folds and calculated the MAE and RMSE of each of these models, it’s time to visualize how large the errors are. This way, you build an intuition of the out-of-sample error distribution, which is helpful in assessing your model quality.</p>
+<p>You will plot all these errors as a histogram and display the summary statistics across all folds.</p>
 </div>
