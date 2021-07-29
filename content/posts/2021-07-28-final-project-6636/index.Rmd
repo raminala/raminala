@@ -1,0 +1,65 @@
+---
+title: Final Project- 6636
+author: ''
+date: '2021-07-28'
+slug: []
+categories: []
+tags:
+  - Classification
+  - data_visualization
+  - data_wrangling
+---
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+bureau <- read_csv("Credit_Bureau.csv") %>%
+  janitor::clean_names() %>%
+rename(
+    id= application_id,
+    auto_loan= presence_of_open_auto_loan ,
+    home_loan= presence_of_open_home_loan,
+    trades_6m= no_of_trades_opened_in_last_6_months,
+    inquiries_6m = no_of_inquiries_in_last_6_months_excluding_home_auto_loans,
+    inquiries_12m= no_of_inquiries_in_last_12_months_excluding_home_auto_loans,
+    utilization_12m =avgas_cc_utilization_in_last_12_months,
+    trades_opened_12m =no_of_trades_opened_in_last_12_months,
+    pl_trades_12m=no_of_pl_trades_opened_in_last_12_months,
+    pl_trades_6m=no_of_pl_trades_opened_in_last_6_months,
+   dpd_60_6m =  no_of_times_60_dpd_or_worse_in_last_6_months,
+   dpd_90_12m =  no_of_times_90_dpd_or_worse_in_last_12_months,
+   dpd_30_12m =  no_of_times_30_dpd_or_worse_in_last_12_months,
+   dpd_90_6m =  no_of_times_90_dpd_or_worse_in_last_6_months,
+   dpd_30_6m =  no_of_times_30_dpd_or_worse_in_last_6_months,
+   dpd_60_12m =  no_of_times_60_dpd_or_worse_in_last_12_months
+    )
+     #%>%
+  #subset(select = -wholesaler)
+names(bureau)
+
+demogs<- read_csv("demogs.csv") %>%
+  janitor::clean_names() %>%
+rename(
+    id= application_id,
+    marital= marital_status_at_the_time_of_application,
+    dependents= no_of_dependents,
+    residence=type_of_residence,
+    company_months =no_of_months_in_current_company,
+    residence_months =no_of_months_in_current_residence
+    )
+
+
+names(demogs)
+```
+
+```{r}
+#total <- cbind(demogs, bureau)
+
+master <- left_join(demogs, bureau, 'id') %>%
+  subset(select = -performance_tag.y)
+master2 <- na.omit(master)
+#write.csv(master,"C:\Fundamentals of Analytics\raminala\content\posts\2021-07-28-final-project-6636\master.csv", row.names = FALSE)
+```
+

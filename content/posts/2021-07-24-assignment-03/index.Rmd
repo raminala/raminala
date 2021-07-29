@@ -27,7 +27,8 @@ library(knitr)
 library(markdown)
 bank <- read_csv("bank.csv") %>%
   select(c(age, job, marital, education, default, balance, housing, loan, y)) %>%
-  mutate(subscription_status=ifelse(y == 'yes', 1, 0))
+  mutate(subscription_status=ifelse(y == 'yes', 1, 0))%>%
+  subset(select=-y)
  
 
 ```
@@ -78,7 +79,7 @@ start_time_LOOCV <- Sys.time()
 train.control_LOOCV <- trainControl(method = "LOOCV")
 
 # Train the model
-model_LOOCV <- train(subscription_status ~ ., data = bank, method = "lm",
+model_LOOCV <- train(factor(subscription_status) ~ ., data = bank, method = "glm",
                trControl = train.control_LOOCV)
 # Summarize the results
 print(model_LOOCV)
@@ -107,7 +108,7 @@ start_time_K_fold <- Sys.time()
 train.control_K_fold <- trainControl(method = "repeatedcv", number = 10, repeats = 4)
 
 # Train the model
-model_K_fold <- train(subscription_status ~., data = bank, method = "lm",
+model_K_fold <- train(factor(subscription_status) ~., data = bank, method = "glm",
                trControl = train.control_K_fold)
 # Summarize the results
 print(model_K_fold)

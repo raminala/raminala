@@ -1,0 +1,31 @@
+---
+title: Final Project- 6636
+author: ''
+date: '2021-07-28'
+slug: []
+categories: []
+tags:
+  - Classification
+  - data_visualization
+  - data_wrangling
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre><code>##  [1] &quot;id&quot;                  &quot;dpd_90_6m&quot;           &quot;dpd_60_6m&quot;          
+##  [4] &quot;dpd_30_6m&quot;           &quot;dpd_90_12m&quot;          &quot;dpd_60_12m&quot;         
+##  [7] &quot;dpd_30_12m&quot;          &quot;utilization_12m&quot;     &quot;trades_6m&quot;          
+## [10] &quot;trades_opened_12m&quot;   &quot;pl_trades_6m&quot;        &quot;pl_trades_12m&quot;      
+## [13] &quot;inquiries_6m&quot;        &quot;inquiries_12m&quot;       &quot;home_loan&quot;          
+## [16] &quot;outstanding_balance&quot; &quot;total_no_of_trades&quot;  &quot;auto_loan&quot;          
+## [19] &quot;performance_tag&quot;</code></pre>
+<pre><code>##  [1] &quot;id&quot;               &quot;age&quot;              &quot;gender&quot;           &quot;marital&quot;         
+##  [5] &quot;dependents&quot;       &quot;income&quot;           &quot;education&quot;        &quot;profession&quot;      
+##  [9] &quot;residence&quot;        &quot;residence_months&quot; &quot;company_months&quot;   &quot;performance_tag&quot;</code></pre>
+<pre class="r"><code>#total &lt;- cbind(demogs, bureau)
+
+master &lt;- left_join(demogs, bureau, &#39;id&#39;) %&gt;%
+  subset(select = -performance_tag.y)
+master2 &lt;- na.omit(master)
+#write.csv(master,&quot;C:\Fundamentals of Analytics\raminala\content\posts\2021-07-28-final-project-6636\master.csv&quot;, row.names = FALSE)</code></pre>
