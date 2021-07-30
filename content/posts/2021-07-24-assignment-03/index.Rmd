@@ -274,10 +274,10 @@ bank_balanced %>%
 ```{r}
 mdl_bank_S <- glm(subscription_status ~ balance , data=bank, family = binomial)
 
-anova_analysis <- anova(mdl_bank_S)
+anova_analysis <- anova(mdl_bank_M)
 anova_analysis
 
 dcdc <- anova_analysis[["Resid. Dev"]]
-paste("Residual Deviance is", dcdc)
+paste("Residual Deviance", dcdc)
 
 ```

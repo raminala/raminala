@@ -59,7 +59,7 @@ LOOCV_run_time= end_time_LOOCV - start_time_LOOCV
 
 #Print run time
 print(LOOCV_run_time)</code></pre>
-<pre><code>## Time difference of 3.216428 mins</code></pre>
+<pre><code>## Time difference of 3.085371 mins</code></pre>
 <p>Calculated errors shows there is negligible error in predicting outputs.</p>
 <p>This dataset is severely balanced towards “no” outcome. Although result shows good accuracy, its specificity is very bad (number of true negatives are zero!). In other words, it biased towards common output. we will see this in final section . Besides, running of this method lasted “3 min”.</p>
 </div>
@@ -97,7 +97,7 @@ K_fold_run_time= end_time_K_fold - start_time_K_fold
 
 #Print run time
 print(K_fold_run_time)</code></pre>
-<pre><code>## Time difference of 2.2757 secs</code></pre>
+<pre><code>## Time difference of 2.331747 secs</code></pre>
 <p>This code ran in just 2.5 seconds that is a great improvement in caparison with LOOCV method.</p>
 </div>
 <div id="bootstrap-method" class="section level2">
@@ -132,7 +132,7 @@ bootstrap_run_time= end_time_bootstrap - start_time_bootstrap
 
 #Print run time
 print(bootstrap_run_time)</code></pre>
-<pre><code>## Time difference of 6.215454 secs</code></pre>
+<pre><code>## Time difference of 6.075949 secs</code></pre>
 <p>Code run in just 6 seconds that is a great improvement in caparison with LOOCV method but slower than K-fold. Obviously, number of iteration affects timing.</p>
 </div>
 <div id="evaluating-performance-with-confusion-matrix" class="section level2">
@@ -181,7 +181,7 @@ bank_balanced %&gt;%
 <h2>Analysis of variance (ANOVA)</h2>
 <pre class="r"><code>mdl_bank_S &lt;- glm(subscription_status ~ balance , data=bank, family = binomial)
 
-anova_analysis &lt;- anova(mdl_bank_S)
+anova_analysis &lt;- anova(mdl_bank_M)
 anova_analysis</code></pre>
 <pre><code>## Analysis of Deviance Table
 ## 
@@ -192,11 +192,21 @@ anova_analysis</code></pre>
 ## Terms added sequentially (first to last)
 ## 
 ## 
-##         Df Deviance Resid. Df Resid. Dev
-## NULL                     4520     3231.0
-## balance  1   1.3285      4519     3229.7</code></pre>
+##           Df Deviance Resid. Df Resid. Dev
+## NULL                       4520     3231.0
+## age        1    8.980      4519     3222.0
+## job       11   54.416      4508     3167.6
+## marital    2   18.640      4506     3149.0
+## education  3    7.884      4503     3141.1
+## default    1    0.024      4502     3141.1
+## balance    1    0.085      4501     3141.0
+## housing    1   22.685      4500     3118.3
+## loan       1   21.753      4499     3096.5</code></pre>
 <pre class="r"><code>dcdc &lt;- anova_analysis[[&quot;Resid. Dev&quot;]]
-paste(&quot;Residual Deviance is&quot;, dcdc)</code></pre>
-<pre><code>## [1] &quot;Residual Deviance is 3231.00023779459&quot;
-## [2] &quot;Residual Deviance is 3229.67171081065&quot;</code></pre>
+paste(&quot;Residual Deviance&quot;, dcdc)</code></pre>
+<pre><code>## [1] &quot;Residual Deviance 3231.00023779459&quot; &quot;Residual Deviance 3222.02070697255&quot;
+## [3] &quot;Residual Deviance 3167.60440190148&quot; &quot;Residual Deviance 3148.9639093729&quot; 
+## [5] &quot;Residual Deviance 3141.07967692287&quot; &quot;Residual Deviance 3141.05558111179&quot;
+## [7] &quot;Residual Deviance 3140.97038637682&quot; &quot;Residual Deviance 3118.28554318478&quot;
+## [9] &quot;Residual Deviance 3096.53259525563&quot;</code></pre>
 </div>
