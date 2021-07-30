@@ -1,79 +1,57 @@
 ---
-title: 'Assignment A04: Tree based Method'
-author: Ramin Ala
-date: '2021-07-29'
+title: Bagging and Random Forest Essentials
+author: ''
+date: '2021-07-30'
 slug: []
 categories: []
 tags:
-  - Assignment
+  - Classification
   - Tree-Based Models
+  - Random Forest
 ---
 
-***Ramin Ala***
+## Loading required R packages
 
-## Introduction
-
-Random decision forests correct for decision trees' habit of overfitting to their training set.
-
-Random Forest algorithm is a special type of bagging applied to decision trees.
-
-the random forest provides a strong improvement, which consists of applying bagging to the data and bootstrap sampling to the predictor variables at each split. This means that at each splitting step of the tree algorithm, a random sample of n predictors is chosen as split candidates from the full set of the predictors.
-
-## libraries
-
-```{r, message=FALSE}
+```{r}
 library(tidyverse)
-library(tidymodels)
 library(caret)
 library(randomForest)
 ```
 
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-
-bank <- read_csv("bank.csv") %>%
-  select(c(age, job, marital, education, default, balance, housing, loan, y)) #%>%
-  #mutate(subscription_status=ifelse(y == 'yes', 1, 0)) #%>%
-  #subset(select=-y)
- 
-#bank %>% group_by(y) %>%  count()
-
-
-```
-
-## Splitting data
-
+## Example of data set
 
 ```{r}
-set.seed(20)
+# Load the data and remove NAs
+data("PimaIndiansDiabetes2", package = "mlbench")
+PimaIndiansDiabetes2 <- na.omit(PimaIndiansDiabetes2)
+# Inspect the data
+sample_n(PimaIndiansDiabetes2, 3)
 
-# Split 80% of data as training set
-training_bank <- bank$y %>% 
+# Split the data into training and test set
+set.seed(123)
+training.samples <- PimaIndiansDiabetes2$diabetes %>% 
   createDataPartition(p = 0.8, list = FALSE)
 
-bank_train  <- bank[training_bank, ]
-bank_test <- bank[-training_bank, ]
+train.data  <- PimaIndiansDiabetes2[training.samples, ]
+test.data <- PimaIndiansDiabetes2[-training.samples, ]
 
-#train.data %>% group_by(y) %>% count()
-#test.data %>% group_by(y) %>% count()
+#PimaIndiansDiabetes2 %>% group_by(diabetes ) %>% count()
 ```
 
 ## Computing random forest classifier
 
-
 ```{r}
-set.seed(20)
-
 # Fit the model on the training set
+set.seed(123)
 model <- train(
-  y ~., data = bank_train, method = "rf",
+  diabetes ~., data = train.data, method = "rf",
   trControl = trainControl("cv", number = 10),
   importance = TRUE
   )
-
 # Best tuning parameter
 model$bestTune
 ```
+
 
 ```{r}
 # Final model
@@ -82,27 +60,27 @@ model$finalModel
 
 ## Make predictions on the test data
 
-
 ```{r}
-predicted.classes <- model %>% predict(bank_test)
-
+# Make predictions on the test data
+predicted.classes <- model %>% predict(test.data)
+head(predicted.classes)
 ```
 
+```{r}
+# Compute model accuracy rate
+mean(predicted.classes == test.data$diabetes)
+```
 
 ## binding predictions and truth 
 
-```{r, warning=FALSE}
+```{r}
+test_pred <- test.data %>%
+  bind_cols(predicted.classes)
 
-
-bank_bind <- bank_test %>%
-   bind_cols(.pred=predicted.classes)
-
-
-test_pred_mat <- bank_bind %>% conf_mat(truth = y, estimate = .pred)
+test_pred_mat <- test_pred %>% conf_mat(truth = diabetes, estimate = 10)
 summary(test_pred_mat)
 autoplot(test_pred_mat, type = 'heatmap')
 ```
-
 
 ## Variable importance
 
@@ -123,7 +101,7 @@ varImpPlot(model$finalModel, type = 2)
 
 The results show that across all of the trees considered in the random forest, the glucose and age variables are the two most important variables.
 
-```{r, message=FALSE}
+```{r}
 # the importance of variables in percentage
 
 varImp(model)

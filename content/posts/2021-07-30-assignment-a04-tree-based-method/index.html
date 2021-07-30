@@ -1,0 +1,166 @@
+---
+title: 'Assignment A04: Tree based Method'
+author: Ramin Ala
+date: '2021-07-29'
+slug: []
+categories: []
+tags:
+  - Assignment
+  - Tree-Based Models
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p><strong><em>Ramin Ala</em></strong></p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Random decision forests correct for decision trees’ habit of overfitting to their training set.</p>
+<p>Random Forest algorithm is a special type of bagging applied to decision trees.</p>
+<p>the random forest provides a strong improvement, which consists of applying bagging to the data and bootstrap sampling to the predictor variables at each split. This means that at each splitting step of the tree algorithm, a random sample of n predictors is chosen as split candidates from the full set of the predictors.</p>
+</div>
+<div id="libraries" class="section level2">
+<h2>libraries</h2>
+<pre class="r"><code>library(tidyverse)
+library(tidymodels)
+library(caret)
+library(randomForest)</code></pre>
+</div>
+<div id="splitting-data" class="section level2">
+<h2>Splitting data</h2>
+<pre class="r"><code>set.seed(20)
+
+# Split 80% of data as training set
+training_bank &lt;- bank$y %&gt;% 
+  createDataPartition(p = 0.8, list = FALSE)
+
+bank_train  &lt;- bank[training_bank, ]
+bank_test &lt;- bank[-training_bank, ]
+
+#train.data %&gt;% group_by(y) %&gt;% count()
+#test.data %&gt;% group_by(y) %&gt;% count()</code></pre>
+</div>
+<div id="computing-random-forest-classifier" class="section level2">
+<h2>Computing random forest classifier</h2>
+<pre class="r"><code>set.seed(20)
+
+# Fit the model on the training set
+model &lt;- train(
+  y ~., data = bank_train, method = &quot;rf&quot;,
+  trControl = trainControl(&quot;cv&quot;, number = 10),
+  importance = TRUE
+  )
+
+# Best tuning parameter
+model$bestTune</code></pre>
+<pre><code>##   mtry
+## 1    2</code></pre>
+<pre class="r"><code># Final model
+model$finalModel</code></pre>
+<pre><code>## 
+## Call:
+##  randomForest(x = x, y = y, mtry = min(param$mtry, ncol(x)), importance = TRUE) 
+##                Type of random forest: classification
+##                      Number of trees: 500
+## No. of variables tried at each split: 2
+## 
+##         OOB estimate of  error rate: 11.53%
+## Confusion matrix:
+##       no yes class.error
+## no  3200   0           0
+## yes  417   0           1</code></pre>
+</div>
+<div id="make-predictions-on-the-test-data" class="section level2">
+<h2>Make predictions on the test data</h2>
+<pre class="r"><code>predicted.classes &lt;- model %&gt;% predict(bank_test)</code></pre>
+</div>
+<div id="binding-predictions-and-truth" class="section level2">
+<h2>binding predictions and truth</h2>
+<pre class="r"><code>bank_bind &lt;- bank_test %&gt;%
+   bind_cols(.pred=predicted.classes)
+
+
+test_pred_mat &lt;- bank_bind %&gt;% conf_mat(truth = y, estimate = .pred)
+summary(test_pred_mat)</code></pre>
+<pre><code>## # A tibble: 13 x 3
+##    .metric              .estimator .estimate
+##    &lt;chr&gt;                &lt;chr&gt;          &lt;dbl&gt;
+##  1 accuracy             binary         0.885
+##  2 kap                  binary         0    
+##  3 sens                 binary         1    
+##  4 spec                 binary         0    
+##  5 ppv                  binary         0.885
+##  6 npv                  binary       NaN    
+##  7 mcc                  binary        NA    
+##  8 j_index              binary         0    
+##  9 bal_accuracy         binary         0.5  
+## 10 detection_prevalence binary         1    
+## 11 precision            binary         0.885
+## 12 recall               binary         1    
+## 13 f_meas               binary         0.939</code></pre>
+<pre class="r"><code>autoplot(test_pred_mat, type = &#39;heatmap&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="variable-importance" class="section level2">
+<h2>Variable importance</h2>
+<pre class="r"><code>importance(model$finalModel)</code></pre>
+<pre><code>##                            no        yes MeanDecreaseAccuracy MeanDecreaseGini
+## age                 6.1203240 10.8119718          11.19009648       23.4966234
+## jobblue-collar      2.3303257  4.1453013           3.53094216        3.0834180
+## jobentrepreneur     1.8619145 -2.0548317           0.98669807        1.2021674
+## jobhousemaid       -1.3589722  0.3500731          -1.20785877        1.4576344
+## jobmanagement       4.2559604 -2.0161073           3.88269899        1.5620691
+## jobretired         -0.6664512  2.4263014           1.09421535        3.7981408
+## jobself-employed   -1.1597927  2.4428489          -0.07162636        1.2164745
+## jobservices         4.0173179 -3.1137301           3.13068484        1.1848792
+## jobstudent         -2.8328849  2.5004189          -2.13092635        1.1910249
+## jobtechnician       3.1899876 -0.5609131           2.96550788        1.7035834
+## jobunemployed      -2.2913854  0.8302918          -1.96406907        0.8636356
+## jobunknown          5.1518094 -2.4725476           4.76358906        1.4728204
+## maritalmarried      7.5680264 -3.4285619           6.56315736        3.1574343
+## maritalsingle       6.0906406 -1.7317804           6.28283876        2.1191524
+## educationsecondary  5.5481291 -3.0471337           5.09943282        2.0282786
+## educationtertiary   7.5282186 -4.9232813           6.62699224        2.5153877
+## educationunknown    3.7149035 -0.8080534           3.47476757        1.2532628
+## defaultyes          5.2992699 -3.4244119           4.59484397        1.5172019
+## balance             2.7373681  0.8048875           2.98756852       21.7455025
+## housingyes          3.9383432  0.6744469           4.63636834        5.7168353
+## loanyes            -1.3990880  3.0321125          -0.30056779        3.6671931</code></pre>
+<p>MeanDecreaseAccuracy: A measure of the extent to which a variable improves the accuracy of the forest in predicting the classification. Higher values mean that the variable improves prediction.</p>
+<p>(MeanDecreaseGini): Provides a more nuanced measure of importance, which factors in both the contribution that variable makes to accuracy, and the degree of misclassification (e.g., if a variable improves the probability of an observation being classified to a segment from 55% to 90%, this will show up in the Importance (MeanDecreaseGini), but not in MeanDecreaseAccuracy). As with MeanDecreaseAccuracy, high numbers indicate that a variable is more important as a predictor.</p>
+<pre class="r"><code># Plot MeanDecreaseAccuracy
+varImpPlot(model$finalModel, type = 1)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code># Plot MeanDecreaseGini
+varImpPlot(model$finalModel, type = 2)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
+<p>The results show that across all of the trees considered in the random forest, the glucose and age variables are the two most important variables.</p>
+<pre class="r"><code># the importance of variables in percentage
+
+varImp(model)</code></pre>
+<pre><code>## rf variable importance
+## 
+##   only 20 most important variables shown (out of 21)
+## 
+##                    Importance
+## age                   100.000
+## jobblue-collar         43.150
+## housingyes             33.022
+## maritalsingle          31.642
+## maritalmarried         30.449
+## balance                27.202
+## educationunknown       23.747
+## jobunknown             22.510
+## jobtechnician          22.237
+## educationtertiary      22.106
+## educationsecondary     21.541
+## jobmanagement          20.121
+## defaultyes             18.137
+## jobretired             17.511
+## loanyes                16.822
+## jobself-employed       14.919
+## jobservices            12.856
+## jobentrepreneur         6.895
+## jobstudent              6.136
+## jobhousemaid            2.458</code></pre>
+</div>

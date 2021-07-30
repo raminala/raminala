@@ -1,0 +1,112 @@
+---
+title: Bagging and Random Forest Essentials
+author: ''
+date: '2021-07-30'
+slug: []
+categories: []
+tags:
+  - Classification
+  - Tree-Based Models
+  - Random Forest
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="loading-required-r-packages" class="section level2">
+<h2>Loading required R packages</h2>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
+## v tibble  3.1.2     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(caret)</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## 
+## Attaching package: &#39;caret&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     lift</code></pre>
+<pre class="r"><code>library(randomForest)</code></pre>
+<pre><code>## randomForest 4.6-14</code></pre>
+<pre><code>## Type rfNews() to see new features/changes/bug fixes.</code></pre>
+<pre><code>## 
+## Attaching package: &#39;randomForest&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     combine</code></pre>
+<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     margin</code></pre>
+</div>
+<div id="example-of-data-set" class="section level2">
+<h2>Example of data set</h2>
+<pre class="r"><code># Load the data and remove NAs
+data(&quot;PimaIndiansDiabetes2&quot;, package = &quot;mlbench&quot;)
+PimaIndiansDiabetes2 &lt;- na.omit(PimaIndiansDiabetes2)
+# Inspect the data
+sample_n(PimaIndiansDiabetes2, 3)</code></pre>
+<pre><code>##     pregnant glucose pressure triceps insulin mass pedigree age diabetes
+## 172        6     134       70      23     130 35.4    0.542  29      pos
+## 255       12      92       62       7     258 27.6    0.926  44      pos
+## 448        0      95       80      45      92 36.5    0.330  26      neg</code></pre>
+<pre class="r"><code># Split the data into training and test set
+set.seed(123)
+training.samples &lt;- PimaIndiansDiabetes2$diabetes %&gt;% 
+  createDataPartition(p = 0.8, list = FALSE)
+
+train.data  &lt;- PimaIndiansDiabetes2[training.samples, ]
+test.data &lt;- PimaIndiansDiabetes2[-training.samples, ]
+
+#PimaIndiansDiabetes2 %&gt;% group_by(diabetes ) %&gt;% count()</code></pre>
+</div>
+<div id="computing-random-forest-classifier" class="section level2">
+<h2>Computing random forest classifier</h2>
+<pre class="r"><code># Fit the model on the training set
+set.seed(123)
+model &lt;- train(
+  diabetes ~., data = train.data, method = &quot;rf&quot;,
+  trControl = trainControl(&quot;cv&quot;, number = 10),
+  importance = TRUE
+  )
+# Best tuning parameter
+model$bestTune</code></pre>
+<pre><code>##   mtry
+## 3    8</code></pre>
+<pre class="r"><code># Final model
+model$finalModel</code></pre>
+<pre><code>## 
+## Call:
+##  randomForest(x = x, y = y, mtry = min(param$mtry, ncol(x)), importance = TRUE) 
+##                Type of random forest: classification
+##                      Number of trees: 500
+## No. of variables tried at each split: 8
+## 
+##         OOB estimate of  error rate: 22.29%
+## Confusion matrix:
+##     neg pos class.error
+## neg 181  29   0.1380952
+## pos  41  63   0.3942308</code></pre>
+</div>
+<div id="make-predictions-on-the-test-data" class="section level2">
+<h2>Make predictions on the test data</h2>
+<pre class="r"><code># Make predictions on the test data
+predicted.classes &lt;- model %&gt;% predict(test.data)
+head(predicted.classes)</code></pre>
+<pre><code>## [1] neg neg pos pos neg neg
+## Levels: neg pos</code></pre>
+<pre class="r"><code># Compute model accuracy rate
+mean(predicted.classes == test.data$diabetes)</code></pre>
+<pre><code>## [1] 0.7307692</code></pre>
+</div>
+<div id="binding-predictions-and-truth" class="section level2">
+<h2>binding predictions and truth</h2>
+<pre class="r"><code>test_pred &lt;- test.data %&gt;%
+  bind_cols(predicted.classes)</code></pre>
+<pre><code>## New names:
+## * NA -&gt; ...10</code></pre>
+</div>
