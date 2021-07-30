@@ -47,7 +47,7 @@ bank_test &lt;- bank[-training_bank, ]
 # Fit the model on the training set
 model &lt;- train(
   y ~., data = bank_train, method = &quot;rf&quot;,
-  trControl = trainControl(&quot;cv&quot;, number = 10),
+  trControl = trainControl(&quot;cv&quot;, number = 3),
   importance = TRUE
   )
 
@@ -105,27 +105,27 @@ summary(test_pred_mat)</code></pre>
 <h2>Variable importance</h2>
 <pre class="r"><code>importance(model$finalModel)</code></pre>
 <pre><code>##                            no        yes MeanDecreaseAccuracy MeanDecreaseGini
-## age                 6.1203240 10.8119718          11.19009648       23.4966234
-## jobblue-collar      2.3303257  4.1453013           3.53094216        3.0834180
-## jobentrepreneur     1.8619145 -2.0548317           0.98669807        1.2021674
-## jobhousemaid       -1.3589722  0.3500731          -1.20785877        1.4576344
-## jobmanagement       4.2559604 -2.0161073           3.88269899        1.5620691
-## jobretired         -0.6664512  2.4263014           1.09421535        3.7981408
-## jobself-employed   -1.1597927  2.4428489          -0.07162636        1.2164745
-## jobservices         4.0173179 -3.1137301           3.13068484        1.1848792
-## jobstudent         -2.8328849  2.5004189          -2.13092635        1.1910249
-## jobtechnician       3.1899876 -0.5609131           2.96550788        1.7035834
-## jobunemployed      -2.2913854  0.8302918          -1.96406907        0.8636356
-## jobunknown          5.1518094 -2.4725476           4.76358906        1.4728204
-## maritalmarried      7.5680264 -3.4285619           6.56315736        3.1574343
-## maritalsingle       6.0906406 -1.7317804           6.28283876        2.1191524
-## educationsecondary  5.5481291 -3.0471337           5.09943282        2.0282786
-## educationtertiary   7.5282186 -4.9232813           6.62699224        2.5153877
-## educationunknown    3.7149035 -0.8080534           3.47476757        1.2532628
-## defaultyes          5.2992699 -3.4244119           4.59484397        1.5172019
-## balance             2.7373681  0.8048875           2.98756852       21.7455025
-## housingyes          3.9383432  0.6744469           4.63636834        5.7168353
-## loanyes            -1.3990880  3.0321125          -0.30056779        3.6671931</code></pre>
+## age                 8.4153642  7.4180405          11.69687461       22.8356872
+## jobblue-collar      2.8847131  2.4836213           3.87898042        2.8803708
+## jobentrepreneur     2.6304393 -2.2411580           1.54544883        1.1872712
+## jobhousemaid       -0.8212681 -0.7072955          -1.06143558        1.3717751
+## jobmanagement       4.0224764 -1.0486284           4.19691298        1.5571955
+## jobretired          2.6225767  0.9829453           4.39976552        3.6838437
+## jobself-employed   -2.5383420 -1.8945317          -3.16846014        1.1897875
+## jobservices         3.4068470 -2.7661859           2.65044742        1.2058057
+## jobstudent         -4.2486142  2.1823473          -3.89460469        1.1854107
+## jobtechnician       2.8719788 -0.9910160           2.39469234        1.6720720
+## jobunemployed      -0.7229227  1.8852340          -0.09628516        0.8025047
+## jobunknown          4.4756569 -1.7232319           4.22397658        1.4089918
+## maritalmarried      8.4673906 -2.5447151           7.87233098        3.1610415
+## maritalsingle       7.7193098 -4.7866469           7.32128381        2.2396345
+## educationsecondary  5.9846482 -3.3835465           5.66087363        2.0483593
+## educationtertiary   7.1697719 -6.8501425           6.14873540        2.4072047
+## educationunknown    4.3862899 -1.9276462           3.62608026        1.2457435
+## defaultyes          4.6802991 -3.0952156           4.03327125        1.4271119
+## balance             3.2825289  4.3461612           4.77923212       21.3537650
+## housingyes          1.6872296  0.1202470           1.83391730        5.6255633
+## loanyes            -3.3086774  3.2340984          -2.09696698        3.5048515</code></pre>
 <p>MeanDecreaseAccuracy: A measure of the extent to which a variable improves the accuracy of the forest in predicting the classification. Higher values mean that the variable improves prediction.</p>
 <p>(MeanDecreaseGini): Provides a more nuanced measure of importance, which factors in both the contribution that variable makes to accuracy, and the degree of misclassification (e.g., if a variable improves the probability of an observation being classified to a segment from 55% to 90%, this will show up in the Importance (MeanDecreaseGini), but not in MeanDecreaseAccuracy). As with MeanDecreaseAccuracy, high numbers indicate that a variable is more important as a predictor.</p>
 <pre class="r"><code># Plot MeanDecreaseAccuracy
@@ -143,24 +143,87 @@ varImp(model)</code></pre>
 ##   only 20 most important variables shown (out of 21)
 ## 
 ##                    Importance
-## age                   100.000
-## jobblue-collar         43.150
-## housingyes             33.022
-## maritalsingle          31.642
-## maritalmarried         30.449
-## balance                27.202
-## educationunknown       23.747
-## jobunknown             22.510
-## jobtechnician          22.237
-## educationtertiary      22.106
-## educationsecondary     21.541
-## jobmanagement          20.121
-## defaultyes             18.137
-## jobretired             17.511
-## loanyes                16.822
-## jobself-employed       14.919
-## jobservices            12.856
-## jobentrepreneur         6.895
-## jobstudent              6.136
-## jobhousemaid            2.458</code></pre>
+## age                    100.00
+## balance                 59.52
+## maritalmarried          51.10
+## jobblue-collar          48.36
+## jobretired              39.66
+## jobmanagement           36.55
+## maritalsingle           36.34
+## jobunknown              35.45
+## educationsecondary      34.71
+## educationunknown        34.00
+## jobtechnician           31.15
+## housingyes              30.79
+## defaultyes              29.69
+## jobunemployed           27.61
+## jobservices             25.03
+## jobentrepreneur         23.79
+## educationtertiary       23.45
+## loanyes                 21.51
+## jobhousemaid            14.33
+## jobstudent              11.68</code></pre>
+</div>
+<div id="imbalanced-dataset-to-balanced-one" class="section level2">
+<h2>imbalanced dataset to balanced one</h2>
+<pre class="r"><code>library(ROSE)
+
+bank_train_balanced &lt;- ovun.sample(y ~ ., data = bank_train, method = &quot;over&quot;,N = 6500)$data
+
+bank_train_balanced %&gt;%
+  group_by(y) %&gt;%
+  count()</code></pre>
+<pre><code>## # A tibble: 2 x 2
+## # Groups:   y [2]
+##   y         n
+##   &lt;chr&gt; &lt;int&gt;
+## 1 no     3200
+## 2 yes    3300</code></pre>
+</div>
+<div id="computing-random-forest-classifier-for-balanced-dataset" class="section level2">
+<h2>Computing random forest classifier for balanced dataset</h2>
+<pre class="r"><code>set.seed(20)
+
+# Fit the model on the training set
+model2 &lt;- train(
+  y ~., data = bank_train_balanced, method = &quot;rf&quot;,
+  trControl = trainControl(&quot;cv&quot;, number = 3),
+  importance = TRUE
+  )
+
+# Best tuning parameter
+model2$bestTune</code></pre>
+<pre><code>##   mtry
+## 2   11</code></pre>
+</div>
+<div id="make-predictions-on-the-test-data-using-new-model" class="section level2">
+<h2>Make predictions on the test data using new model</h2>
+<pre class="r"><code>predicted.classes2 &lt;- model2 %&gt;% predict(bank_test)</code></pre>
+</div>
+<div id="binding-predictions-and-truth-for-new-data" class="section level2">
+<h2>binding predictions and truth for new data</h2>
+<pre class="r"><code>bank_bind2 &lt;- bank_test %&gt;%
+   bind_cols(.pred=predicted.classes2)
+
+
+test_pred_mat2 &lt;- bank_bind2 %&gt;% conf_mat(truth = y, estimate = .pred)
+summary(test_pred_mat2)</code></pre>
+<pre><code>## # A tibble: 13 x 3
+##    .metric              .estimator .estimate
+##    &lt;chr&gt;                &lt;chr&gt;          &lt;dbl&gt;
+##  1 accuracy             binary         0.840
+##  2 kap                  binary         0.128
+##  3 sens                 binary         0.924
+##  4 spec                 binary         0.192
+##  5 ppv                  binary         0.898
+##  6 npv                  binary         0.247
+##  7 mcc                  binary         0.130
+##  8 j_index              binary         0.116
+##  9 bal_accuracy         binary         0.558
+## 10 detection_prevalence binary         0.910
+## 11 precision            binary         0.898
+## 12 recall               binary         0.924
+## 13 f_meas               binary         0.911</code></pre>
+<pre class="r"><code>autoplot(test_pred_mat2, type = &#39;heatmap&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>

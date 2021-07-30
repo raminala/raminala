@@ -67,7 +67,7 @@ set.seed(20)
 # Fit the model on the training set
 model <- train(
   y ~., data = bank_train, method = "rf",
-  trControl = trainControl("cv", number = 10),
+  trControl = trainControl("cv", number = 3),
   importance = TRUE
   )
 
@@ -129,3 +129,57 @@ The results show that across all of the trees considered in the random forest, t
 varImp(model)
 ```
 
+## imbalanced dataset to balanced one
+
+ 
+```{r, message=FALSE}
+library(ROSE)
+
+bank_train_balanced <- ovun.sample(y ~ ., data = bank_train, method = "over",N = 6500)$data
+
+bank_train_balanced %>%
+  group_by(y) %>%
+  count()
+```
+
+
+## Computing random forest classifier for balanced dataset
+
+
+```{r}
+set.seed(20)
+
+# Fit the model on the training set
+model2 <- train(
+  y ~., data = bank_train_balanced, method = "rf",
+  trControl = trainControl("cv", number = 3),
+  importance = TRUE
+  )
+
+# Best tuning parameter
+model2$bestTune
+```
+
+## Make predictions on the test data using new model 
+
+
+```{r}
+predicted.classes2 <- model2 %>% predict(bank_test)
+
+```
+
+
+
+## binding predictions and truth for new data
+
+```{r, warning=FALSE}
+
+
+bank_bind2 <- bank_test %>%
+   bind_cols(.pred=predicted.classes2)
+
+
+test_pred_mat2 <- bank_bind2 %>% conf_mat(truth = y, estimate = .pred)
+summary(test_pred_mat2)
+autoplot(test_pred_mat2, type = 'heatmap')
+```
