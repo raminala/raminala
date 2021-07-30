@@ -59,7 +59,7 @@ LOOCV_run_time= end_time_LOOCV - start_time_LOOCV
 
 #Print run time
 print(LOOCV_run_time)</code></pre>
-<pre><code>## Time difference of 3.085371 mins</code></pre>
+<pre><code>## Time difference of 3.539086 mins</code></pre>
 <p>Calculated errors shows there is negligible error in predicting outputs.</p>
 <p>This dataset is severely balanced towards “no” outcome. Although result shows good accuracy, its specificity is very bad (number of true negatives are zero!). In other words, it biased towards common output. we will see this in final section . Besides, running of this method lasted “3 min”.</p>
 </div>
@@ -97,7 +97,7 @@ K_fold_run_time= end_time_K_fold - start_time_K_fold
 
 #Print run time
 print(K_fold_run_time)</code></pre>
-<pre><code>## Time difference of 2.331747 secs</code></pre>
+<pre><code>## Time difference of 2.390161 secs</code></pre>
 <p>This code ran in just 2.5 seconds that is a great improvement in caparison with LOOCV method.</p>
 </div>
 <div id="bootstrap-method" class="section level2">
@@ -132,7 +132,7 @@ bootstrap_run_time= end_time_bootstrap - start_time_bootstrap
 
 #Print run time
 print(bootstrap_run_time)</code></pre>
-<pre><code>## Time difference of 6.075949 secs</code></pre>
+<pre><code>## Time difference of 6.471049 secs</code></pre>
 <p>Code run in just 6 seconds that is a great improvement in caparison with LOOCV method but slower than K-fold. Obviously, number of iteration affects timing.</p>
 </div>
 <div id="evaluating-performance-with-confusion-matrix" class="section level2">
