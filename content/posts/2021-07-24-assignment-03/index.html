@@ -26,7 +26,7 @@ library(tictoc)</code></pre>
 </div>
 <div id="loocv-leave-one-out-cross-validation" class="section level2">
 <h2>LOOCV (Leave one out cross validation)</h2>
-<p>For this dataset, the LOOCV method takes long time to process. Because it consists building the model for (4521-1) times and evaluating the remaining sample with the model and averaging errors after finishinf process.</p>
+<p>For this dataset, the LOOCV method takes long time to process. Because it consists building the model for (4521-1) times and evaluating the remaining sample with the model and averaging errors after doing the process.</p>
 <p>We are using tictoc library to measure the run time for each code chunk to evaluate the performance of these methods in terms of run time.</p>
 <hr />
 <pre class="r"><code>start_time_LOOCV &lt;- Sys.time()
@@ -36,32 +36,32 @@ library(tictoc)</code></pre>
 train.control_LOOCV &lt;- trainControl(method = &quot;LOOCV&quot;)
 
 # Train the model
-model_LOOCV &lt;- train(subscription_status ~ ., data = bank, method = &quot;lm&quot;,
+model_LOOCV &lt;- train(factor(subscription_status) ~ ., data = bank, method = &quot;glm&quot;,
                trControl = train.control_LOOCV)
 # Summarize the results
 print(model_LOOCV)</code></pre>
-<pre><code>## Linear Regression 
+<pre><code>## Generalized Linear Model 
 ## 
 ## 4521 samples
-##    9 predictor
+##    8 predictor
+##    2 classes: &#39;0&#39;, &#39;1&#39; 
 ## 
 ## No pre-processing
 ## Resampling: Leave-One-Out Cross-Validation 
 ## Summary of sample sizes: 4520, 4520, 4520, 4520, 4520, 4520, ... 
 ## Resampling results:
 ## 
-##   RMSE          Rsquared  MAE         
-##   8.053605e-16  1         4.179036e-16
-## 
-## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+##   Accuracy  Kappa
+##   0.88476   0</code></pre>
 <pre class="r"><code>end_time_LOOCV &lt;- Sys.time()
 
 LOOCV_run_time= end_time_LOOCV - start_time_LOOCV
 
 #Print run time
 print(LOOCV_run_time)</code></pre>
-<pre><code>## Time difference of 1.284482 mins</code></pre>
-<p>Calculated errors shows there is negligible error in predicting outputs. we will see this in final section called confusion matrix. Besides, running of this method lasted “1.23 min”.</p>
+<pre><code>## Time difference of 3.216428 mins</code></pre>
+<p>Calculated errors shows there is negligible error in predicting outputs.</p>
+<p>This dataset is severely balanced towards “no” outcome. Although result shows good accuracy, its specificity is very bad (number of true negatives are zero!). In other words, it biased towards common output. we will see this in final section . Besides, running of this method lasted “3 min”.</p>
 </div>
 <div id="k-fold-cross-validation" class="section level2">
 <h2>K-fold cross-validation</h2>
@@ -74,32 +74,31 @@ start_time_K_fold &lt;- Sys.time()
 train.control_K_fold &lt;- trainControl(method = &quot;repeatedcv&quot;, number = 10, repeats = 4)
 
 # Train the model
-model_K_fold &lt;- train(subscription_status ~., data = bank, method = &quot;lm&quot;,
+model_K_fold &lt;- train(factor(subscription_status) ~., data = bank, method = &quot;glm&quot;,
                trControl = train.control_K_fold)
 # Summarize the results
 print(model_K_fold)</code></pre>
-<pre><code>## Linear Regression 
+<pre><code>## Generalized Linear Model 
 ## 
 ## 4521 samples
-##    9 predictor
+##    8 predictor
+##    2 classes: &#39;0&#39;, &#39;1&#39; 
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 4 times) 
 ## Summary of sample sizes: 4069, 4069, 4069, 4069, 4069, 4069, ... 
 ## Resampling results:
 ## 
-##   RMSE          Rsquared  MAE         
-##   6.116485e-16  1         3.847581e-16
-## 
-## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+##   Accuracy   Kappa
+##   0.8847604  0</code></pre>
 <pre class="r"><code>end_time_K_fold &lt;- Sys.time()
 
 K_fold_run_time= end_time_K_fold - start_time_K_fold
 
 #Print run time
 print(K_fold_run_time)</code></pre>
-<pre><code>## Time difference of 1.213336 secs</code></pre>
-<p>Again error is nearly zero but code run in just 1.4 seconds that is a great improvement in caparison with LOOCV method.</p>
+<pre><code>## Time difference of 2.2757 secs</code></pre>
+<p>This code ran in just 2.5 seconds that is a great improvement in caparison with LOOCV method.</p>
 </div>
 <div id="bootstrap-method" class="section level2">
 <h2>Bootstrap method</h2>
@@ -110,41 +109,94 @@ start_time_bootstrap &lt;- Sys.time()
 train.control_Bootstrap &lt;- trainControl(method = &quot;boot&quot;, number = 100)
 
 # Train the model
-model_Bootstrap &lt;- train(subscription_status ~., data = bank, method = &quot;lm&quot;,
+model_Bootstrap &lt;- train(factor(subscription_status) ~., data = bank, method = &quot;glm&quot;,
                trControl = train.control_Bootstrap)
 # Summarize the results
 print(model_Bootstrap)</code></pre>
-<pre><code>## Linear Regression 
+<pre><code>## Generalized Linear Model 
 ## 
 ## 4521 samples
-##    9 predictor
+##    8 predictor
+##    2 classes: &#39;0&#39;, &#39;1&#39; 
 ## 
 ## No pre-processing
 ## Resampling: Bootstrapped (100 reps) 
 ## Summary of sample sizes: 4521, 4521, 4521, 4521, 4521, 4521, ... 
 ## Resampling results:
 ## 
-##   RMSE          Rsquared  MAE         
-##   1.030247e-15  1         6.465142e-16
-## 
-## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+##   Accuracy   Kappa       
+##   0.8848218  0.0005296479</code></pre>
 <pre class="r"><code>end_time_bootstrap &lt;- Sys.time()
 
 bootstrap_run_time= end_time_bootstrap - start_time_bootstrap
 
 #Print run time
 print(bootstrap_run_time)</code></pre>
-<pre><code>## Time difference of 3.569924 secs</code></pre>
-<p>Error is also negligible here, and code run in just 3.6 seconds that is a great improvement in caparison with LOOCV method but slower than K-fold. Obviously, number of iteration affects timing.</p>
+<pre><code>## Time difference of 6.215454 secs</code></pre>
+<p>Code run in just 6 seconds that is a great improvement in caparison with LOOCV method but slower than K-fold. Obviously, number of iteration affects timing.</p>
 </div>
 <div id="evaluating-performance-with-confusion-matrix" class="section level2">
 <h2>Evaluating performance with confusion matrix</h2>
 <p>Calculating performance metrics with the yardstick package provides insight into how well a classification model is performing on the test dataset.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>Confusion matrices and heatmap plots shows there are no error in predictions.</p>
 <p>Explanations about predictions of SLR (Single linear regression) and MLR (Multiple linear regression) is necessary. In these cases, we defined a threshold of probabilities that separates “yes” and “no” outcomes. These thresholds are selected so that number of errors (numbers in sub diagonal of matrix) become minimum.</p>
+</div>
+<div id="imbalanced-dataset-to-balanced-one" class="section level2">
+<h2>imbalanced dataset to balanced one</h2>
+<pre class="r"><code>library(smotefamily)
+
+    data_example = sample_generator(100,ratio = 0.80)
+
+    
+        genData = SMOTE(data_example[,-3],data_example[,3])
+    genData_2 = SMOTE(data_example[,-3],data_example[,3],K=7)
+
+    
+    head(data_example)</code></pre>
+<pre><code>##          X1         X2 result
+## 1 0.8496772 0.08153535      n
+## 2 0.9469083 0.32537769      n
+## 3 0.7285105 0.61745624      n
+## 4 0.2998839 0.66843470      p
+## 5 0.8386152 0.45855128      n
+## 6 0.1528754 0.97242208      n</code></pre>
+<p>These are preliminary works for balancing this dataset. Two R packages are employed, ROSE and smotefamily</p>
+<pre class="r"><code>library(ROSE)</code></pre>
+<pre><code>## Loaded ROSE 0.0-4</code></pre>
+<pre class="r"><code>bank_balanced &lt;- ovun.sample(subscription_status ~ ., data = bank, method = &quot;over&quot;,N = 8000)$data
+
+bank_balanced %&gt;%
+  group_by(subscription_status) %&gt;%
+  count()</code></pre>
+<pre><code>## # A tibble: 2 x 2
+## # Groups:   subscription_status [2]
+##   subscription_status     n
+##                 &lt;dbl&gt; &lt;int&gt;
+## 1                   0  4000
+## 2                   1  4000</code></pre>
+</div>
+<div id="analysis-of-variance-anova" class="section level2">
+<h2>Analysis of variance (ANOVA)</h2>
+<pre class="r"><code>mdl_bank_S &lt;- glm(subscription_status ~ balance , data=bank, family = binomial)
+
+anova_analysis &lt;- anova(mdl_bank_S)
+anova_analysis</code></pre>
+<pre><code>## Analysis of Deviance Table
+## 
+## Model: binomial, link: logit
+## 
+## Response: subscription_status
+## 
+## Terms added sequentially (first to last)
+## 
+## 
+##         Df Deviance Resid. Df Resid. Dev
+## NULL                     4520     3231.0
+## balance  1   1.3285      4519     3229.7</code></pre>
+<pre class="r"><code>dcdc &lt;- anova_analysis[[&quot;Resid. Dev&quot;]]
+paste(&quot;Residual Deviance is&quot;, dcdc)</code></pre>
+<pre><code>## [1] &quot;Residual Deviance is 3231.00023779459&quot;
+## [2] &quot;Residual Deviance is 3229.67171081065&quot;</code></pre>
 </div>

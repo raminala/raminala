@@ -30,16 +30,10 @@ bank <- read_csv("bank.csv") %>%
   mutate(subscription_status=ifelse(y == 'yes', 1, 0))%>%
   subset(select=-y)
  
-
+#summary(bank)
 ```
 
 
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-mdl_bank_S <- glm(subscription_status ~ balance , data=bank, family = binomial)
-
-
-```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 mdl_bank_M <- glm(subscription_status ~ age+job+marital+education+default+balance+housing+loan , data=bank, family = binomial)
@@ -63,7 +57,7 @@ library(tictoc)
 
 ## LOOCV (Leave one out cross validation) 
 
-For this dataset, the LOOCV method takes long time to process. Because it consists building the model for (4521-1) times and evaluating the remaining sample with the model and averaging errors after finishinf process.
+For this dataset, the LOOCV method takes long time to process. Because it consists building the model for (4521-1) times and evaluating the remaining sample with the model and averaging errors after doing the process.
 
 We are using tictoc library to measure the run time for each code chunk to evaluate the performance of these methods in terms of run time.
 
@@ -93,7 +87,12 @@ print(LOOCV_run_time)
 
 ```
 
-Calculated errors shows there is negligible error in predicting outputs. we will see this in final section called confusion matrix. Besides, running of this method lasted "1.23 min".
+Calculated errors shows there is negligible error in predicting outputs.
+
+This dataset is severely balanced towards "no" outcome. Although result shows good accuracy, its specificity is very bad (number of true negatives are zero!). In other words, it biased towards common output. we will see this in final section . Besides, running of this method lasted "3 min".
+
+
+
 
 ## K-fold cross-validation
 
@@ -121,7 +120,7 @@ K_fold_run_time= end_time_K_fold - start_time_K_fold
 print(K_fold_run_time)
 ```
 
-Again error is nearly zero but code run in just 1.4 seconds that is a great improvement in caparison with LOOCV method.
+This code ran in just 2.5 seconds that is a great improvement in caparison with LOOCV method.
 
 ## Bootstrap method 
 
@@ -134,7 +133,7 @@ start_time_bootstrap <- Sys.time()
 train.control_Bootstrap <- trainControl(method = "boot", number = 100)
 
 # Train the model
-model_Bootstrap <- train(subscription_status ~., data = bank, method = "lm",
+model_Bootstrap <- train(factor(subscription_status) ~., data = bank, method = "glm",
                trControl = train.control_Bootstrap)
 # Summarize the results
 print(model_Bootstrap)
@@ -147,7 +146,7 @@ bootstrap_run_time= end_time_bootstrap - start_time_bootstrap
 print(bootstrap_run_time)
 ```
 
-Error is also negligible here, and code run in just 3.6 seconds that is a great improvement in caparison with LOOCV method but slower than K-fold. Obviously, number of iteration affects timing.
+Code run in just 6 seconds that is a great improvement in caparison with LOOCV method but slower than K-fold. Obviously, number of iteration affects timing.
 
 ## Evaluating performance with confusion matrix
 
@@ -155,13 +154,15 @@ Calculating performance metrics with the yardstick package provides insight into
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
+mdl_bank_S <- glm(subscription_status ~ balance , data=bank, family = binomial)
+
 status_predictions_SLR <- predict(mdl_bank_S, new_data = bank, type = "response")
 
 status_predictions_MLR <- predict(mdl_bank_M, new_data = bank, type = "response")
 
-status_predictions_model_LOOCV <- predict(model_LOOCV$finalModel, new_data = bank)
-status_predictions_model_K_fold <- predict(model_K_fold$finalModel, new_data = bank)
-status_predictions_model_Bootstrap <- predict(model_Bootstrap$finalModel, new_data = bank)
+status_predictions_model_LOOCV <- predict(model_LOOCV$finalModel, new_data = bank, type = "response")
+status_predictions_model_K_fold <- predict(model_K_fold$finalModel, new_data = bank, type = "response")
+status_predictions_model_Bootstrap <- predict(model_Bootstrap$finalModel, new_data = bank, type = "response")
 
 test_results_SLR <- bank %>%
   bind_cols(status_pred=status_predictions_SLR)
@@ -182,51 +183,6 @@ test_results_model_Bootstrap <- bank %>%
 
 ```
 
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-# LOOCV
-
-p <- test_results_model_LOOCV %>% select(subscription_status,status_pred) %>% 
-   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
-   mutate(estimate=ifelse(status_pred == '1' , 'yes', 'no'))
-
-# Calculate the confusion matrix
-conf_mat(p, truth = truth,
-    estimate = estimate)%>% 
-  # Create a heat map
-  autoplot(type = 'heatmap')
-```
-
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-# K_fold
-
-p2 <- test_results_model_K_fold %>% select(subscription_status,status_pred) %>% 
-   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
-   mutate(estimate=ifelse(status_pred == '1' , 'yes', 'no'))
-
-# Calculate the confusion matrix
-conf_mat(p2, truth = truth,
-    estimate = estimate)%>% 
-  # Create a heat map
-  autoplot(type = 'heatmap')
-```
-
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-# Bootstrap
-
-p3 <- test_results_model_Bootstrap %>% select(subscription_status,status_pred) %>% 
-   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
-   mutate(estimate=ifelse(status_pred == '1' , 'yes', 'no'))
-
-# Calculate the confusion matrix
-conf_mat(p3, truth = truth,
-    estimate = estimate)%>% 
-  # Create a heat map
-  autoplot(type = 'heatmap')
-
-```
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -250,12 +206,12 @@ conf_mat(p4, truth = truth,
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #  MLR
 
-p4 <- test_results_MLR %>% select(subscription_status,status_pred) %>% 
+p5 <- test_results_MLR %>% select(subscription_status,status_pred) %>% 
    mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
    mutate(estimate=ifelse(status_pred > 0.3 , 'yes', 'no'))
 
 # Calculate the confusion matrix
-conf_mat(p4, truth = truth,
+conf_mat(p5, truth = truth,
     estimate = estimate)%>% 
   # Create a heat map
   autoplot(type = 'heatmap')
@@ -266,3 +222,62 @@ Confusion matrices and heatmap plots shows there are no error in predictions.
 
 Explanations about predictions of SLR (Single linear regression) and MLR (Multiple linear regression) is necessary. In these cases, we defined a threshold of probabilities that separates "yes" and "no" outcomes. These thresholds are selected so that number of errors (numbers in sub diagonal of matrix) become minimum.
  
+## imbalanced dataset to balanced one
+ 
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+library(smotefamily)
+
+
+#fg <- data.matrix(bank, rownames.force = NA)
+
+#table(fg$subscription_status)
+
+# rr <- fg[,-9]
+#newData <- SMOTE(fg, subscription_status, K = 5, dup_size = 0)
+
+#newData <- SMOTE(fg,target = fg[,9], K = 3, dup_size = 3) 
+
+#newData <- SMOTE(bank[,1:8],target = numeric (bank$subscription_status), K = 3, dup_size = 10) 
+
+```
+ 
+ 
+```{r}
+library(smotefamily)
+
+    data_example = sample_generator(100,ratio = 0.80)
+
+    
+    	genData = SMOTE(data_example[,-3],data_example[,3])
+	genData_2 = SMOTE(data_example[,-3],data_example[,3],K=7)
+
+	
+	head(data_example)
+
+```
+ 
+ These are preliminary works for balancing this dataset. Two R packages are employed, ROSE and smotefamily
+ 
+```{r}
+library(ROSE)
+
+bank_balanced <- ovun.sample(subscription_status ~ ., data = bank, method = "over",N = 8000)$data
+
+bank_balanced %>%
+  group_by(subscription_status) %>%
+  count()
+```
+ 
+## Analysis of variance (ANOVA)
+
+```{r}
+mdl_bank_S <- glm(subscription_status ~ balance , data=bank, family = binomial)
+
+anova_analysis <- anova(mdl_bank_S)
+anova_analysis
+
+dcdc <- anova_analysis[["Resid. Dev"]]
+paste("Residual Deviance is", dcdc)
+
+```

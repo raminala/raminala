@@ -48,6 +48,7 @@ home_test <- home_split %>%
 nrow(home_training)
 nrow(home_test)
 
+
 ```
 
 ## 1-4 Distribution of outcome variable values
