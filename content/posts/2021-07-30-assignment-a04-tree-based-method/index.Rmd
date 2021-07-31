@@ -13,11 +13,15 @@ tags:
 
 ## Introduction
 
-Random decision forests correct for decision trees' habit of overfitting to their training set.
-
-Random Forest algorithm is a special type of bagging applied to decision trees.
+Random Forests grows many classification trees. To classify a new object from an input vector, put the input vector down each of the trees in the forest. Each tree gives a classification (tree "vote"), for that class. The forest chooses the classification having the most votes (over all the trees in the forest). Random decision forests correct for decision trees' habit of overfitting to their training set.
 
 the random forest provides a strong improvement, which consists of applying bagging to the data and bootstrap sampling to the predictor variables at each split. This means that at each splitting step of the tree algorithm, a random sample of n predictors is chosen as split candidates from the full set of the predictors.
+
+In this exercise, a random forest classification applies on the bank dataset to predict whether an unknown new customer will subscribe to an account or not. We are using "caret" package for modeling random forest. Dataset divided to 80-20 percents to train with 80% and test the acquired model with remaining 20% test data.
+
+Variable importance analysis is also applied on this dataset to determine importance of variables and sort them in terms of importance.
+
+This dataset consists of an imbalanced number of outputs, so that 90 percent of outcomes are "no" and 10 percent are "yes". This leads to severe bias of generated model towards "no". In fact, all inputs of test set resulted in "no". Although model's accuracy is good, it has a terrible specificity. To tackle this problem, a balanced model is built for this dataset  using "ROSE" package. This results in slighltly decrease in accuracy but big improvement is terms of specificity.
 
 ## libraries
 
