@@ -1,13 +1,15 @@
 ---
-title: 'Assignment A04: Tree based Method'
-author: Ramin Ala
-date: '2021-07-29'
+title: 'Assignment A04: Tree based Method:Random Forest'
+author: ''
+date: '2021-07-30'
 slug: []
 categories: []
 tags:
   - Assignment
-  - Tree-Based Models
+  - Classification
+  - Random Forest
 ---
+
 
 ***Ramin Ala***
 
@@ -59,7 +61,7 @@ bank_test <- bank[-training_bank, ]
 
 Carat package is used to generate random forest model.
 
-```{r echo=False, paged.print=TRUE}
+```{r }
 set.seed(20)
 
 # Fit the model on the training set
