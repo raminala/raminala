@@ -10,7 +10,7 @@ tags:
   - data_wrangling
 ---
 
-
+## import two dataset and rename variables
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -35,8 +35,7 @@ rename(
    dpd_30_6m =  no_of_times_30_dpd_or_worse_in_last_6_months,
    dpd_60_12m =  no_of_times_60_dpd_or_worse_in_last_12_months
     )
-     #%>%
-  #subset(select = -wholesaler)
+    
 names(bureau)
 
 demogs<- read_csv("demogs.csv") %>%
@@ -54,12 +53,76 @@ rename(
 names(demogs)
 ```
 
-```{r}
-#total <- cbind(demogs, bureau)
 
-master <- left_join(demogs, bureau, 'id') %>%
-  subset(select = -performance_tag.y)
-master2 <- na.omit(master)
-#write.csv(master,"C:\Fundamentals of Analytics\raminala\content\posts\2021-07-28-final-project-6636\master.csv", row.names = FALSE)
+
+## bind two dataset to build master dataset
+
+
+```{r}
+
+bind_dataset <- left_join(demogs, bureau, 'id') %>%
+  subset(select = -performance_tag.y) %>%
+  rename(performance_tag=performance_tag.x)
+
+names(bind_dataset)
+
+```
+
+
+## Reordering columns (place performance_tag at the end)
+
+```{r}
+col_order <- c("id", "age", "gender", "marital", "dependents", "income",
+               "education", "profession", "residence", "residence_months", "company_months", "dpd_90_6m",
+               "dpd_60_6m", "dpd_30_6m", "dpd_90_12m", "dpd_60_12m", "dpd_30_12m", "utilization_12m",
+               "trades_6m", "trades_opened_12m", "pl_trades_6m", "pl_trades_12m", "inquiries_6m", "inquiries_12m",
+               "home_loan", "outstanding_balance", "total_no_of_trades",  "auto_loan",
+               "performance_tag"
+               )
+master <- bind_dataset[, col_order]
+
+
+write.csv(master,
+          "C:\\Fundamentals of Analytics\\master.csv", row.names = FALSE)
+```
+
+
+
+
+## weight of evidence (WOE) (and, equivalently, information value analysis)
+
+## 4 : Data Preparation
+
+```{r}
+library(Information)
+
+#summary(bureau)
+#master$age <- factor(master$age)
+
+
+master_IV <- master %>%
+
+na.omit(master) %>%
+subset(select=-id)
+
+
+```
+
+
+## 5 : Compute Information Value and WOE
+
+```{r}
+IV <- create_infotables(data=master_IV, y="performance_tag", bins=10, parallel=FALSE)
+```
+
+```{r}
+IV_Value = data.frame(IV$Summary)
+
+print(IV_Value)
+```
+
+```{r}
+plot_infotables(IV, IV$Summary$Variable[1:27], same_scale=FALSE)
+
 ```
 

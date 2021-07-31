@@ -13,6 +13,8 @@ tags:
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
+<div id="import-two-dataset-and-rename-variables" class="section level2">
+<h2>import two dataset and rename variables</h2>
 <pre><code>##  [1] &quot;id&quot;                  &quot;dpd_90_6m&quot;           &quot;dpd_60_6m&quot;          
 ##  [4] &quot;dpd_30_6m&quot;           &quot;dpd_90_12m&quot;          &quot;dpd_60_12m&quot;         
 ##  [7] &quot;dpd_30_12m&quot;          &quot;utilization_12m&quot;     &quot;trades_6m&quot;          
@@ -23,9 +25,90 @@ tags:
 <pre><code>##  [1] &quot;id&quot;               &quot;age&quot;              &quot;gender&quot;           &quot;marital&quot;         
 ##  [5] &quot;dependents&quot;       &quot;income&quot;           &quot;education&quot;        &quot;profession&quot;      
 ##  [9] &quot;residence&quot;        &quot;residence_months&quot; &quot;company_months&quot;   &quot;performance_tag&quot;</code></pre>
-<pre class="r"><code>#total &lt;- cbind(demogs, bureau)
+</div>
+<div id="bind-two-dataset-to-build-master-dataset" class="section level2">
+<h2>bind two dataset to build master dataset</h2>
+<pre class="r"><code>bind_dataset &lt;- left_join(demogs, bureau, &#39;id&#39;) %&gt;%
+  subset(select = -performance_tag.y) %&gt;%
+  rename(performance_tag=performance_tag.x)
 
-master &lt;- left_join(demogs, bureau, &#39;id&#39;) %&gt;%
-  subset(select = -performance_tag.y)
-master2 &lt;- na.omit(master)
-#write.csv(master,&quot;C:\Fundamentals of Analytics\raminala\content\posts\2021-07-28-final-project-6636\master.csv&quot;, row.names = FALSE)</code></pre>
+names(bind_dataset)</code></pre>
+<pre><code>##  [1] &quot;id&quot;                  &quot;age&quot;                 &quot;gender&quot;             
+##  [4] &quot;marital&quot;             &quot;dependents&quot;          &quot;income&quot;             
+##  [7] &quot;education&quot;           &quot;profession&quot;          &quot;residence&quot;          
+## [10] &quot;residence_months&quot;    &quot;company_months&quot;      &quot;performance_tag&quot;    
+## [13] &quot;dpd_90_6m&quot;           &quot;dpd_60_6m&quot;           &quot;dpd_30_6m&quot;          
+## [16] &quot;dpd_90_12m&quot;          &quot;dpd_60_12m&quot;          &quot;dpd_30_12m&quot;         
+## [19] &quot;utilization_12m&quot;     &quot;trades_6m&quot;           &quot;trades_opened_12m&quot;  
+## [22] &quot;pl_trades_6m&quot;        &quot;pl_trades_12m&quot;       &quot;inquiries_6m&quot;       
+## [25] &quot;inquiries_12m&quot;       &quot;home_loan&quot;           &quot;outstanding_balance&quot;
+## [28] &quot;total_no_of_trades&quot;  &quot;auto_loan&quot;</code></pre>
+</div>
+<div id="reordering-columns-place-performance_tag-at-the-end" class="section level2">
+<h2>Reordering columns (place performance_tag at the end)</h2>
+<pre class="r"><code>col_order &lt;- c(&quot;id&quot;, &quot;age&quot;, &quot;gender&quot;, &quot;marital&quot;, &quot;dependents&quot;, &quot;income&quot;,
+               &quot;education&quot;, &quot;profession&quot;, &quot;residence&quot;, &quot;residence_months&quot;, &quot;company_months&quot;, &quot;dpd_90_6m&quot;,
+               &quot;dpd_60_6m&quot;, &quot;dpd_30_6m&quot;, &quot;dpd_90_12m&quot;, &quot;dpd_60_12m&quot;, &quot;dpd_30_12m&quot;, &quot;utilization_12m&quot;,
+               &quot;trades_6m&quot;, &quot;trades_opened_12m&quot;, &quot;pl_trades_6m&quot;, &quot;pl_trades_12m&quot;, &quot;inquiries_6m&quot;, &quot;inquiries_12m&quot;,
+               &quot;home_loan&quot;, &quot;outstanding_balance&quot;, &quot;total_no_of_trades&quot;,  &quot;auto_loan&quot;,
+               &quot;performance_tag&quot;
+               )
+master &lt;- bind_dataset[, col_order]
+
+
+write.csv(master,
+          &quot;C:\\Fundamentals of Analytics\\master.csv&quot;, row.names = FALSE)</code></pre>
+</div>
+<div id="weight-of-evidence-woe-and-equivalently-information-value-analysis" class="section level2">
+<h2>weight of evidence (WOE) (and, equivalently, information value analysis)</h2>
+</div>
+<div id="data-preparation" class="section level2">
+<h2>4 : Data Preparation</h2>
+<pre class="r"><code>library(Information)
+
+#summary(bureau)
+#master$age &lt;- factor(master$age)
+
+
+master_IV &lt;- master %&gt;%
+
+na.omit(master) %&gt;%
+subset(select=-id)</code></pre>
+</div>
+<div id="compute-information-value-and-woe" class="section level2">
+<h2>5 : Compute Information Value and WOE</h2>
+<pre class="r"><code>IV &lt;- create_infotables(data=master_IV, y=&quot;performance_tag&quot;, bins=10, parallel=FALSE)</code></pre>
+<pre class="r"><code>IV_Value = data.frame(IV$Summary)
+
+print(IV_Value)</code></pre>
+<pre><code>##               Variable           IV
+## 23       inquiries_12m 3.154610e-01
+## 17     utilization_12m 3.140657e-01
+## 21       pl_trades_12m 3.114747e-01
+## 19   trades_opened_12m 3.106376e-01
+## 25 outstanding_balance 2.548384e-01
+## 26  total_no_of_trades 2.496478e-01
+## 13           dpd_30_6m 2.468598e-01
+## 20        pl_trades_6m 2.283689e-01
+## 14          dpd_90_12m 2.187290e-01
+## 22        inquiries_6m 2.139588e-01
+## 12           dpd_60_6m 2.103120e-01
+## 16          dpd_30_12m 2.023846e-01
+## 18           trades_6m 1.946076e-01
+## 15          dpd_60_12m 1.891702e-01
+## 11           dpd_90_6m 1.639854e-01
+## 9     residence_months 8.010704e-02
+## 5               income 4.165066e-02
+## 10      company_months 2.187682e-02
+## 24           home_loan 1.732550e-02
+## 1                  age 3.754750e-03
+## 4           dependents 2.943996e-03
+## 7           profession 2.194827e-03
+## 27           auto_loan 1.610443e-03
+## 8            residence 8.532957e-04
+## 6            education 8.137030e-04
+## 2               gender 2.511990e-04
+## 3              marital 9.370021e-05</code></pre>
+<pre class="r"><code>plot_infotables(IV, IV$Summary$Variable[1:27], same_scale=FALSE)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-2.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-3.png" width="672" /></p>
+</div>
