@@ -36,13 +36,7 @@ library(randomForest)
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 bank <- read_csv("bank.csv") %>%
-  select(c(age, job, marital, education, default, balance, housing, loan, y)) #%>%
-  #mutate(subscription_status=ifelse(y == 'yes', 1, 0)) #%>%
-  #subset(select=-y)
- 
-#bank %>% group_by(y) %>%  count()
-
-
+  select(c(age, job, marital, education, default, balance, housing, loan, y)) 
 ```
 
 ## Splitting data
@@ -59,14 +53,13 @@ training_bank <- bank$y %>%
 bank_train  <- bank[training_bank, ]
 bank_test <- bank[-training_bank, ]
 
-#train.data %>% group_by(y) %>% count()
-#test.data %>% group_by(y) %>% count()
 ```
 
 ## Computing random forest model
 
+Carat package is used to generate random forest model.
 
-```{r}
+```{r echo=False, paged.print=TRUE}
 set.seed(20)
 
 # Fit the model on the training set

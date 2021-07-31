@@ -38,13 +38,11 @@ training_bank &lt;- bank$y %&gt;%
   createDataPartition(p = 0.8, list = FALSE)
 
 bank_train  &lt;- bank[training_bank, ]
-bank_test &lt;- bank[-training_bank, ]
-
-#train.data %&gt;% group_by(y) %&gt;% count()
-#test.data %&gt;% group_by(y) %&gt;% count()</code></pre>
+bank_test &lt;- bank[-training_bank, ]</code></pre>
 </div>
 <div id="computing-random-forest-model" class="section level2">
 <h2>Computing random forest model</h2>
+<p>Carat package is used to generate random forest model.</p>
 <pre class="r"><code>set.seed(20)
 
 # Fit the model on the training set
