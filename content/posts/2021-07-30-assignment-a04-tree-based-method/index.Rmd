@@ -21,11 +21,11 @@ In this exercise, a random forest classification applies on the bank dataset to 
 
 Variable importance analysis is also applied on this dataset to determine importance of variables and sort them in terms of importance.
 
-This dataset consists of an imbalanced number of outputs, so that 90 percent of outcomes are "no" and 10 percent are "yes". This leads to severe bias of generated model towards "no". In fact, all inputs of test set resulted in "no". Although model's accuracy is good, it has a terrible specificity. To tackle this problem, a balanced model is built for this dataset  using "ROSE" package. This results in slighltly decrease in accuracy but big improvement is terms of specificity.
+This dataset consists of an imbalanced number of outputs, so that 90 percent of outcomes are "no" and 10 percent are "yes". This leads to severe bias of generated model towards "no". In fact, all inputs of test set resulted in "no". Although model's accuracy is good, it has a terrible specificity. To tackle this problem, a balanced model is built for this dataset  using "ROSE" package. This results in slightly decrease in accuracy but big improvement is terms of specificity.
 
 ## libraries
 
-```{r, message=FALSE}
+```{r message=FALSE, paged.print=TRUE}
 library(tidyverse)
 library(tidymodels)
 library(caret)
@@ -47,8 +47,9 @@ bank <- read_csv("bank.csv") %>%
 
 ## Splitting data
 
+Dataset divided to train-test parts, 80% for training and 20% for testing the generated model.
 
-```{r}
+```{r Splitting, paged.print=TRUE}
 set.seed(20)
 
 # Split 80% of data as training set
@@ -62,7 +63,7 @@ bank_test <- bank[-training_bank, ]
 #test.data %>% group_by(y) %>% count()
 ```
 
-## Computing random forest classifier
+## Computing random forest model
 
 
 ```{r}

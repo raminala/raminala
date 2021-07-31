@@ -19,7 +19,7 @@ tags:
 <p>the random forest provides a strong improvement, which consists of applying bagging to the data and bootstrap sampling to the predictor variables at each split. This means that at each splitting step of the tree algorithm, a random sample of n predictors is chosen as split candidates from the full set of the predictors.</p>
 <p>In this exercise, a random forest classification applies on the bank dataset to predict whether an unknown new customer will subscribe to an account or not. We are using “caret” package for modeling random forest. Dataset divided to 80-20 percents to train with 80% and test the acquired model with remaining 20% test data.</p>
 <p>Variable importance analysis is also applied on this dataset to determine importance of variables and sort them in terms of importance.</p>
-<p>This dataset consists of an imbalanced number of outputs, so that 90 percent of outcomes are “no” and 10 percent are “yes”. This leads to severe bias of generated model towards “no”. In fact, all inputs of test set resulted in “no”. Although model’s accuracy is good, it has a terrible specificity. To tackle this problem, a balanced model is built for this dataset using “ROSE” package. This results in slighltly decrease in accuracy but big improvement is terms of specificity.</p>
+<p>This dataset consists of an imbalanced number of outputs, so that 90 percent of outcomes are “no” and 10 percent are “yes”. This leads to severe bias of generated model towards “no”. In fact, all inputs of test set resulted in “no”. Although model’s accuracy is good, it has a terrible specificity. To tackle this problem, a balanced model is built for this dataset using “ROSE” package. This results in slightly decrease in accuracy but big improvement is terms of specificity.</p>
 </div>
 <div id="libraries" class="section level2">
 <h2>libraries</h2>
@@ -30,6 +30,7 @@ library(randomForest)</code></pre>
 </div>
 <div id="splitting-data" class="section level2">
 <h2>Splitting data</h2>
+<p>Dataset divided to train-test parts, 80% for training and 20% for testing the generated model.</p>
 <pre class="r"><code>set.seed(20)
 
 # Split 80% of data as training set
@@ -42,8 +43,8 @@ bank_test &lt;- bank[-training_bank, ]
 #train.data %&gt;% group_by(y) %&gt;% count()
 #test.data %&gt;% group_by(y) %&gt;% count()</code></pre>
 </div>
-<div id="computing-random-forest-classifier" class="section level2">
-<h2>Computing random forest classifier</h2>
+<div id="computing-random-forest-model" class="section level2">
+<h2>Computing random forest model</h2>
 <pre class="r"><code>set.seed(20)
 
 # Fit the model on the training set
@@ -101,7 +102,7 @@ summary(test_pred_mat)</code></pre>
 ## 12 recall               binary         1    
 ## 13 f_meas               binary         0.939</code></pre>
 <pre class="r"><code>autoplot(test_pred_mat, type = &#39;heatmap&#39;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
 <div id="variable-importance" class="section level2">
 <h2>Variable importance</h2>
@@ -132,10 +133,10 @@ summary(test_pred_mat)</code></pre>
 <p>(MeanDecreaseGini): Provides a more nuanced measure of importance, which factors in both the contribution that variable makes to accuracy, and the degree of misclassification (e.g., if a variable improves the probability of an observation being classified to a segment from 55% to 90%, this will show up in the Importance (MeanDecreaseGini), but not in MeanDecreaseAccuracy). As with MeanDecreaseAccuracy, high numbers indicate that a variable is more important as a predictor.</p>
 <pre class="r"><code># Plot MeanDecreaseAccuracy
 varImpPlot(model$finalModel, type = 1)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <pre class="r"><code># Plot MeanDecreaseGini
 varImpPlot(model$finalModel, type = 2)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
 <p>The results show that across all of the trees considered in the random forest, the glucose and age variables are the two most important variables.</p>
 <pre class="r"><code># the importance of variables in percentage
 
@@ -227,5 +228,5 @@ summary(test_pred_mat2)</code></pre>
 ## 12 recall               binary         0.924
 ## 13 f_meas               binary         0.911</code></pre>
 <pre class="r"><code>autoplot(test_pred_mat2, type = &#39;heatmap&#39;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 </div>
