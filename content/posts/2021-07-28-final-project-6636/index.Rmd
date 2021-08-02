@@ -228,8 +228,121 @@ woe_data <- master %>%
   mutate( company_months = replace(company_months, between(company_months,41,47),  -0.15950171)) %>%
   mutate( company_months = replace(company_months, between(company_months,48,53),  -0.22066994)) %>%
   mutate( company_months = replace(company_months, between(company_months,54,61),  -0.23006158)) %>%
-  mutate( company_months = replace(company_months, between(company_months,62,133),  0.06500409)) #%>%
+  mutate( company_months = replace(company_months, between(company_months,62,133),  0.06500409)) %>%
 
-  print(IV$Tables$company_months, row.names=FALSE)
+  mutate( dpd_90_6m = replace(dpd_90_6m, dpd_90_6m==0,  -0.2664307)) %>%
+  mutate( dpd_90_6m = replace(dpd_90_6m, between(dpd_90_6m,1,3), 0.6239753))  %>%
+  
+  mutate( dpd_60_6m = replace(dpd_60_6m, dpd_60_6m==0,  -0.3435695)) %>%
+  mutate( dpd_60_6m = replace(dpd_60_6m, between(dpd_60_6m,1,5),  0.6230040))  %>%
+  
+  mutate( dpd_30_6m = replace(dpd_30_6m, dpd_30_6m==0,  -0.3958799)) %>%
+  mutate( dpd_30_6m = replace(dpd_30_6m, dpd_30_6m==1,  0.4694610))  %>%
+  mutate( dpd_30_6m = replace(dpd_30_6m, between(dpd_30_6m,2,7),  0.7403884)) %>%
+
+  mutate( dpd_90_12m = replace(dpd_90_12m, dpd_90_12m==0,  -0.3647314)) %>%
+  mutate( dpd_90_12m = replace(dpd_90_12m, dpd_90_12m==1,  0.5101573))  %>%
+  mutate( dpd_90_12m = replace(dpd_90_12m, between(dpd_90_12m,2,5),  0.7218272)) %>%
+
+  mutate( dpd_60_12m = replace(dpd_60_12m, dpd_60_12m==0,  -0.3591009)) %>%
+  mutate( dpd_60_12m = replace(dpd_60_12m, dpd_60_12m==1,  0.2152035))  %>%
+  mutate( dpd_60_12m = replace(dpd_60_12m, between(dpd_60_12m,2,7),  0.6939493)) %>%
+  
+  mutate( dpd_30_12m = replace(dpd_30_12m, dpd_30_12m==0,  -0.3853646)) %>%
+  mutate( dpd_30_12m = replace(dpd_30_12m, between(dpd_30_12m,1,2),  0.2848629))  %>%
+  mutate( dpd_30_12m = replace(dpd_30_12m, between(dpd_30_12m,3,9),  0.7965947))   %>%
+  
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,0,4),  -0.79974940)) %>%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,5,6),  -0.79817351)) %>%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,7,8),  -0.79187508)) %>%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,9,11),  -0.66998411)) %>%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,12,14),  -0.46603868)) %>%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,15,21),  -0.07600819)) %>%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,22,37),  0.47376425)) %>%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,38,51),  0.58503960)) %>%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,52,71),  0.56644494)) %>%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,72,113),  0.38568829)) %>%
+  
+  mutate( trades_6m = replace(trades_6m, trades_6m==0,  -0.7402284	)) %>%
+  mutate( trades_6m = replace(trades_6m, trades_6m==1,  -0.4760898	)) %>%
+  mutate( trades_6m = replace(trades_6m, trades_6m==2,  0.2364562)) %>%
+  mutate( trades_6m = replace(trades_6m, trades_6m==3,  0.4327520)) %>%
+  mutate( trades_6m = replace(trades_6m, trades_6m==4,  0.5215066)) %>%
+  mutate( trades_6m = replace(trades_6m, between(trades_6m,5,12),  0.1335172))%>%
+  
+  mutate( trades_opened_12m = replace(trades_opened_12m, trades_opened_12m==0,  -0.894500098)) %>%
+  mutate( trades_opened_12m = replace(trades_opened_12m, trades_opened_12m==1,  -1.016850939)) %>%
+  mutate( trades_opened_12m = replace(trades_opened_12m, trades_opened_12m==2,  -0.813563496)) %>%
+  mutate( trades_opened_12m = replace(trades_opened_12m, between(trades_opened_12m,3,4),  0.011943065)) %>%
+  mutate( trades_opened_12m = replace(trades_opened_12m, trades_opened_12m==5,  0.207396853)) %>%
+  mutate( trades_opened_12m = replace(trades_opened_12m, between(trades_opened_12m,6,7),  0.448049021)) %>%
+  mutate( trades_opened_12m = replace(trades_opened_12m, between(trades_opened_12m,8,9),  0.573136724)) %>%
+  mutate( trades_opened_12m = replace(trades_opened_12m, between(trades_opened_12m,10,12),  0.485011064)) %>%
+  mutate( trades_opened_12m = replace(trades_opened_12m, between(trades_opened_12m,13,28),  0.002793356)) %>%
+  
+  mutate( pl_trades_6m = replace(pl_trades_6m, pl_trades_6m==0,  -0.6768231)) %>%
+  mutate( pl_trades_6m = replace(pl_trades_6m, pl_trades_6m==1,  0.2013560)) %>%
+  mutate( pl_trades_6m = replace(pl_trades_6m, pl_trades_6m==2,  0.4397232)) %>%
+  mutate( pl_trades_6m = replace(pl_trades_6m, between(pl_trades_6m,3,6),  0.3576285))%>%
+  
+  mutate( pl_trades_12m = replace(pl_trades_12m, pl_trades_12m==0,  -0.9471609	)) %>%
+  mutate( pl_trades_12m = replace(pl_trades_12m, pl_trades_12m==1,  -0.1279522	)) %>%
+  mutate( pl_trades_12m = replace(pl_trades_12m, pl_trades_12m==2,  0.2522636)) %>%
+  mutate( pl_trades_12m = replace(pl_trades_12m, pl_trades_12m==3,  0.4161652)) %>%
+  mutate( pl_trades_12m = replace(pl_trades_12m, pl_trades_12m==4,  0.5016385)) %>%
+  mutate( pl_trades_12m = replace(pl_trades_12m, pl_trades_12m==5,  0.4196919)) %>%
+  mutate( pl_trades_12m = replace(pl_trades_12m, between(pl_trades_12m,6,12),  0.2376102))%>%
+
+  mutate( inquiries_6m = replace(inquiries_6m, inquiries_6m==0,  -0.75470945)) %>%
+  mutate( inquiries_6m = replace(inquiries_6m, inquiries_6m==1,  0.18011102)) %>%
+  mutate( inquiries_6m = replace(inquiries_6m, inquiries_6m==2,  0.21415526)) %>%
+  mutate( inquiries_6m = replace(inquiries_6m, between(inquiries_6m,3,4),  0.50749871)) %>%
+  mutate( inquiries_6m = replace(inquiries_6m, between(inquiries_6m,5,10),  0.01163274)) %>%
+  
+  mutate( inquiries_12m = replace(inquiries_12m, inquiries_12m==0,  -1.14210740)) %>%
+  mutate( inquiries_12m = replace(inquiries_12m, inquiries_12m==1,  -0.02178118)) %>%
+  mutate( inquiries_12m = replace(inquiries_12m, inquiries_12m==2,   0.14294109)) %>%
+  mutate( inquiries_12m = replace(inquiries_12m, inquiries_12m==3,   0.16773844)) %>%
+  mutate( inquiries_12m = replace(inquiries_12m, inquiries_12m==4,   0.25020441)) %>%
+  mutate( inquiries_12m = replace(inquiries_12m, inquiries_12m==5,   0.57635386)) %>%
+  mutate( inquiries_12m = replace(inquiries_12m, between(inquiries_12m,6,8),  0.48580800)) %>%
+  mutate( inquiries_12m = replace(inquiries_12m, between(inquiries_12m,9,20),  0.01255320))  %>%
+  
+  mutate( home_loan = replace(home_loan, home_loan==0,  0.07322469)) %>%
+  mutate( home_loan = replace(home_loan, home_loan==1, -0.23694925))%>%
+  
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,0,7786),  -0.9764093)) %>%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,7787,55454),  -0.8487953)) %>%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,56065,392876),  -0.0769904)) %>%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,392909,590337),   0.2715642)) %>%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,590343,777938),   0.4655003)) %>%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,777956,976179),   0.4142887)) %>%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,976183,1362849),   0.3866071)) %>%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,1362864,2962106),  -0.3887941)) %>%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,2962114,3289876),  -0.8015947)) %>%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,3289931,5218801),   0.2963591)) %>%
+
+
+  mutate( total_no_of_trades = replace(total_no_of_trades, total_no_of_trades==1,  -1.05653995)) %>%
+  mutate( total_no_of_trades = replace(total_no_of_trades, total_no_of_trades==2,   -1.01505568	)) %>%
+  mutate( total_no_of_trades = replace(total_no_of_trades, total_no_of_trades==3,   -0.69881486)) %>%
+  mutate( total_no_of_trades = replace(total_no_of_trades, total_no_of_trades==4,  -0.44466272)) %>%
+  mutate( total_no_of_trades = replace(total_no_of_trades, total_no_of_trades==5,  -0.04461396)) %>%
+  mutate( total_no_of_trades = replace(total_no_of_trades, between(total_no_of_trades,6,7),  0.21585574)) %>%
+  mutate( total_no_of_trades = replace(total_no_of_trades, total_no_of_trades==8,   0.46328513)) %>%
+  mutate( total_no_of_trades = replace(total_no_of_trades, between(total_no_of_trades,9,10),  0.54093915)) %>%
+  mutate( total_no_of_trades = replace(total_no_of_trades, between(total_no_of_trades,11,19),  0.42543258)) %>%
+  mutate( total_no_of_trades = replace(total_no_of_trades, between(total_no_of_trades,20,44),  -0.06846777	)) %>%
+  
+  mutate( auto_loan = replace(auto_loan, auto_loan==0,  0.01191341	)) %>%
+  mutate( auto_loan = replace(auto_loan, auto_loan==1,   -0.13519714	))
+
+
+
+  print(IV$Tables$dpd_60_6m, row.names=FALSE)
+  names(woe_data)
+  
+  write.csv(woe_data,
+          "C:\\Fundamentals of Analytics\\woe_data.csv", row.names = FALSE)
 ```
 
