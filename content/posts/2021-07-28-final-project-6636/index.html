@@ -111,4 +111,50 @@ print(IV_Value)</code></pre>
 ## 3              marital 9.370021e-05</code></pre>
 <pre class="r"><code>plot_infotables(IV, IV$Summary$Variable[1:27], same_scale=FALSE)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-2.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-3.png" width="672" /></p>
+<pre class="r"><code>plot_infotables(IV, &quot;inquiries_12m&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-4.png" width="672" /></p>
+<pre class="r"><code>plot_infotables(IV, &quot;age&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-5.png" width="672" /></p>
+<pre class="r"><code>tt &lt;- master_IV %&gt;%
+  select(inquiries_12m, performance_tag) %&gt;%
+  
+  group_by(performance_tag) %&gt;%
+  count()
+
+
+
+vv &lt;- master_IV %&gt;%
+  select(inquiries_12m, performance_tag) %&gt;%
+  filter(between(inquiries_12m,5,5)) %&gt;%
+  group_by(performance_tag) %&gt;%
+  count()
+tt</code></pre>
+<pre><code>## # A tibble: 2 x 2
+## # Groups:   performance_tag [2]
+##   performance_tag     n
+##             &lt;dbl&gt; &lt;int&gt;
+## 1               0 65809
+## 2               1  2896</code></pre>
+<pre class="r"><code>vv</code></pre>
+<pre><code>## # A tibble: 2 x 2
+## # Groups:   performance_tag [2]
+##   performance_tag     n
+##             &lt;dbl&gt; &lt;int&gt;
+## 1               0  4546
+## 2               1   356</code></pre>
+<pre class="r"><code>print(IV$Tables$age, row.names=FALSE)</code></pre>
+<pre><code>##      age    N    Percent          WOE           IV
+##  [-3,30] 5815 0.08463722 -0.039506890 0.0001297377
+##  [31,35] 6805 0.09904665  0.046882216 0.0003521703
+##  [36,38] 6812 0.09914853  0.066531127 0.0008046568
+##  [39,41] 7020 0.10217597  0.075316247 0.0014046604
+##  [42,44] 6869 0.09997817 -0.061320756 0.0017702238
+##  [45,47] 6718 0.09778037 -0.004329305 0.0017720529
+##  [48,50] 6641 0.09665963 -0.007207997 0.0017770583
+##  [51,53] 6714 0.09772215 -0.137458080 0.0035115977
+##  [54,57] 7501 0.10917692  0.044718393 0.0037344482
+##  [58,65] 7810 0.11367441 -0.013404982 0.0037547498</code></pre>
+</div>
+<div id="replace-variables-values-by-the-corresponding-woe-value" class="section level2">
+<h2>Replace variables’ values by the corresponding WOE value</h2>
 </div>

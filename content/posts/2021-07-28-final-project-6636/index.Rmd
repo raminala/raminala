@@ -121,8 +121,115 @@ IV_Value = data.frame(IV$Summary)
 print(IV_Value)
 ```
 
+
 ```{r}
 plot_infotables(IV, IV$Summary$Variable[1:27], same_scale=FALSE)
 
+plot_infotables(IV, "inquiries_12m")
+plot_infotables(IV, "age")
+```
+
+
+```{r}
+tt <- master_IV %>%
+  select(inquiries_12m, performance_tag) %>%
+  
+  group_by(performance_tag) %>%
+  count()
+
+
+
+vv <- master_IV %>%
+  select(inquiries_12m, performance_tag) %>%
+  filter(between(inquiries_12m,5,5)) %>%
+  group_by(performance_tag) %>%
+  count()
+tt
+vv
+```
+
+```{r}
+print(IV$Tables$inquiries_12m, row.names=FALSE)
+
+print(IV$Tables$income, row.names=FALSE)
+```
+
+## Replace variables' values by the corresponding WOE value
+
+
+
+
+```{r}
+
+woe_data <- master %>%
+  mutate( age = replace(age, between(age,-3,30),  -0.039506890)) %>%
+  mutate( age = replace(age, between(age,31,35),   0.046882216)) %>%
+  mutate( age = replace(age, between(age,36,38),   0.066531127)) %>%
+  mutate( age = replace(age, between(age,39,41),   0.075316247)) %>%
+  mutate( age = replace(age, between(age,42,44),  -0.061320756)) %>%
+  mutate( age = replace(age, between(age,45,47),  -0.004329305)) %>%
+  mutate( age = replace(age, between(age,48,50),  -0.007207997)) %>%
+  mutate( age = replace(age, between(age,51,53),  -0.137458080)) %>%
+  mutate( age = replace(age, between(age,54,57),   0.044718393)) %>%
+  mutate( age = replace(age, between(age,58,65),  -0.013404982)) %>%
+  
+  mutate( gender = replace(gender, gender=="F",  0.028254108)) %>%
+  mutate( gender = replace(gender, gender=="M",  -0.008890893)) %>%
+  
+  mutate( marital = replace(marital, marital=="Married",  -0.004058593)) %>%
+  mutate( marital = replace(marital, marital=="Single",  0.023087052)) %>% 
+  
+  mutate( dependents = replace(dependents, dependents==1,  0.047511301)) %>%
+  mutate( dependents = replace(dependents, dependents==2, -0.089738973)) %>% 
+  mutate( dependents = replace(dependents, dependents==3,  0.051725860)) %>%
+  mutate( dependents = replace(dependents, dependents==4, -0.029168607)) %>% 
+  mutate( dependents = replace(dependents, dependents==5,  0.006997003)) %>%
+  
+  mutate( income = replace(income, between(income,-0.5,5),  0.299553096)) %>%
+  mutate( income = replace(income, between(income,6,10),    0.270245403)) %>%
+  mutate( income = replace(income, between(income,11,16),   0.074864917)) %>%
+  mutate( income = replace(income, between(income,17,21),   0.089160195)) %>%
+  mutate( income = replace(income, between(income,22,26),   0.007652167)) %>%
+  mutate( income = replace(income, between(income,27,31),   0.071544388)) %>%
+  mutate( income = replace(income, between(income,32,36),  -0.138694556)) %>%
+  mutate( income = replace(income, between(income,37,41),  -0.264723534)) %>%
+  mutate( income = replace(income, between(income,42,48),   -0.175401898)) %>%
+  mutate( income = replace(income, between(income,49,60),  -0.363216455)) %>%
+
+  mutate( education = replace(education, education=="Bachelor",  0.0203476113)) %>%
+  mutate( education = replace(education, education=="Masters",  -0.0008907703)) %>%
+  mutate( education = replace(education, education=="Others",  0.5394285801)) %>%
+  mutate( education = replace(education, education=="Phd",  -0.0085173636)) %>%
+  mutate( education = replace(education, education=="Professional",  -0.0155472553)) %>%
+  
+  mutate( profession = replace(profession, profession=="SAL",  -0.02719623)) %>%
+  mutate( profession = replace(profession, profession=="SE",  0.09099464)) %>%
+  mutate( profession = replace(profession, profession=="SE_PROF",  -0.01586440)) %>% 
+  
+  mutate( residence = replace(residence, residence=="Company provided",  0.066903551)) %>%
+  mutate( residence = replace(residence, residence=="Living with Parents",  0.074093102)) %>%
+  mutate( residence = replace(residence, residence=="Others",  -0.514160027)) %>%
+  mutate( residence = replace(residence, residence=="Owned",  -0.003167738	)) %>%
+  mutate( residence = replace(residence, residence=="Rented",  -0.002327681)) %>%
+  
+  mutate( residence_months = replace(residence_months, between(residence_months,6,9),  -0.27504521)) %>%
+  mutate( residence_months = replace(residence_months, between(residence_months,10,28),  0.50219013)) %>%
+  mutate( residence_months = replace(residence_months, between(residence_months,29,49),  0.30145219)) %>%
+  mutate( residence_months = replace(residence_months, between(residence_months,50,72),  0.14236553)) %>%
+  mutate( residence_months = replace(residence_months, between(residence_months,73,97),  0.13184356)) %>%
+  mutate( residence_months = replace(residence_months, between(residence_months,98,126),  -0.07614037)) %>%
+
+  mutate( company_months = replace(company_months, between(company_months,3,5),  0.10380388)) %>%
+  mutate( company_months = replace(company_months, between(company_months,6,12),  0.17693458)) %>%
+  mutate( company_months = replace(company_months, between(company_months,13,19),  0.20495867)) %>%
+  mutate( company_months = replace(company_months, between(company_months,20,26),  0.03865713)) %>%
+  mutate( company_months = replace(company_months, between(company_months,27,33),  -0.08128390)) %>%
+  mutate( company_months = replace(company_months, between(company_months,34,40),  0.01916403)) %>%
+  mutate( company_months = replace(company_months, between(company_months,41,47),  -0.15950171)) %>%
+  mutate( company_months = replace(company_months, between(company_months,48,53),  -0.22066994)) %>%
+  mutate( company_months = replace(company_months, between(company_months,54,61),  -0.23006158)) %>%
+  mutate( company_months = replace(company_months, between(company_months,62,133),  0.06500409)) #%>%
+
+  print(IV$Tables$company_months, row.names=FALSE)
 ```
 
