@@ -98,3 +98,22 @@ head(predicted.classes)
 mean(predicted.classes == test.data$diabetes)
 ```
 
+```{r}
+# Fit the model on the training set
+set.seed(123)
+model <- train(
+  diabetes ~., data = train.data, method = "svmLinear",
+  trControl = trainControl("cv", number = 10),
+  tuneGrid = expand.grid(C = seq(0, 2, length = 20)),
+  preProcess = c("center","scale")
+  )
+# Plot model accuracy vs different values of Cost
+plot(model)
+```
+
+```{r}
+# Print the best tuning parameter C that
+# maximizes model accuracy
+model$bestTune
+```
+
