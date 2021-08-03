@@ -340,3 +340,13 @@ woe_data <- master %>%
 
 ## Support Vector Machines
 
+```{r}
+library(e1071)
+```
+
+```{r}
+
+
+svmfit = svm(y ~ ., data = dat, kernel = "linear", cost = 10, scale = FALSE)
+print(svmfit)
+```
