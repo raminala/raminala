@@ -340,14 +340,44 @@ woe_data <- master %>%
 
 ## Support Vector Machines
 
+## Libraries
+
 ```{r}
 library(e1071)
 library(kernlab)
+library(tidyverse)
+library(caret)
 ```
+
+## Split the data
 
 ```{r}
 
 
-svmfit = svm(performance_tag ~ ., data = woe_data, kernel = "linear", cost = 10, scale = FALSE)
-print(svmfit)
+data_no_na <- na.omit(woe_data)
+
+set.seed(123)
+training.samples <- data_no_na$performance_tag %>%
+  createDataPartition(p = 0.3, list = FALSE)
+
+train.data  <- data_no_na[training.samples, ]
+test.data <- data_no_na[-training.samples, ]
+
 ```
+
+## SVM linear classifier
+
+```{r}
+
+# Fit the model on the training set
+set.seed(123)
+model <- train(
+  as.factor(performance_tag) ~., data = train.data, method = "svmLinear",
+  trControl = trainControl("cv", number = 10),
+  preProcess = c("center","scale")
+  )
+
+
+```
+
+
