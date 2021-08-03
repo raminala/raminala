@@ -342,11 +342,12 @@ woe_data <- master %>%
 
 ```{r}
 library(e1071)
+library(kernlab)
 ```
 
 ```{r}
 
 
-svmfit = svm(y ~ ., data = dat, kernel = "linear", cost = 10, scale = FALSE)
+svmfit = svm(performance_tag ~ ., data = woe_data, kernel = "linear", cost = 10, scale = FALSE)
 print(svmfit)
 ```
