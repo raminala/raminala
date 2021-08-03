@@ -1,0 +1,100 @@
+---
+title: 'Support Vector Machines '
+author: ''
+date: '2021-08-02'
+slug: []
+categories: []
+tags:
+  - Support Vector Machines
+---
+
+```{r}
+v<-rnorm(500)
+#v
+mean(v)
+
+rep(c(-1, 1),c(5,3))
+
+```
+
+
+```{r}
+set.seed(10111)
+x = matrix(rnorm(40), 20, 2)
+y = rep(c(-1, 1), c(10, 10))
+x[y == 1,] = x[y == 1,] + 1
+plot(x, col = y + 3, pch = 19)
+```
+
+```{r}
+library(e1071)
+```
+
+```{r}
+dat = data.frame(x, y = as.factor(y))
+
+dat
+
+svmfit = svm(y ~ ., data = dat, kernel = "linear", cost = 10, scale = FALSE)
+print(svmfit)
+```
+
+
+
+```{r}
+plot(svmfit, dat)
+```
+
+## Support Vector Machine
+
+Support Vector Machine works by identifying the optimal *decision boundary* that separates data points from different groups (or classes), and then predicts the class of new observations based on this separation boundary.
+
+Support vector machine methods can handle both linear and non-linear class boundaries. It can be used for multi-class classification problems.
+
+
+## Libraries
+
+```{r}
+library(tidyverse)
+library(caret)
+library(kernlab)
+```
+
+## Loading data
+
+```{r}
+# Load the data
+data("PimaIndiansDiabetes2", package = "mlbench")
+pima.data <- na.omit(PimaIndiansDiabetes2)
+
+# Split the data into training and test set
+set.seed(123)
+
+training.samples <- pima.data$diabetes %>%
+  createDataPartition(p = 0.8, list = FALSE)
+
+train.data  <- pima.data[training.samples, ]
+test.data <- pima.data[-training.samples, ]
+```
+
+## SVM linear classifier
+
+
+```{r}
+# Fit the model on the training set
+set.seed(123)
+model <- train(
+  diabetes ~., data = train.data, method = "svmLinear",
+  trControl = trainControl("cv", number = 10),
+  preProcess = c("center","scale")
+  )
+# Make predictions on the test data
+predicted.classes <- model %>% predict(test.data)
+head(predicted.classes)
+```
+
+```{r}
+# Compute model accuracy rate
+mean(predicted.classes == test.data$diabetes)
+```
+

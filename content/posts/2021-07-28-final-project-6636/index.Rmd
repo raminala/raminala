@@ -148,16 +148,8 @@ tt
 vv
 ```
 
-```{r}
-print(IV$Tables$inquiries_12m, row.names=FALSE)
-
-print(IV$Tables$income, row.names=FALSE)
-```
 
 ## Replace variables' values by the corresponding WOE value
-
-
-
 
 ```{r}
 
@@ -345,4 +337,6 @@ woe_data <- master %>%
   write.csv(woe_data,
           "C:\\Fundamentals of Analytics\\woe_data.csv", row.names = FALSE)
 ```
+
+## Support Vector Machines
 

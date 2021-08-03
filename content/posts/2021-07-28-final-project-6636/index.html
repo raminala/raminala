@@ -142,19 +142,205 @@ tt</code></pre>
 ##             &lt;dbl&gt; &lt;int&gt;
 ## 1               0  4546
 ## 2               1   356</code></pre>
-<pre class="r"><code>print(IV$Tables$age, row.names=FALSE)</code></pre>
-<pre><code>##      age    N    Percent          WOE           IV
-##  [-3,30] 5815 0.08463722 -0.039506890 0.0001297377
-##  [31,35] 6805 0.09904665  0.046882216 0.0003521703
-##  [36,38] 6812 0.09914853  0.066531127 0.0008046568
-##  [39,41] 7020 0.10217597  0.075316247 0.0014046604
-##  [42,44] 6869 0.09997817 -0.061320756 0.0017702238
-##  [45,47] 6718 0.09778037 -0.004329305 0.0017720529
-##  [48,50] 6641 0.09665963 -0.007207997 0.0017770583
-##  [51,53] 6714 0.09772215 -0.137458080 0.0035115977
-##  [54,57] 7501 0.10917692  0.044718393 0.0037344482
-##  [58,65] 7810 0.11367441 -0.013404982 0.0037547498</code></pre>
 </div>
 <div id="replace-variables-values-by-the-corresponding-woe-value" class="section level2">
 <h2>Replace variables’ values by the corresponding WOE value</h2>
+<pre class="r"><code>woe_data &lt;- master %&gt;%
+  mutate( age = replace(age, between(age,-3,30),  -0.039506890)) %&gt;%
+  mutate( age = replace(age, between(age,31,35),   0.046882216)) %&gt;%
+  mutate( age = replace(age, between(age,36,38),   0.066531127)) %&gt;%
+  mutate( age = replace(age, between(age,39,41),   0.075316247)) %&gt;%
+  mutate( age = replace(age, between(age,42,44),  -0.061320756)) %&gt;%
+  mutate( age = replace(age, between(age,45,47),  -0.004329305)) %&gt;%
+  mutate( age = replace(age, between(age,48,50),  -0.007207997)) %&gt;%
+  mutate( age = replace(age, between(age,51,53),  -0.137458080)) %&gt;%
+  mutate( age = replace(age, between(age,54,57),   0.044718393)) %&gt;%
+  mutate( age = replace(age, between(age,58,65),  -0.013404982)) %&gt;%
+  
+  mutate( gender = replace(gender, gender==&quot;F&quot;,  0.028254108)) %&gt;%
+  mutate( gender = replace(gender, gender==&quot;M&quot;,  -0.008890893)) %&gt;%
+  
+  mutate( marital = replace(marital, marital==&quot;Married&quot;,  -0.004058593)) %&gt;%
+  mutate( marital = replace(marital, marital==&quot;Single&quot;,  0.023087052)) %&gt;% 
+  
+  mutate( dependents = replace(dependents, dependents==1,  0.047511301)) %&gt;%
+  mutate( dependents = replace(dependents, dependents==2, -0.089738973)) %&gt;% 
+  mutate( dependents = replace(dependents, dependents==3,  0.051725860)) %&gt;%
+  mutate( dependents = replace(dependents, dependents==4, -0.029168607)) %&gt;% 
+  mutate( dependents = replace(dependents, dependents==5,  0.006997003)) %&gt;%
+  
+  mutate( income = replace(income, between(income,-0.5,5),  0.299553096)) %&gt;%
+  mutate( income = replace(income, between(income,6,10),    0.270245403)) %&gt;%
+  mutate( income = replace(income, between(income,11,16),   0.074864917)) %&gt;%
+  mutate( income = replace(income, between(income,17,21),   0.089160195)) %&gt;%
+  mutate( income = replace(income, between(income,22,26),   0.007652167)) %&gt;%
+  mutate( income = replace(income, between(income,27,31),   0.071544388)) %&gt;%
+  mutate( income = replace(income, between(income,32,36),  -0.138694556)) %&gt;%
+  mutate( income = replace(income, between(income,37,41),  -0.264723534)) %&gt;%
+  mutate( income = replace(income, between(income,42,48),   -0.175401898)) %&gt;%
+  mutate( income = replace(income, between(income,49,60),  -0.363216455)) %&gt;%
+
+  mutate( education = replace(education, education==&quot;Bachelor&quot;,  0.0203476113)) %&gt;%
+  mutate( education = replace(education, education==&quot;Masters&quot;,  -0.0008907703)) %&gt;%
+  mutate( education = replace(education, education==&quot;Others&quot;,  0.5394285801)) %&gt;%
+  mutate( education = replace(education, education==&quot;Phd&quot;,  -0.0085173636)) %&gt;%
+  mutate( education = replace(education, education==&quot;Professional&quot;,  -0.0155472553)) %&gt;%
+  
+  mutate( profession = replace(profession, profession==&quot;SAL&quot;,  -0.02719623)) %&gt;%
+  mutate( profession = replace(profession, profession==&quot;SE&quot;,  0.09099464)) %&gt;%
+  mutate( profession = replace(profession, profession==&quot;SE_PROF&quot;,  -0.01586440)) %&gt;% 
+  
+  mutate( residence = replace(residence, residence==&quot;Company provided&quot;,  0.066903551)) %&gt;%
+  mutate( residence = replace(residence, residence==&quot;Living with Parents&quot;,  0.074093102)) %&gt;%
+  mutate( residence = replace(residence, residence==&quot;Others&quot;,  -0.514160027)) %&gt;%
+  mutate( residence = replace(residence, residence==&quot;Owned&quot;,  -0.003167738  )) %&gt;%
+  mutate( residence = replace(residence, residence==&quot;Rented&quot;,  -0.002327681)) %&gt;%
+  
+  mutate( residence_months = replace(residence_months, between(residence_months,6,9),  -0.27504521)) %&gt;%
+  mutate( residence_months = replace(residence_months, between(residence_months,10,28),  0.50219013)) %&gt;%
+  mutate( residence_months = replace(residence_months, between(residence_months,29,49),  0.30145219)) %&gt;%
+  mutate( residence_months = replace(residence_months, between(residence_months,50,72),  0.14236553)) %&gt;%
+  mutate( residence_months = replace(residence_months, between(residence_months,73,97),  0.13184356)) %&gt;%
+  mutate( residence_months = replace(residence_months, between(residence_months,98,126),  -0.07614037)) %&gt;%
+
+  mutate( company_months = replace(company_months, between(company_months,3,5),  0.10380388)) %&gt;%
+  mutate( company_months = replace(company_months, between(company_months,6,12),  0.17693458)) %&gt;%
+  mutate( company_months = replace(company_months, between(company_months,13,19),  0.20495867)) %&gt;%
+  mutate( company_months = replace(company_months, between(company_months,20,26),  0.03865713)) %&gt;%
+  mutate( company_months = replace(company_months, between(company_months,27,33),  -0.08128390)) %&gt;%
+  mutate( company_months = replace(company_months, between(company_months,34,40),  0.01916403)) %&gt;%
+  mutate( company_months = replace(company_months, between(company_months,41,47),  -0.15950171)) %&gt;%
+  mutate( company_months = replace(company_months, between(company_months,48,53),  -0.22066994)) %&gt;%
+  mutate( company_months = replace(company_months, between(company_months,54,61),  -0.23006158)) %&gt;%
+  mutate( company_months = replace(company_months, between(company_months,62,133),  0.06500409)) %&gt;%
+
+  mutate( dpd_90_6m = replace(dpd_90_6m, dpd_90_6m==0,  -0.2664307)) %&gt;%
+  mutate( dpd_90_6m = replace(dpd_90_6m, between(dpd_90_6m,1,3), 0.6239753))  %&gt;%
+  
+  mutate( dpd_60_6m = replace(dpd_60_6m, dpd_60_6m==0,  -0.3435695)) %&gt;%
+  mutate( dpd_60_6m = replace(dpd_60_6m, between(dpd_60_6m,1,5),  0.6230040))  %&gt;%
+  
+  mutate( dpd_30_6m = replace(dpd_30_6m, dpd_30_6m==0,  -0.3958799)) %&gt;%
+  mutate( dpd_30_6m = replace(dpd_30_6m, dpd_30_6m==1,  0.4694610))  %&gt;%
+  mutate( dpd_30_6m = replace(dpd_30_6m, between(dpd_30_6m,2,7),  0.7403884)) %&gt;%
+
+  mutate( dpd_90_12m = replace(dpd_90_12m, dpd_90_12m==0,  -0.3647314)) %&gt;%
+  mutate( dpd_90_12m = replace(dpd_90_12m, dpd_90_12m==1,  0.5101573))  %&gt;%
+  mutate( dpd_90_12m = replace(dpd_90_12m, between(dpd_90_12m,2,5),  0.7218272)) %&gt;%
+
+  mutate( dpd_60_12m = replace(dpd_60_12m, dpd_60_12m==0,  -0.3591009)) %&gt;%
+  mutate( dpd_60_12m = replace(dpd_60_12m, dpd_60_12m==1,  0.2152035))  %&gt;%
+  mutate( dpd_60_12m = replace(dpd_60_12m, between(dpd_60_12m,2,7),  0.6939493)) %&gt;%
+  
+  mutate( dpd_30_12m = replace(dpd_30_12m, dpd_30_12m==0,  -0.3853646)) %&gt;%
+  mutate( dpd_30_12m = replace(dpd_30_12m, between(dpd_30_12m,1,2),  0.2848629))  %&gt;%
+  mutate( dpd_30_12m = replace(dpd_30_12m, between(dpd_30_12m,3,9),  0.7965947))   %&gt;%
+  
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,0,4),  -0.79974940)) %&gt;%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,5,6),  -0.79817351)) %&gt;%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,7,8),  -0.79187508)) %&gt;%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,9,11),  -0.66998411)) %&gt;%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,12,14),  -0.46603868)) %&gt;%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,15,21),  -0.07600819)) %&gt;%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,22,37),  0.47376425)) %&gt;%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,38,51),  0.58503960)) %&gt;%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,52,71),  0.56644494)) %&gt;%
+  mutate( utilization_12m = replace(utilization_12m, between(utilization_12m,72,113),  0.38568829)) %&gt;%
+  
+  mutate( trades_6m = replace(trades_6m, trades_6m==0,  -0.7402284  )) %&gt;%
+  mutate( trades_6m = replace(trades_6m, trades_6m==1,  -0.4760898  )) %&gt;%
+  mutate( trades_6m = replace(trades_6m, trades_6m==2,  0.2364562)) %&gt;%
+  mutate( trades_6m = replace(trades_6m, trades_6m==3,  0.4327520)) %&gt;%
+  mutate( trades_6m = replace(trades_6m, trades_6m==4,  0.5215066)) %&gt;%
+  mutate( trades_6m = replace(trades_6m, between(trades_6m,5,12),  0.1335172))%&gt;%
+  
+  mutate( trades_opened_12m = replace(trades_opened_12m, trades_opened_12m==0,  -0.894500098)) %&gt;%
+  mutate( trades_opened_12m = replace(trades_opened_12m, trades_opened_12m==1,  -1.016850939)) %&gt;%
+  mutate( trades_opened_12m = replace(trades_opened_12m, trades_opened_12m==2,  -0.813563496)) %&gt;%
+  mutate( trades_opened_12m = replace(trades_opened_12m, between(trades_opened_12m,3,4),  0.011943065)) %&gt;%
+  mutate( trades_opened_12m = replace(trades_opened_12m, trades_opened_12m==5,  0.207396853)) %&gt;%
+  mutate( trades_opened_12m = replace(trades_opened_12m, between(trades_opened_12m,6,7),  0.448049021)) %&gt;%
+  mutate( trades_opened_12m = replace(trades_opened_12m, between(trades_opened_12m,8,9),  0.573136724)) %&gt;%
+  mutate( trades_opened_12m = replace(trades_opened_12m, between(trades_opened_12m,10,12),  0.485011064)) %&gt;%
+  mutate( trades_opened_12m = replace(trades_opened_12m, between(trades_opened_12m,13,28),  0.002793356)) %&gt;%
+  
+  mutate( pl_trades_6m = replace(pl_trades_6m, pl_trades_6m==0,  -0.6768231)) %&gt;%
+  mutate( pl_trades_6m = replace(pl_trades_6m, pl_trades_6m==1,  0.2013560)) %&gt;%
+  mutate( pl_trades_6m = replace(pl_trades_6m, pl_trades_6m==2,  0.4397232)) %&gt;%
+  mutate( pl_trades_6m = replace(pl_trades_6m, between(pl_trades_6m,3,6),  0.3576285))%&gt;%
+  
+  mutate( pl_trades_12m = replace(pl_trades_12m, pl_trades_12m==0,  -0.9471609  )) %&gt;%
+  mutate( pl_trades_12m = replace(pl_trades_12m, pl_trades_12m==1,  -0.1279522  )) %&gt;%
+  mutate( pl_trades_12m = replace(pl_trades_12m, pl_trades_12m==2,  0.2522636)) %&gt;%
+  mutate( pl_trades_12m = replace(pl_trades_12m, pl_trades_12m==3,  0.4161652)) %&gt;%
+  mutate( pl_trades_12m = replace(pl_trades_12m, pl_trades_12m==4,  0.5016385)) %&gt;%
+  mutate( pl_trades_12m = replace(pl_trades_12m, pl_trades_12m==5,  0.4196919)) %&gt;%
+  mutate( pl_trades_12m = replace(pl_trades_12m, between(pl_trades_12m,6,12),  0.2376102))%&gt;%
+
+  mutate( inquiries_6m = replace(inquiries_6m, inquiries_6m==0,  -0.75470945)) %&gt;%
+  mutate( inquiries_6m = replace(inquiries_6m, inquiries_6m==1,  0.18011102)) %&gt;%
+  mutate( inquiries_6m = replace(inquiries_6m, inquiries_6m==2,  0.21415526)) %&gt;%
+  mutate( inquiries_6m = replace(inquiries_6m, between(inquiries_6m,3,4),  0.50749871)) %&gt;%
+  mutate( inquiries_6m = replace(inquiries_6m, between(inquiries_6m,5,10),  0.01163274)) %&gt;%
+  
+  mutate( inquiries_12m = replace(inquiries_12m, inquiries_12m==0,  -1.14210740)) %&gt;%
+  mutate( inquiries_12m = replace(inquiries_12m, inquiries_12m==1,  -0.02178118)) %&gt;%
+  mutate( inquiries_12m = replace(inquiries_12m, inquiries_12m==2,   0.14294109)) %&gt;%
+  mutate( inquiries_12m = replace(inquiries_12m, inquiries_12m==3,   0.16773844)) %&gt;%
+  mutate( inquiries_12m = replace(inquiries_12m, inquiries_12m==4,   0.25020441)) %&gt;%
+  mutate( inquiries_12m = replace(inquiries_12m, inquiries_12m==5,   0.57635386)) %&gt;%
+  mutate( inquiries_12m = replace(inquiries_12m, between(inquiries_12m,6,8),  0.48580800)) %&gt;%
+  mutate( inquiries_12m = replace(inquiries_12m, between(inquiries_12m,9,20),  0.01255320))  %&gt;%
+  
+  mutate( home_loan = replace(home_loan, home_loan==0,  0.07322469)) %&gt;%
+  mutate( home_loan = replace(home_loan, home_loan==1, -0.23694925))%&gt;%
+  
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,0,7786),  -0.9764093)) %&gt;%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,7787,55454),  -0.8487953)) %&gt;%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,56065,392876),  -0.0769904)) %&gt;%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,392909,590337),   0.2715642)) %&gt;%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,590343,777938),   0.4655003)) %&gt;%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,777956,976179),   0.4142887)) %&gt;%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,976183,1362849),   0.3866071)) %&gt;%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,1362864,2962106),  -0.3887941)) %&gt;%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,2962114,3289876),  -0.8015947)) %&gt;%
+  mutate( outstanding_balance = replace(outstanding_balance, between(outstanding_balance,3289931,5218801),   0.2963591)) %&gt;%
+
+
+  mutate( total_no_of_trades = replace(total_no_of_trades, total_no_of_trades==1,  -1.05653995)) %&gt;%
+  mutate( total_no_of_trades = replace(total_no_of_trades, total_no_of_trades==2,   -1.01505568 )) %&gt;%
+  mutate( total_no_of_trades = replace(total_no_of_trades, total_no_of_trades==3,   -0.69881486)) %&gt;%
+  mutate( total_no_of_trades = replace(total_no_of_trades, total_no_of_trades==4,  -0.44466272)) %&gt;%
+  mutate( total_no_of_trades = replace(total_no_of_trades, total_no_of_trades==5,  -0.04461396)) %&gt;%
+  mutate( total_no_of_trades = replace(total_no_of_trades, between(total_no_of_trades,6,7),  0.21585574)) %&gt;%
+  mutate( total_no_of_trades = replace(total_no_of_trades, total_no_of_trades==8,   0.46328513)) %&gt;%
+  mutate( total_no_of_trades = replace(total_no_of_trades, between(total_no_of_trades,9,10),  0.54093915)) %&gt;%
+  mutate( total_no_of_trades = replace(total_no_of_trades, between(total_no_of_trades,11,19),  0.42543258)) %&gt;%
+  mutate( total_no_of_trades = replace(total_no_of_trades, between(total_no_of_trades,20,44),  -0.06846777  )) %&gt;%
+  
+  mutate( auto_loan = replace(auto_loan, auto_loan==0,  0.01191341  )) %&gt;%
+  mutate( auto_loan = replace(auto_loan, auto_loan==1,   -0.13519714    ))
+
+
+
+  print(IV$Tables$dpd_60_6m, row.names=FALSE)</code></pre>
+<pre><code>##  dpd_60_6m     N   Percent        WOE        IV
+##      [0,0] 50783 0.7391456 -0.3435695 0.0747556
+##      [1,5] 17922 0.2608544  0.6230040 0.2103120</code></pre>
+<pre class="r"><code>  names(woe_data)</code></pre>
+<pre><code>##  [1] &quot;id&quot;                  &quot;age&quot;                 &quot;gender&quot;             
+##  [4] &quot;marital&quot;             &quot;dependents&quot;          &quot;income&quot;             
+##  [7] &quot;education&quot;           &quot;profession&quot;          &quot;residence&quot;          
+## [10] &quot;residence_months&quot;    &quot;company_months&quot;      &quot;dpd_90_6m&quot;          
+## [13] &quot;dpd_60_6m&quot;           &quot;dpd_30_6m&quot;           &quot;dpd_90_12m&quot;         
+## [16] &quot;dpd_60_12m&quot;          &quot;dpd_30_12m&quot;          &quot;utilization_12m&quot;    
+## [19] &quot;trades_6m&quot;           &quot;trades_opened_12m&quot;   &quot;pl_trades_6m&quot;       
+## [22] &quot;pl_trades_12m&quot;       &quot;inquiries_6m&quot;        &quot;inquiries_12m&quot;      
+## [25] &quot;home_loan&quot;           &quot;outstanding_balance&quot; &quot;total_no_of_trades&quot; 
+## [28] &quot;auto_loan&quot;           &quot;performance_tag&quot;</code></pre>
+<pre class="r"><code>  write.csv(woe_data,
+          &quot;C:\\Fundamentals of Analytics\\woe_data.csv&quot;, row.names = FALSE)</code></pre>
+</div>
+<div id="support-vector-machines" class="section level2">
+<h2>Support Vector Machines</h2>
 </div>

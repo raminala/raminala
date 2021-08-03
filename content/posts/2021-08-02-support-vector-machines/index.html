@@ -1,0 +1,26 @@
+---
+title: 'Support Vector Machines '
+author: ''
+date: '2021-08-02'
+slug: []
+categories: []
+tags:
+  - Support Vector Machines
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>v&lt;-rnorm(500)
+#v
+mean(v)</code></pre>
+<pre><code>## [1] 0.06566555</code></pre>
+<pre class="r"><code>rep(c(-1, 1),c(5,3))</code></pre>
+<pre><code>## [1] -1 -1 -1 -1 -1  1  1  1</code></pre>
+<pre class="r"><code>set.seed(10111)
+x = matrix(rnorm(40), 20, 2)
+y = rep(c(-1, 1), c(10, 10))
+x[y == 1,] = x[y == 1,] + 1
+plot(x, col = y + 3, pch = 19)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>library(e1071)</code></pre>
