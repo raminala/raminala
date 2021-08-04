@@ -10,10 +10,16 @@ tags:
   - data_wrangling
 ---
 
+```{r}
+library(tidymodels)
+library(tidyverse)
+```
+
+
 ## import two dataset and rename variables
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-library(tidyverse)
+
 
 bureau <- read_csv("Credit_Bureau.csv") %>%
   janitor::clean_names() %>%
@@ -356,13 +362,38 @@ library(caret)
 
 data_no_na <- na.omit(woe_data)
 
+# selecting important predictors
+final_data <- data_no_na %>%
+  select(inquiries_12m,
+         utilization_12m,
+         pl_trades_12m,
+         trades_opened_12m,
+         outstanding_balance,
+         total_no_of_trades,
+         dpd_30_6m,
+         pl_trades_6m,
+         dpd_90_12m,
+         inquiries_6m,
+         dpd_60_6m,
+         dpd_30_12m,
+         trades_6m,
+         dpd_60_12m,
+         dpd_90_6m,
+         residence_months,
+         income,
+         company_months,
+         performance_tag)
+  
 set.seed(123)
-training.samples <- data_no_na$performance_tag %>%
-  createDataPartition(p = 0.3, list = FALSE)
+training.samples <- final_data$performance_tag %>%
+  createDataPartition(p = 0.8, list = FALSE)
 
-train.data  <- data_no_na[training.samples, ]
-test.data <- data_no_na[-training.samples, ]
+train.data  <- final_data[training.samples, ]
+test.data <- final_data[-training.samples, ]
 
+#train.data %>% group_by(performance_tag) %>% count()
+
+table(train.data$performance_tag)
 ```
 
 ## SVM linear classifier
@@ -380,4 +411,92 @@ model <- train(
 
 ```
 
+## Make predictions on the test data
+
+```{r}
+predicted.classes <- model %>% predict(test.data)
+head(predicted.classes)
+```
+
+## binding predictions and truth 
+
+```{r, warning=FALSE}
+
+
+data_bind <- test.data %>%
+   bind_cols(.pred=predicted.classes)
+
+
+test_pred_mat <- data_bind %>% conf_mat(truth = performance_tag, estimate = .pred)
+summary(test_pred_mat)
+autoplot(test_pred_mat, type = 'heatmap')
+```
+
+## Undersampling
+
+```{r, message=FALSE}
+library(ROSE)
+
+master_WOE_train_balanced <- ovun.sample(performance_tag ~ ., data = train.data, method = "under",N = 4700)$data
+
+master_WOE_train_balanced %>%
+  group_by(performance_tag) %>%
+  count()
+
+
+
+
+
+```
+
+## SVM linear classifier
+
+```{r}
+
+# Fit the model on the training set
+set.seed(123)
+
+
+
+model2 <- train(
+  as.factor(performance_tag) ~., data = master_WOE_train_balanced, method = "svmLinear",
+  trControl = trainControl("cv", number = 50),
+  preProcess = c("center","scale")
+  )
+
+# Make predictions on the test data
+
+predicted.classes2 <- model2 %>% predict(test.data)
+head(predicted.classes2)
+
+# binding predictions and truth 
+
+data_bind2 <- test.data %>%
+   bind_cols(.pred=predicted.classes2)
+
+
+
+
+```
+
+
+```{r}
+test_pred_mat2 <- data_bind2 %>% conf_mat(truth = performance_tag, estimate = .pred)
+summary(test_pred_mat2)
+autoplot(test_pred_mat2, type = 'heatmap')
+
+
+
+```
+
+
+
+```{r}
+roc_svm_test <- roc(response = class1.trainset$Class, predictor =as.numeric(class1.svm.pred))
+
+plot(roc_svm_test, add = TRUE,col = "red", print.auc=TRUE, print.auc.x = 0.5, print.auc.y = 0.3)
+legend(0.3, 0.2, legend = c("test-svm"), lty = c(1), col = c("blue"))
+```
+
+============================================================================================================================================================================================================================================================
 
