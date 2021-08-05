@@ -23,6 +23,7 @@ library(tidyverse)
 library(caret)
 library(ROCit)
 library(brglm)
+library(yardstick)
 ```
 
 
@@ -380,15 +381,9 @@ plot(ROCit_obj)
 
 ```
 
-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
-
-
-
 ## Bias Reduction in Generalized Linear Models (brglm)
 
 ```{r}
-
 
  brglm_model  <- brglm(
    performance_tag~age+gender+marital+dependents+income+education+profession+residence+residence_months+company_months,
@@ -405,7 +400,7 @@ plot(ROCit_obj)
 ```{r}
 brglm_predic_prob <- predict(brglm_model, newdata = demogs_test, type = "response")
 brglm_predic_factor <- ifelse(brglm_predic_prob > 0.05, 1, 0)
-paste("accuracy is",100*mean(brglm_predic_factor == demogs_test$performance_tag, na.rm = TRUE))
+paste("accuracy is",100*mean(brglm_predic_factor == demogs_test$performance_tag, na.rm = TRUE),"%")
 
 demogs_test_brglm <- demogs_test %>% bind_cols(.pred_factor=brglm_predic_factor, .pred_prob=brglm_predic_prob) %>%
   select(performance_tag, .pred_factor, .pred_prob) %>% drop_na()
@@ -417,47 +412,20 @@ select(performance_tag, .pred_factor)
 ccccc[] <- lapply( ccccc, factor)
 
 
-ccccc %>%
-  conf_mat(truth = performance_tag, estimate = .pred_factor)
-summary(ccccc)
+ccccc %>% conf_mat(truth = performance_tag, estimate = .pred_factor) 
+#summary(ccccc)
 
 
-ROCit_obj <- rocit(score=demogs_test_brglm$.pred_prob,class=demogs_test_brglm$performance_tag)
-plot(ROCit_obj)
+#ROCit_obj <- rocit(score=demogs_test_brglm$.pred_prob,class=demogs_test_brglm$performance_tag)
+#plot(ROCit_obj)
 
 ```
 
 
-```{r}
-#prediction
-glm_predic_prob <- predict(logit_model, demogs_test, type = "response")
 
-glm_predic_factor <- ifelse(glm_predic_prob > 0.05, 1, 0)
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
-mean(glm_predic_factor == demogs_test$performance_tag, na.rm = TRUE)
-
-demogs_test_glm <- demogs_test %>% bind_cols(.pred_factor=glm_predic_factor, .pred_prob=glm_predic_prob) %>%
-  select(performance_tag, .pred_factor, .pred_prob) %>% drop_na()
-
-
-bbbbbb <- demogs_test_glm %>%
-select(performance_tag, .pred_factor)
-
-bbbbbb[] <- lapply( bbbbbb, factor)
-
-bbbbbb %>%
-  conf_mat(truth = performance_tag, estimate = .pred_factor)
-summary(bbbbbb)
-#autoplot(bbbbbb, type = 'heatmap')
-
-ROCit_obj <- rocit(score=demogs_test_glm$.pred_prob,class=demogs_test_glm$performance_tag)
-plot(ROCit_obj)
-```
-
-
-
-
-## Making new dataset including only determinant variables
+## building a new dataset with determinant variables
 
 ```{r}
 
@@ -496,7 +464,7 @@ woe_data_selected <- woe_data %>%
 
 ```
 
-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
 
 ## Split the data
 
