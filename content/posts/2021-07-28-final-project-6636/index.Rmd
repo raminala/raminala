@@ -10,6 +10,14 @@ tags:
   - data_wrangling
 ---
 
+## Assessing the financial benefit of your project
+
+This project would benefit credit card provider by detecting customers who have the potential of missing their credit card payment. Although this is not an unfamiliar situation for these institutions, it affect their revenue every year by making them to prosecute these clients. This project gives you two options based on two categories of information.
+
+First a short explanation about the method we used to assess our model. We have tested our model by a population of more than 20/000 applicants. Please note that his population is new to our model, so there is not any bias about that. 
+
+First, demographic information that you are collecting from a potential client at the time of applying for a new credit card. Our model shows that by these information alone, you could detect one-third of  
+
 ## Libraries
 
 ```{r}
@@ -24,10 +32,14 @@ library(caret)
 library(ROCit)
 library(brglm)
 library(yardstick)
+library(ggplot2)
 ```
 
 
 ## import two dataset and rename variables
+
+For the convenience of data analysis, we have renamed the variables from the original dataset, after importing the there are as below:
+
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -53,7 +65,7 @@ rename(
    dpd_60_12m =  no_of_times_60_dpd_or_worse_in_last_12_months
     )
     
-#names(bureau)
+
 
 demogs<- read_csv("demogs.csv") %>%
   janitor::clean_names() %>%
@@ -66,17 +78,17 @@ rename(
     residence_months =no_of_months_in_current_residence
     )
 
-
-#names(demogs)
+names(bureau)
+names(demogs)
 
 ```
 
 ## bind two dataset, reordering columns (outcome: master dataset)
 
-place performance_tag (dependent variable) at the end.
+Here two datasets of demographic and credit bureau data are combined. besides, We ordered the column names and saved the dataset named as master here.
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 master <-  left_join(demogs, bureau, 'id') %>%
   subset(select = -performance_tag.y) %>%
@@ -98,9 +110,15 @@ master <- master[,
 
 ## weight of evidence (WOE) (and, equivalently, information value analysis)
 
-## 4 : Data Preparation
+As we know, weight of evidence and information value helps to explore data and screen variables and hence it will be easier for us to use those values as a benchmark to screen variables in relation to the dependent variable.Before calculating those values we need to prepare our data first.
 
-```{r}
+
+***Data Preparation***
+
+Fist of all we have omitted the missing values from the dataset as there is a lots of 'na' values exists and then we have removed the variable with customer ID.
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 #summary(bureau)
 #master$age <- factor(master$age)
@@ -117,17 +135,21 @@ subset(select=-id)
 ```
 
 
-## 5 : Compute Information Value and WOE
+***Compute Information Value and WOE***
 
-```{r}
+As we know, for calculating WOE and IV value there several steps involved. In our data set there are both continuous and categorical variables, so first we need to split data into 10 parts and then calculate the number of events and non-events in each group (bin) and then the % of events and % of non-events in each group.Finally by taking natural log of division of % of non-events and % of events IV value is Calculated using the relevant functions. 
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 IV <- create_infotables(data=master_IV, y="performance_tag", bins=10, parallel=FALSE)
 ```
 
+***Plot variables interms of WOE and IV values***
+
+To visualize all the variables in terms of WOE and IV values here we plotted the variables below:
 
 
-
-
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 plot_infotables(IV, IV$Summary$Variable[1:27], same_scale=FALSE)
 
 plot_infotables(IV, "inquiries_12m")
@@ -137,9 +159,9 @@ plot_infotables(IV, "age")
 
 
 
-## Replace variables' values by the corresponding WOE value
+***Replace variables' values by the corresponding WOE value***
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 woe_data <- master %>%
   mutate( age = replace(age, between(age,-3,30),  -0.039506890)) %>%
@@ -326,9 +348,260 @@ woe_data <- master %>%
 ```
 
 
-## logistic linear model using Demographic data
+## Univariate Analysis of Master data 
 
-```{r}
+According to the IV analysis results of the important variable we have selected the most important variables from the master data set for further analysis. As we know, the IV value 0.3 to 0.5, then the predictor has a strong relationship to the Goods or Bad odds ratio.For exploring the data set some basic univariate Analysis on Master data is done below first. This analysis will answer the questions below:
+1.What patterns No of trades in last 12 months follows?
+2. What distribution inquiries 12 months have on the data?
+3. Does outstanding balance have any affect on performance tag?
+4. How are the summary of Number of pl Trades Opened and Number Trades Opened in last 12 months?
+
+
+***Summary of inquiries_12m***
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+master %>%
+    summarize(variable = "inquiries_12m", mean_inquiries_12m = mean(inquiries_12m), st_dev_cty = sd(inquiries_12m)) 
+
+master %>%
+    summarize(variable = "inquiries_12m",
+              q0.2 = quantile(inquiries_12m, 0.2),
+              q0.4 = quantile(inquiries_12m, 0.4),
+              q0.6 = quantile(inquiries_12m, 0.6),
+              q0.8 = quantile(inquiries_12m, 0.8)) 
+
+ggplot(master, aes(x = inquiries_12m)) +
+  geom_histogram(binwidth = 1.25, color = "black",fill = "skyblue") +
+  labs(
+    x = "Number of inquiries made in last 12m",
+    y = "Frequency",
+    title = "Summary of Number of inquiries in last 12m")
+```
+
+The average number of inquiries in last 12 months excluding home and auto loans is 3.5.Most of the cases the number of inquiries is zero and the maximum number of inquiries has made is almost 20.
+
+
+***outstanding_balance***
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+na.omit(master$outstanding_balance) %>%
+  summary(master$outstanding_balance)
+
+balance_except_zero <- master[master$outstanding_balance > 0, ] 
+
+ggplot(balance_except_zero, aes(outstanding_balance, fill = performance_tag)) + 
+    geom_histogram(data = subset(balance_except_zero,performance_tag==1),fill="red",alpha=.5) + 
+    geom_histogram(data = subset(balance_except_zero,performance_tag==0),fill="blue",alpha=.2) + 
+    ggtitle("Performance Tag by outstanding_balance")
+
+
+```
+
+The mean value of outstanding_balance is 1249092. And we see that the outstanding_balance are divided in to two clusters, bad performance is relatively higher for lower outstanding_balance than higher outstanding balance. We see that there are some effects of outstanding balance on performance tag.
+
+
+***pl_trades_12m***
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+master %>%
+    summarize(variable = "pl_trades_12m", mean_pl_trades_12m = mean(pl_trades_12m), st_dev_pl_trades_12m = sd(pl_trades_12m))
+
+master %>%
+    summarize(variable = "pl_trades_12m",
+              q0.2 = quantile(pl_trades_12m, 0.2),
+              q0.4 = quantile(pl_trades_12m, 0.4),
+              q0.6 = quantile(pl_trades_12m, 0.6),
+              q0.8 = quantile(pl_trades_12m, 0.8)) 
+
+ggplot(master, aes(x = pl_trades_12m)) +
+  geom_histogram(binwidth = 1.25, color = "black",fill = "skyblue") +
+  labs(
+    x = "Number of pl Trades Opened in last 12m",
+    y = "Frequency",
+    title = "Summary of Number of pl Trades Opened in last 12m")
+```
+
+The highest number of pl Trades Opened in last 12 months is 5, the average number of pl trades opened is 2.4 approximately.The highest frequency has occurred for zero or no trades in last 12 months.
+
+
+***trades_opened_12m***
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(pander)
+master %>%
+    summarize(variable = "trades_opened_12m", mean_trades_opened_12m = mean(trades_opened_12m), st_dev_trades_opened_12m = sd(trades_opened_12m)) 
+
+master %>%
+    summarize(variable = "trades_opened_12m",
+              q0.2 = quantile(trades_opened_12m, 0.2),
+              q0.4 = quantile(trades_opened_12m, 0.4),
+              q0.6 = quantile(trades_opened_12m, 0.6),
+              q0.8 = quantile(trades_opened_12m, 0.8)) 
+ggplot(master, aes(x = trades_opened_12m)) +
+  geom_histogram(binwidth = 1.25, color = "black",fill = "skyblue") +
+  labs(
+    x = "Number of Trades Opened in last 12m",
+    y = "Frequency",
+    title = "Summary of Number of Trades Opened in last 12m")
+```
+
+The average number of trades opened is 5.827 in last 12 months.The highest frequency has occurred for the number of trades is three in last 12 months.
+
+## Univariate Analysis on Demographic/application data
+
+The demographic data there are 10 variables including the response variable, as we have seen earlier. According to the IV values we have selected some important variables(with IV values 0.3 to 0.5).From the exploratory analysis of demographic data following questions we will get the answer of following questions:
+1.In which age group the maximum defaulters lies?
+2.Does Marital status and Gender has any affect on the defaulter’s behaviour?
+3.Is No of dependents a significant contributor on defaulters?
+4.Are type of Residence, Education and Profession a significant contributors?
+5.Does residents month seems significant factor in the defaulting behaviour?
+
+Now for further analysis let us explore this data set more as follows according to the name listed in data set:
+
+
+
+***age***
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+summary(demogs$age)
+library(ggplot2)
+library(pander)
+ggplot(demogs, aes(x = age)) +
+  geom_histogram(binwidth = 2.50, color = "black",fill = "skyblue") +
+  labs(
+    x = "Age of customer",
+    y = "Frequency",
+    title = "Age Distribution of customer")
+```
+
+Maximum age of a customer is 65 where the median or middle age appeared is 45.The highest number of customer lies between age 40 to 55. From the summary statistics we also see that there is a customer with age -3.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+age_18_plus <- master[master$age >= 18, ] 
+
+ggplot(age_18_plus, aes(age, fill = performance_tag)) + 
+    geom_histogram(data = subset(age_18_plus,performance_tag==1),fill="red",alpha=.5) + 
+    geom_histogram(data = subset(age_18_plus,performance_tag==0),fill="blue",alpha=.2) +
+    ggtitle("Summary of outstanding_balance of a customer")
+```
+
+From the age distribution by performance we see that vary few customer are with performance tag 1 or bad customer. We can see that maximum defaulters in the age group 30-60.
+
+***GENDER***
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# GENDER
+ggplot(data = master) +
+  geom_bar(mapping = aes(x = gender),fill = "blue",
+        alpha = 0.4) +
+  ggtitle("Summary of Gender")
+
+# reshape the dataset
+gender_by_perf <- master %>% group_by(gender,performance_tag) %>% summarise(count=n()) %>% drop_na()
+
+# Stacked barplot using ggplot2
+ggplot(gender_by_perf,                  
+       aes(x = gender,
+           y = count,
+           fill = performance_tag)) +
+  ggtitle("Performance Tag by Gender") +
+  geom_bar(stat = "identity")
+```
+
+The count of Male customer is more than double of female customer.So, thus the case of bad male customer proportion is also higher than that of female with performance tag. Thus, we can say that gender of a customer also has some effects on their performance tag to be default or not.
+
+***residence_months***
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+summary(demogs$residence_months)
+
+ggplot(master, aes(residence_months, fill = performance_tag)) + 
+    geom_histogram(data = subset(master,performance_tag==1),fill="red",alpha=.5) + 
+    geom_histogram(data = subset(master,performance_tag==0),fill="yellow",alpha=.4) +
+  ggtitle("Performance Tag by residence_months")
+```
+
+This variable residence_months represents the number of months in current residence of customers, here we see that the default customer lives in the same residence for less than 10 months. The min number of months is 6 and maximum months in current resident is 126. 
+
+***residence***
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(data = master) +
+  geom_bar(mapping = aes(x = residence),fill = "green",
+        alpha = 0.4) + ggtitle("Summary of residence of a customer")
+
+# reshape the dataset
+residence_by_perf <- master %>% group_by(residence,performance_tag) %>% summarise(count=n()) %>% drop_na()
+
+# Stacked barplot using ggplot2
+ggplot(residence_by_perf,                  
+       aes(x = residence,
+           y = count,
+           fill = performance_tag)) +
+  ggtitle("Performance Tag by type of residence of customers") +
+  geom_bar(stat = "identity")
+```
+
+From the types of residence of customers distribution by performance tag, we see that the default customer residence types is rental as the number of customer with rental residence occurs most frequently.
+
+***profession***
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+#head(master)
+ggplot(data = master) +
+  geom_bar(mapping = aes(x = profession),fill = "red",
+        alpha = 0.4) + ggtitle("Summary of profession of a customer")
+
+# reshape the dataset
+profession_by_perf <- master %>% group_by(profession,performance_tag) %>% summarise(count=n()) %>% drop_na()
+
+# Stacked barplot 
+ggplot(profession_by_perf,                  
+       aes(x = profession,
+           y = count,
+           fill = performance_tag)) +
+  ggtitle("Performance Tag by Profession") +
+  geom_bar(stat = "identity")
+```
+
+In case of profession we also see that which profession highest frequency(SAL) has more performance tag than other professions. 
+
+## Building model
+
+As we know, the objective of model building is to know the relationship between the response variable and the independent variables.
+
+##Demographic data model
+
+Here, from the Demographic data model, we will get the answer of the question, what relationship residence_months, income, age, dependents, marital status, gender, company_months, education, residence or profession have on the customers performance.That is, to decide whether the customer will be a defaulter or not? 
+Building different models like logistic regression with demographic and woe data will answer the question which factors will minimize the risk of probability of a customer being defaulter.In other words, which factors the bank manager need to focus more significantly.
+
+## Summary of response variable
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+table(demogs$performance_tag)
+prop.table(table(demogs$performance_tag))
+```
+
+Here, we see that 2948 customer is marked as 1 or default for performance  and 66922 customer is not default where as the proportion is 0.0422 and 0.9578 respectively.
+
+
+***Logistic regression model building***
+
+Logistic regression works for a data that contain continuous and/or categorical predictor variables. One advantage of logistic regression is that it computes a prediction probability score of an event.And, for predicting if a customer will default on a loan or not in Banking sector, binary classification or logistic regression is an effective method. Hence, it helps to identify and minimize the risk.
+
+For fitting the logistic regression model we first spitted the data into two groups of train and test data, then using all the variables except customer ID from demographic dataset the logistic regression model has built as below:
+
+
+
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
 demogs_drop_na <- demogs %>% drop_na(performance_tag)
 
@@ -349,8 +622,12 @@ logit_model <- glm(performance_tag ~ age+gender+marital+dependents+income+educat
 
 ```
 
+The logit models are now built.Comparing above models in terms of null and residual deviance, we find for that the logitmodel1 gives the best result. As, we know,the smaller the AIC, the better the model fits the data.Also, in comparison of null and residual deviance, this model gives best result.
+We see that for all the model we get almost same predictions. So, we can say that the model accuracy of logistic regression classifier on test set is 95.88%. 
 
-```{r}
+
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
 #prop.table(table(demogs_test$performance_tag))
 
@@ -383,7 +660,7 @@ plot(ROCit_obj)
 
 ## Bias Reduction in Generalized Linear Models (brglm)
 
-```{r}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
  brglm_model  <- brglm(
    performance_tag~age+gender+marital+dependents+income+education+profession+residence+residence_months+company_months,
@@ -397,7 +674,7 @@ plot(ROCit_obj)
 #exp(coef(fit1))
 ```
 
-```{r}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 brglm_predic_prob <- predict(brglm_model, newdata = demogs_test, type = "response")
 brglm_predic_factor <- ifelse(brglm_predic_prob > 0.05, 1, 0)
 paste("accuracy is",100*mean(brglm_predic_factor == demogs_test$performance_tag, na.rm = TRUE),"%")
@@ -423,11 +700,9 @@ ccccc %>% conf_mat(truth = performance_tag, estimate = .pred_factor)
 
 
 
-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
 ## building a new dataset with determinant variables
 
-```{r}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
 # selecting important predictors
 woe_data_selected <- woe_data %>%
@@ -466,7 +741,7 @@ woe_data_selected <- woe_data %>%
 
 ## Split the data
 
-```{r}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 set.seed(10)
 
 training.samples <- woe_data_selected$performance_tag %>%
@@ -482,9 +757,9 @@ print(prop.table(table(train.data$performance_tag)))
 ```
 ## Support Vector Machines
 
-## SVM linear classifier
+***SVM linear classifier***
 
-```{r}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
 # Fit the model on the training set
 set.seed(123)
@@ -497,16 +772,16 @@ model <- train(
 
 ```
 
-## Make predictions on the test data
+*** Make predictions on the test data***
 
-```{r}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 predicted.classes <- model %>% predict(test.data)
 head(predicted.classes)
 ```
 
-## binding predictions and truth 
+***binding predictions and truth ***
 
-```{r, warning=FALSE}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
 
 data_bind <- test.data %>%
@@ -520,7 +795,7 @@ autoplot(test_pred_mat, type = 'heatmap')
 
 ## Undersampling
 
-```{r, message=FALSE}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
 
 master_WOE_train_balanced <- ovun.sample(performance_tag ~ ., data = train.data, method = "under",N = 4700)$data
@@ -537,7 +812,7 @@ master_WOE_train_balanced %>%
 
 ## SVM linear classifier
 
-```{r}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 
 # Fit the model on the training set
 set.seed(123)
@@ -566,7 +841,7 @@ data_bind2 <- test.data %>%
 ```
 
 
-```{r}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 test_pred_mat2 <- data_bind2 %>% conf_mat(truth = performance_tag, estimate = .pred)
 summary(test_pred_mat2)
 autoplot(test_pred_mat2, type = 'heatmap')
@@ -574,15 +849,4 @@ autoplot(test_pred_mat2, type = 'heatmap')
 
 
 ```
-
-
-
-```{r}
-#roc_svm_test <- roc(response = class1.trainset$Class, predictor =as.numeric(class1.svm.pred))
-
-#plot(roc_svm_test, add = TRUE,col = "red", print.auc=TRUE, print.auc.x = 0.5, print.auc.y = 0.3)
-#legend(0.3, 0.2, legend = c("test-svm"), lty = c(1), col = c("blue"))
-```
-
-============================================================================================================================================================================================================================================================
 
