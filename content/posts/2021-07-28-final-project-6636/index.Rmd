@@ -473,7 +473,7 @@ woe_data_selected <- woe_data %>%
 set.seed(10)
 
 training.samples <- final_data$performance_tag %>%
-  createDataPartition(p = 0.8, list = FALSE)
+  createDataPartition(p = 0.6, list = FALSE)
 
 train.data  <- final_data[training.samples, ]
 test.data <- final_data[-training.samples, ]
