@@ -13,135 +13,131 @@ tags:
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
+<div id="libraries" class="section level2">
+<h2>Libraries</h2>
+<pre class="r"><code>library(tidymodels)</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;tune&#39;:
+##   method                   from   
+##   required_pkgs.model_spec parsnip</code></pre>
+<pre><code>## -- Attaching packages -------------------------------------- tidymodels 0.1.3 --</code></pre>
+<pre><code>## v broom        0.7.8      v recipes      0.1.16
+## v dials        0.0.9      v rsample      0.1.0 
+## v dplyr        1.0.6      v tibble       3.1.2 
+## v ggplot2      3.3.3      v tidyr        1.1.3 
+## v infer        0.5.4      v tune         0.1.5 
+## v modeldata    0.1.0      v workflows    0.2.2 
+## v parsnip      0.1.6      v workflowsets 0.0.2 
+## v purrr        0.3.4      v yardstick    0.0.8</code></pre>
+<pre><code>## -- Conflicts ----------------------------------------- tidymodels_conflicts() --
+## x purrr::discard() masks scales::discard()
+## x dplyr::filter()  masks stats::filter()
+## x dplyr::lag()     masks stats::lag()
+## x recipes::step()  masks stats::step()
+## * Use tidymodels_prefer() to resolve common conflicts.</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v readr   1.4.0     v forcats 0.5.1
+## v stringr 1.4.0</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x readr::col_factor() masks scales::col_factor()
+## x purrr::discard()    masks scales::discard()
+## x dplyr::filter()     masks stats::filter()
+## x stringr::fixed()    masks recipes::fixed()
+## x dplyr::lag()        masks stats::lag()
+## x readr::spec()       masks yardstick::spec()</code></pre>
+<pre class="r"><code>library(Information)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Information&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dials&#39;:
+## 
+##     penalty</code></pre>
+<pre class="r"><code>library(ROSE)</code></pre>
+<pre><code>## Loaded ROSE 0.0-4</code></pre>
+<pre class="r"><code>library(e1071)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;e1071&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:tune&#39;:
+## 
+##     tune</code></pre>
+<pre><code>## The following object is masked from &#39;package:rsample&#39;:
+## 
+##     permutations</code></pre>
+<pre class="r"><code>library(kernlab)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;kernlab&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     cross</code></pre>
+<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     alpha</code></pre>
+<pre><code>## The following object is masked from &#39;package:scales&#39;:
+## 
+##     alpha</code></pre>
+<pre class="r"><code>library(tidyverse)
+library(caret)</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## 
+## Attaching package: &#39;caret&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:yardstick&#39;:
+## 
+##     precision, recall, sensitivity, specificity</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     lift</code></pre>
+<pre class="r"><code>library(ROCit)
+library(brglm)</code></pre>
+<pre><code>## Loading required package: profileModel</code></pre>
+<pre><code>## &#39;brglm&#39; will gradually be superseded by the &#39;brglm2&#39; R package (https://cran.r-project.org/package=brglm2), which provides utilities for mean and median bias reduction for all GLMs.
+##  Methods for the detection of separation and infinite estimates in binomial-response models are provided by the &#39;detectseparation&#39; R package (https://cran.r-project.org/package=detectseparation).</code></pre>
+<pre class="r"><code>library(yardstick)</code></pre>
+</div>
 <div id="import-two-dataset-and-rename-variables" class="section level2">
 <h2>import two dataset and rename variables</h2>
-<pre><code>##  [1] &quot;id&quot;                  &quot;dpd_90_6m&quot;           &quot;dpd_60_6m&quot;          
-##  [4] &quot;dpd_30_6m&quot;           &quot;dpd_90_12m&quot;          &quot;dpd_60_12m&quot;         
-##  [7] &quot;dpd_30_12m&quot;          &quot;utilization_12m&quot;     &quot;trades_6m&quot;          
-## [10] &quot;trades_opened_12m&quot;   &quot;pl_trades_6m&quot;        &quot;pl_trades_12m&quot;      
-## [13] &quot;inquiries_6m&quot;        &quot;inquiries_12m&quot;       &quot;home_loan&quot;          
-## [16] &quot;outstanding_balance&quot; &quot;total_no_of_trades&quot;  &quot;auto_loan&quot;          
-## [19] &quot;performance_tag&quot;</code></pre>
-<pre><code>##  [1] &quot;id&quot;               &quot;age&quot;              &quot;gender&quot;           &quot;marital&quot;         
-##  [5] &quot;dependents&quot;       &quot;income&quot;           &quot;education&quot;        &quot;profession&quot;      
-##  [9] &quot;residence&quot;        &quot;residence_months&quot; &quot;company_months&quot;   &quot;performance_tag&quot;</code></pre>
 </div>
-<div id="bind-two-dataset-to-build-master-dataset" class="section level2">
-<h2>bind two dataset to build master dataset</h2>
-<pre class="r"><code>bind_dataset &lt;- left_join(demogs, bureau, &#39;id&#39;) %&gt;%
+<div id="bind-two-dataset-reordering-columns-outcome-master-dataset" class="section level2">
+<h2>bind two dataset, reordering columns (outcome: master dataset)</h2>
+<p>place performance_tag (dependent variable) at the end.</p>
+<pre class="r"><code>master &lt;-  left_join(demogs, bureau, &#39;id&#39;) %&gt;%
   subset(select = -performance_tag.y) %&gt;%
-  rename(performance_tag=performance_tag.x)
+  rename(performance_tag=performance_tag.x) 
 
-names(bind_dataset)</code></pre>
-<pre><code>##  [1] &quot;id&quot;                  &quot;age&quot;                 &quot;gender&quot;             
-##  [4] &quot;marital&quot;             &quot;dependents&quot;          &quot;income&quot;             
-##  [7] &quot;education&quot;           &quot;profession&quot;          &quot;residence&quot;          
-## [10] &quot;residence_months&quot;    &quot;company_months&quot;      &quot;performance_tag&quot;    
-## [13] &quot;dpd_90_6m&quot;           &quot;dpd_60_6m&quot;           &quot;dpd_30_6m&quot;          
-## [16] &quot;dpd_90_12m&quot;          &quot;dpd_60_12m&quot;          &quot;dpd_30_12m&quot;         
-## [19] &quot;utilization_12m&quot;     &quot;trades_6m&quot;           &quot;trades_opened_12m&quot;  
-## [22] &quot;pl_trades_6m&quot;        &quot;pl_trades_12m&quot;       &quot;inquiries_6m&quot;       
-## [25] &quot;inquiries_12m&quot;       &quot;home_loan&quot;           &quot;outstanding_balance&quot;
-## [28] &quot;total_no_of_trades&quot;  &quot;auto_loan&quot;</code></pre>
-</div>
-<div id="reordering-columns-place-performance_tag-at-the-end" class="section level2">
-<h2>Reordering columns (place performance_tag at the end)</h2>
-<pre class="r"><code>col_order &lt;- c(&quot;id&quot;, &quot;age&quot;, &quot;gender&quot;, &quot;marital&quot;, &quot;dependents&quot;, &quot;income&quot;,
+master &lt;- master[, 
+                       c(&quot;id&quot;, &quot;age&quot;, &quot;gender&quot;, &quot;marital&quot;, &quot;dependents&quot;, &quot;income&quot;,
                &quot;education&quot;, &quot;profession&quot;, &quot;residence&quot;, &quot;residence_months&quot;, &quot;company_months&quot;, &quot;dpd_90_6m&quot;,
                &quot;dpd_60_6m&quot;, &quot;dpd_30_6m&quot;, &quot;dpd_90_12m&quot;, &quot;dpd_60_12m&quot;, &quot;dpd_30_12m&quot;, &quot;utilization_12m&quot;,
                &quot;trades_6m&quot;, &quot;trades_opened_12m&quot;, &quot;pl_trades_6m&quot;, &quot;pl_trades_12m&quot;, &quot;inquiries_6m&quot;, &quot;inquiries_12m&quot;,
                &quot;home_loan&quot;, &quot;outstanding_balance&quot;, &quot;total_no_of_trades&quot;,  &quot;auto_loan&quot;,
                &quot;performance_tag&quot;
                )
-master &lt;- bind_dataset[, col_order]
-
-
-write.csv(master,
-          &quot;C:\\Fundamentals of Analytics\\master.csv&quot;, row.names = FALSE)</code></pre>
+                       ]</code></pre>
 </div>
 <div id="weight-of-evidence-woe-and-equivalently-information-value-analysis" class="section level2">
 <h2>weight of evidence (WOE) (and, equivalently, information value analysis)</h2>
 </div>
 <div id="data-preparation" class="section level2">
 <h2>4 : Data Preparation</h2>
-<pre class="r"><code>library(Information)
-
-#summary(bureau)
+<pre class="r"><code>#summary(bureau)
 #master$age &lt;- factor(master$age)
-
 
 master_IV &lt;- master %&gt;%
 
 na.omit(master) %&gt;%
-subset(select=-id)</code></pre>
+subset(select=-id)
+
+#IV_Value = data.frame(IV$Summary)
+
+#print(IV_Value)</code></pre>
 </div>
 <div id="compute-information-value-and-woe" class="section level2">
 <h2>5 : Compute Information Value and WOE</h2>
 <pre class="r"><code>IV &lt;- create_infotables(data=master_IV, y=&quot;performance_tag&quot;, bins=10, parallel=FALSE)</code></pre>
-<pre class="r"><code>IV_Value = data.frame(IV$Summary)
-
-print(IV_Value)</code></pre>
-<pre><code>##               Variable           IV
-## 23       inquiries_12m 3.154610e-01
-## 17     utilization_12m 3.140657e-01
-## 21       pl_trades_12m 3.114747e-01
-## 19   trades_opened_12m 3.106376e-01
-## 25 outstanding_balance 2.548384e-01
-## 26  total_no_of_trades 2.496478e-01
-## 13           dpd_30_6m 2.468598e-01
-## 20        pl_trades_6m 2.283689e-01
-## 14          dpd_90_12m 2.187290e-01
-## 22        inquiries_6m 2.139588e-01
-## 12           dpd_60_6m 2.103120e-01
-## 16          dpd_30_12m 2.023846e-01
-## 18           trades_6m 1.946076e-01
-## 15          dpd_60_12m 1.891702e-01
-## 11           dpd_90_6m 1.639854e-01
-## 9     residence_months 8.010704e-02
-## 5               income 4.165066e-02
-## 10      company_months 2.187682e-02
-## 24           home_loan 1.732550e-02
-## 1                  age 3.754750e-03
-## 4           dependents 2.943996e-03
-## 7           profession 2.194827e-03
-## 27           auto_loan 1.610443e-03
-## 8            residence 8.532957e-04
-## 6            education 8.137030e-04
-## 2               gender 2.511990e-04
-## 3              marital 9.370021e-05</code></pre>
 <pre class="r"><code>plot_infotables(IV, IV$Summary$Variable[1:27], same_scale=FALSE)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-2.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-3.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-2.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-3.png" width="672" /></p>
 <pre class="r"><code>plot_infotables(IV, &quot;inquiries_12m&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-4.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-4.png" width="672" /></p>
 <pre class="r"><code>plot_infotables(IV, &quot;age&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-5.png" width="672" /></p>
-<pre class="r"><code>tt &lt;- master_IV %&gt;%
-  select(inquiries_12m, performance_tag) %&gt;%
-  
-  group_by(performance_tag) %&gt;%
-  count()
-
-
-
-vv &lt;- master_IV %&gt;%
-  select(inquiries_12m, performance_tag) %&gt;%
-  filter(between(inquiries_12m,5,5)) %&gt;%
-  group_by(performance_tag) %&gt;%
-  count()
-tt</code></pre>
-<pre><code>## # A tibble: 2 x 2
-## # Groups:   performance_tag [2]
-##   performance_tag     n
-##             &lt;dbl&gt; &lt;int&gt;
-## 1               0 65809
-## 2               1  2896</code></pre>
-<pre class="r"><code>vv</code></pre>
-<pre><code>## # A tibble: 2 x 2
-## # Groups:   performance_tag [2]
-##   performance_tag     n
-##             &lt;dbl&gt; &lt;int&gt;
-## 1               0  4546
-## 2               1   356</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-5.png" width="672" /></p>
 </div>
 <div id="replace-variables-values-by-the-corresponding-woe-value" class="section level2">
 <h2>Replace variables’ values by the corresponding WOE value</h2>
@@ -323,24 +319,259 @@ tt</code></pre>
 
 
 
-  print(IV$Tables$dpd_60_6m, row.names=FALSE)</code></pre>
-<pre><code>##  dpd_60_6m     N   Percent        WOE        IV
-##      [0,0] 50783 0.7391456 -0.3435695 0.0747556
-##      [1,5] 17922 0.2608544  0.6230040 0.2103120</code></pre>
-<pre class="r"><code>  names(woe_data)</code></pre>
-<pre><code>##  [1] &quot;id&quot;                  &quot;age&quot;                 &quot;gender&quot;             
-##  [4] &quot;marital&quot;             &quot;dependents&quot;          &quot;income&quot;             
-##  [7] &quot;education&quot;           &quot;profession&quot;          &quot;residence&quot;          
-## [10] &quot;residence_months&quot;    &quot;company_months&quot;      &quot;dpd_90_6m&quot;          
-## [13] &quot;dpd_60_6m&quot;           &quot;dpd_30_6m&quot;           &quot;dpd_90_12m&quot;         
-## [16] &quot;dpd_60_12m&quot;          &quot;dpd_30_12m&quot;          &quot;utilization_12m&quot;    
-## [19] &quot;trades_6m&quot;           &quot;trades_opened_12m&quot;   &quot;pl_trades_6m&quot;       
-## [22] &quot;pl_trades_12m&quot;       &quot;inquiries_6m&quot;        &quot;inquiries_12m&quot;      
-## [25] &quot;home_loan&quot;           &quot;outstanding_balance&quot; &quot;total_no_of_trades&quot; 
-## [28] &quot;auto_loan&quot;           &quot;performance_tag&quot;</code></pre>
-<pre class="r"><code>  write.csv(woe_data,
-          &quot;C:\\Fundamentals of Analytics\\woe_data.csv&quot;, row.names = FALSE)</code></pre>
+  #print(IV$Tables$dpd_60_6m, row.names=FALSE)
+  #names(woe_data)
+  
+ # write.csv(woe_data,&quot;C:\\Fundamentals of Analytics\\woe_data.csv&quot;, row.names = FALSE)</code></pre>
+</div>
+<div id="logistic-linear-model-using-demographic-data" class="section level2">
+<h2>logistic linear model using Demographic data</h2>
+<pre class="r"><code>demogs_drop_na &lt;- demogs %&gt;% drop_na(performance_tag)
+
+set.seed(10)
+
+#splitting
+demogs_split &lt;- initial_split(demogs_drop_na, prop = 0.70, strata=performance_tag)
+
+demogs_train &lt;- training(demogs_split)
+demogs_test  &lt;- testing(demogs_split)
+
+#building model
+logit_model &lt;- glm(performance_tag ~ age+gender+marital+dependents+income+education+profession+residence+residence_months+company_months, data = demogs_train, family = &quot;binomial&quot;)
+
+#summary(logit_model1)</code></pre>
+<pre class="r"><code>#prop.table(table(demogs_test$performance_tag))
+
+#prediction
+glm_predic_prob &lt;- predict(logit_model, demogs_test, type = &quot;response&quot;)
+
+glm_predic_factor &lt;- ifelse(glm_predic_prob &gt; 0.05, 1, 0)
+
+paste(&quot;accuracy is&quot;,100*mean(glm_predic_factor == demogs_test$performance_tag, na.rm = TRUE), &quot;%&quot;)</code></pre>
+<pre><code>## [1] &quot;accuracy is 81.4179175829429 %&quot;</code></pre>
+<pre class="r"><code>demogs_test_glm &lt;- demogs_test %&gt;% bind_cols(.pred_factor=glm_predic_factor, .pred_prob=glm_predic_prob) %&gt;%
+  select(performance_tag, .pred_factor, .pred_prob) %&gt;% drop_na()
+
+
+bbbbbb &lt;- demogs_test_glm %&gt;%
+select(performance_tag, .pred_factor)
+
+bbbbbb[] &lt;- lapply( bbbbbb, factor)
+
+bbbbbb %&gt;%
+  conf_mat(truth = performance_tag, estimate = .pred_factor)</code></pre>
+<pre><code>##           Truth
+## Prediction     0     1
+##          0 16802   693
+##          1  3194   229</code></pre>
+<pre class="r"><code>summary(bbbbbb)</code></pre>
+<pre><code>##  performance_tag .pred_factor
+##  0:19996         0:17495     
+##  1:  922         1: 3423</code></pre>
+<pre class="r"><code>#autoplot(bbbbbb, type = &#39;heatmap&#39;)
+
+ROCit_obj &lt;- rocit(score=demogs_test_glm$.pred_prob,class=demogs_test_glm$performance_tag)
+plot(ROCit_obj)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="bias-reduction-in-generalized-linear-models-brglm" class="section level2">
+<h2>Bias Reduction in Generalized Linear Models (brglm)</h2>
+<pre class="r"><code> brglm_model  &lt;- brglm(
+   performance_tag~age+gender+marital+dependents+income+education+profession+residence+residence_months+company_months,
+   
+   family = binomial(&quot;probit&quot;),
+             data = demogs_train)
+ 
+ #theta_brglm &lt;- coef(brglm_model)
+#summary(brglm_model)
+#summary(fit1)
+#exp(coef(fit1))</code></pre>
+<pre class="r"><code>brglm_predic_prob &lt;- predict(brglm_model, newdata = demogs_test, type = &quot;response&quot;)
+brglm_predic_factor &lt;- ifelse(brglm_predic_prob &gt; 0.05, 1, 0)
+paste(&quot;accuracy is&quot;,100*mean(brglm_predic_factor == demogs_test$performance_tag, na.rm = TRUE),&quot;%&quot;)</code></pre>
+<pre><code>## [1] &quot;accuracy is 81.0641552729707 %&quot;</code></pre>
+<pre class="r"><code>demogs_test_brglm &lt;- demogs_test %&gt;% bind_cols(.pred_factor=brglm_predic_factor, .pred_prob=brglm_predic_prob) %&gt;%
+  select(performance_tag, .pred_factor, .pred_prob) %&gt;% drop_na()
+
+
+ccccc &lt;- demogs_test_brglm %&gt;%
+select(performance_tag, .pred_factor)
+
+ccccc[] &lt;- lapply( ccccc, factor)
+
+
+ccccc %&gt;% conf_mat(truth = performance_tag, estimate = .pred_factor) </code></pre>
+<pre><code>##           Truth
+## Prediction     0     1
+##          0 16728   693
+##          1  3268   229</code></pre>
+<pre class="r"><code>#summary(ccccc)
+
+
+#ROCit_obj &lt;- rocit(score=demogs_test_brglm$.pred_prob,class=demogs_test_brglm$performance_tag)
+#plot(ROCit_obj)</code></pre>
+<p>&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</p>
+</div>
+<div id="building-a-new-dataset-with-determinant-variables" class="section level2">
+<h2>building a new dataset with determinant variables</h2>
+<pre class="r"><code># selecting important predictors
+woe_data_selected &lt;- woe_data %&gt;%
+  select(
+         # these 15 variables from demogs dataset
+    
+         inquiries_12m,
+         utilization_12m,
+         pl_trades_12m,
+         trades_opened_12m,
+         outstanding_balance,
+         total_no_of_trades,
+         dpd_30_6m,
+         pl_trades_6m,
+         dpd_90_12m,
+         inquiries_6m,
+         dpd_60_6m,
+         dpd_30_12m,
+         trades_6m,
+         dpd_60_12m,
+         dpd_90_6m,
+         
+         # these 3 variables from demogs dataset
+         
+         residence_months,
+         income,
+         company_months,
+         
+         # response variable
+         
+         performance_tag) %&gt;%
+  na.omit(performance_tag)</code></pre>
+</div>
+<div id="split-the-data" class="section level2">
+<h2>Split the data</h2>
+<pre class="r"><code>set.seed(10)
+
+training.samples &lt;- woe_data_selected$performance_tag %&gt;%
+  createDataPartition(p = 0.6, list = FALSE)
+
+train.data  &lt;- woe_data_selected[training.samples, ]
+test.data &lt;- woe_data_selected[-training.samples, ]
+
+#train.data %&gt;% group_by(performance_tag) %&gt;% count()
+
+print(prop.table(table(train.data$performance_tag)))</code></pre>
+<pre><code>## 
+##          0          1 
+## 0.95863187 0.04136813</code></pre>
 </div>
 <div id="support-vector-machines" class="section level2">
 <h2>Support Vector Machines</h2>
+</div>
+<div id="svm-linear-classifier" class="section level2">
+<h2>SVM linear classifier</h2>
+<pre class="r"><code># Fit the model on the training set
+set.seed(123)
+model &lt;- train(
+  as.factor(performance_tag) ~., data = train.data, method = &quot;svmLinear&quot;,
+  trControl = trainControl(&quot;cv&quot;, number = 10),
+  preProcess = c(&quot;center&quot;,&quot;scale&quot;)
+  )</code></pre>
+</div>
+<div id="make-predictions-on-the-test-data" class="section level2">
+<h2>Make predictions on the test data</h2>
+<pre class="r"><code>predicted.classes &lt;- model %&gt;% predict(test.data)
+head(predicted.classes)</code></pre>
+<pre><code>## [1] 0 0 0 0 0 0
+## Levels: 0 1</code></pre>
+</div>
+<div id="binding-predictions-and-truth" class="section level2">
+<h2>binding predictions and truth</h2>
+<pre class="r"><code>data_bind &lt;- test.data %&gt;%
+   bind_cols(.pred=predicted.classes)
+
+
+test_pred_mat &lt;- data_bind %&gt;% conf_mat(truth = performance_tag, estimate = .pred)
+summary(test_pred_mat)</code></pre>
+<pre><code>## # A tibble: 13 x 3
+##    .metric              .estimator .estimate
+##    &lt;chr&gt;                &lt;chr&gt;          &lt;dbl&gt;
+##  1 accuracy             binary         0.957
+##  2 kap                  binary         0    
+##  3 sens                 binary         1    
+##  4 spec                 binary         0    
+##  5 ppv                  binary         0.957
+##  6 npv                  binary       NaN    
+##  7 mcc                  binary        NA    
+##  8 j_index              binary         0    
+##  9 bal_accuracy         binary         0.5  
+## 10 detection_prevalence binary         1    
+## 11 precision            binary         0.957
+## 12 recall               binary         1    
+## 13 f_meas               binary         0.978</code></pre>
+<pre class="r"><code>autoplot(test_pred_mat, type = &#39;heatmap&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+</div>
+<div id="undersampling" class="section level2">
+<h2>Undersampling</h2>
+<pre class="r"><code>master_WOE_train_balanced &lt;- ovun.sample(performance_tag ~ ., data = train.data, method = &quot;under&quot;,N = 4700)$data
+
+master_WOE_train_balanced %&gt;%
+  group_by(performance_tag) %&gt;%
+  count()</code></pre>
+<pre><code>## # A tibble: 2 x 2
+## # Groups:   performance_tag [2]
+##   performance_tag     n
+##             &lt;dbl&gt; &lt;int&gt;
+## 1               0  2991
+## 2               1  1709</code></pre>
+</div>
+<div id="svm-linear-classifier-1" class="section level2">
+<h2>SVM linear classifier</h2>
+<pre class="r"><code># Fit the model on the training set
+set.seed(123)
+
+
+
+model2 &lt;- train(
+  as.factor(performance_tag) ~., data = master_WOE_train_balanced, method = &quot;svmLinear&quot;,
+  trControl = trainControl(&quot;cv&quot;, number = 50),
+  preProcess = c(&quot;center&quot;,&quot;scale&quot;)
+  )
+
+# Make predictions on the test data
+
+predicted.classes2 &lt;- model2 %&gt;% predict(test.data)
+head(predicted.classes2)</code></pre>
+<pre><code>## [1] 0 0 0 0 0 0
+## Levels: 0 1</code></pre>
+<pre class="r"><code># binding predictions and truth 
+
+data_bind2 &lt;- test.data %&gt;%
+   bind_cols(.pred=predicted.classes2)</code></pre>
+<pre class="r"><code>test_pred_mat2 &lt;- data_bind2 %&gt;% conf_mat(truth = performance_tag, estimate = .pred)</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
+## was converted to a factor</code></pre>
+<pre class="r"><code>summary(test_pred_mat2)</code></pre>
+<pre><code>## # A tibble: 13 x 3
+##    .metric              .estimator .estimate
+##    &lt;chr&gt;                &lt;chr&gt;          &lt;dbl&gt;
+##  1 accuracy             binary        0.715 
+##  2 kap                  binary        0.0625
+##  3 sens                 binary        0.725 
+##  4 spec                 binary        0.504 
+##  5 ppv                  binary        0.970 
+##  6 npv                  binary        0.0766
+##  7 mcc                  binary        0.103 
+##  8 j_index              binary        0.229 
+##  9 bal_accuracy         binary        0.615 
+## 10 detection_prevalence binary        0.715 
+## 11 precision            binary        0.970 
+## 12 recall               binary        0.725 
+## 13 f_meas               binary        0.830</code></pre>
+<pre class="r"><code>autoplot(test_pred_mat2, type = &#39;heatmap&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<pre class="r"><code>#roc_svm_test &lt;- roc(response = class1.trainset$Class, predictor =as.numeric(class1.svm.pred))
+
+#plot(roc_svm_test, add = TRUE,col = &quot;red&quot;, print.auc=TRUE, print.auc.x = 0.5, print.auc.y = 0.3)
+#legend(0.3, 0.2, legend = c(&quot;test-svm&quot;), lty = c(1), col = c(&quot;blue&quot;))</code></pre>
+<p>============================================================================================================================================================================================================================================================</p>
 </div>

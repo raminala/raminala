@@ -458,25 +458,22 @@ woe_data_selected <- woe_data %>%
          
          # response variable
          
-         performance_tag) #%>%
- # na.omit()
+         performance_tag) %>%
+  na.omit(performance_tag)
 
 
 ```
 
-
-
 ## Split the data
 
 ```{r}
-
 set.seed(10)
 
-training.samples <- final_data$performance_tag %>%
+training.samples <- woe_data_selected$performance_tag %>%
   createDataPartition(p = 0.6, list = FALSE)
 
-train.data  <- final_data[training.samples, ]
-test.data <- final_data[-training.samples, ]
+train.data  <- woe_data_selected[training.samples, ]
+test.data <- woe_data_selected[-training.samples, ]
 
 #train.data %>% group_by(performance_tag) %>% count()
 
@@ -581,10 +578,10 @@ autoplot(test_pred_mat2, type = 'heatmap')
 
 
 ```{r}
-roc_svm_test <- roc(response = class1.trainset$Class, predictor =as.numeric(class1.svm.pred))
+#roc_svm_test <- roc(response = class1.trainset$Class, predictor =as.numeric(class1.svm.pred))
 
-plot(roc_svm_test, add = TRUE,col = "red", print.auc=TRUE, print.auc.x = 0.5, print.auc.y = 0.3)
-legend(0.3, 0.2, legend = c("test-svm"), lty = c(1), col = c("blue"))
+#plot(roc_svm_test, add = TRUE,col = "red", print.auc=TRUE, print.auc.x = 0.5, print.auc.y = 0.3)
+#legend(0.3, 0.2, legend = c("test-svm"), lty = c(1), col = c("blue"))
 ```
 
 ============================================================================================================================================================================================================================================================
