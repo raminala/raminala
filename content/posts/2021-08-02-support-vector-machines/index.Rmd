@@ -9,6 +9,154 @@ tags:
 ---
 
 ```{r}
+library(tidyverse)
+library(e1071)
+```
+
+
+## 1-1- Generate a 2d uniformly distributed dataset.
+
+The aim of this lesson is to create a dataset that will be used to illustrate the basic principles of support vector machines. In this exercise we will do the first step, which is to create a 2 dimensional uniformly distributed dataset containing 600 datapoints.
+
+
+```{r}
+#set seed
+set.seed(42)
+
+#set number of data points. 
+n <- 600
+
+#Generate data frame with two uniformly distributed predictors lying between 0 and 1.
+df <- data.frame(x1 = runif(n), 
+                 x2 = runif(n))
+```
+
+
+## 1-2- Create a decision boundary
+
+The dataset you created in the previous exercise is available to you in the dataframe df (recall that it consists of two uniformly distributed variables x1 and x2, lying between 0 and 1). In this exercise you will add a class variable to that dataset. You will do this by creating a variable y whose value is -1 or +1 depending on whether the point (x1, x2) lies below or above the straight line that passes through the origin and has slope 1.4.
+
+Create a new column y in the dataframe df with the following specs:
+y = -1 if x2 < 1.4*x1
+y = 1 if x2 > 1.4*x1
+
+```{r}
+#classify data points depending on location
+df$y <- factor(ifelse(df$x2 - 1.4*df$x1 < 0, -1, 1), 
+    levels = c(-1, 1))
+
+
+```
+
+
+## 1-2- Introduce a margin in the dataset
+
+Create a margin in the dataset that you generated in the previous exercise and then display the margin in a plot. Recall that the slope of the linear decision boundary you created in the previous exercise is 1.4.
+
+```{r}
+#set margin
+delta <- 0.07
+
+# retain only those points that lie outside the margin
+df1 <- df[abs(1.4*df$x1 - df$x2) > delta, ]
+
+#build plot
+plot_margins <- ggplot(data = df1, aes(x = x1, y = x2, color = y)) + geom_point() + 
+    scale_color_manual(values = c("red", "blue")) + 
+    geom_abline(slope = 1.4, intercept = 0)+
+    geom_abline(slope = 1.4, intercept = delta, linetype = "dashed") +
+    geom_abline(slope = 1.4, intercept = -delta, linetype = "dashed")
+ 
+#display plot 
+plot_margins
+```
+
+
+
+## 2-2-Creating training and test datasets
+
+Splitting a dataset into training and test sets is an important step in building and testing a classification model. The training set is used to build the model and the test set to evaluate its predictive accuracy.
+
+In this exercise, you will split the dataset you created in the previous chapter into training and test sets. The dataset has been loaded in the dataframe df and a seed has already been set to ensure reproducibility.
+
+
+```{r}
+#split train and test data in an 80/20 proportion
+df[, "train"] <- ifelse(runif(nrow(df))<0.8, 1, 0)
+
+#assign training rows to data frame trainset
+trainset <- df[df$train == 1, ]
+#assign test rows to data frame testset
+testset <- df[df$train == 0, ]
+
+#find index of "train" column
+trainColNum <- grep("train", names(df))
+
+#remove "train" column from train and test dataset
+trainset <- trainset[, -trainColNum]
+testset <- testset[, -trainColNum]
+
+
+```
+
+## 2-3 Building a linear SVM classifier
+
+In this exercise, you will use the svm() function from the e1071 library to build a linear SVM classifier using training dataset you created in the previous exercise. The training dataset has been loaded for you in the dataframe trainset
+
+```{r}
+#build svm model, setting required parameters
+svm_model<- svm(y ~ ., 
+                data = trainset, 
+                type = "C-classification", 
+                kernel = "linear", 
+                scale = FALSE)
+```
+
+
+## Exploring the model and calculating accuracy
+
+In this exercise you will explore the contents of the model and calculate its training and test accuracies. 
+
+```{r, echo=FALSE}
+#list components of model
+names(svm_model)
+
+#list values of the SV, index and rho
+svm_model$SV
+svm_model$index
+svm_model$rho
+
+#compute training accuracy
+pred_train <- predict(svm_model, trainset)
+mean(pred_train == trainset$y)
+
+#compute test accuracy
+pred_test <- predict(svm_model, testset)
+mean(pred_test == testset$y)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
 v<-rnorm(500)
 #v
 mean(v)
