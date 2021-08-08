@@ -153,22 +153,116 @@ layered_plot <-
 layered_plot
 ```
 
+## 2-6 Visualizing decision & margin bounds using ggplot2
+
+In this exercise, you will add the decision and margin boundaries to the support vector scatter plot created in the previous exercise. The SVM model is available in the variable svm_model and the weight vector has been precalculated for you and is available in the variable w. 
 
 
 
+```{r}
+
+w=data.frame(x1=6.55241 , x2=-4.73278)
+
+#calculate slope and intercept of decision boundary from weight vector and svm model
+slope_1 <- -w[1]/w[2]
+intercept_1 <- svm_model$rho/w[2]
+
+#build scatter plot of training dataset
+scatter_plot <- ggplot(data = trainset, aes(x = x1, y = x2, color = y)) + 
+    geom_point() + scale_color_manual(values = c("red", "blue"))
+#add decision boundary
+plot_decision <- scatter_plot + geom_abline(slope = slope_1, intercept = intercept_1) 
+#add margin boundaries
+plot_margins <- plot_decision + 
+ geom_abline(slope = slope_1, intercept = intercept_1 - 1/w[2], linetype = "dashed")+
+ geom_abline(slope = slope_1, intercept = intercept_1 + 1/w[2], linetype = "dashed")
+#display plot
+#plot_margins
+```
+
+##  2-7 Visualizing decision & margin bounds using `plot()`
+
+In this exercise, you will rebuild the SVM model (as a refresher) and use the built in SVM plot() function to visualize the decision regions and support vectors. The training data is available in the dataframe trainset.
+
+```{r}
+#build svm model
+svm_model<- 
+    svm(y ~ ., data = trainset, type = "C-classification", 
+        kernel = "linear", scale = FALSE)
+
+#plot decision boundaries and support vectors for the training data
+plot(x = svm_model, data = trainset)
+```
+
+## 2-8 Tuning a linear SVM
+
+In this exercise you will study the influence of varying cost on the number of support vectors for linear SVMs. To do this, you will build two SVMs, one with cost = 1 and the other with cost = 100 and find the number of support vectors. A model training dataset is available in the dataframe trainset.
 
 
+.
+```{r}
+#build svm model, cost = 1
+svm_model_1 <- svm(y ~ .,
+                   data = trainset,
+                   type = "C-classification",
+                   cost = 1,
+                   kernel = "linear",
+                   scale = FALSE)
+
+#print model details
+svm_model_1
 
 
+#build svm model, cost = 100
+svm_model_100 <- svm(y ~ .,
+                   data = trainset,
+                   type = "C-classification",
+                   cost = 100,
+                   kernel = "linear",
+                   scale = FALSE)
+
+#print model details
+svm_model_100
+```
+
+## 2-9 Visualizing decision boundaries and margins
+
+In the previous exercise you built two linear classifiers for a linearly separable dataset, one with cost = 1 and the other cost = 100. In this exercise you will visualize the margins for the two classifiers on a single plot. The following objects are available for use:
+
+The training dataset: trainset.
+The cost = 1 and cost = 100 classifiers in svm_model_1 and svm_model_100, respectively.
+The slope and intercept for the cost = 1 classifier is stored in slope_1 and intercept_1.
+The slope and intercept for the cost = 100 classifier is stored in slope_100 and intercept_100.
+Weight vectors for the two costs are stored in w_1 and w_100, respectively
+A basic scatter plot of the training data is stored in train_plot
+
+```{r}
+#add decision boundary and margins for cost = 1 to training data scatter plot
+
+```
+
+## 2-10 A multiclass classification problem
+
+In this exercise, you will use the svm() function from the e1071 library to build a linear multiclass SVM classifier for a dataset that is known to be perfectly linearly separable. Calculate the training and test accuracies, and plot the model using the training data. The training and test datasets are available in the dataframes trainset and testset. Use the default setting for the cost parameter.
+
+```{r}
+svm_model<- 
+    svm(y ~ ., data = trainset, type = "C-classification", 
+        kernel = "linear", scale = FALSE)
+
+#compute training accuracy
+pred_train <- predict(svm_model, trainset)
+mean(pred_train == trainset$y)
+
+#compute test accuracy
+pred_test <- predict(svm_model, testset)
+mean(pred_test == testset$y)
+
+#plot
+plot(svm_model, trainset)
 
 
-
-
-
-
-
-
-
+```
 
 
 ```{r}
@@ -201,6 +295,9 @@ dat
 svmfit = svm(y ~ ., data = dat, kernel = "linear", cost = 10, scale = FALSE)
 print(svmfit)
 ```
+
+
+
 
 
 
