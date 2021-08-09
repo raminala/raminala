@@ -499,17 +499,6 @@ scatter_plot
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 ```{r}
 v<-rnorm(500)
 #v
