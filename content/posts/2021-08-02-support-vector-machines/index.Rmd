@@ -264,7 +264,7 @@ plot(svm_model, trainset)
 
 ```
 
-## 2-2-Generating a 2d radially separable dataset
+## 3-2-Generating a 2d radially separable dataset
 
 In this exercise you will create a 2d radially separable dataset containing 400 uniformly distributed data points.
 
@@ -287,7 +287,7 @@ radius_squared <- radius^2
 df$y <- factor(ifelse((df$x1)^2 + (df$x2)^2 < radius_squared, -1, 1), levels = c(-1, 1))
 ```
 
-## 2-3-Visualizing the dataset
+## 3-3-Visualizing the dataset
 
 In this exercise you will use ggplot() to visualize the dataset you created in the previous exercise. The dataset is available in the dataframe df. Use color to distinguish between the two classes.
 
@@ -303,7 +303,7 @@ scatter_plot
 ```
 
 
-
+## 3-5- 
 
 
 
