@@ -303,28 +303,142 @@ scatter_plot
 ```
 
 
-## 3-5- 
+## 3-5- Linear SVM for a radially separable dataset
+In this exercise you will build two linear SVMs, one for cost = 1 (default) and the other for cost = 100, for the radially separable dataset you created in the first lesson of this chapter. You will also calculate the training and test accuracies for both costs.
+
+
+```{r}
+#split train and test data in an 80/20 proportion
+df[, "train"] <- ifelse(runif(nrow(df))<0.8, 1, 0)
+
+#assign training rows to data frame trainset
+trainset <- df[df$train == 1, ]
+testset<- df[df$train == 0, ]
+```
 
 
 
+```{r}
+#default cost mode;
+svm_model_1 <- svm(y ~ ., data = trainset, type = "C-classification", cost = 1, kernel = "linear")
+
+#training accuracy
+pred_train <- predict(svm_model_1, trainset)
+mean(pred_train == trainset$y)
+
+#test accuracy
+pred_test <- predict(svm_model_1, testset)
+mean(pred_test == testset$y)
+```
 
 
+## 3-6- Average accuracy for linear SVM
+
+In this exercise you will calculate the average accuracy for a default cost linear SVM using 100 different training/test partitions of the dataset you generated in the first lesson of this chapter. The e1071 library has been preloaded and the dataset is available in the dataframe df. Use random 80/20 splits of the data in df when creating training and test datasets for each iteration.
 
 
+```{r}
+# Print average accuracy and standard deviation
+accuracy <- rep(NA, 100)
+set.seed(2)
+
+# Calculate accuracies for 100 training/test partitions
+for (i in 1:100){
+    df[, "train"] <- ifelse(runif(nrow(df)) < 0.8, 1, 0)
+    trainset <- df[df$train == 1, ]
+    testset <- df[df$train == 0, ]
+    trainColNum <- grep("train", names(trainset))
+    trainset <- trainset[, -trainColNum]
+    testset <- testset[, -trainColNum]
+    svm_model <- svm(y ~ ., data = trainset, type = "C-classification", kernel = "linear")
+    pred_test <- predict(svm_model, testset)
+    accuracy[i] <- mean(pred_test == testset$y)
+}
+
+# Print average accuracy and standard deviation
+mean(accuracy)
+sd(accuracy)
+```
+
+## 3-8-Visualizing transformed radially separable data
+
+In this exercise you will transform the radially separable dataset you created earlier in this chapter and visualize it in the x1^2-x2^2 plane. As a reminder, the separation boundary for the data is the circle x1^2 + x2^2 = 0.64(radius = 0.8 units). The dataset has been loaded for you in the dataframe df.
+
+```{r}
+#transform data
+df1 <- data.frame(x1sq = df$x1^2, x2sq = df$x2^2, y = df$y)
+
+#plot data points in the transformed space
+plot_transformed <- ggplot(data = df1, aes(x = x1sq, y = x2sq, color = y)) + 
+    geom_point()+ guides(color = FALSE) + 
+    scale_color_manual(values = c("red", "blue"))
+
+#add decision boundary and visualize
+plot_decision <- plot_transformed + geom_abline(slope = -1, intercept = 0.64)
+plot_decision
+```
+
+## 3-9-SVM with polynomial kernel
+
+In this exercise you will build a SVM with a quadratic kernel (polynomial of degree 2) for the radially separable dataset you created earlier in this chapter. You will then calculate the training and test accuracies and create a plot of the model using the built in plot() function. The training and test datasets are available in the dataframes trainset and testset, and the e1071 library has been preloaded.
+
+```{r}
+svm_model<- 
+    svm(y ~ ., data = trainset, type = "C-classification", 
+        kernel = "polynomial", degree = 2)
+
+#measure training and test accuracy
+pred_train <- predict(svm_model, trainset)
+mean(pred_train == trainset$y)
+pred_test <- predict(svm_model, testset)
+mean(pred_test == testset$y)
+
+#plot
+plot(svm_model, trainset)
+```
+
+## 3-11- Using `tune.svm()`
+
+This exercise will give you hands-on practice with using the tune.svm() function. You will use it to obtain the optimal values for the cost, gamma, and coef0 parameters for an SVM model based on the radially separable dataset you created earlier in this chapter. The training data is available in the dataframe trainset, the test data in testset, and the e1071 library has been preloaded for you. Remember that the class variable y is stored in the third column of the trainset and testset.
+
+Also recall that in the video, Kailash used cost=10^(1:3) to get a range of the cost parameter from 10=10^1 to 1000=10^3 in multiples of 10.
 
 
+```{r}
+#tune model
+tune_out <- 
+    tune.svm(x = trainset[, -3], y = trainset[, 3], 
+             type = "C-classification", 
+             kernel = "polynomial", degree = 2, cost = 10^(-1:2), 
+             gamma = c(0.1, 1, 10), coef0 = c(0.1, 1, 10))
 
+#list optimal values
+tune_out$best.parameters$cost
+tune_out$best.parameters$gamma
+tune_out$best.parameters$coef0
+```
 
+## 3-12- Building and visualizing the tuned model
 
+In the final exercise of this chapter, you will build a polynomial SVM using the optimal values of the parameters that you obtained from tune.svm() in the previous exercise. You will then calculate the training and test accuracies and visualize the model using svm.plot(). The e1071 library has been preloaded and the test and training datasets are available in the dataframes trainset and testset. The output of tune.svm() is available in the variable tune_out.
 
+```{r}
+#Build tuned model
+svm_model <- svm(y~ ., data = trainset, type = "C-classification", 
+                 kernel = "polynomial", degree = 2, 
+                 cost = tune_out$best.parameters$cost, 
+                 gamma = tune_out$best.parameters$gamma, 
+                 coef0 = tune_out$best.parameters$coef0)
 
+#Calculate training and test accuracies
+pred_train <- predict(svm_model, trainset)
+mean(pred_train == trainset$y)
+pred_test <- predict(svm_model, testset)
+mean(pred_test == testset$y)
 
-
-
-
-
-
-
+#plot model
+plot(svm_model, trainset)
+```
 
 
 ```{r}
