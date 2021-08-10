@@ -496,6 +496,106 @@ scatter_plot<- ggplot(data = df, aes(x = x1, y = x2, color = y)) +
  
 scatter_plot 
 ```
+## 4-6- Linear SVM for complex dataset
+
+In this exercise you will build a default cost linear SVM for the complex dataset you created in the first lesson of this chapter. You will also calculate the training and test accuracies and plot the classification boundary against the test dataset. The e1071 library has been loaded, and test and training datasets have been created for you and are available in the data frames trainset and testset.
+
+
+```{r}
+#build model
+svm_model<- 
+    svm(y ~ ., data = trainset, type = "C-classification", 
+        kernel = "linear")
+
+#accuracy
+pred_train <- predict(svm_model, trainset)
+mean(pred_train == trainset$y)
+pred_test <- predict(svm_model, testset)
+mean(pred_test == testset$y)
+
+#plot model against testset
+plot(svm_model, testset)
+```
+## 4-7- Quadratic SVM for complex dataset
+
+In this exercise you will build a default quadratic (polynomial, degree = 2) linear SVM for the complex dataset you created in the first lesson of this chapter. You will also calculate the training and test accuracies plot the classification boundary against the training dataset. The e1071 library has been loaded, and test and training datasets have been created for you and are available in the data frames trainset and testset.
+
+
+```{r}
+#build model
+svm_model<- 
+    svm(y ~ ., data = trainset, type = "C-classification", 
+        kernel = "polynomial", degree = 2)
+
+#accuracy
+pred_train <- predict(svm_model, trainset)
+mean(pred_train == trainset$y)
+pred_test <- predict(svm_model, testset)
+mean(pred_test == testset$y)
+
+#plot model
+plot(svm_model, trainset)
+```
+## 4-9- Polynomial SVM on a complex dataset
+
+Calculate the average accuracy for a degree 2 polynomial kernel SVM using 100 different training/test partitions of the complex dataset you generated in the first lesson of this chapter. Use default settings for the parameters. The e1071 library has been preloaded and the dataset is available in the dataframe df. Use random 80/20 splits of the data in df when creating training and test datasets for each iteration.
+
+```{r}
+#create vector to store accuracies and set random number seed
+accuracy <- rep(NA, 100)
+set.seed(2)
+
+#calculate accuracies for 100 training/test partitions
+for (i in 1:100){
+    df[, "train"] <- ifelse(runif(nrow(df))<0.8, 1, 0)
+    trainset <- df[df$train == 1, ]
+    testset <- df[df$train == 0, ]
+    trainColNum <- grep("train", names(trainset))
+    trainset <- trainset[, -trainColNum]
+    testset <- testset[, -trainColNum]
+    svm_model<- svm(y ~ ., data = trainset, type = "C-classification", kernel = "polynomial", degree = 2)
+    pred_test <- predict(svm_model, testset)
+    accuracy[i] <- mean(pred_test == testset$y)
+}
+
+#print average accuracy and standard deviation
+mean(accuracy)
+sd(accuracy)
+```
+
+## 4-10- RBF SVM on a complex dataset
+
+Calculate the average accuracy for a RBF kernel SVM using 100 different training/test partitions of the complex dataset you generated in the first lesson of this chapter. Use default settings for the parameters. The e1071 library has been preloaded and the dataset is available in the dataframe df. Use random 80/20 splits of the data in df when creating training and test datasets for each iteration.
+
+```{r}
+#create vector to store accuracies and set random number seed
+accuracy <- rep(NA, 100)
+set.seed(2)
+
+#calculate accuracies for 100 training/test partitions
+for (i in 1:100){
+    df[, "train"] <- ifelse(runif(nrow(df))<0.8, 1, 0)
+    trainset <- df[df$train == 1, ]
+    testset <- df[df$train == 0, ]
+    trainColNum <- grep("train", names(trainset))
+    trainset <- trainset[, -trainColNum]
+    testset <- testset[, -trainColNum]
+    svm_model<- svm(y ~ ., data = trainset, type = "C-classification", kernel = "radial")
+    pred_test <- predict(svm_model, testset)
+    accuracy[i] <- mean(pred_test == testset$y)
+}
+
+#print average accuracy and standard deviation
+mean(accuracy)
+sd(accuracy)
+```
+
+## 4-11- 
+
+
+```{r}
+
+```
 
 
 
