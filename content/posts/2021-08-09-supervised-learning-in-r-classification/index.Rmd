@@ -1,0 +1,29 @@
+---
+title: 'Supervised Learning in R: Classification'
+author: ''
+date: '2021-08-09'
+slug: []
+categories: []
+tags:
+  - Classification
+---
+
+```{r}
+signs <- read_csv("signs.csv") %>% na.omit()
+#next_sign <- read_csv("next_sign.csv") %>% na.omit()
+glimpse(signs)
+
+```
+
+
+```{r}
+# Load the 'class' package
+library(class)
+
+# Create a vector of labels
+sign_types <- signs$sign_type
+
+# Classify the next sign observed
+knn(train = signs[-1], test = next_sign, cl = sign_types)
+```
+

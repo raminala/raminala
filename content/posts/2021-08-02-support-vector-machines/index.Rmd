@@ -14,7 +14,7 @@ library(e1071)
 ```
 
 
-## 1-1- Generate a 2d uniformly distributed dataset.
+## 1-7- Generate a 2d uniformly distributed dataset.
 
 The aim of this lesson is to create a dataset that will be used to illustrate the basic principles of support vector machines. In this exercise we will do the first step, which is to create a 2 dimensional uniformly distributed dataset containing 600 datapoints.
 
@@ -32,7 +32,7 @@ df <- data.frame(x1 = runif(n),
 ```
 
 
-## 1-2- Create a decision boundary
+## 1-8- Create a decision boundary
 
 The dataset you created in the previous exercise is available to you in the dataframe df (recall that it consists of two uniformly distributed variables x1 and x2, lying between 0 and 1). In this exercise you will add a class variable to that dataset. You will do this by creating a variable y whose value is -1 or +1 depending on whether the point (x1, x2) lies below or above the straight line that passes through the origin and has slope 1.4.
 
@@ -49,7 +49,7 @@ df$y <- factor(ifelse(df$x2 - 1.4*df$x1 < 0, -1, 1),
 ```
 
 
-## 1-2- Introduce a margin in the dataset
+## 1-9- Introduce a margin in the dataset
 
 Create a margin in the dataset that you generated in the previous exercise and then display the margin in a plot. Recall that the slope of the linear decision boundary you created in the previous exercise is 1.4.
 
@@ -305,6 +305,26 @@ scatter_plot
 
 ## 3-5- Linear SVM for a radially separable dataset
 In this exercise you will build two linear SVMs, one for cost = 1 (default) and the other for cost = 100, for the radially separable dataset you created in the first lesson of this chapter. You will also calculate the training and test accuracies for both costs.
+
+```{r}
+#split train and test data in an 80/20 proportion
+df[, "train"] <- ifelse(runif(nrow(df))<0.8, 1, 0)
+
+#assign training rows to data frame trainset
+trainset <- df[df$train == 1, ]
+#assign test rows to data frame testset
+testset <- df[df$train == 0, ]
+
+#find index of "train" column
+trainColNum <- grep("train", names(df))
+
+#remove "train" column from train and test dataset
+trainset <- trainset[, -trainColNum]
+testset <- testset[, -trainColNum]
+
+
+```
+
 
 
 ```{r}
@@ -590,11 +610,29 @@ mean(accuracy)
 sd(accuracy)
 ```
 
-## 4-11- 
+## 4-11- RBF SVM on a complex dataset
+
+Calculate the average accuracy for a RBF kernel SVM using 100 different training/test partitions of the complex dataset you generated in the first lesson of this chapter. Use default settings for the parameters. The e1071 library has been preloaded and the dataset is available in the dataframe df. Use random 80/20 splits of the data in df when creating training and test datasets for each iteration.
 
 
 ```{r}
+#tune model
+tune_out <- tune.svm(x = trainset[, -3], y = trainset[, 3], 
+                     gamma = 5*10^(-2:2), 
+                     cost = c(0.01, 0.1, 1, 10, 100), 
+                     type = "C-classification", kernel = "radial")
 
+#build tuned model
+svm_model <- svm(y~ ., data = trainset, type = "C-classification", kernel = "radial", 
+                 cost = tune_out$best.parameters$cost, 
+                 gamma = tune_out$best.parameters$gamma)
+
+#calculate test accuracy
+pred_test <- predict(svm_model, testset)
+mean(pred_test == testset$y)
+
+#Plot decision boundary against test data
+plot(svm_model, testset)
 ```
 
 
