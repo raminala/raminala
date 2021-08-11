@@ -155,3 +155,16 @@ While Brett was tracking his location over 13 weeks, he never went into the offi
 Explore how this impacts the predicted probability that Brett may go to work on the weekend in the future. Additionally, you can see how using the Laplace correction will allow a small chance for these types of unforeseen circumstances.
 
 The model locmodel is already in your workspace, along with the dataframe weekend_afternoon.
+
+# The 'naivebayes' package is loaded into the workspace already
+# The Naive Bayes location model (locmodel) has already been built
+
+# Observe the predicted probabilities for a weekend afternoon
+predict(locmodel, weekend_afternoon, type="prob" )
+
+# Build a new model using the Laplace correction
+locmodel2 <- naive_bayes(location  ~ daytype + hourtype, locations,laplace=1)
+
+# Observe the new predicted probabilities for a weekend afternoon
+predict(locmodel2, weekend_afternoon, type="prob" )
+
