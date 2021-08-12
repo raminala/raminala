@@ -214,7 +214,13 @@ donors$donation_pred <- ifelse(donors$donation_prob > 0.0504, 1, 0)
 mean(donors$donation_pred == donors$donated)
 ---
 
-## 3-6 
+## 3-6 Calculating ROC Curves and AUC
+
+The previous exercises have demonstrated that accuracy is a very misleading measure of model performance on imbalanced datasets. Graphing the model's performance better illustrates the tradeoff between a model that is overly agressive and one that is overly passive.
+
+In this exercise you will create a ROC curve and compute the area under the curve (AUC) to evaluate the logistic regression model of donations you built earlier.
+
+The dataset donors with the column of predicted probabilities, donation_prob ,is already loaded in your workspace.
 
 ```{r}
 
