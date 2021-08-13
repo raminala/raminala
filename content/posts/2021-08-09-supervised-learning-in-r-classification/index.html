@@ -1,0 +1,495 @@
+---
+title: 'Supervised Learning in R: Classification'
+author: ''
+date: '2021-08-09'
+slug: []
+categories: []
+tags:
+  - Classification
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
+## v tibble  3.1.2     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(class) #knn
+library(tidyverse)</code></pre>
+<pre class="r"><code>signs &lt;- read_csv(&quot;signs.csv&quot;) #%&gt;% na.omit()</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   sign_type = col_character()
+## )
+## i Use `spec()` for the full column specifications.</code></pre>
+<pre class="r"><code>next_sign &lt;- read_csv(&quot;next_sign.csv&quot;)</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double()
+## )
+## i Use `spec()` for the full column specifications.</code></pre>
+<pre class="r"><code>#glimpse(signs)
+where9am &lt;- read_csv(&quot;where9am.csv&quot;)</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   X1 = col_double(),
+##   daytype = col_character(),
+##   location = col_character()
+## )</code></pre>
+<div id="section" class="section level2">
+<h2>1-2</h2>
+<pre class="r"><code># Load the &#39;class&#39; package
+library(class)
+
+# Create a vector of labels
+sign_types &lt;- signs$sign_type
+
+# Classify the next sign observed
+ss&lt;-knn(train = signs[-1], test = next_sign, cl = sign_types)</code></pre>
+</div>
+<div id="section-1" class="section level2">
+<h2>1-4</h2>
+<pre class="r"><code># Examine the structure of the signs dataset
+
+str(signs)</code></pre>
+<pre><code>## spec_tbl_df [146 x 49] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+##  $ sign_type: chr [1:146] &quot;pedestrian&quot; &quot;pedestrian&quot; &quot;pedestrian&quot; &quot;pedestrian&quot; ...
+##  $ r1       : num [1:146] 155 142 57 22 169 75 136 149 13 123 ...
+##  $ g1       : num [1:146] 228 217 54 35 179 67 149 225 34 124 ...
+##  $ b1       : num [1:146] 251 242 50 41 170 60 157 241 28 107 ...
+##  $ r2       : num [1:146] 135 166 187 171 231 131 200 34 5 83 ...
+##  $ g2       : num [1:146] 188 204 201 178 254 89 203 45 21 61 ...
+##  $ b2       : num [1:146] 101 44 68 26 27 53 107 1 11 26 ...
+##  $ r3       : num [1:146] 156 142 51 19 97 214 150 155 123 116 ...
+##  $ g3       : num [1:146] 227 217 51 27 107 144 167 226 154 124 ...
+##  $ b3       : num [1:146] 245 242 45 29 99 75 134 238 140 115 ...
+##  $ r4       : num [1:146] 145 147 59 19 123 156 171 147 21 67 ...
+##  $ g4       : num [1:146] 211 219 62 27 147 169 218 222 46 67 ...
+##  $ b4       : num [1:146] 228 242 65 29 152 190 252 242 41 52 ...
+##  $ r5       : num [1:146] 166 164 156 42 221 67 171 170 36 70 ...
+##  $ g5       : num [1:146] 233 228 171 37 236 50 158 191 60 53 ...
+##  $ b5       : num [1:146] 245 229 50 3 117 36 108 113 26 26 ...
+##  $ r6       : num [1:146] 212 84 254 217 205 37 157 26 75 26 ...
+##  $ g6       : num [1:146] 254 116 255 228 225 36 186 37 108 26 ...
+##  $ b6       : num [1:146] 52 17 36 19 80 42 11 12 44 21 ...
+##  $ r7       : num [1:146] 212 217 211 221 235 44 26 34 13 52 ...
+##  $ g7       : num [1:146] 254 254 226 235 254 42 35 45 27 45 ...
+##  $ b7       : num [1:146] 11 26 70 20 60 44 10 19 25 27 ...
+##  $ r8       : num [1:146] 188 155 78 181 90 192 180 221 133 117 ...
+##  $ g8       : num [1:146] 229 203 73 183 110 131 211 249 163 109 ...
+##  $ b8       : num [1:146] 117 128 64 73 9 73 236 184 126 83 ...
+##  $ r9       : num [1:146] 170 213 220 237 216 123 129 226 83 110 ...
+##  $ g9       : num [1:146] 216 253 234 234 236 74 109 246 125 74 ...
+##  $ b9       : num [1:146] 120 51 59 44 66 22 73 59 19 12 ...
+##  $ r10      : num [1:146] 211 217 254 251 229 36 161 30 13 98 ...
+##  $ g10      : num [1:146] 254 255 255 254 255 34 190 40 27 70 ...
+##  $ b10      : num [1:146] 3 21 51 2 12 37 10 34 25 26 ...
+##  $ r11      : num [1:146] 212 217 253 235 235 44 161 34 9 20 ...
+##  $ g11      : num [1:146] 254 255 255 243 254 42 190 44 23 21 ...
+##  $ b11      : num [1:146] 19 21 44 12 60 44 6 35 18 20 ...
+##  $ r12      : num [1:146] 172 158 66 19 163 197 187 241 85 113 ...
+##  $ g12      : num [1:146] 235 225 68 27 168 114 215 255 128 76 ...
+##  $ b12      : num [1:146] 244 237 68 29 152 21 236 54 21 14 ...
+##  $ r13      : num [1:146] 172 164 69 20 124 171 141 205 83 106 ...
+##  $ g13      : num [1:146] 235 227 65 29 117 102 142 229 125 69 ...
+##  $ b13      : num [1:146] 244 237 59 34 91 26 140 46 19 9 ...
+##  $ r14      : num [1:146] 172 182 76 64 188 197 189 226 85 102 ...
+##  $ g14      : num [1:146] 228 228 84 61 205 114 171 246 128 67 ...
+##  $ b14      : num [1:146] 235 143 22 4 78 21 140 59 21 6 ...
+##  $ r15      : num [1:146] 177 171 82 211 125 123 214 235 85 106 ...
+##  $ g15      : num [1:146] 235 228 93 222 147 74 221 252 128 69 ...
+##  $ b15      : num [1:146] 244 196 17 78 20 22 201 67 21 9 ...
+##  $ r16      : num [1:146] 22 164 58 19 160 180 188 237 83 43 ...
+##  $ g16      : num [1:146] 52 227 60 27 183 107 211 254 125 29 ...
+##  $ b16      : num [1:146] 53 237 60 29 187 26 227 53 19 11 ...
+##  - attr(*, &quot;spec&quot;)=
+##   .. cols(
+##   ..   sign_type = col_character(),
+##   ..   r1 = col_double(),
+##   ..   g1 = col_double(),
+##   ..   b1 = col_double(),
+##   ..   r2 = col_double(),
+##   ..   g2 = col_double(),
+##   ..   b2 = col_double(),
+##   ..   r3 = col_double(),
+##   ..   g3 = col_double(),
+##   ..   b3 = col_double(),
+##   ..   r4 = col_double(),
+##   ..   g4 = col_double(),
+##   ..   b4 = col_double(),
+##   ..   r5 = col_double(),
+##   ..   g5 = col_double(),
+##   ..   b5 = col_double(),
+##   ..   r6 = col_double(),
+##   ..   g6 = col_double(),
+##   ..   b6 = col_double(),
+##   ..   r7 = col_double(),
+##   ..   g7 = col_double(),
+##   ..   b7 = col_double(),
+##   ..   r8 = col_double(),
+##   ..   g8 = col_double(),
+##   ..   b8 = col_double(),
+##   ..   r9 = col_double(),
+##   ..   g9 = col_double(),
+##   ..   b9 = col_double(),
+##   ..   r10 = col_double(),
+##   ..   g10 = col_double(),
+##   ..   b10 = col_double(),
+##   ..   r11 = col_double(),
+##   ..   g11 = col_double(),
+##   ..   b11 = col_double(),
+##   ..   r12 = col_double(),
+##   ..   g12 = col_double(),
+##   ..   b12 = col_double(),
+##   ..   r13 = col_double(),
+##   ..   g13 = col_double(),
+##   ..   b13 = col_double(),
+##   ..   r14 = col_double(),
+##   ..   g14 = col_double(),
+##   ..   b14 = col_double(),
+##   ..   r15 = col_double(),
+##   ..   g15 = col_double(),
+##   ..   b15 = col_double(),
+##   ..   r16 = col_double(),
+##   ..   g16 = col_double(),
+##   ..   b16 = col_double()
+##   .. )</code></pre>
+<pre class="r"><code># Count the number of signs of each type
+table(signs$sign_type)</code></pre>
+<pre><code>## 
+## pedestrian      speed       stop 
+##         46         49         51</code></pre>
+<pre class="r"><code># Check r10&#39;s average red level by sign type
+aggregate(r10 ~ sign_type, data = signs, mean)</code></pre>
+<pre><code>##    sign_type       r10
+## 1 pedestrian 113.71739
+## 2      speed  80.63265
+## 3       stop 132.39216</code></pre>
+</div>
+<div id="testing-other-k-values" class="section level2">
+<h2>1-8 Testing other ‘k’ values</h2>
+<p>By default, the knn() function in the class package uses only the single nearest neighbor.</p>
+<p>Setting a k parameter allows the algorithm to consider additional nearby neighbors. This enlarges the collection of neighbors which will vote on the predicted class.</p>
+<p>Compare k values of 1, 7, and 15 to examine the impact on traffic sign classification accuracy.</p>
+<p>The class package is already loaded in your workspace along with the datasets signs, signs_test, and sign_types. The object signs_actual holds the true values of the signs.</p>
+</div>
+<div id="computing-probabilities" class="section level2">
+<h2>2-2- Computing probabilities</h2>
+<p>The where9am data frame contains 91 days (thirteen weeks) worth of data in which Brett recorded his location at 9am each day as well as whether the daytype was a weekend or weekday.</p>
+<p>Using the conditional probability formula below, you can compute the probability that Brett is working in the office, given that it is a weekday.</p>
+<pre class="r"><code># Compute P(A) 
+p_A &lt;- nrow(subset(where9am, location == &quot;office&quot;)) / nrow(where9am)
+
+# Compute P(B)
+p_B &lt;- nrow(subset(where9am, daytype == &quot;weekday&quot;)) / nrow(where9am)
+
+# Compute the observed P(A and B)
+p_AB &lt;- nrow(subset(where9am, location == &quot;office&quot; &amp; daytype == &quot;weekday&quot;)) / nrow(where9am)
+
+# Compute P(A | B) and print its value
+p_A_given_B &lt;- p_AB / p_B
+p_A_given_B</code></pre>
+<pre><code>## [1] 0.6</code></pre>
+</div>
+<div id="a-simple-naive-bayes-location-model" class="section level2">
+<h2>2-4- A simple Naive Bayes location model</h2>
+<p>The previous exercises showed that the probability that Brett is at work or at home at 9am is highly dependent on whether it is the weekend or a weekday.</p>
+<p>To see this finding in action, use the where9am data frame to build a Naive Bayes model on the same data.</p>
+<p>You can then use this model to predict the future: where does the model think that Brett will be at 9am on Thursday and at 9am on Saturday?</p>
+<p>The data frame where9am is available in your workspace. This dataset contains information about Brett’s location at 9am on different days.</p>
+<pre class="r"><code>thursday9am &lt;- data.frame(daytype=c(&quot;weekday&quot;))
+saturday9am &lt;- data.frame(daytype=c(&quot;weekend&quot;))
+# Load the naivebayes package
+library(naivebayes)</code></pre>
+<pre><code>## naivebayes 0.9.7 loaded</code></pre>
+<pre class="r"><code># Build the location prediction model
+locmodel &lt;- naive_bayes(location ~ daytype, data = where9am)</code></pre>
+<pre><code>## Warning: naive_bayes(): Feature daytype - zero probabilities are present.
+## Consider Laplace smoothing.</code></pre>
+<pre class="r"><code># Predict Thursday&#39;s 9am location
+predict(locmodel, thursday9am)</code></pre>
+<pre><code>## [1] office
+## Levels: appointment campus home office</code></pre>
+<pre class="r"><code># Predict Saturdays&#39;s 9am location
+predict(locmodel, saturday9am)</code></pre>
+<pre><code>## [1] home
+## Levels: appointment campus home office</code></pre>
+</div>
+<div id="examining-raw-probabilities" class="section level2">
+<h2>2-5- Examining “raw” probabilities</h2>
+<p>The naivebayes package offers several ways to peek inside a Naive Bayes model.</p>
+<p>Typing the name of the model object provides the a priori (overall) and conditional probabilities of each of the model’s predictors. If one were so inclined, you might use these for calculating posterior (predicted) probabilities by hand.</p>
+<p>Alternatively, R will compute the posterior probabilities for you if the type = “prob” parameter is supplied to the predict() function.</p>
+<p>Using these methods, examine how the model’s predicted 9am location probability varies from day-to-day. The model locmodel that you fit in the previous exercise is in your workspace.</p>
+<pre class="r"><code># The &#39;naivebayes&#39; package is loaded into the workspace
+# and the Naive Bayes &#39;locmodel&#39; has been built
+
+# Examine the location prediction model
+locmodel</code></pre>
+<pre><code>## 
+## ================================== Naive Bayes ================================== 
+##  
+##  Call: 
+## naive_bayes.formula(formula = location ~ daytype, data = where9am)
+## 
+## --------------------------------------------------------------------------------- 
+##  
+## Laplace smoothing: 0
+## 
+## --------------------------------------------------------------------------------- 
+##  
+##  A priori probabilities: 
+## 
+## appointment      campus        home      office 
+##  0.01098901  0.10989011  0.45054945  0.42857143 
+## 
+## --------------------------------------------------------------------------------- 
+##  
+##  Tables: 
+## 
+## --------------------------------------------------------------------------------- 
+##  ::: daytype (Bernoulli) 
+## --------------------------------------------------------------------------------- 
+##          
+## daytype   appointment    campus      home    office
+##   weekday   1.0000000 1.0000000 0.3658537 1.0000000
+##   weekend   0.0000000 0.0000000 0.6341463 0.0000000
+## 
+## ---------------------------------------------------------------------------------</code></pre>
+<pre class="r"><code># Obtain the predicted probabilities for Thursday at 9am
+predict(locmodel, thursday9am , type = &quot;prob&quot;)</code></pre>
+<pre><code>##      appointment    campus      home office
+## [1,]  0.01538462 0.1538462 0.2307692    0.6</code></pre>
+<pre class="r"><code># Obtain the predicted probabilities for Saturday at 9am
+predict(locmodel, saturday9am , type = &quot;prob&quot;)</code></pre>
+<pre><code>##       appointment       campus      home      office
+## [1,] 3.838772e-05 0.0003838772 0.9980806 0.001497121</code></pre>
+</div>
+<div id="a-more-sophisticated-location-model" class="section level2">
+<h2>2-9- A more sophisticated location model</h2>
+<p>The locations dataset records Brett’s location every hour for 13 weeks. Each hour, the tracking information includes the daytype (weekend or weekday) as well as the hourtype (morning, afternoon, evening, or night).</p>
+<p>Using this data, build a more sophisticated model to see how Brett’s predicted location not only varies by the day of week but also by the time of day. The dataset locations is already loaded in your workspace.</p>
+<p>You can specify additional independent variables in your formula using the + sign (e.g. y ~ x + b).</p>
+<pre class="r"><code># The &#39;naivebayes&#39; package is loaded into the workspace already
+
+# Build a NB model of location
+#locmodel &lt;- naive_bayes(location  ~ daytype + hourtype, locations)
+
+# Predict Brett&#39;s location on a weekday afternoon
+#predict(locmodel, weekday_afternoon)
+
+# Predict Brett&#39;s location on a weekday evening
+#predict(locmodel, weekday_evening)</code></pre>
+<p>##2-10-Preparing for unforeseen circumstances</p>
+<p>While Brett was tracking his location over 13 weeks, he never went into the office during the weekend. Consequently, the joint probability of P(office and weekend) = 0.</p>
+<p>Explore how this impacts the predicted probability that Brett may go to work on the weekend in the future. Additionally, you can see how using the Laplace correction will allow a small chance for these types of unforeseen circumstances.</p>
+<p>The model locmodel is already in your workspace, along with the dataframe weekend_afternoon.</p>
+</div>
+<div id="the-naivebayes-package-is-loaded-into-the-workspace-already" class="section level1">
+<h1>The ‘naivebayes’ package is loaded into the workspace already</h1>
+</div>
+<div id="the-naive-bayes-location-model-locmodel-has-already-been-built" class="section level1">
+<h1>The Naive Bayes location model (locmodel) has already been built</h1>
+</div>
+<div id="observe-the-predicted-probabilities-for-a-weekend-afternoon" class="section level1">
+<h1>Observe the predicted probabilities for a weekend afternoon</h1>
+<p>predict(locmodel, weekend_afternoon, type=“prob” )</p>
+</div>
+<div id="build-a-new-model-using-the-laplace-correction" class="section level1">
+<h1>Build a new model using the Laplace correction</h1>
+<p>locmodel2 &lt;- naive_bayes(location ~ daytype + hourtype, locations,laplace=1)</p>
+</div>
+<div id="observe-the-new-predicted-probabilities-for-a-weekend-afternoon" class="section level1">
+<h1>Observe the new predicted probabilities for a weekend afternoon</h1>
+<p>predict(locmodel2, weekend_afternoon, type=“prob” )</p>
+<div id="building-simple-logistic-regression-models" class="section level2">
+<h2>3-2 Building simple logistic regression models</h2>
+<p>The donors dataset contains 93,462 examples of people mailed in a fundraising solicitation for paralyzed military veterans. The donated column is 1 if the person made a donation in response to the mailing and 0 otherwise. This binary outcome will be the dependent variable for the logistic regression model.</p>
+<p>The remaining columns are features of the prospective donors that may influence their donation behavior. These are the model’s independent variables.</p>
+<p>When building a regression model, it is often helpful to form a hypothesis about which independent variables will be predictive of the dependent variable. The bad_address column, which is set to 1 for an invalid mailing address and 0 otherwise, seems like it might reduce the chances of a donation. Similarly, one might suspect that religious interest (interest_religion) and interest in veterans affairs (interest_veterans) would be associated with greater charitable giving.</p>
+<p>In this exercise, you will use these three factors to create a simple model of donation behavior. The dataset donors is available in your workspace.</p>
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td># Examine the dataset to identify potential independent variables
+str(donors)</td>
+</tr>
+<tr class="even">
+<td># Explore the dependent variable</td>
+</tr>
+<tr class="odd">
+<td>table(donors$donated)
+# Build the donation model
+donation_model &lt;- glm(donated~bad_address+interest_religion+interest_veterans, data = donors, family = “binomial”)</td>
+</tr>
+<tr class="even">
+<td># Summarize the model results
+summary(donation_model)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="making-a-binary-prediction" class="section level2">
+<h2>3-3 Making a binary prediction</h2>
+<p>In the previous exercise, you used the glm() function to build a logistic regression model of donor behavior. As with many of R’s machine learning methods, you can apply the predict() function to the model object to forecast future behavior. By default, predict() outputs predictions in terms of log odds unless type = “response” is specified. This converts the log odds to probabilities.</p>
+<p>Because a logistic regression model estimates the probability of the outcome, it is up to you to determine the threshold at which the probability implies action. One must balance the extremes of being too cautious versus being too aggressive. For example, if you were to solicit only the people with a 99% or greater donation probability, you may miss out on many people with lower estimated probabilities that still choose to donate. This balance is particularly important to consider for severely imbalanced outcomes, such as in this dataset where donations are relatively rare.</p>
+<p>The dataset donors and the model donation_model are already loaded in your workspace.</p>
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td># Estimate the donation probability
+donors$donation_prob &lt;- predict(donation_model, type = “response”)</td>
+</tr>
+<tr class="even">
+<td># Find the donation probability of the average prospect
+mean(donors$donated)</td>
+</tr>
+<tr class="odd">
+<td># Predict a donation if probability of donation is greater than average (0.0504)
+donors<span class="math inline">\(donation_pred &lt;- ifelse(donors\)</span>donation_prob &gt; 0.0504, 1, 0)</td>
+</tr>
+<tr class="even">
+<td># Calculate the model’s accuracy
+mean(donors<span class="math inline">\(donation_pred == donors\)</span>donated)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="calculating-roc-curves-and-auc" class="section level2">
+<h2>3-6 Calculating ROC Curves and AUC</h2>
+<p>The previous exercises have demonstrated that accuracy is a very misleading measure of model performance on imbalanced datasets. Graphing the model’s performance better illustrates the tradeoff between a model that is overly agressive and one that is overly passive.</p>
+<p>In this exercise you will create a ROC curve and compute the area under the curve (AUC) to evaluate the logistic regression model of donations you built earlier.</p>
+<p>The dataset donors with the column of predicted probabilities, donation_prob ,is already loaded in your workspace.</p>
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td># Load the pROC package
+library(pROC)</td>
+</tr>
+<tr class="even">
+<td># Create a ROC curve
+ROC &lt;- roc(donors<span class="math inline">\(donated, donors\)</span>donation_prob)</td>
+</tr>
+<tr class="odd">
+<td># Plot the ROC curve
+plot(ROC, col = “blue”)</td>
+</tr>
+<tr class="even">
+<td># Calculate the area under the curve (AUC)
+auc(ROC)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="coding-categorical-features" class="section level2">
+<h2>3-9 Coding categorical features</h2>
+<p>Sometimes a dataset contains numeric values that represent a categorical feature.</p>
+<p>In the donors dataset, wealth_rating uses numbers to indicate the donor’s wealth level:</p>
+<p>0 = Unknown
+1 = Low
+2 = Medium
+3 = High
+This exercise illustrates how to prepare this type of categorical feature and examines its impact on a logistic regression model. The dataframe donors is loaded in your workspace.</p>
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td># Convert the wealth rating to a factor
+donors<span class="math inline">\(wealth_levels &lt;- factor(donors\)</span>wealth_rating, levels = c(0, 1, 2, 3),
+labels = c(“Unknown”, “Low”, “Medium”, “High”))</td>
+</tr>
+<tr class="even">
+<td># Use relevel() to change reference category
+donors<span class="math inline">\(wealth_levels &lt;- relevel(donors\)</span>wealth_levels, ref = “Medium”)</td>
+</tr>
+<tr class="odd">
+<td># See how our factor coding impacts the model
+summary(glm(donated~wealth_levels, data = donors, family = “binomial”))</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="handling-missing-data" class="section level2">
+<h2>3-10 Handling missing data</h2>
+<p>Some of the prospective donors have missing age data. Unfortunately, R will exclude any cases with NA values when building a regression model.</p>
+<p>One workaround is to replace, or impute, the missing values with an estimated value. After doing so, you may also create a missing data indicator to model the possibility that cases with missing data are different in some way from those without.</p>
+<p>The dataframe donors is loaded in your workspace.</p>
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td># Find the average age among non-missing values
+summary(donors$age)</td>
+</tr>
+<tr class="even">
+<td># Impute missing age values with the mean age
+donors<span class="math inline">\(imputed_age &lt;- ifelse(is.na(donors\)</span>age), round(mean(donors<span class="math inline">\(age, na.rm = TRUE), 2), donors\)</span>age)</td>
+</tr>
+<tr class="odd">
+<td># Create missing value indicator for age
+donors<span class="math inline">\(missing_age &lt;- ifelse(is.na(donors\)</span>age), 1, 0)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="building-a-more-sophisticated-model" class="section level2">
+<h2>3-12 Building a more sophisticated model</h2>
+<p>One of the best predictors of future giving is a history of recent, frequent, and large gifts. In marketing terms, this is known as R/F/M:</p>
+<p>Recency
+Frequency
+Money
+Donors that haven’t given both recently and frequently may be especially likely to give again; in other words, the combined impact of recency and frequency may be greater than the sum of the separate effects.</p>
+</div>
+<div id="because-these-predictors-together-have-a-greater-impact-on-the-dependent-variable-their-joint-effect-must-be-modeled-as-an-interaction.-the-donors-dataset-has-been-loaded-for-you." class="section level2">
+<h2>Because these predictors together have a greater impact on the dependent variable, their joint effect must be modeled as an interaction. The donors dataset has been loaded for you.</h2>
+</div>
+</div>
+<div id="build-a-recency-frequency-and-money-rfm-model" class="section level1">
+<h1>Build a recency, frequency, and money (RFM) model</h1>
+<p>rfm_model &lt;- glm(donated~money + recency * frequency, donors, family = “binomial”)</p>
+</div>
+<div id="summarize-the-rfm-model-to-see-how-the-parameters-were-coded" class="section level1">
+<h1>Summarize the RFM model to see how the parameters were coded</h1>
+<p>summary(rfm_model)</p>
+</div>
+<div id="compute-predicted-probabilities-for-the-rfm-model" class="section level1">
+<h1>Compute predicted probabilities for the RFM model</h1>
+<p>rfm_prob &lt;- predict(rfm_model, , type=“response”)</p>
+</div>
+<div id="plot-the-roc-curve-and-find-auc-for-the-new-model" class="section level1">
+<h1>Plot the ROC curve and find AUC for the new model</h1>
+<p>library(pROC)
+ROC &lt;- roc(donors$donated, rfm_prob)
+plot(ROC, col = “red”)
+auc(ROC)
+—</p>
+<div id="section-2" class="section level2">
+<h2>3-15</h2>
+<hr />
+<hr />
+</div>
+</div>
