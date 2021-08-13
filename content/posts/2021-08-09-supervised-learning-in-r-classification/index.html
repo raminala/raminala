@@ -487,9 +487,91 @@ ROC &lt;- roc(donors$donated, rfm_prob)
 plot(ROC, col = “red”)
 auc(ROC)
 —</p>
-<div id="section-2" class="section level2">
-<h2>3-15</h2>
-<hr />
-<hr />
+<div id="building-a-stepwise-regression-model" class="section level2">
+<h2>3-15 Building a stepwise regression model</h2>
+<p>In the absence of subject-matter expertise, stepwise regression can assist with the search for the most important predictors of the outcome of interest.</p>
+<p>In this exercise, you will use a forward stepwise approach to add predictors to the model one-by-one until no additional benefit is seen. The donors dataset has been loaded for you.</p>
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td># Specify a null model with no predictors
+null_model &lt;- glm(donated~1, data = donors, family = “binomial”)</td>
+</tr>
+<tr class="even">
+<td># Specify the full model using all of the potential predictors
+full_model &lt;- glm(donated~., data = donors, family = “binomial”)</td>
+</tr>
+<tr class="odd">
+<td># Use a forward stepwise algorithm to build a parsimonious model
+step_model &lt;- step(null_model, scope = list(lower = null_model, upper = full_model), direction = “forward”)</td>
+</tr>
+<tr class="even">
+<td># Estimate the stepwise donation probability
+step_prob &lt;- predict(step_model, type=“response”)</td>
+</tr>
+<tr class="odd">
+<td># Plot the ROC of the stepwise model
+library(pROC)
+ROC &lt;- roc(donors$donated, step_prob)
+plot(ROC, col = “red”)
+auc(ROC)</td>
+</tr>
+</tbody>
+</table>
+<p>##4-2 Building a simple decision tree</p>
+<p>The loans dataset contains 11,312 randomly-selected people who applied for and later received loans from Lending Club, a US-based peer-to-peer lending company.</p>
+<p>You will use a decision tree to try to learn patterns in the outcome of these loans (either repaid or default) based on the requested loan amount and credit score at the time of application.</p>
+<p>Then, see how the tree’s predictions differ for an applicant with good credit versus one with bad credit.</p>
+<p>The dataset loans is already in your workspace.</p>
+<pre class="r"><code>loans &lt;- read.csv(&quot;loans.csv&quot;)
+good_credit &lt;- read.csv(&quot;good_credit.csv&quot;)
+bad_credit &lt;- read.csv(&quot;bad_credit.csv&quot;)</code></pre>
+<pre class="r"><code># Load the rpart package
+library(rpart)
+
+# Build a lending model predicting loan outcome versus loan amount and credit score
+loan_model &lt;- rpart(outcome ~ loan_amount + credit_score, data = loans, method = &quot;class&quot;, control = rpart.control(cp = 0))
+
+# Make a prediction for someone with good credit
+predict(loan_model, good_credit, type = &quot;class&quot;)</code></pre>
+<pre><code>##      1 
+## repaid 
+## Levels: default repaid</code></pre>
+<pre class="r"><code># Make a prediction for someone with bad credit
+predict(loan_model, bad_credit, type = &quot;class&quot;)</code></pre>
+<pre><code>##       1 
+## default 
+## Levels: default repaid</code></pre>
+<p>##4-3 Visualizing classification trees</p>
+<p>Due to government rules to prevent illegal discrimination, lenders are required to explain why a loan application was rejected.</p>
+<p>The structure of classification trees can be depicted visually, which helps to understand how the tree makes its decisions. The model loan_model that you fit in the last exercise is in your workspace.</p>
+<pre class="r"><code># Examine the loan_model object
+loan_model</code></pre>
+<pre><code>## n= 11312 
+## 
+## node), split, n, loss, yval, (yprob)
+##       * denotes terminal node
+## 
+##  1) root 11312 5654 repaid (0.4998232 0.5001768)  
+##    2) credit_score=AVERAGE,LOW 9490 4437 default (0.5324552 0.4675448)  
+##      4) credit_score=LOW 1667  631 default (0.6214757 0.3785243) *
+##      5) credit_score=AVERAGE 7823 3806 default (0.5134859 0.4865141)  
+##       10) loan_amount=HIGH 2472 1079 default (0.5635113 0.4364887) *
+##       11) loan_amount=LOW,MEDIUM 5351 2624 repaid (0.4903756 0.5096244)  
+##         22) loan_amount=LOW 1810  874 default (0.5171271 0.4828729) *
+##         23) loan_amount=MEDIUM 3541 1688 repaid (0.4767015 0.5232985) *
+##    3) credit_score=HIGH 1822  601 repaid (0.3298573 0.6701427) *</code></pre>
+<pre class="r"><code># Load the rpart.plot package
+library(rpart.plot)
+
+# Plot the loan_model with default settings
+rpart.plot(loan_model)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code># Plot the loan_model with customized settings
+rpart.plot(loan_model, type = 3, box.palette = c(&quot;red&quot;, &quot;green&quot;), fallen.leaves = TRUE)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
 </div>
 </div>
