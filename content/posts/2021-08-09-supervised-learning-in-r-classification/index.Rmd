@@ -222,9 +222,20 @@ In this exercise you will create a ROC curve and compute the area under the curv
 
 The dataset donors with the column of predicted probabilities, donation_prob ,is already loaded in your workspace.
 
-```{r}
+---
+# Load the pROC package
+library(pROC)
 
-```
+# Create a ROC curve
+ROC <- roc(donors$donated, donors$donation_prob)
+
+# Plot the ROC curve
+plot(ROC, col = "blue")
+
+# Calculate the area under the curve (AUC)
+auc(ROC)
+---
+
 
 ## 3-9 
 
