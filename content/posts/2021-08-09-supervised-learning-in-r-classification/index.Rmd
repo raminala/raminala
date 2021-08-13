@@ -237,27 +237,52 @@ auc(ROC)
 ---
 
 
-## 3-9 
+## 3-9 Coding categorical features
 
-```{r}
+Sometimes a dataset contains numeric values that represent a categorical feature.
 
-```
+In the donors dataset, wealth_rating uses numbers to indicate the donor's wealth level:
 
-## 3-10 
+0 = Unknown
+1 = Low
+2 = Medium
+3 = High
+This exercise illustrates how to prepare this type of categorical feature and examines its impact on a logistic regression model. The dataframe donors is loaded in your workspace.
 
-```{r}
+---
+# Convert the wealth rating to a factor
+donors$wealth_levels <- factor(donors$wealth_rating, levels = c(0, 1, 2, 3),
+labels = c("Unknown", "Low", "Medium", "High"))
 
-```
+# Use relevel() to change reference category
+donors$wealth_levels <- relevel(donors$wealth_levels, ref = "Medium")
+
+# See how our factor coding impacts the model
+summary(glm(donated~wealth_levels, data = donors, family = "binomial"))
+---
+
+## 3-10 Handling missing data
+
+Some of the prospective donors have missing age data. Unfortunately, R will exclude any cases with NA values when building a regression model.
+
+One workaround is to replace, or impute, the missing values with an estimated value. After doing so, you may also create a missing data indicator to model the possibility that cases with missing data are different in some way from those without.
+
+The dataframe donors is loaded in your workspace.
+
+---
+
+---
 
 ## 3-12 
 
-```{r}
+---
 
-```
+---
 
 ## 3-15 
 
-```{r}
+---
 
-```
+---
+
 
