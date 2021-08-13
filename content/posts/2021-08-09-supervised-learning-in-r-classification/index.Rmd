@@ -314,7 +314,73 @@ In the absence of subject-matter expertise, stepwise regression can assist with 
 In this exercise, you will use a forward stepwise approach to add predictors to the model one-by-one until no additional benefit is seen. The donors dataset has been loaded for you.
 
 ---
+# Specify a null model with no predictors
+null_model <- glm(donated~1, data = donors, family = "binomial")
 
+# Specify the full model using all of the potential predictors
+full_model <- glm(donated~., data = donors, family = "binomial")
+
+# Use a forward stepwise algorithm to build a parsimonious model
+step_model <- step(null_model, scope = list(lower = null_model, upper = full_model), direction = "forward")
+
+# Estimate the stepwise donation probability
+step_prob <- predict(step_model,  type="response")
+
+# Plot the ROC of the stepwise model
+library(pROC)
+ROC <- roc(donors$donated, step_prob)
+plot(ROC, col = "red")
+auc(ROC)
 ---
 
+##4-2 Building a simple decision tree
+
+The loans dataset contains 11,312 randomly-selected people who applied for and later received loans from Lending Club, a US-based peer-to-peer lending company.
+
+You will use a decision tree to try to learn patterns in the outcome of these loans (either repaid or default) based on the requested loan amount and credit score at the time of application.
+
+Then, see how the tree's predictions differ for an applicant with good credit versus one with bad credit.
+
+The dataset loans is already in your workspace.
+
+```{r}
+loans <- read.csv("loans.csv")
+good_credit <- read.csv("good_credit.csv")
+bad_credit <- read.csv("bad_credit.csv")
+```
+
+
+```{r}
+# Load the rpart package
+library(rpart)
+
+# Build a lending model predicting loan outcome versus loan amount and credit score
+loan_model <- rpart(outcome ~ loan_amount + credit_score, data = loans, method = "class", control = rpart.control(cp = 0))
+
+# Make a prediction for someone with good credit
+predict(loan_model, good_credit, type = "class")
+
+# Make a prediction for someone with bad credit
+predict(loan_model, bad_credit, type = "class")
+```
+
+##4-3 Visualizing classification trees
+
+Due to government rules to prevent illegal discrimination, lenders are required to explain why a loan application was rejected.
+
+The structure of classification trees can be depicted visually, which helps to understand how the tree makes its decisions. The model loan_model that you fit in the last exercise is in your workspace.
+
+```{r}
+# Examine the loan_model object
+loan_model
+
+# Load the rpart.plot package
+library(rpart.plot)
+
+# Plot the loan_model with default settings
+rpart.plot(loan_model)
+
+# Plot the loan_model with customized settings
+rpart.plot(loan_model, type = 3, box.palette = c("red", "green"), fallen.leaves = TRUE)
+```
 

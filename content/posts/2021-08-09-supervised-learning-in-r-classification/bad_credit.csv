@@ -1,0 +1,2 @@
+loan_amount,emp_length,home_ownership,income,loan_purpose,debt_to_income,credit_score,recent_inquiry,delinquent,credit_accounts,bad_public_record,credit_utilization,past_bankrupt,outcome
+LOW,6 - 9 years,RENT,MEDIUM,car,AVERAGE,LOW,YES,NEVER,FEW,NO,HIGH,NO,repaid
