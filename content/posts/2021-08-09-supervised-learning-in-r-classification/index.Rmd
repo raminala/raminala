@@ -398,7 +398,17 @@ Use the resulting vector of row IDs to subset the loans into training and testin
 
 
 ```{r}
+# Determine the number of rows for training
+nrow(loans)
 
+# Create a random sample of row IDs
+sample_rows <- sample(nrow(loans), nrow(loans)*3/4)
+
+# Create the training dataset
+loans_train <- loans[ sample_rows,]
+
+# Create the test dataset
+loans_test <- loans[-sample_rows,]
 ```
 
 
@@ -414,7 +424,17 @@ The rpart package is loaded into the workspace and the loans_train and loans_tes
 
 
 ```{r}
+# Grow a tree using all of the available applicant data
+loan_model <- rpart(outcome ~ ., data = loans_train, method = "class", control = rpart.control(cp = 0))
 
+# Make predictions on the test dataset
+loans_test$pred <- predict(loan_model, loans_test, type = "class")
+
+# Examine the confusion matrix
+table(loans_test$pred, loans_test$outcome)
+
+# Compute the accuracy on the test dataset
+mean(loans_test$pred==loans_test$outcome)
 ```
 
 ##4-11 Preventing overgrown trees
@@ -425,8 +445,27 @@ Using the pre-pruning methods for early stopping, you can prevent a tree from gr
 
 
 ```{r}
+# Grow a tree with maxdepth of 6
+loan_model <- rpart(outcome ~ ., data = loans_train, method = "class", control = rpart.control(cp = 0
+,maxdepth = 6))
 
+
+# Make a class prediction on the test set
+loans_test$pred <- predict(loan_model, loans_test, type = "class")
+
+# Compute the accuracy of the simpler tree
+mean(loans_test$pred==loans_test$outcome)
 ```
+
+```{r}
+# Swap maxdepth for a minimum split of 500 
+loan_model <- rpart(outcome ~ ., data = loans_train, method = "class", control = rpart.control(cp = 0, minsplit = 500))
+
+# Run this. How does the accuracy change?
+loans_test$pred <- predict(loan_model, loans_test, type = "class")
+mean(loans_test$pred == loans_test$outcome)
+```
+
 
 ##4-12 Creating a nicely pruned tree
 

@@ -578,14 +578,58 @@ rpart.plot(loan_model, type = 3, box.palette = c(&quot;red&quot;, &quot;green&qu
 <p>As depicted in the following image, you can use 75% of the observations for training and 25% for testing the model.</p>
 <p>The sample() function can be used to generate a random sample of rows to include in the training set. Simply supply it the total number of observations and the number needed for training.</p>
 <p>Use the resulting vector of row IDs to subset the loans into training and testing datasets. The dataset loans is loaded in your workspace.</p>
+<pre class="r"><code># Determine the number of rows for training
+nrow(loans)</code></pre>
+<pre><code>## [1] 11312</code></pre>
+<pre class="r"><code># Create a random sample of row IDs
+sample_rows &lt;- sample(nrow(loans), nrow(loans)*3/4)
+
+# Create the training dataset
+loans_train &lt;- loans[ sample_rows,]
+
+# Create the test dataset
+loans_test &lt;- loans[-sample_rows,]</code></pre>
 <p>##4-8 Building and evaluating a larger tree</p>
 <p>Previously, you created a simple decision tree that used the applicant’s credit score and requested loan amount to predict the loan outcome.</p>
 <p>Lending Club has additional information about the applicants, such as home ownership status, length of employment, loan purpose, and past bankruptcies, that may be useful for making more accurate predictions.</p>
 <p>Using all of the available applicant data, build a more sophisticated lending model using the random training dataset created previously. Then, use this model to make predictions on the testing dataset to estimate the performance of the model on future loan applications.</p>
 <p>The rpart package is loaded into the workspace and the loans_train and loans_test datasets have been created.</p>
+<pre class="r"><code># Grow a tree using all of the available applicant data
+loan_model &lt;- rpart(outcome ~ ., data = loans_train, method = &quot;class&quot;, control = rpart.control(cp = 0))
+
+# Make predictions on the test dataset
+loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
+
+# Examine the confusion matrix
+table(loans_test$pred, loans_test$outcome)</code></pre>
+<pre><code>##          
+##           default repaid
+##   default     844    634
+##   repaid      560    790</code></pre>
+<pre class="r"><code># Compute the accuracy on the test dataset
+mean(loans_test$pred==loans_test$outcome)</code></pre>
+<pre><code>## [1] 0.5777935</code></pre>
 <p>##4-11 Preventing overgrown trees</p>
 <p>The tree grown on the full set of applicant data grew to be extremely large and extremely complex, with hundreds of splits and leaf nodes containing only a handful of applicants. This tree would be almost impossible for a loan officer to interpret.</p>
 <p>Using the pre-pruning methods for early stopping, you can prevent a tree from growing too large and complex. See how the rpart control options for maximum tree depth and minimum split count impact the resulting tree.</p>
+<pre class="r"><code># Grow a tree with maxdepth of 6
+loan_model &lt;- rpart(outcome ~ ., data = loans_train, method = &quot;class&quot;, control = rpart.control(cp = 0
+,maxdepth = 6))
+
+
+# Make a class prediction on the test set
+loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
+
+# Compute the accuracy of the simpler tree
+mean(loans_test$pred==loans_test$outcome)</code></pre>
+<pre><code>## [1] 0.5954738</code></pre>
+<pre class="r"><code># Swap maxdepth for a minimum split of 500 
+loan_model &lt;- rpart(outcome ~ ., data = loans_train, method = &quot;class&quot;, control = rpart.control(cp = 0, minsplit = 500))
+
+# Run this. How does the accuracy change?
+loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
+mean(loans_test$pred == loans_test$outcome)</code></pre>
+<pre><code>## [1] 0.6000707</code></pre>
 <p>##4-12 Creating a nicely pruned tree</p>
 <p>Stopping a tree from growing all the way can lead it to ignore some aspects of the data or miss important trends it may have discovered later.</p>
 <p>By using post-pruning, you can intentionally grow a large and complex tree then prune it to be smaller and more efficient later on.</p>
