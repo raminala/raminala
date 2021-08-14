@@ -503,6 +503,14 @@ Keep in mind that due to the random nature of the forest, the results may vary s
 
 
 ```{r}
+# Load the randomForest package
+library(randomForest)
 
+# Build a random forest model
+loan_model <- randomForest(factor(outcome) ~ ., data = loans_train)
+
+# Compute the accuracy of the random forest
+loans_test$pred <- predict(loan_model, loans_test)
+mean(loans_test$pred==loans_test$outcome)
 ```
 
