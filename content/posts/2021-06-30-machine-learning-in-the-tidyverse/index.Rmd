@@ -113,5 +113,48 @@ You will use this data to build a linear model for each country to predict life 
 Note: The term feature is synonymous with the terms variable or predictor. It refers to an attribute of your data that can be used to build a machine learning model.
 
 ```{r}
+# Build a linear model for each country
+gap_models <- gap_nested %>%
+    mutate(model = map(data, ~lm(formula = life_expectancy~year, data = .x)))
+    
+# Extract the model for Algeria    
+algeria_model <- gap_models$model[[1]]
 
+# View the summary for the Algeria model
+summary(algeria_model)
 ```
+
+
+## 1-11 Extracting model statistics tidily
+
+In this exercise, you will use the tidy() and glance() functions to extract information from algeria_model in a tidy manner.
+
+For a linear model, tidy() extracts the model coefficients while glance() returns the model statistics such as the R^2.
+
+```{r}
+library(broom)
+
+# Extract the coefficients of the algeria_model as a dataframe
+tidy(algeria_model)
+
+# Extract the statistics of the algeria_model as a dataframe
+glance(algeria_model)
+```
+
+## 1-12 Augmenting your data
+
+From the results of glance(), you learned that using the available features the linear model fits well with an adjusted  of 0.99. The augment() function can help you explore this fit by appending the predictions to the original data.
+
+Here you will leverage this to compare the predicted values of life_expectancy with the original ones based on the year feature. 
+
+```{r}
+# Build the augmented dataframe
+algeria_fitted <- augment(algeria_model)
+
+# Compare the predicted values with the actual values of life expectancy
+algeria_fitted %>% 
+  ggplot(aes(x = year)) +
+  geom_point(aes(y = life_expectancy)) + 
+  geom_line(aes(y = .fitted), color = "red")
+```
+
