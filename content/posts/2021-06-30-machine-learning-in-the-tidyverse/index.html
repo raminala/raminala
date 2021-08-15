@@ -5,28 +5,50 @@ date: '2021-06-30'
 slug: []
 categories: []
 tags:
+  - data_wrangling
   - Machine Learning
 ---
 
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
-<div id="foundations-of-tidy-machine-learning" class="section level2">
-<h2>Foundations of “tidy” Machine learning</h2>
-</div>
 <div id="nesting-your-data" class="section level2">
-<h2>Nesting your data</h2>
+<h2>1-2 Nesting your data</h2>
+<p>In this course, you will work with a collection of economic and social indicators for 77 countries over a period of 52 years. This data is stored in the gapminder dataframe.</p>
+<p>In this exercise, you will transform your gapminder data into a nested dataframe by using the first tool needed to build the foundation of tidy machine learning skills: nest().</p>
+<p>Note: This is a more granular version than the dataset available from the gapminder package. This version is available in the dslabs package.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
+## v tibble  3.1.2     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>gapminder &lt;- read_csv(&quot;gapminder.csv&quot;)</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   country = col_character(),
+##   year = col_double(),
+##   infant_mortality = col_double(),
+##   life_expectancy = col_double(),
+##   fertility = col_double(),
+##   population = col_double(),
+##   gdpPercap = col_double()
+## )</code></pre>
 <pre class="r"><code># Explore gapminder
 head(gapminder)</code></pre>
-<pre><code>## # A tibble: 6 x 6
-##   country     continent  year lifeExp      pop gdpPercap
-##   &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
-## 1 Afghanistan Asia       1952    28.8  8425333      779.
-## 2 Afghanistan Asia       1957    30.3  9240934      821.
-## 3 Afghanistan Asia       1962    32.0 10267083      853.
-## 4 Afghanistan Asia       1967    34.0 11537966      836.
-## 5 Afghanistan Asia       1972    36.1 13079460      740.
-## 6 Afghanistan Asia       1977    38.4 14880372      786.</code></pre>
+<pre><code>## # A tibble: 6 x 7
+##   country  year infant_mortality life_expectancy fertility population gdpPercap
+##   &lt;chr&gt;   &lt;dbl&gt;            &lt;dbl&gt;           &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
+## 1 Algeria  1960             148.            47.5      7.65   11124892      1242
+## 2 Algeria  1961             148.            48.0      7.65   11404859      1047
+## 3 Algeria  1962             148.            48.6      7.65   11690152       820
+## 4 Algeria  1963             148.            49.1      7.65   11985130      1075
+## 5 Algeria  1964             149.            49.6      7.65   12295973      1109
+## 6 Algeria  1965             149.            50.1      7.66   12626953      1147</code></pre>
 <pre class="r"><code># Prepare the nested dataframe gap_nested
 
 gap_nested &lt;- gapminder %&gt;% 
@@ -37,38 +59,201 @@ gap_nested &lt;- gapminder %&gt;%
 head(gap_nested)</code></pre>
 <pre><code>## # A tibble: 6 x 2
 ## # Groups:   country [6]
-##   country     data             
-##   &lt;fct&gt;       &lt;list&gt;           
-## 1 Afghanistan &lt;tibble [12 x 5]&gt;
-## 2 Albania     &lt;tibble [12 x 5]&gt;
-## 3 Algeria     &lt;tibble [12 x 5]&gt;
-## 4 Angola      &lt;tibble [12 x 5]&gt;
-## 5 Argentina   &lt;tibble [12 x 5]&gt;
-## 6 Australia   &lt;tibble [12 x 5]&gt;</code></pre>
+##   country    data             
+##   &lt;chr&gt;      &lt;list&gt;           
+## 1 Algeria    &lt;tibble [52 x 6]&gt;
+## 2 Argentina  &lt;tibble [52 x 6]&gt;
+## 3 Australia  &lt;tibble [52 x 6]&gt;
+## 4 Austria    &lt;tibble [52 x 6]&gt;
+## 5 Bangladesh &lt;tibble [52 x 6]&gt;
+## 6 Belgium    &lt;tibble [52 x 6]&gt;</code></pre>
 </div>
-<div id="section" class="section level2">
-<h2>1-3</h2>
+<div id="unnesting-your-data" class="section level2">
+<h2>1-3 Unnesting your data</h2>
+<p>As you’ve seen in the previous exercise, a nested dataframe is simply a way to shape your data. Essentially taking the group_by() windows and packaging them in corresponding rows.</p>
+<p>In the same way you can use the nest() function to break your data into nested chunks, you can use the unnest() function to expand the dataframes that are nested in these chunks.</p>
 <pre class="r"><code># Create the unnested dataframe called gap_unnnested
-
 gap_unnested &lt;- gap_nested %&gt;% 
-  unnest(cols = c(data))
-
+  unnest(col=data)
+  
 # Confirm that your data was not modified  
 identical(gapminder, gap_unnested)</code></pre>
 <pre><code>## [1] FALSE</code></pre>
 </div>
-<div id="section-1" class="section level1">
-<h1>1-4</h1>
+<div id="explore-a-nested-cell" class="section level2">
+<h2>1-4 Explore a nested cell</h2>
+<p>In the first exercise, you successfully created a nested dataframe gap_nested. The data column contains tibbles for each country. In this exercise, you will explore one of these nested chunks.</p>
 <pre class="r"><code># Extract the data of Algeria
 algeria_df &lt;- gap_nested$data[[1]]
 
 # Calculate the minimum of the population vector
-min(algeria_df$pop)</code></pre>
-<pre><code>## [1] 8425333</code></pre>
+min(algeria_df$population)</code></pre>
+<pre><code>## [1] 11124892</code></pre>
 <pre class="r"><code># Calculate the maximum of the population vector
-max(algeria_df$pop)</code></pre>
-<pre><code>## [1] 31889923</code></pre>
+max(algeria_df$population)</code></pre>
+<pre><code>## [1] 36717132</code></pre>
 <pre class="r"><code># Calculate the mean of the population vector
-mean(algeria_df$pop)</code></pre>
-<pre><code>## [1] 15823715</code></pre>
+mean(algeria_df$population)</code></pre>
+<pre><code>## [1] 23129438</code></pre>
+</div>
+<div id="mapping-your-data" class="section level2">
+<h2>1-6 Mapping your data</h2>
+<p>In combination with mutate(), you can use map() to append the results of your calculation to a dataframe. Since the map() function always returns a vector of lists you must use unnest() to extract this information into a numeric vector.</p>
+<p>Here you will explore this functionality by calculating the mean population of each country in the gapminder dataset.</p>
+<pre class="r"><code># Calculate the mean population for each country
+pop_nested &lt;- gap_nested %&gt;%
+  mutate(mean_pop = map(.x=data, .f=~mean(.x$population)))
+
+# Take a look at pop_nested
+head(pop_nested)</code></pre>
+<pre><code>## # A tibble: 6 x 3
+## # Groups:   country [6]
+##   country    data              mean_pop 
+##   &lt;chr&gt;      &lt;list&gt;            &lt;list&gt;   
+## 1 Algeria    &lt;tibble [52 x 6]&gt; &lt;dbl [1]&gt;
+## 2 Argentina  &lt;tibble [52 x 6]&gt; &lt;dbl [1]&gt;
+## 3 Australia  &lt;tibble [52 x 6]&gt; &lt;dbl [1]&gt;
+## 4 Austria    &lt;tibble [52 x 6]&gt; &lt;dbl [1]&gt;
+## 5 Bangladesh &lt;tibble [52 x 6]&gt; &lt;dbl [1]&gt;
+## 6 Belgium    &lt;tibble [52 x 6]&gt; &lt;dbl [1]&gt;</code></pre>
+<pre class="r"><code># Extract the mean_pop value by using unnest
+pop_mean &lt;- pop_nested %&gt;% 
+  unnest(mean_pop)
+
+# Take a look at pop_mean
+head(pop_mean)</code></pre>
+<pre><code>## # A tibble: 6 x 3
+## # Groups:   country [6]
+##   country    data               mean_pop
+##   &lt;chr&gt;      &lt;list&gt;                &lt;dbl&gt;
+## 1 Algeria    &lt;tibble [52 x 6]&gt; 23129438.
+## 2 Argentina  &lt;tibble [52 x 6]&gt; 30783053.
+## 3 Australia  &lt;tibble [52 x 6]&gt; 16074837.
+## 4 Austria    &lt;tibble [52 x 6]&gt;  7746272.
+## 5 Bangladesh &lt;tibble [52 x 6]&gt; 97649407.
+## 6 Belgium    &lt;tibble [52 x 6]&gt;  9983596.</code></pre>
+</div>
+<div id="expecting-mapped-output" class="section level2">
+<h2>1-7Expecting mapped output</h2>
+<p>When you know that the output of your mapped function is an expected type (here it is a numeric vector) you can leverage the map_*() family of functions to explicitly try to return that object type instead of a list.</p>
+<p>Here you will again calculate the mean population of each country, but instead, you will use map_dbl() to explicitly append the numeric vector returned by mean() to your dataframe.</p>
+<pre class="r"><code># Calculate mean population and store result as a double
+pop_mean &lt;- gap_nested %&gt;%
+  mutate(mean_pop = map_dbl(data, ~mean(.x$population)))
+
+# Take a look at pop_mean
+head(pop_mean)</code></pre>
+<pre><code>## # A tibble: 6 x 3
+## # Groups:   country [6]
+##   country    data               mean_pop
+##   &lt;chr&gt;      &lt;list&gt;                &lt;dbl&gt;
+## 1 Algeria    &lt;tibble [52 x 6]&gt; 23129438.
+## 2 Argentina  &lt;tibble [52 x 6]&gt; 30783053.
+## 3 Australia  &lt;tibble [52 x 6]&gt; 16074837.
+## 4 Austria    &lt;tibble [52 x 6]&gt;  7746272.
+## 5 Bangladesh &lt;tibble [52 x 6]&gt; 97649407.
+## 6 Belgium    &lt;tibble [52 x 6]&gt;  9983596.</code></pre>
+</div>
+<div id="mapping-many-models" class="section level2">
+<h2>1-8 Mapping many models</h2>
+<p>The gap_nested dataframe available in your workspace contains the gapminder dataset nested by country.</p>
+<p>You will use this data to build a linear model for each country to predict life expectancy using the year feature.</p>
+<p>Note: The term feature is synonymous with the terms variable or predictor. It refers to an attribute of your data that can be used to build a machine learning model.</p>
+<pre class="r"><code># Build a linear model for each country
+gap_models &lt;- gap_nested %&gt;%
+    mutate(model = map(data, ~lm(formula = life_expectancy~year, data = .x)))
+    
+# Extract the model for Algeria    
+algeria_model &lt;- gap_models$model[[1]]
+
+# View the summary for the Algeria model
+summary(algeria_model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = life_expectancy ~ year, data = .x)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -4.044 -1.577 -0.543  1.700  3.843 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -1.197e+03  3.994e+01  -29.96   &lt;2e-16 ***
+## year         6.349e-01  2.011e-02   31.56   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.177 on 50 degrees of freedom
+## Multiple R-squared:  0.9522, Adjusted R-squared:  0.9513 
+## F-statistic: 996.2 on 1 and 50 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="extracting-model-statistics-tidily" class="section level2">
+<h2>1-11 Extracting model statistics tidily</h2>
+<p>In this exercise, you will use the tidy() and glance() functions to extract information from algeria_model in a tidy manner.</p>
+<p>For a linear model, tidy() extracts the model coefficients while glance() returns the model statistics such as the R^2.</p>
+<pre class="r"><code>library(broom)
+
+# Extract the coefficients of the algeria_model as a dataframe
+tidy(algeria_model)</code></pre>
+<pre><code>## # A tibble: 2 x 5
+##   term         estimate std.error statistic  p.value
+##   &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept) -1197.      39.9        -30.0 1.32e-33
+## 2 year            0.635    0.0201      31.6 1.11e-34</code></pre>
+<pre class="r"><code># Extract the statistics of the algeria_model as a dataframe
+glance(algeria_model)</code></pre>
+<pre><code>## # A tibble: 1 x 12
+##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     0.952         0.951  2.18      996. 1.11e-34     1  -113.  232.  238.
+## # ... with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
+</div>
+<div id="augmenting-your-data" class="section level2">
+<h2>1-12 Augmenting your data</h2>
+<p>From the results of glance(), you learned that using the available features the linear model fits well with an adjusted of 0.99. The augment() function can help you explore this fit by appending the predictions to the original data.</p>
+<p>Here you will leverage this to compare the predicted values of life_expectancy with the original ones based on the year feature.</p>
+<pre class="r"><code># Build the augmented dataframe
+algeria_fitted &lt;- augment(algeria_model)
+
+# Compare the predicted values with the actual values of life expectancy
+algeria_fitted %&gt;% 
+  ggplot(aes(x = year)) +
+  geom_point(aes(y = life_expectancy)) + 
+  geom_line(aes(y = .fitted), color = &quot;red&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="tidy-up-the-coefficients-of-your-models" class="section level2">
+<h2>2-2 Tidy up the coefficients of your models</h2>
+<p>In this exercise you will leverage the list column workflow along with the tidy() function from broom to extract and explore the coefficients for the 77 models you built.</p>
+<p>Remember the gap_models dataframe contains a model predicting life expectancy by year for 77 countries.</p>
+<pre class="r"><code># Extract the coefficient statistics of each model into nested dataframes
+model_coef_nested &lt;- gap_models %&gt;% 
+    mutate(coef = map(model, ~tidy(.x)))
+    
+# Simplify the coef dataframes for each model    
+model_coef &lt;- model_coef_nested %&gt;%
+    unnest(coef)
+
+# Plot a histogram of the coefficient estimates for year         
+model_coef %&gt;% 
+  filter(term == &quot;year&quot;) %&gt;% 
+  ggplot(aes(x = estimate)) +
+  geom_histogram()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="section" class="section level2">
+<h2>2-5</h2>
+</div>
+<div id="section-1" class="section level2">
+<h2>2-6</h2>
+</div>
+<div id="section-2" class="section level2">
+<h2>2-8</h2>
+</div>
+<div id="section-3" class="section level2">
+<h2>2-9</h2>
+</div>
+<div id="section-4" class="section level2">
+<h2>2-11</h2>
 </div>

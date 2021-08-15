@@ -158,3 +158,60 @@ algeria_fitted %>%
   geom_line(aes(y = .fitted), color = "red")
 ```
 
+## 2-2 Tidy up the coefficients of your models
+
+In this exercise you will leverage the list column workflow along with the tidy() function from broom to extract and explore the coefficients for the 77 models you built.
+
+Remember the gap_models dataframe contains a model predicting life expectancy by year for 77 countries.
+
+```{r}
+# Extract the coefficient statistics of each model into nested dataframes
+model_coef_nested <- gap_models %>% 
+    mutate(coef = map(model, ~tidy(.x)))
+    
+# Simplify the coef dataframes for each model    
+model_coef <- model_coef_nested %>%
+    unnest(coef)
+
+# Plot a histogram of the coefficient estimates for year         
+model_coef %>% 
+  filter(term == "year") %>% 
+  ggplot(aes(x = estimate)) +
+  geom_histogram()
+```
+
+
+## 2-5 
+
+```{r}
+
+```
+
+
+## 2-6 
+
+```{r}
+
+```
+
+
+## 2-8 
+
+```{r}
+
+```
+
+
+## 2-9 
+
+```{r}
+
+```
+
+
+## 2-11 
+
+```{r}
+
+```
+
