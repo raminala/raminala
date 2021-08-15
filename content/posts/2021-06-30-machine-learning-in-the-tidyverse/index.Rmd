@@ -76,7 +76,7 @@ Here you will explore this functionality by calculating the mean population of e
 ```{r}
 # Calculate the mean population for each country
 pop_nested <- gap_nested %>%
-  mutate(mean_pop = map(data, ~mean(.x$population)))
+  mutate(mean_pop = map(.x=data, .f=~mean(.x$population)))
 
 # Take a look at pop_nested
 head(pop_nested)
@@ -89,13 +89,28 @@ pop_mean <- pop_nested %>%
 head(pop_mean)
 ```
 
-## 1-7 
+## 1-7Expecting mapped output
+
+When you know that the output of your mapped function is an expected type (here it is a numeric vector) you can leverage the map_*() family of functions to explicitly try to return that object type instead of a list.
+
+Here you will again calculate the mean population of each country, but instead, you will use map_dbl() to explicitly append the numeric vector returned by mean() to your dataframe. 
 
 ```{r}
+# Calculate mean population and store result as a double
+pop_mean <- gap_nested %>%
+  mutate(mean_pop = map_dbl(data, ~mean(.x$population)))
 
+# Take a look at pop_mean
+head(pop_mean)
 ```
 
-## 1-8 
+## 1-8 Mapping many models
+
+The gap_nested dataframe available in your workspace contains the gapminder dataset nested by country.
+
+You will use this data to build a linear model for each country to predict life expectancy using the year feature.
+
+Note: The term feature is synonymous with the terms variable or predictor. It refers to an attribute of your data that can be used to build a machine learning model.
 
 ```{r}
 
