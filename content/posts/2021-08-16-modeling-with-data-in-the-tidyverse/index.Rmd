@@ -1,0 +1,12 @@
+---
+title: Modeling with Data in the Tidyverse
+author: ''
+date: '2021-08-16'
+slug: []
+categories: []
+tags:
+  - data_wrangling
+  - Classification
+  - Regression
+---
+
