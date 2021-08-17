@@ -10,3 +10,34 @@ tags:
   - Regression
 ---
 
+```{r}
+# Load packages
+library(moderndive)
+library(ggplot2)
+library(tidyverse)
+```
+
+## 1-1 Log10 transformation of house size
+
+You just saw that the predictor variable sqft_living is right-skewed and hence a log base 10 transformation is warranted to unskew it. Just as we transformed the outcome variable price to create log10_price in the video, let's do the same for sqft_living.
+
+```{r}
+
+# Plot the histogram
+ggplot(house_prices, aes(x = sqft_living)) +
+  geom_histogram(bins = 30) +
+  labs(x="Size (sq.feet)", y="count")
+```
+
+
+```{r}
+# Add log10_size
+house_prices_2 <- house_prices %>%
+  mutate(log10_size = log10(sqft_living))
+
+# Plot the histogram  
+ggplot(house_prices_2, aes(x = log10_size)) +
+  geom_histogram() +
+  labs(x = "log10 size", y = "count")
+```
+
