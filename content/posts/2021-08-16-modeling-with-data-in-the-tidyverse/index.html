@@ -1,0 +1,59 @@
+---
+title: Modeling with Data in the Tidyverse
+author: ''
+date: '2021-08-16'
+slug: []
+categories: []
+tags:
+  - data_wrangling
+  - Classification
+  - Regression
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code># Load packages
+library(moderndive)
+library(ggplot2)
+library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v tibble  3.1.2     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1
+## v purrr   0.3.4</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<div id="log10-transformation-of-house-size" class="section level2">
+<h2>1-1 Log10 transformation of house size</h2>
+<p>You just saw that the predictor variable sqft_living is right-skewed and hence a log base 10 transformation is warranted to unskew it. Just as we transformed the outcome variable price to create log10_price in the video, let’s do the same for sqft_living.</p>
+<pre class="r"><code># Plot the histogram
+ggplot(house_prices, aes(x = sqft_living)) +
+  geom_histogram(bins = 30) +
+  labs(x=&quot;Size (sq.feet)&quot;, y=&quot;count&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code># Add log10_size
+house_prices_2 &lt;- house_prices %&gt;%
+  mutate(log10_size = log10(sqft_living))
+
+# Plot the histogram  
+ggplot(house_prices_2, aes(x = log10_size)) +
+  geom_histogram() +
+  labs(x = &quot;log10 size&quot;, y = &quot;count&quot;)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+## 1-2 adding jitter</p>
+<p>The researchers in the UT Austin created a “beauty score” by asking a panel of 6 students to rate the “beauty” of all 463 instructors. They were interested in studying any possible impact of “beauty” of teaching evaluation scores. Let’s do an EDA of this variable and its relationship with teaching score.</p>
+<p>From now on, assume that ggplot2, dplyr, and moderndive are all available in your workspace unless you’re told otherwise.</p>
+<pre class="r"><code># Scatterplot
+ggplot(evals, aes(x = bty_avg, y = score)) +
+  geom_point() +
+  labs(x = &quot;beauty score&quot;, y = &quot;teaching score&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code># Jitter plot
+ggplot(evals, aes(x = bty_avg, y = score)) +
+  geom_jitter() +
+  labs(x = &quot;beauty score&quot;, y = &quot;teaching score&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>

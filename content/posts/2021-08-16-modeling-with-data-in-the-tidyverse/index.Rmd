@@ -40,4 +40,22 @@ ggplot(house_prices_2, aes(x = log10_size)) +
   geom_histogram() +
   labs(x = "log10 size", y = "count")
 ```
+## 1-2 adding jitter
+
+The researchers in the UT Austin created a "beauty score" by asking a panel of 6 students to rate the "beauty" of all 463 instructors. They were interested in studying any possible impact of "beauty" of teaching evaluation scores. Let's do an EDA of this variable and its relationship with teaching score.
+
+From now on, assume that ggplot2, dplyr, and moderndive are all available in your workspace unless you're told otherwise.
+```{r}
+# Scatterplot
+ggplot(evals, aes(x = bty_avg, y = score)) +
+  geom_point() +
+  labs(x = "beauty score", y = "teaching score")
+```
+
+```{r}
+# Jitter plot
+ggplot(evals, aes(x = bty_avg, y = score)) +
+  geom_jitter() +
+  labs(x = "beauty score", y = "teaching score")
+```
 
