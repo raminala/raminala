@@ -362,3 +362,31 @@ fullmodel_perf %&gt;%
 ## 10 Brazil             0.999
 ## # ... with 67 more rows</code></pre>
 </div>
+<div id="the-test-train-split" class="section level2">
+<h2>3-2 The test-train split</h2>
+<p>In a disciplined machine learning workflow it is crucial to withhold a portion of your data (testing data) from any decision-making process. This allows you to independently assess the performance of your model when it is finalized. The remaining data, the training data, is used to build and select the best model.</p>
+<p>In this exercise, you will use the rsample package to split your data to perform the initial train-test split of your gapminder data.</p>
+<p>Note: Since this is a random split of the data it is good practice to set a seed before splitting it.</p>
+<pre class="r"><code>library(rsample)
+set.seed(42)
+
+# Prepare the initial split object
+gap_split &lt;- initial_split(gapminder, prop = 0.75)
+
+# Extract the training dataframe
+training_data &lt;- training(gap_split)
+
+# Extract the testing dataframe
+testing_data &lt;- testing(gap_split)
+
+# Calculate the dimensions of both training_data and testing_data
+dim(training_data)</code></pre>
+<pre><code>## [1] 3003    7</code></pre>
+<pre class="r"><code>dim(testing_data)</code></pre>
+<pre><code>## [1] 1001    7</code></pre>
+</div>
+<div id="cross-validation-dataframes" class="section level2">
+<h2>3-3 Cross-validation dataframes</h2>
+<p>Now that you have withheld a portion of your data as testing data, you can use the remaining portion to find the best performing model.</p>
+<p>In this exercise, you will split the training data into a series of 5 train-validate sets using the vfold_cv() function from the rsample package.</p>
+</div>

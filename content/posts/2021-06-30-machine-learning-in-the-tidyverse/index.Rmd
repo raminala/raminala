@@ -295,3 +295,15 @@ fullmodel_perf %>%
   select(country, adj.r.squared)
 ```
 
+## 3-2 The test-train split
+
+In a disciplined machine learning workflow it is crucial to withhold a portion of your data (testing data) from any decision-making process. This allows you to independently assess the performance of your model when it is finalized. The remaining data, the training data, is used to build and select the best model.
+
+In this exercise, you will use the rsample package to split your data to perform the initial train-test split of your gapminder data.
+
+Note: Since this is a random split of the data it is good practice to set a seed before splitting it.
+
+```{r}
+
+```
+
