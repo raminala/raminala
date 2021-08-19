@@ -181,14 +181,31 @@ model_coef %>%
 ```
 
 
-## 2-5 
+## 2-5 Glance at the fit of your models
+
+In this exercise you will use glance() to calculate how well the linear models fit the data for each country.
 
 ```{r}
+# Extract the fit statistics of each model into dataframes
+model_perf_nested <- gap_models %>% 
+    mutate(fit = map(model, ~glance(.x)))
 
+# Simplify the fit dataframes for each model    
+model_perf <- model_perf_nested %>% 
+    unnest(col=fit)
+    
+# Look at the first six rows of model_perf
+head(model_perf)
 ```
 
 
-## 2-6 
+## 2-6 Best and worst fitting models
+
+In this exercise you will answer the following questions:
+
+Overall, how well do your models fit your data?
+Which are the best fitting models?
+Which models do not fit the data well?
 
 ```{r}
 
