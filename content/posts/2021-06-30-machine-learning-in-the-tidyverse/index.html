@@ -322,6 +322,43 @@ worst_augmented %&gt;%
   facet_wrap(~country, scales = &quot;free_y&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
-<div id="section" class="section level2">
-<h2>2-11</h2>
+<div id="build-better-models" class="section level2">
+<h2>2-11 Build better models</h2>
+<p>Earlier you built a collection of simple models to fit life expectancy using the year feature. Your previous analysis showed that some of these models didn’t fit very well.</p>
+<p>In this exercise you will build multiple regression models for each country using all available features. You may be interested in comparing the performance of the four worst fitting models so their adjusted are provided below:</p>
+<p>Country Adjusted
+Botswana -0.0060772
+Lesotho -0.0169851
+Zambia 0.1668999
+Zimbabwe 0.2083979</p>
+<pre class="r"><code># Build a linear model for each country using all features
+gap_fullmodel &lt;- gap_nested %&gt;% 
+  mutate(model = map(data, ~lm(life_expectancy~., data = .x)))
+
+fullmodel_perf &lt;- gap_fullmodel %&gt;% 
+  # Extract the fit statistics of each model into dataframes
+  mutate(fit = map(model, ~glance(.x))) %&gt;% 
+  # Simplify the fit dataframes for each model
+  unnest(fit)
+  
+# View the performance for the four countries with the worst fitting 
+# four simple models you looked at before
+fullmodel_perf %&gt;% 
+  filter(country %in% worst_fit$country) %&gt;% 
+  select(country, adj.r.squared)</code></pre>
+<pre><code>## # A tibble: 77 x 2
+## # Groups:   country [77]
+##    country    adj.r.squared
+##    &lt;chr&gt;              &lt;dbl&gt;
+##  1 Algeria            0.999
+##  2 Argentina          0.999
+##  3 Australia          0.994
+##  4 Austria            0.996
+##  5 Bangladesh         0.981
+##  6 Belgium            0.996
+##  7 Benin              0.996
+##  8 Bolivia            0.999
+##  9 Botswana           0.844
+## 10 Brazil             0.999
+## # ... with 67 more rows</code></pre>
 </div>
