@@ -211,7 +211,7 @@ Which models do not fit the data well?
 # Plot a histogram of rsquared for the 77 models    
 model_perf %>% 
   ggplot(aes(x = r.squared)) + 
-  geom_histogram()  
+  geom_histogram(bins = 30)  
   
 # Extract the 4 best fitting models
 best_fit <- model_perf %>% 
@@ -228,16 +228,43 @@ worst_fit <- model_perf %>%
 In this exercise you will prepare your four best and worst fitting models for further exploration by augmenting your model data with augment().
 
 ```{r}
+best_augmented <- best_fit %>% 
+  # Build the augmented dataframe for each country model
+  mutate(augmented = map(model, ~augment(.x))) %>% 
+  # Expand the augmented dataframes
+  unnest(augmented)
 
+worst_augmented <- worst_fit %>% 
+  # Build the augmented dataframe for each country model
+  mutate(augmented = map(model, ~augment(.x))) %>% 
+  # Expand the augmented dataframes
+  unnest(augmented)
 ```
 
 
-## 2-9 
+## 2-9 Explore your best and worst fitting models
+
+Let's explore your four best and worst fitting models by comparing the fitted lines with the actual values.
 
 ```{r}
-
+# Compare the predicted values with the actual values of life expectancy 
+# for the top 4 best fitting models
+best_augmented %>% 
+  ggplot(aes(x = year)) +
+  geom_point(aes(y = life_expectancy)) + 
+  geom_line(aes(y = .fitted), color = "red") +
+  facet_wrap(~country, scales = "free_y")
 ```
 
+```{r}
+# Compare the predicted values with the actual values of life expectancy 
+# for the top 4 worst fitting models
+worst_augmented %>% 
+  ggplot(aes(x = year)) +
+  geom_point(aes(y = life_expectancy)) + 
+  geom_line(aes(y = .fitted), color = "red") +
+  facet_wrap(~country, scales = "free_y")
+```
 
 ## 2-11 
 

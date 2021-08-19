@@ -277,8 +277,7 @@ Which models do not fit the data well?</p>
 <pre class="r"><code># Plot a histogram of rsquared for the 77 models    
 model_perf %&gt;% 
   ggplot(aes(x = r.squared)) + 
-  geom_histogram()  </code></pre>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+  geom_histogram(bins = 30)  </code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <pre class="r"><code># Extract the 4 best fitting models
 best_fit &lt;- model_perf %&gt;% 
@@ -291,10 +290,38 @@ worst_fit &lt;- model_perf %&gt;%
 <div id="augment-the-fitted-values-of-each-model" class="section level2">
 <h2>2-8 Augment the fitted values of each model</h2>
 <p>In this exercise you will prepare your four best and worst fitting models for further exploration by augmenting your model data with augment().</p>
+<pre class="r"><code>best_augmented &lt;- best_fit %&gt;% 
+  # Build the augmented dataframe for each country model
+  mutate(augmented = map(model, ~augment(.x))) %&gt;% 
+  # Expand the augmented dataframes
+  unnest(augmented)
+
+worst_augmented &lt;- worst_fit %&gt;% 
+  # Build the augmented dataframe for each country model
+  mutate(augmented = map(model, ~augment(.x))) %&gt;% 
+  # Expand the augmented dataframes
+  unnest(augmented)</code></pre>
+</div>
+<div id="explore-your-best-and-worst-fitting-models" class="section level2">
+<h2>2-9 Explore your best and worst fitting models</h2>
+<p>Let’s explore your four best and worst fitting models by comparing the fitted lines with the actual values.</p>
+<pre class="r"><code># Compare the predicted values with the actual values of life expectancy 
+# for the top 4 best fitting models
+best_augmented %&gt;% 
+  ggplot(aes(x = year)) +
+  geom_point(aes(y = life_expectancy)) + 
+  geom_line(aes(y = .fitted), color = &quot;red&quot;) +
+  facet_wrap(~country, scales = &quot;free_y&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code># Compare the predicted values with the actual values of life expectancy 
+# for the top 4 worst fitting models
+worst_augmented %&gt;% 
+  ggplot(aes(x = year)) +
+  geom_point(aes(y = life_expectancy)) + 
+  geom_line(aes(y = .fitted), color = &quot;red&quot;) +
+  facet_wrap(~country, scales = &quot;free_y&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 <div id="section" class="section level2">
-<h2>2-9</h2>
-</div>
-<div id="section-1" class="section level2">
 <h2>2-11</h2>
 </div>
