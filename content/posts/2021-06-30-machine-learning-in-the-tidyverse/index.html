@@ -389,4 +389,28 @@ dim(training_data)</code></pre>
 <h2>3-3 Cross-validation dataframes</h2>
 <p>Now that you have withheld a portion of your data as testing data, you can use the remaining portion to find the best performing model.</p>
 <p>In this exercise, you will split the training data into a series of 5 train-validate sets using the vfold_cv() function from the rsample package.</p>
+<pre class="r"><code>set.seed(42)
+
+# Prepare the dataframe containing the cross validation partitions
+cv_split &lt;- vfold_cv(training_data, v = 5)
+
+cv_data &lt;- cv_split %&gt;% 
+  mutate(
+    # Extract the train dataframe for each split
+    train = map(splits, ~training(.x)), 
+    # Extract the validate dataframe for each split
+    validate = map(splits, ~testing(.x))
+  )
+
+# Use head() to preview cv_data
+head(cv_data)</code></pre>
+<pre><code>## #  5-fold cross-validation 
+## # A tibble: 5 x 4
+##   splits             id    train                validate          
+##   &lt;list&gt;             &lt;chr&gt; &lt;list&gt;               &lt;list&gt;            
+## 1 &lt;split [2402/601]&gt; Fold1 &lt;tibble [2,402 x 7]&gt; &lt;tibble [601 x 7]&gt;
+## 2 &lt;split [2402/601]&gt; Fold2 &lt;tibble [2,402 x 7]&gt; &lt;tibble [601 x 7]&gt;
+## 3 &lt;split [2402/601]&gt; Fold3 &lt;tibble [2,402 x 7]&gt; &lt;tibble [601 x 7]&gt;
+## 4 &lt;split [2403/600]&gt; Fold4 &lt;tibble [2,403 x 7]&gt; &lt;tibble [600 x 7]&gt;
+## 5 &lt;split [2403/600]&gt; Fold5 &lt;tibble [2,403 x 7]&gt; &lt;tibble [600 x 7]&gt;</code></pre>
 </div>
