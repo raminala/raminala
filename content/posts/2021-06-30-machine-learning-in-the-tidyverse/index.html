@@ -242,18 +242,59 @@ model_coef %&gt;%
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>
+<div id="glance-at-the-fit-of-your-models" class="section level2">
+<h2>2-5 Glance at the fit of your models</h2>
+<p>In this exercise you will use glance() to calculate how well the linear models fit the data for each country.</p>
+<pre class="r"><code># Extract the fit statistics of each model into dataframes
+model_perf_nested &lt;- gap_models %&gt;% 
+    mutate(fit = map(model, ~glance(.x)))
+
+# Simplify the fit dataframes for each model    
+model_perf &lt;- model_perf_nested %&gt;% 
+    unnest(col=fit)
+    
+# Look at the first six rows of model_perf
+head(model_perf)</code></pre>
+<pre><code>## # A tibble: 6 x 15
+## # Groups:   country [6]
+##   country  data     model r.squared adj.r.squared sigma statistic  p.value    df
+##   &lt;chr&gt;    &lt;list&gt;   &lt;lis&gt;     &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+## 1 Algeria  &lt;tibble~ &lt;lm&gt;      0.952         0.951 2.18       996. 1.11e-34     1
+## 2 Argenti~ &lt;tibble~ &lt;lm&gt;      0.984         0.984 0.431     3137. 8.78e-47     1
+## 3 Austral~ &lt;tibble~ &lt;lm&gt;      0.983         0.983 0.511     2905. 5.83e-46     1
+## 4 Austria  &lt;tibble~ &lt;lm&gt;      0.987         0.986 0.438     3702. 1.48e-48     1
+## 5 Banglad~ &lt;tibble~ &lt;lm&gt;      0.949         0.947 1.83       921. 7.10e-34     1
+## 6 Belgium  &lt;tibble~ &lt;lm&gt;      0.990         0.990 0.331     5094. 5.54e-52     1
+## # ... with 6 more variables: logLik &lt;dbl&gt;, AIC &lt;dbl&gt;, BIC &lt;dbl&gt;,
+## #   deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
+</div>
+<div id="best-and-worst-fitting-models" class="section level2">
+<h2>2-6 Best and worst fitting models</h2>
+<p>In this exercise you will answer the following questions:</p>
+<p>Overall, how well do your models fit your data?
+Which are the best fitting models?
+Which models do not fit the data well?</p>
+<pre class="r"><code># Plot a histogram of rsquared for the 77 models    
+model_perf %&gt;% 
+  ggplot(aes(x = r.squared)) + 
+  geom_histogram()  </code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code># Extract the 4 best fitting models
+best_fit &lt;- model_perf %&gt;% 
+  top_n(n = 4, wt = r.squared)
+
+# Extract the 4 models with the worst fit
+worst_fit &lt;- model_perf %&gt;% 
+  top_n(n = 4, wt = -r.squared)</code></pre>
+</div>
+<div id="augment-the-fitted-values-of-each-model" class="section level2">
+<h2>2-8 Augment the fitted values of each model</h2>
+<p>In this exercise you will prepare your four best and worst fitting models for further exploration by augmenting your model data with augment().</p>
+</div>
 <div id="section" class="section level2">
-<h2>2-5</h2>
-</div>
-<div id="section-1" class="section level2">
-<h2>2-6</h2>
-</div>
-<div id="section-2" class="section level2">
-<h2>2-8</h2>
-</div>
-<div id="section-3" class="section level2">
 <h2>2-9</h2>
 </div>
-<div id="section-4" class="section level2">
+<div id="section-1" class="section level2">
 <h2>2-11</h2>
 </div>
