@@ -350,6 +350,29 @@ head(cv_data)
 In this exercise, you will build a linear model predicting life_expectancy using all available features. You will do this for the train data of each cross-validation fold.
 
 ```{r}
-
+# Build a model using the train data for each fold of the cross validation
+cv_models_lm <- cv_data %>% 
+  mutate(model = map(train, ~lm(formula = life_expectancy~., data = .x)))
 ```
 
+
+## 3-6 Preparing for evaluation
+
+In order to measure the validate performance of your models you need compare the predicted values of life_expectancy for the observations from validate set to the actual values recorded. Here you will prepare both of these vectors for each partition.
+
+
+```{r}
+cv_prep_lm <- cv_models_lm %>% 
+  mutate(
+    # Extract the recorded life expectancy for the records in the validate dataframes
+    validate_actual = map(validate, ~.x$life_expectancy),
+    # Predict life expectancy for each validate set using its corresponding model
+    validate_predicted = map2(.x = model, .y = validate, ~predict(.x, .y))
+  )
+```
+
+## 3-6 Evaluate model performance
+
+Now that you have both the actual and predicted values of each fold you can compare them to measure performance.
+
+For this regression model, you will measure the Mean Absolute Error (MAE) between these two vectors. This value tells you the average difference between the actual and predicted values.
