@@ -14,7 +14,7 @@ tags:
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
 <pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
-## v tibble  3.1.1     v dplyr   1.0.6
+## v tibble  3.1.2     v dplyr   1.0.6
 ## v tidyr   1.1.3     v stringr 1.4.0
 ## v readr   1.4.0     v forcats 0.5.1</code></pre>
 <pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
@@ -608,11 +608,11 @@ loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
 table(loans_test$pred, loans_test$outcome)</code></pre>
 <pre><code>##          
 ##           default repaid
-##   default     812    646
-##   repaid      633    737</code></pre>
+##   default     787    591
+##   repaid      626    824</code></pre>
 <pre class="r"><code># Compute the accuracy on the test dataset
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5477369</code></pre>
+<pre><code>## [1] 0.5696605</code></pre>
 </div>
 <div id="preventing-overgrown-trees" class="section level2">
 <h2>4-11 Preventing overgrown trees</h2>
@@ -628,14 +628,14 @@ loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
 
 # Compute the accuracy of the simpler tree
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5756719</code></pre>
+<pre><code>## [1] 0.5799151</code></pre>
 <pre class="r"><code># Swap maxdepth for a minimum split of 500 
 loan_model &lt;- rpart(outcome ~ ., data = loans_train, method = &quot;class&quot;, control = rpart.control(cp = 0, minsplit = 500))
 
 # Run this. How does the accuracy change?
 loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
 mean(loans_test$pred == loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5781471</code></pre>
+<pre><code>## [1] 0.5912306</code></pre>
 </div>
 <div id="creating-a-nicely-pruned-tree" class="section level2">
 <h2>4-12 Creating a nicely pruned tree</h2>
@@ -655,7 +655,7 @@ loan_model_pruned &lt;- prune(loan_model, cp = 0.0014)
 # Compute the accuracy of the pruned tree
 loans_test$pred &lt;- predict(loan_model_pruned, loans_test, type = &quot;class&quot;)
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5753182</code></pre>
+<pre><code>## [1] 0.5823904</code></pre>
 </div>
 <div id="building-a-random-forest-model" class="section level2">
 <h2>4-16 Building a random forest model</h2>
@@ -680,6 +680,6 @@ loan_model &lt;- randomForest(factor(outcome) ~ ., data = loans_train)
 # Compute the accuracy of the random forest
 loans_test$pred &lt;- predict(loan_model, loans_test)
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5689533</code></pre>
+<pre><code>## [1] 0.5880481</code></pre>
 </div>
 </div>
