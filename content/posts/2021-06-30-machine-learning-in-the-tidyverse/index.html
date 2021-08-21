@@ -433,7 +433,18 @@ cv_models_lm &lt;- cv_data %&gt;%
   )</code></pre>
 </div>
 <div id="evaluate-model-performance" class="section level2">
-<h2>3-6 Evaluate model performance</h2>
+<h2>3-7 Evaluate model performance</h2>
 <p>Now that you have both the actual and predicted values of each fold you can compare them to measure performance.</p>
 <p>For this regression model, you will measure the Mean Absolute Error (MAE) between these two vectors. This value tells you the average difference between the actual and predicted values.</p>
+<pre class="r"><code>library(Metrics)
+# Calculate the mean absolute error for each validate fold       
+cv_eval_lm &lt;- cv_prep_lm %&gt;% 
+  mutate(validate_mae = map2_dbl(validate_actual, validate_predicted, ~mae(actual = .x, predicted = .y)))
+
+# Print the validate_mae column
+cv_eval_lm$validate_mae</code></pre>
+<pre><code>## [1] 1.564897 1.481837 1.395386 1.589818 1.460490</code></pre>
+<pre class="r"><code># Calculate the mean of validate_mae column
+mean(cv_eval_lm$validate_mae)</code></pre>
+<pre><code>## [1] 1.498485</code></pre>
 </div>
