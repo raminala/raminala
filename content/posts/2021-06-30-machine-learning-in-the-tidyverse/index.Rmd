@@ -345,3 +345,11 @@ cv_data <- cv_split %>%
 head(cv_data)
 ```
 
+## 3-5 Build cross-validated models
+
+In this exercise, you will build a linear model predicting life_expectancy using all available features. You will do this for the train data of each cross-validation fold.
+
+```{r}
+
+```
+
