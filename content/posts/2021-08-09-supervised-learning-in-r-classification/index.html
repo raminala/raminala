@@ -14,7 +14,7 @@ tags:
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
 <pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
-## v tibble  3.1.2     v dplyr   1.0.6
+## v tibble  3.1.1     v dplyr   1.0.6
 ## v tidyr   1.1.3     v stringr 1.4.0
 ## v readr   1.4.0     v forcats 0.5.1</code></pre>
 <pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
@@ -573,7 +573,9 @@ rpart.plot(loan_model)</code></pre>
 <pre class="r"><code># Plot the loan_model with customized settings
 rpart.plot(loan_model, type = 3, box.palette = c(&quot;red&quot;, &quot;green&quot;), fallen.leaves = TRUE)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
-<p>##4-7 Creating random test datasets</p>
+</div>
+<div id="creating-random-test-datasets" class="section level2">
+<h2>4-7 Creating random test datasets</h2>
 <p>Before building a more sophisticated lending model, it is important to hold out a portion of the loan data to simulate how well it will predict the outcomes of future loan applicants.</p>
 <p>As depicted in the following image, you can use 75% of the observations for training and 25% for testing the model.</p>
 <p>The sample() function can be used to generate a random sample of rows to include in the training set. Simply supply it the total number of observations and the number needed for training.</p>
@@ -589,7 +591,9 @@ loans_train &lt;- loans[ sample_rows,]
 
 # Create the test dataset
 loans_test &lt;- loans[-sample_rows,]</code></pre>
-<p>##4-8 Building and evaluating a larger tree</p>
+</div>
+<div id="building-and-evaluating-a-larger-tree" class="section level2">
+<h2>4-8 Building and evaluating a larger tree</h2>
 <p>Previously, you created a simple decision tree that used the applicant’s credit score and requested loan amount to predict the loan outcome.</p>
 <p>Lending Club has additional information about the applicants, such as home ownership status, length of employment, loan purpose, and past bankruptcies, that may be useful for making more accurate predictions.</p>
 <p>Using all of the available applicant data, build a more sophisticated lending model using the random training dataset created previously. Then, use this model to make predictions on the testing dataset to estimate the performance of the model on future loan applications.</p>
@@ -604,12 +608,14 @@ loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
 table(loans_test$pred, loans_test$outcome)</code></pre>
 <pre><code>##          
 ##           default repaid
-##   default     811    651
-##   repaid      570    796</code></pre>
+##   default     812    646
+##   repaid      633    737</code></pre>
 <pre class="r"><code># Compute the accuracy on the test dataset
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5682461</code></pre>
-<p>##4-11 Preventing overgrown trees</p>
+<pre><code>## [1] 0.5477369</code></pre>
+</div>
+<div id="preventing-overgrown-trees" class="section level2">
+<h2>4-11 Preventing overgrown trees</h2>
 <p>The tree grown on the full set of applicant data grew to be extremely large and extremely complex, with hundreds of splits and leaf nodes containing only a handful of applicants. This tree would be almost impossible for a loan officer to interpret.</p>
 <p>Using the pre-pruning methods for early stopping, you can prevent a tree from growing too large and complex. See how the rpart control options for maximum tree depth and minimum split count impact the resulting tree.</p>
 <pre class="r"><code># Grow a tree with maxdepth of 6
@@ -622,15 +628,17 @@ loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
 
 # Compute the accuracy of the simpler tree
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5767327</code></pre>
+<pre><code>## [1] 0.5756719</code></pre>
 <pre class="r"><code># Swap maxdepth for a minimum split of 500 
 loan_model &lt;- rpart(outcome ~ ., data = loans_train, method = &quot;class&quot;, control = rpart.control(cp = 0, minsplit = 500))
 
 # Run this. How does the accuracy change?
 loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
 mean(loans_test$pred == loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5763791</code></pre>
-<p>##4-12 Creating a nicely pruned tree</p>
+<pre><code>## [1] 0.5781471</code></pre>
+</div>
+<div id="creating-a-nicely-pruned-tree" class="section level2">
+<h2>4-12 Creating a nicely pruned tree</h2>
 <p>Stopping a tree from growing all the way can lead it to ignore some aspects of the data or miss important trends it may have discovered later.</p>
 <p>By using post-pruning, you can intentionally grow a large and complex tree then prune it to be smaller and more efficient later on.</p>
 <p>In this exercise, you will have the opportunity to construct a visualization of the tree’s performance versus complexity, and use this information to prune the tree to an appropriate level.</p>
@@ -647,8 +655,10 @@ loan_model_pruned &lt;- prune(loan_model, cp = 0.0014)
 # Compute the accuracy of the pruned tree
 loans_test$pred &lt;- predict(loan_model_pruned, loans_test, type = &quot;class&quot;)
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5869873</code></pre>
-<p>##4-16 Building a random forest model</p>
+<pre><code>## [1] 0.5753182</code></pre>
+</div>
+<div id="building-a-random-forest-model" class="section level2">
+<h2>4-16 Building a random forest model</h2>
 <p>In spite of the fact that a forest can contain hundreds of trees, growing a decision tree forest is perhaps even easier than creating a single highly-tuned tree.</p>
 <p>Using the randomForest package, build a random forest and see how it compares to the single trees you built previously.</p>
 <p>Keep in mind that due to the random nature of the forest, the results may vary slightly each time you create the forest.</p>
@@ -670,6 +680,6 @@ loan_model &lt;- randomForest(factor(outcome) ~ ., data = loans_train)
 # Compute the accuracy of the random forest
 loans_test$pred &lt;- predict(loan_model, loans_test)
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5958274</code></pre>
+<pre><code>## [1] 0.5689533</code></pre>
 </div>
 </div>
