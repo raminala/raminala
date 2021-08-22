@@ -434,7 +434,7 @@ Wow! That was a significant improvement over a regression model. Now let's see i
 
 The default value of mtry for ranger is the rounded down square root of the total number of features (6). This results in a value of 2.
 
-```{r}
+---
 # Prepare for tuning your cross validation folds by varying mtry
 cv_tune <- cv_data %>% 
   crossing(mtry = 2:5) 
@@ -444,4 +444,50 @@ cv_model_tunerf <- cv_tune %>%
   mutate(model = map2(.x = train, .y = mtry, ~ranger(formula = life_expectancy~., 
                                            data = .x, mtry = .y, 
                                            num.trees = 100, seed = 42)))
-```
+---
+
+
+## 3-12 The best performing parameter
+
+You've now built models where you've varied the random forest-specific hyperparameter mtry in the hopes of improving your model further. Now you will measure the performance of each mtry value across the 5 cross validation partitions to see if you can improve the model.
+
+Remember that the validate MAE you calculated two exercises ago of 0.795 was for the default mtry value of 2.
+
+---
+# Generate validate predictions for each model
+cv_prep_tunerf <- cv_model_tunerf %>% 
+  mutate(validate_predicted = map2(.x = model, .y = validate, ~predict(.x, .y)$predictions))
+
+# Calculate validate MAE for each fold and mtry combination
+cv_eval_tunerf <- cv_prep_tunerf %>% 
+  mutate(validate_mae = map2_dbl(.x = validate_actual, .y = validate_predicted, ~mae(actual = .x, predicted = .y)))
+
+# Calculate the mean validate_mae for each mtry used  
+cv_eval_tunerf %>% 
+  group_by(mtry) %>% 
+  summarise(mean_mae = mean(validate_mae))
+
+---
+
+## 3-14 Build & evaluate the best model
+Using cross-validation you were able to identify the best model for predicting life_expectancy using all the features in gapminder. Now that you've selected your model, you can use the independent set of data (testing_data) that you've held out to estimate the performance of this model on new data.
+
+You will build this model using all training_data and evaluate using testing_data.
+
+---
+
+# Build the model using all training data and the best performing parameter
+best_model <- ranger(formula = life_expectancy~., data = training_data,
+                     mtry = 4, num.trees = 100, seed = 42)
+
+# Prepare the test_actual vector
+test_actual <- testing_data$life_expectancy
+
+# Predict life_expectancy for the testing_data
+test_predicted <- predict(best_model, testing_data)$predictions
+
+# Calculate the test MAE
+mae(test_actual, test_predicted)
+
+---
+  
