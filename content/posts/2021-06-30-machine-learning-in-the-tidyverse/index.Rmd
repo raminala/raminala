@@ -396,24 +396,25 @@ Here you will use the same cross-validation data to build (using train) and eval
 
 Note: We will limit our random forests to contain 100 trees to ensure they finish fitting in a reasonable time. The default number of trees for ranger() is 500.
 
-```{r}
+---
 library(ranger)
 
 # Build a random forest model for each fold
 cv_models_rf <- cv_data %>% 
   mutate(model = map(train, ~ranger(formula = life_expectancy~., data = .x,
-                                    num.trees = 100, seed = 42)))
+                                    num.trees = 10, seed = 42)))
 
 # Generate predictions using the random forest model
 cv_prep_rf <- cv_models_rf %>% 
   mutate(validate_predicted = map2(.x = model, .y = validate, ~predict(.x, .y)$predictions))
-```
+---
+
 
 ## 3-10 Evaluate a random forest model
 
 Similar to the linear regression model, you will use the MAE metric to evaluate the performance of the random forest model.
 
-```{r}
+---
 library(ranger)
 
 # Calculate validate MAE for each fold
@@ -425,5 +426,22 @@ cv_eval_rf$validate_mae
 
 # Calculate the mean of validate_mae column
 mean(cv_eval_rf$validate_mae)
-```
+---
 
+## 3-11 Fine tune your model
+
+Wow! That was a significant improvement over a regression model. Now let's see if you can further improve this performance by fine tuning your random forest models. To do this you will vary the mtry parameter when building your random forest models on your train data.
+
+The default value of mtry for ranger is the rounded down square root of the total number of features (6). This results in a value of 2.
+
+```{r}
+# Prepare for tuning your cross validation folds by varying mtry
+cv_tune <- cv_data %>% 
+  crossing(mtry = 2:5) 
+
+# Build a model for each fold & mtry combination
+cv_model_tunerf <- cv_tune %>% 
+  mutate(model = map2(.x = train, .y = mtry, ~ranger(formula = life_expectancy~., 
+                                           data = .x, mtry = .y, 
+                                           num.trees = 100, seed = 42)))
+```
