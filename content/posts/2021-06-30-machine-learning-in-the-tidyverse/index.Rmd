@@ -490,4 +490,80 @@ test_predicted <- predict(best_model, testing_data)$predictions
 mae(test_actual, test_predicted)
 
 ---
-  
+ 
+
+## 4-2 Prepare train-test-validate parts
+
+In this exercise, you will leverage the tools that you have learned thus far to build a classification model to predict employee attrition.
+
+You will work with the attrition dataset, which contains 30 features about employees which you will use to predict if they have left the company.
+
+You will first prepare the training & testing data sets, then you will further split the training data using cross-validation so that you can search for the best performing model for this task.
+
+```{r}
+
+```
+
+
+## 4-3 ff
+
+```{r}
+
+```
+
+
+## 4-5 ff
+
+```{r}
+
+```
+
+
+## 4-6 ff
+
+```{r}
+
+```
+
+
+## 4-7 ff
+
+```{r}
+
+```
+
+
+## 4-8 ff
+
+```{r}
+
+```
+
+
+## 4-10 ff
+
+```{r}
+
+```
+
+
+## 4-11 ff
+
+```{r}
+
+```
+
+
+## 4-12 ff
+
+```{r}
+
+```
+
+
+## 4-13 ff
+
+```{r}
+
+```
+

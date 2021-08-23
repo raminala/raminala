@@ -448,3 +448,162 @@ cv_eval_lm$validate_mae</code></pre>
 mean(cv_eval_lm$validate_mae)</code></pre>
 <pre><code>## [1] 1.498485</code></pre>
 </div>
+<div id="build-a-random-forest-model" class="section level2">
+<h2>3-9 Build a random forest model</h2>
+<p>Here you will use the same cross-validation data to build (using train) and evaluate (using validate) random forests for each partition. Since you are using the same cross-validation partitions as your regression models, you are able to directly compare the performance of the two models.</p>
+<p>Note: We will limit our random forests to contain 100 trees to ensure they finish fitting in a reasonable time. The default number of trees for ranger() is 500.</p>
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>library(ranger)</td>
+</tr>
+<tr class="even">
+<td># Build a random forest model for each fold
+cv_models_rf &lt;- cv_data %&gt;%
+mutate(model = map(train, ~ranger(formula = life_expectancy~., data = .x,
+num.trees = 10, seed = 42)))</td>
+</tr>
+<tr class="odd">
+<td># Generate predictions using the random forest model
+cv_prep_rf &lt;- cv_models_rf %&gt;%
+mutate(validate_predicted = map2(.x = model, .y = validate, ~predict(.x, .y)$predictions))</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="evaluate-a-random-forest-model" class="section level2">
+<h2>3-10 Evaluate a random forest model</h2>
+<p>Similar to the linear regression model, you will use the MAE metric to evaluate the performance of the random forest model.</p>
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>library(ranger)</td>
+</tr>
+<tr class="even">
+<td># Calculate validate MAE for each fold
+cv_eval_rf &lt;- cv_prep_rf %&gt;%
+mutate(validate_mae = map2_dbl(validate_actual, validate_predicted, ~mae(actual = .x, predicted = .y)))</td>
+</tr>
+<tr class="odd">
+<td># Print the validate_mae column
+cv_eval_rf$validate_mae</td>
+</tr>
+<tr class="even">
+<td># Calculate the mean of validate_mae column
+mean(cv_eval_rf$validate_mae)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="fine-tune-your-model" class="section level2">
+<h2>3-11 Fine tune your model</h2>
+<p>Wow! That was a significant improvement over a regression model. Now let’s see if you can further improve this performance by fine tuning your random forest models. To do this you will vary the mtry parameter when building your random forest models on your train data.</p>
+<p>The default value of mtry for ranger is the rounded down square root of the total number of features (6). This results in a value of 2.</p>
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td># Prepare for tuning your cross validation folds by varying mtry
+cv_tune &lt;- cv_data %&gt;%
+crossing(mtry = 2:5)</td>
+</tr>
+<tr class="even">
+<td># Build a model for each fold &amp; mtry combination
+cv_model_tunerf &lt;- cv_tune %&gt;%
+mutate(model = map2(.x = train, .y = mtry, ~ranger(formula = life_expectancy~.,
+data = .x, mtry = .y,
+num.trees = 100, seed = 42)))</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="the-best-performing-parameter" class="section level2">
+<h2>3-12 The best performing parameter</h2>
+<p>You’ve now built models where you’ve varied the random forest-specific hyperparameter mtry in the hopes of improving your model further. Now you will measure the performance of each mtry value across the 5 cross validation partitions to see if you can improve the model.</p>
+<p>Remember that the validate MAE you calculated two exercises ago of 0.795 was for the default mtry value of 2.</p>
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td># Generate validate predictions for each model
+cv_prep_tunerf &lt;- cv_model_tunerf %&gt;%
+mutate(validate_predicted = map2(.x = model, .y = validate, ~predict(.x, .y)$predictions))</td>
+</tr>
+<tr class="even">
+<td># Calculate validate MAE for each fold and mtry combination
+cv_eval_tunerf &lt;- cv_prep_tunerf %&gt;%
+mutate(validate_mae = map2_dbl(.x = validate_actual, .y = validate_predicted, ~mae(actual = .x, predicted = .y)))</td>
+</tr>
+<tr class="odd">
+<td># Calculate the mean validate_mae for each mtry used
+cv_eval_tunerf %&gt;%
+group_by(mtry) %&gt;%
+summarise(mean_mae = mean(validate_mae))</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="build-evaluate-the-best-model" class="section level2">
+<h2>3-14 Build &amp; evaluate the best model</h2>
+<p>Using cross-validation you were able to identify the best model for predicting life_expectancy using all the features in gapminder. Now that you’ve selected your model, you can use the independent set of data (testing_data) that you’ve held out to estimate the performance of this model on new data.</p>
+<p>You will build this model using all training_data and evaluate using testing_data.</p>
+<hr />
+</div>
+<div id="build-the-model-using-all-training-data-and-the-best-performing-parameter" class="section level1">
+<h1>Build the model using all training data and the best performing parameter</h1>
+<p>best_model &lt;- ranger(formula = life_expectancy~., data = training_data,
+mtry = 4, num.trees = 100, seed = 42)</p>
+</div>
+<div id="prepare-the-test_actual-vector" class="section level1">
+<h1>Prepare the test_actual vector</h1>
+<p>test_actual &lt;- testing_data$life_expectancy</p>
+</div>
+<div id="predict-life_expectancy-for-the-testing_data" class="section level1">
+<h1>Predict life_expectancy for the testing_data</h1>
+<p>test_predicted &lt;- predict(best_model, testing_data)$predictions</p>
+</div>
+<div id="calculate-the-test-mae" class="section level1">
+<h1>Calculate the test MAE</h1>
+<p>mae(test_actual, test_predicted)</p>
+<hr />
+<div id="ff" class="section level2">
+<h2>4-2 ff</h2>
+</div>
+<div id="ff-1" class="section level2">
+<h2>4-3 ff</h2>
+</div>
+<div id="ff-2" class="section level2">
+<h2>4-5 ff</h2>
+</div>
+<div id="ff-3" class="section level2">
+<h2>4-6 ff</h2>
+</div>
+<div id="ff-4" class="section level2">
+<h2>4-7 ff</h2>
+</div>
+<div id="ff-5" class="section level2">
+<h2>4-8 ff</h2>
+</div>
+<div id="ff-6" class="section level2">
+<h2>4-10 ff</h2>
+</div>
+<div id="ff-7" class="section level2">
+<h2>4-11 ff</h2>
+</div>
+<div id="ff-8" class="section level2">
+<h2>4-12 ff</h2>
+</div>
+<div id="ff-9" class="section level2">
+<h2>4-13 ff</h2>
+</div>
+</div>
