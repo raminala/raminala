@@ -578,18 +578,36 @@ precision: portion of predictions that the model correctly predicted as TRUE.
 recall: portion of actual TRUE values that the model correctly recovered.
 
 ```{r}
+library(Metrics)
 
+# Compare the actual & predicted performance visually using a table
+table(validate_actual, validate_predicted)
+
+# Calculate the accuracy
+accuracy(validate_actual, validate_predicted)
+
+# Calculate the precision
+precision(validate_actual, validate_predicted)
+
+# Calculate the recall
+recall(validate_actual, validate_predicted)
 ```
 
 
-## 4-7 ff
+## 4-7 Prepare for cross-validated performance
+
+Now that you know how to calculate the performance metrics for a single model, you are now ready to expand this for all the folds in the cross-validation dataframe.
 
 ```{r}
 
 ```
 
 
-## 4-8 ff
+## 4-8 Calculate cross-validated performance
+
+It is crucial to optimize models using a carefully selected metric aimed at achieving the goal of the model.
+
+Imagine that in this case you want to use this model to identify employees that are predicted to leave the company. Ideally, you want a model that can capture as many of the ready-to-leave employees as possible so that you can intervene. The corresponding metric that captures this is the recall metric. As such, you will exclusively use recall to optimize and select your models.
 
 ```{r}
 

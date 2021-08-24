@@ -635,23 +635,61 @@ validate_predicted &lt;- validate_prob &gt; 0.5</code></pre>
 <p>accuracy: rate of correctly predicted values relative to all predictions.
 precision: portion of predictions that the model correctly predicted as TRUE.
 recall: portion of actual TRUE values that the model correctly recovered.</p>
+<pre class="r"><code>library(Metrics)
+
+# Compare the actual &amp; predicted performance visually using a table
+table(validate_actual, validate_predicted)</code></pre>
+<pre><code>##                validate_predicted
+## validate_actual FALSE TRUE
+##           FALSE   184    8
+##           TRUE     14   15</code></pre>
+<pre class="r"><code># Calculate the accuracy
+accuracy(validate_actual, validate_predicted)</code></pre>
+<pre><code>## [1] 0.9004525</code></pre>
+<pre class="r"><code># Calculate the precision
+precision(validate_actual, validate_predicted)</code></pre>
+<pre><code>## [1] 0.6521739</code></pre>
+<pre class="r"><code># Calculate the recall
+recall(validate_actual, validate_predicted)</code></pre>
+<pre><code>## [1] 0.5172414</code></pre>
+</div>
+<div id="prepare-for-cross-validated-performance" class="section level2">
+<h2>4-7 Prepare for cross-validated performance</h2>
+<p>Now that you know how to calculate the performance metrics for a single model, you are now ready to expand this for all the folds in the cross-validation dataframe.</p>
+<pre class="r"><code>cv_prep_lr &lt;- cv_models_lr %&gt;% 
+  mutate(
+    # Prepare binary vector of actual Attrition values in validate
+    validate_actual = map(validate, ~.x$Attrition == &quot;Yes&quot;),
+    # Prepare binary vector of predicted Attrition values for validate
+    validate_predicted = map2(.x = model, .y = validate, ~predict(.x, .y, type = &quot;response&quot;) &gt; 0.5)
+  )</code></pre>
+</div>
+<div id="calculate-cross-validated-performance" class="section level2">
+<h2>4-8 Calculate cross-validated performance</h2>
+<p>It is crucial to optimize models using a carefully selected metric aimed at achieving the goal of the model.</p>
+<p>Imagine that in this case you want to use this model to identify employees that are predicted to leave the company. Ideally, you want a model that can capture as many of the ready-to-leave employees as possible so that you can intervene. The corresponding metric that captures this is the recall metric. As such, you will exclusively use recall to optimize and select your models.</p>
+<pre class="r"><code># Calculate the validate recall for each cross validation fold
+cv_perf_recall &lt;- cv_prep_lr %&gt;% 
+  mutate(validate_recall = map2_dbl(validate_actual, validate_predicted, 
+                                    ~recall(actual = .x, predicted = .y)))
+
+# Print the validate_recall column
+cv_perf_recall$validate_recall</code></pre>
+<pre><code>## [1] 0.5172414 0.3823529 0.4545455 0.4444444 0.4222222</code></pre>
+<pre class="r"><code># Calculate the average of the validate_recall column
+mean(cv_perf_recall$validate_recall)</code></pre>
+<pre><code>## [1] 0.4441613</code></pre>
 </div>
 <div id="ff" class="section level2">
-<h2>4-7 ff</h2>
-</div>
-<div id="ff-1" class="section level2">
-<h2>4-8 ff</h2>
-</div>
-<div id="ff-2" class="section level2">
 <h2>4-10 ff</h2>
 </div>
-<div id="ff-3" class="section level2">
+<div id="ff-1" class="section level2">
 <h2>4-11 ff</h2>
 </div>
-<div id="ff-4" class="section level2">
+<div id="ff-2" class="section level2">
 <h2>4-12 ff</h2>
 </div>
-<div id="ff-5" class="section level2">
+<div id="ff-3" class="section level2">
 <h2>4-13 ff</h2>
 </div>
 </div>
