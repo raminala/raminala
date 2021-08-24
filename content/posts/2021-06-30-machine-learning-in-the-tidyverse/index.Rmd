@@ -547,14 +547,35 @@ cv_models_lr <- cv_data %>%
 ```
 
 
-## 4-5 ff
+## 4-5 Predictions of a single model
+
+To calculate the performance of a classification model you need to compare the actual values of Attrition to those predicted by the model. When calculating metrics for binary classification tasks (such as precision and recall), the actual and predicted vectors must be converted to binary values.
+
+In this exercise, you will learn how to prepare these vectors using the model and validate dataframes from the first cross-validation fold as an example.
 
 ```{r}
+# Extract the first model and validate 
+model <- cv_models_lr$model[[1]]
+validate <- cv_models_lr$validate[[1]]
 
+# Prepare binary vector of actual Attrition values in validate
+validate_actual <- validate$Attrition == "Yes"
+
+# Predict the probabilities for the observations in validate
+validate_prob <- predict(model, validate, type = "response")
+
+# Prepare binary vector of predicted Attrition values for validate
+validate_predicted <- validate_prob > 0.5
 ```
 
 
-## 4-6 ff
+## 4-6 Performance of a single model
+
+Now that you have the binary vectors for the actual and predicted values of the model, you can calculate many commonly used binary classification metrics. In this exercise you will focus on:
+
+accuracy: rate of correctly predicted values relative to all predictions.
+precision: portion of predictions that the model correctly predicted as TRUE.
+recall: portion of actual TRUE values that the model correctly recovered.
 
 ```{r}
 

@@ -612,28 +612,46 @@ cv_models_lr &lt;- cv_data %&gt;%
   mutate(model = map(train, ~glm(formula = factor(Attrition)~., 
                                data = .x, family = &quot;binomial&quot;)))</code></pre>
 </div>
+<div id="predictions-of-a-single-model" class="section level2">
+<h2>4-5 Predictions of a single model</h2>
+<p>To calculate the performance of a classification model you need to compare the actual values of Attrition to those predicted by the model. When calculating metrics for binary classification tasks (such as precision and recall), the actual and predicted vectors must be converted to binary values.</p>
+<p>In this exercise, you will learn how to prepare these vectors using the model and validate dataframes from the first cross-validation fold as an example.</p>
+<pre class="r"><code># Extract the first model and validate 
+model &lt;- cv_models_lr$model[[1]]
+validate &lt;- cv_models_lr$validate[[1]]
+
+# Prepare binary vector of actual Attrition values in validate
+validate_actual &lt;- validate$Attrition == &quot;Yes&quot;
+
+# Predict the probabilities for the observations in validate
+validate_prob &lt;- predict(model, validate, type = &quot;response&quot;)
+
+# Prepare binary vector of predicted Attrition values for validate
+validate_predicted &lt;- validate_prob &gt; 0.5</code></pre>
+</div>
+<div id="performance-of-a-single-model" class="section level2">
+<h2>4-6 Performance of a single model</h2>
+<p>Now that you have the binary vectors for the actual and predicted values of the model, you can calculate many commonly used binary classification metrics. In this exercise you will focus on:</p>
+<p>accuracy: rate of correctly predicted values relative to all predictions.
+precision: portion of predictions that the model correctly predicted as TRUE.
+recall: portion of actual TRUE values that the model correctly recovered.</p>
+</div>
 <div id="ff" class="section level2">
-<h2>4-5 ff</h2>
-</div>
-<div id="ff-1" class="section level2">
-<h2>4-6 ff</h2>
-</div>
-<div id="ff-2" class="section level2">
 <h2>4-7 ff</h2>
 </div>
-<div id="ff-3" class="section level2">
+<div id="ff-1" class="section level2">
 <h2>4-8 ff</h2>
 </div>
-<div id="ff-4" class="section level2">
+<div id="ff-2" class="section level2">
 <h2>4-10 ff</h2>
 </div>
-<div id="ff-5" class="section level2">
+<div id="ff-3" class="section level2">
 <h2>4-11 ff</h2>
 </div>
-<div id="ff-6" class="section level2">
+<div id="ff-4" class="section level2">
 <h2>4-12 ff</h2>
 </div>
-<div id="ff-7" class="section level2">
+<div id="ff-5" class="section level2">
 <h2>4-13 ff</h2>
 </div>
 </div>
