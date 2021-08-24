@@ -683,7 +683,22 @@ mean(cv_perf_recall$validate_recall)</code></pre>
 <div id="tune-random-forest-models" class="section level2">
 <h2>4-10 Tune random forest models</h2>
 <p>Now that you have a working logistic regression model you will prepare a random forest model to compare it with.</p>
+<hr />
+<p>library(ranger)</p>
 </div>
+</div>
+<div id="prepare-for-tuning-your-cross-validation-folds-by-varying-mtry" class="section level1">
+<h1>Prepare for tuning your cross validation folds by varying mtry</h1>
+<p>cv_tune &lt;- cv_data %&gt;%
+crossing(mtry = c(2, 4, 8, 16))</p>
+</div>
+<div id="build-a-cross-validation-model-for-each-fold-mtry-combination" class="section level1">
+<h1>Build a cross validation model for each fold &amp; mtry combination</h1>
+<p>cv_models_rf &lt;- cv_tune %&gt;%
+mutate(model = map2(train, mtry, ~ranger(formula = factor(Attrition)~.,
+data = .x, mtry = .y,
+num.trees = 100, seed = 42)))</p>
+<hr />
 <div id="random-forest-performance" class="section level2">
 <h2>4-11 Random forest performance</h2>
 <p>It is now time to see whether the random forests models you built in the previous exercise are able to outperform the logistic regression model.</p>
