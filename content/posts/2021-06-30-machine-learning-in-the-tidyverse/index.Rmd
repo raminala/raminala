@@ -500,15 +500,50 @@ You will work with the attrition dataset, which contains 30 features about emplo
 
 You will first prepare the training & testing data sets, then you will further split the training data using cross-validation so that you can search for the best performing model for this task.
 
-```{r}
-
+```{r, echo=FALSE, message=FALSE}
+attrition <- read_csv("attrition.csv")
 ```
 
 
-## 4-3 ff
+```{r}
+set.seed(42)
+
+# Prepare the initial split object
+data_split <- initial_split(attrition, prop = 0.75)
+
+# Extract the training dataframe
+training_data <- training(data_split)
+
+# Extract the testing dataframe
+testing_data <- testing(data_split)
+```
+
 
 ```{r}
+set.seed(42)
+cv_split <- vfold_cv(training_data, v = 5)
 
+cv_data <- cv_split %>% 
+  mutate(
+    # Extract the train dataframe for each split
+    train = map(splits, ~training(.x)),
+    # Extract the validate dataframe for each split
+    validate = map(splits, ~testing(.x))
+  )
+```
+
+
+## 4-3 Build cross-validated models
+
+In this exercise, you will build logistic regression models for each fold in your cross-validation.
+
+You will build this using the glm() function and by setting the family argument to "binomial".
+
+```{r}
+# Build a model using the train data for each fold of the cross validation
+cv_models_lr <- cv_data %>% 
+  mutate(model = map(train, ~glm(formula = factor(Attrition)~., 
+                               data = .x, family = "binomial")))
 ```
 
 
