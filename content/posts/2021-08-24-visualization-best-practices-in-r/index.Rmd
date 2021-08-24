@@ -1,0 +1,143 @@
+---
+title: Visualization Best Practices in R
+author: ''
+date: '2021-08-24'
+slug: []
+categories: []
+tags:
+  - data_visualization
+---
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(waffle)
+who_disease <- read_csv("who_disease.csv")
+```
+
+## 1-2 Familiarizing with disease data
+
+The dataset containing disease cases from the World Health Organization (WHO) is loaded into your environment as the dataframe who_disease.
+
+In order to familiarize yourself with the data, let's start by printing it to the console.
+
+Once you've investigated it a bit, make a simple bar chart of the number of observations by region using the supplied code. You will need to fill in the aes()thetics function to map the x-axis to the proper column name.
+
+This course touches on a lot of concepts you may have forgotten, so if you ever need a quick refresher, download the Tidyverse Cheat Sheet and keep it handy!
+
+```{r}
+# print dataframe to inspect
+print(who_disease)
+
+# set x aesthetic to region column
+ggplot(who_disease, aes(region)) +
+  geom_bar()
+```
+
+## 1-3 Warming up data-wrangling
+
+Let's warm up your tidyverse data wrangling skills a bit and look at the number of cases reported by year for the American region ('AMR').
+
+To do this, we will first filter the dataset to our desired region, then make a simple scatter plot of the year by cases.
+
+In addition, set the opacity of the points to 50% (0.5) so we can get a sense of data overlap.
+
+```{r}
+# filter data to AMR region. 
+amr_region <- who_disease %>%
+    filter(region=="AMR")
+
+# map x to year and y to cases. 
+ggplot(amr_region, aes(year,cases)) + 
+	# lower alpha to 0.5 to see overlap.   
+  	geom_point(alpha=0.5)
+```
+
+## 1-5 The infamous P-I-E
+
+Intuitively, you can think about a pie chart as a stacked bar chart that has been 'wrapped' around some central axis. Conveniently, this intuition fits very well with how they are made in ggplot2.
+
+Supplied is code to summarize our who_disease data into a dataframe containing three diseases: measles, mumps, and,other, along with their total number of cases in the data.
+
+Your job is to turn the empty ggplot object into a stacked bar-chart, then into a pie-chart by using the transform coord_polar(theta = 'y').
+
+Notice how I have set x = 1 in the aesthetics. This is because we only want one bar chart here. We'll learn about multiple stacked bar charts in the next lesson!
+
+```{r}
+# Wrangle data into form we want. 
+disease_counts <- who_disease %>%
+	mutate(disease = ifelse(disease %in% c('measles', 'mumps'), disease, 'other')) %>%
+	group_by(disease) %>%
+	summarise(total_cases = sum(cases))
+
+ggplot(disease_counts, aes(x = 1, y = total_cases, fill = disease)) +
+	# Use a column geometry.
+	geom_col() 
+	# Change coordinate system to polar and set theta to 'y'.
+	coord_polar(theta="y")
+```
+
+
+## 1-6 Cleaning up the pie
+
+The pie chart you made in the last plot is good, but it's a little cluttered. Let's clean it up using the ggplot function theme_void() along with giving it a meaningful title with ggtitle(...).
+
+The disease_counts summarized dataframe from the last exercise is already loaded for you.
+
+```{r}
+ggplot(disease_counts, aes(x = 1, y = total_cases, fill = disease)) +
+	# Use a column geometry.
+	geom_col() +
+	# Change coordinate system to polar.
+	coord_polar(theta = "y") +
+	# Clean up the background with theme_void and give it a proper title with ggtitle.
+	theme_void() +
+	ggtitle("Proportion of diseases")
+```
+
+
+## 1-7 How about a waffle?
+
+What if we are interested in the details of the 'other' class?
+
+Let's make the switch to a waffle chart, as they are capable of dealing with more classes. We'll use the same data-manipulation pipeline from the last exercise, but this time with all the diseases left in.
+
+We will use the library waffle which contains the function waffle(). This function produces a waffle chart for you when supplied with a named vector of counts.
+
+It will draw one square for each unit supplied in the vector, so we need to manipulate our disease counts to rounded percents (note the mutate() call in the supplied data wrangling code).
+
+```{r}
+disease_counts <- who_disease %>%
+	group_by(disease) %>%
+	summarise(total_cases = sum(cases)) %>% 
+	mutate(percent = round(total_cases/sum(total_cases)*100))
+
+# Create an array of rounded percentages for diseases.
+case_counts <- disease_counts$percent
+# Name the percentage array
+names(case_counts) <- disease_counts$disease
+
+# Pass case_counts vector to the waffle function to plot
+waffle(case_counts)
+```
+
+
+## 1-9 
+
+```{r}
+
+```
+
+
+## 1-10 
+
+```{r}
+
+```
+
+
+## 1-11 
+
+```{r}
+
+```
+

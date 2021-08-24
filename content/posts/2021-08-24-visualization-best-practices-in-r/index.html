@@ -1,0 +1,144 @@
+---
+title: Visualization Best Practices in R
+author: ''
+date: '2021-08-24'
+slug: []
+categories: []
+tags:
+  - data_visualization
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="familiarizing-with-disease-data" class="section level2">
+<h2>1-2 Familiarizing with disease data</h2>
+<p>The dataset containing disease cases from the World Health Organization (WHO) is loaded into your environment as the dataframe who_disease.</p>
+<p>In order to familiarize yourself with the data, let’s start by printing it to the console.</p>
+<p>Once you’ve investigated it a bit, make a simple bar chart of the number of observations by region using the supplied code. You will need to fill in the aes()thetics function to map the x-axis to the proper column name.</p>
+<p>This course touches on a lot of concepts you may have forgotten, so if you ever need a quick refresher, download the Tidyverse Cheat Sheet and keep it handy!</p>
+<pre class="r"><code># print dataframe to inspect
+print(who_disease)</code></pre>
+<pre><code>## # A tibble: 43,262 x 7
+##       X1 region countryCode country             disease  year cases
+##    &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;       &lt;chr&gt;               &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;
+##  1     1 EMR    AFG         Afghanistan         measles  2016   638
+##  2     2 EUR    ALB         Albania             measles  2016    17
+##  3     3 AFR    DZA         Algeria             measles  2016    41
+##  4     4 EUR    AND         Andorra             measles  2016     0
+##  5     5 AFR    AGO         Angola              measles  2016    53
+##  6     6 AMR    ATG         Antigua and Barbuda measles  2016     0
+##  7     7 AMR    ARG         Argentina           measles  2016     0
+##  8     8 EUR    ARM         Armenia             measles  2016     2
+##  9     9 WPR    AUS         Australia           measles  2016    99
+## 10    10 EUR    AUT         Austria             measles  2016    27
+## # ... with 43,252 more rows</code></pre>
+<pre class="r"><code># set x aesthetic to region column
+ggplot(who_disease, aes(region)) +
+  geom_bar()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<div id="warming-up-data-wrangling" class="section level2">
+<h2>1-3 Warming up data-wrangling</h2>
+<p>Let’s warm up your tidyverse data wrangling skills a bit and look at the number of cases reported by year for the American region (‘AMR’).</p>
+<p>To do this, we will first filter the dataset to our desired region, then make a simple scatter plot of the year by cases.</p>
+<p>In addition, set the opacity of the points to 50% (0.5) so we can get a sense of data overlap.</p>
+<pre class="r"><code># filter data to AMR region. 
+amr_region &lt;- who_disease %&gt;%
+    filter(region==&quot;AMR&quot;)
+
+# map x to year and y to cases. 
+ggplot(amr_region, aes(year,cases)) + 
+    # lower alpha to 0.5 to see overlap.   
+    geom_point(alpha=0.5)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="the-infamous-p-i-e" class="section level2">
+<h2>1-5 The infamous P-I-E</h2>
+<p>Intuitively, you can think about a pie chart as a stacked bar chart that has been ‘wrapped’ around some central axis. Conveniently, this intuition fits very well with how they are made in ggplot2.</p>
+<p>Supplied is code to summarize our who_disease data into a dataframe containing three diseases: measles, mumps, and,other, along with their total number of cases in the data.</p>
+<p>Your job is to turn the empty ggplot object into a stacked bar-chart, then into a pie-chart by using the transform coord_polar(theta = ‘y’).</p>
+<p>Notice how I have set x = 1 in the aesthetics. This is because we only want one bar chart here. We’ll learn about multiple stacked bar charts in the next lesson!</p>
+<pre class="r"><code># Wrangle data into form we want. 
+disease_counts &lt;- who_disease %&gt;%
+    mutate(disease = ifelse(disease %in% c(&#39;measles&#39;, &#39;mumps&#39;), disease, &#39;other&#39;)) %&gt;%
+    group_by(disease) %&gt;%
+    summarise(total_cases = sum(cases))
+
+ggplot(disease_counts, aes(x = 1, y = total_cases, fill = disease)) +
+    # Use a column geometry.
+    geom_col() </code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>    # Change coordinate system to polar and set theta to &#39;y&#39;.
+    coord_polar(theta=&quot;y&quot;)</code></pre>
+<pre><code>## &lt;ggproto object: Class CoordPolar, Coord, gg&gt;
+##     aspect: function
+##     backtransform_range: function
+##     clip: on
+##     default: FALSE
+##     direction: 1
+##     distance: function
+##     is_free: function
+##     is_linear: function
+##     labels: function
+##     modify_scales: function
+##     r: x
+##     range: function
+##     render_axis_h: function
+##     render_axis_v: function
+##     render_bg: function
+##     render_fg: function
+##     setup_data: function
+##     setup_layout: function
+##     setup_panel_guides: function
+##     setup_panel_params: function
+##     setup_params: function
+##     start: 0
+##     theta: y
+##     train_panel_guides: function
+##     transform: function
+##     super:  &lt;ggproto object: Class CoordPolar, Coord, gg&gt;</code></pre>
+</div>
+<div id="cleaning-up-the-pie" class="section level2">
+<h2>1-6 Cleaning up the pie</h2>
+<p>The pie chart you made in the last plot is good, but it’s a little cluttered. Let’s clean it up using the ggplot function theme_void() along with giving it a meaningful title with ggtitle(…).</p>
+<p>The disease_counts summarized dataframe from the last exercise is already loaded for you.</p>
+<pre class="r"><code>ggplot(disease_counts, aes(x = 1, y = total_cases, fill = disease)) +
+    # Use a column geometry.
+    geom_col() +
+    # Change coordinate system to polar.
+    coord_polar(theta = &quot;y&quot;) +
+    # Clean up the background with theme_void and give it a proper title with ggtitle.
+    theme_void() +
+    ggtitle(&quot;Proportion of diseases&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="how-about-a-waffle" class="section level2">
+<h2>1-7 How about a waffle?</h2>
+<p>What if we are interested in the details of the ‘other’ class?</p>
+<p>Let’s make the switch to a waffle chart, as they are capable of dealing with more classes. We’ll use the same data-manipulation pipeline from the last exercise, but this time with all the diseases left in.</p>
+<p>We will use the library waffle which contains the function waffle(). This function produces a waffle chart for you when supplied with a named vector of counts.</p>
+<p>It will draw one square for each unit supplied in the vector, so we need to manipulate our disease counts to rounded percents (note the mutate() call in the supplied data wrangling code).</p>
+<pre class="r"><code>disease_counts &lt;- who_disease %&gt;%
+    group_by(disease) %&gt;%
+    summarise(total_cases = sum(cases)) %&gt;% 
+    mutate(percent = round(total_cases/sum(total_cases)*100))
+
+# Create an array of rounded percentages for diseases.
+case_counts &lt;- disease_counts$percent
+# Name the percentage array
+names(case_counts) &lt;- disease_counts$disease
+
+# Pass case_counts vector to the waffle function to plot
+waffle(case_counts)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="section" class="section level2">
+<h2>1-9</h2>
+</div>
+<div id="section-1" class="section level2">
+<h2>1-10</h2>
+</div>
+<div id="section-2" class="section level2">
+<h2>1-11</h2>
+</div>
