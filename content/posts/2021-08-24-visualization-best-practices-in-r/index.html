@@ -133,12 +133,55 @@ names(case_counts) &lt;- disease_counts$disease
 waffle(case_counts)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
-<div id="section" class="section level2">
-<h2>1-9</h2>
+<div id="basic-stacked-bars" class="section level2">
+<h2>1-9 Basic stacked bars</h2>
+<p>When we made the pie and waffle charts in the last exercises, we looked at all years in the data combined together.</p>
+<p>Now, we’re interested in looking at these patterns over time. To do this we will make a stacked bar chart with the x-axis being the year of observation. Like we did with the pie chart before, we will simplify the data to just be measles, mumps, and other.</p>
+<p>Do you notice anything funky in the data after visualizing it this way?</p>
+<pre class="r"><code>disease_counts &lt;- who_disease %&gt;%
+    mutate(disease = ifelse(disease %in% c(&#39;measles&#39;, &#39;mumps&#39;), disease, &#39;other&#39;)) %&gt;%
+    group_by(disease, year) %&gt;% # note the addition of year to the grouping.
+    summarise(total_cases = sum(cases))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;disease&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code># add the mapping of year to the x axis. 
+ggplot(disease_counts, aes(year, y = total_cases, fill = disease)) +
+    # Change the position argument to make bars full height
+    geom_col(position=&quot;fill&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
-<div id="section-1" class="section level2">
-<h2>1-10</h2>
+<div id="ordering-stack-for-readability" class="section level2">
+<h2>1-10 Ordering stack for readability</h2>
+<p>In the last plot since we grouped all diseases that are not measles and mumps into their own category, it’s fair to assume that we care less about the ‘other’ category’s trajectory than those of measles and mumps.</p>
+<p>Because of this, the plot we made has a problem. The way that the bars are stacked, with measles on top, mumps in the middle, and other on the bottom, makes it hard to get a good intuition for the behavior of mumps over time because its baseline is non-constant due to changing values in measles proportions.</p>
+<p>Ggplot orders the bars and legend based upon the order it sees the variables in the dataset. To override this, turn the disease column into a factor with the levels in the order we want our plot to use.</p>
+<pre class="r"><code>disease_counts &lt;- who_disease %&gt;%
+    mutate(
+        disease = ifelse(disease %in% c(&#39;measles&#39;, &#39;mumps&#39;), disease, &#39;other&#39;) %&gt;% 
+        factor(levels = c(&#39;measles&#39;, &#39;other&#39;, &#39;mumps&#39;)) # change factor levels to desired ordering
+    ) %&gt;%
+    group_by(disease, year) %&gt;%
+    summarise(total_cases = sum(cases)) </code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;disease&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code># plot
+ggplot(disease_counts, aes(x = year, y = total_cases, fill = disease)) +
+    geom_col(position = &#39;fill&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 </div>
-<div id="section-2" class="section level2">
-<h2>1-11</h2>
+<div id="categorical-x-axis" class="section level2">
+<h2>1-11 Categorical x-axis</h2>
+<p>In the previous charts, we saw that mumps didn’t start getting reported until 1999, making comparisons before then meaningless.</p>
+<p>Let’s filter the data to be only the cases reported on or after 1999 and then make a stacked bar chart looking at the proportion of different diseases by region.</p>
+<p>Modify the data-manipulation pipeline to get the data into the form you want, then build your stacked bar chart and plot! Don’t worry about ordering the bars here as we did in the last exercise. See any surprising patterns?</p>
+<pre class="r"><code>disease_counts &lt;- who_disease %&gt;%
+    # Filter to on or later than 1999
+    filter(year &gt;= 1999) %&gt;% 
+    mutate(disease = ifelse(disease %in% c(&#39;measles&#39;, &#39;mumps&#39;), disease, &#39;other&#39;)) %&gt;%
+    group_by(disease, region) %&gt;%    # Add region to grouping
+    summarise(total_cases = sum(cases))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;disease&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code># Set aesthetics so disease is the stacking variable, region is the x-axis and counts are the y
+ggplot(disease_counts, aes(x = region, y = total_cases, fill = disease)) +
+    # Add a column geometry with the proper position value. 
+    geom_col(position = &#39;fill&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>

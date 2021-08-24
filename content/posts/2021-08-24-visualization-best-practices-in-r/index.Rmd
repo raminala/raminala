@@ -121,23 +121,69 @@ waffle(case_counts)
 ```
 
 
-## 1-9 
+## 1-9 Basic stacked bars
+
+When we made the pie and waffle charts in the last exercises, we looked at all years in the data combined together.
+
+Now, we're interested in looking at these patterns over time. To do this we will make a stacked bar chart with the x-axis being the year of observation. Like we did with the pie chart before, we will simplify the data to just be measles, mumps, and other.
+
+Do you notice anything funky in the data after visualizing it this way?
 
 ```{r}
+disease_counts <- who_disease %>%
+	mutate(disease = ifelse(disease %in% c('measles', 'mumps'), disease, 'other')) %>%
+	group_by(disease, year) %>% # note the addition of year to the grouping.
+	summarise(total_cases = sum(cases))
 
+# add the mapping of year to the x axis. 
+ggplot(disease_counts, aes(year, y = total_cases, fill = disease)) +
+	# Change the position argument to make bars full height
+	geom_col(position="fill")
 ```
 
 
-## 1-10 
+## 1-10 Ordering stack for readability
+
+In the last plot since we grouped all diseases that are not measles and mumps into their own category, it's fair to assume that we care less about the 'other' category's trajectory than those of measles and mumps.
+
+Because of this, the plot we made has a problem. The way that the bars are stacked, with measles on top, mumps in the middle, and other on the bottom, makes it hard to get a good intuition for the behavior of mumps over time because its baseline is non-constant due to changing values in measles proportions.
+
+Ggplot orders the bars and legend based upon the order it sees the variables in the dataset. To override this, turn the disease column into a factor with the levels in the order we want our plot to use.
 
 ```{r}
+disease_counts <- who_disease %>%
+	mutate(
+		disease = ifelse(disease %in% c('measles', 'mumps'), disease, 'other') %>% 
+		factor(levels = c('measles', 'other', 'mumps')) # change factor levels to desired ordering
+	) %>%
+	group_by(disease, year) %>%
+	summarise(total_cases = sum(cases)) 
 
+# plot
+ggplot(disease_counts, aes(x = year, y = total_cases, fill = disease)) +
+	geom_col(position = 'fill')
 ```
 
 
-## 1-11 
+## 1-11 Categorical x-axis
+
+In the previous charts, we saw that mumps didn't start getting reported until 1999, making comparisons before then meaningless.
+
+Let's filter the data to be only the cases reported on or after 1999 and then make a stacked bar chart looking at the proportion of different diseases by region.
+
+Modify the data-manipulation pipeline to get the data into the form you want, then build your stacked bar chart and plot! Don't worry about ordering the bars here as we did in the last exercise. See any surprising patterns?
 
 ```{r}
+disease_counts <- who_disease %>%
+	# Filter to on or later than 1999
+	filter(year >= 1999) %>% 
+	mutate(disease = ifelse(disease %in% c('measles', 'mumps'), disease, 'other')) %>%
+	group_by(disease, region) %>%    # Add region to grouping
+	summarise(total_cases = sum(cases))
 
+# Set aesthetics so disease is the stacking variable, region is the x-axis and counts are the y
+ggplot(disease_counts, aes(x = region, y = total_cases, fill = disease)) +
+	# Add a column geometry with the proper position value. 
+	geom_col(position = 'fill')
 ```
 
