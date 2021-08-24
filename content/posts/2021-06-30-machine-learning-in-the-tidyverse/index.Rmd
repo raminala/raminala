@@ -629,28 +629,38 @@ mean(cv_perf_recall$validate_recall)
 ```
 
 
-## 4-10 ff
+## 4-10 Tune random forest models
+
+Now that you have a working logistic regression model you will prepare a random forest model to compare it with.
 
 ```{r}
 
 ```
 
 
-## 4-11 ff
+## 4-11 Random forest performance
+
+It is now time to see whether the random forests models you built in the previous exercise are able to outperform the logistic regression model.
+
+Remember that the validate recall for the logistic regression model was 0.43.
 
 ```{r}
 
 ```
 
 
-## 4-12 ff
+## 4-12 Build final classification model
+
+Comparing the recall performance between the logistic regression model (0.4) and the best performing random forest model (0.2), you've learned that the model with the best performance is the logistic regression model. In this exercise, you will build the logistic regression model using all of the train data and you will prepare the necessary vectors for evaluating this model's test performance.
 
 ```{r}
 
 ```
 
 
-## 4-13 ff
+## 4-13 Measure final model performance
+
+Now its time to calculate the test performance of your final model (logistic regression). Here you will use the held out testing data to characterize the performance you would expect from this model when it is applied to new data.
 
 ```{r}
 
