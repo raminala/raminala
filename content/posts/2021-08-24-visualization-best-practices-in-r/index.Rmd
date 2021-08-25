@@ -71,7 +71,7 @@ disease_counts <- who_disease %>%
 
 ggplot(disease_counts, aes(x = 1, y = total_cases, fill = disease)) +
 	# Use a column geometry.
-	geom_col() 
+	geom_col() +
 	# Change coordinate system to polar and set theta to 'y'.
 	coord_polar(theta="y")
 ```
