@@ -385,22 +385,50 @@ md_speeding %&gt;%
     )</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 </div>
+<div id="adjusting-the-bin-numbers" class="section level2">
+<h2>3-6 Adjusting the bin numbers</h2>
+<p>Let’s take our first steps away from the default number of bins with our histograms. We’ll start by building a histogram of the percentage of the speed a driver is traveling over the limit for each citation. This is calculated as ((speed - speed_limit) / speed_limit)*100.</p>
+<p>Plot percentage over the speed limit as a histogram with the number of bins set to 40. While you’re at it, set the alpha to 0.8. You’re entirely on your own with this one, no scaffolding.</p>
+<pre class="r"><code># Load md_speeding into ggplot
+ggplot(md_speeding) +
+  # add a geom_histogram with x mapped to percentage_over_limit
+    geom_histogram(aes(percentage_over_limit),
+                bins=40,     # set bin number to 40
+        alpha = 0.8)    # reduce alpha to 0.8</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+</div>
+<div id="more-bars" class="section level2">
+<h2>3-7 More bars</h2>
+<p>With the last plot, 40 bins make it roughly look like we have a skewed but unimodal distribution. Remember the rule-of-thumb from the slides: if you have more than 150 data points you should usually shoot straight up to 100 bins. Let’s do that here.</p>
+<p>Edit the plot to have 100 bins instead of 40 and also change the color of the bars to ‘steelblue’ just because it’s a good color and sometimes that’s important.</p>
+<p>Do you notice anything about the range around 30% now? If you want to get a little more of an idea of what could be happening, try filtering the data to the percentage over the speed limit of 30.</p>
+<pre class="r"><code>ggplot(md_speeding) +
+    geom_histogram(
+        aes(x = percentage_over_limit),
+        bins = 100 ,         # switch to 100 bins
+        fill =&#39;steelblue&#39; ,                # set the fill of the bars to &#39;steelblue&#39;
+        alpha = 0.8 )</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+</div>
+<div id="bin-width-by-context" class="section level2">
+<h2>3-8 Bin width by context</h2>
+<p>The supplied code looks at the distribution of citations by hour of the day. Notice how the bars don’t fall nicely on a given hour; making the interpretation of the bar heights a bit ungainly. When your data has natural breakpoints like this, you should exploit them. In this case, we can set our breaks to fall on the hour boundaries.</p>
+<p>Modify geom_histogram() to set the binwidth to 1 hour. This argument, however, doesn’t tell ggplot where to start its bins, which by default is determined by the extent of the data. To fix this, set the center argument to 0.5. This says you want one of the bars to be centered at 30 mins past midnight, ggplot then arranges the rest of the bars accordingly. (You could set this to be any hour + 0.5 such as 2.5, 3.5 etc..)</p>
+<pre class="r"><code>ggplot(md_speeding,aes(x = hour_of_day)) +
+    geom_histogram(
+        binwidth=1 , # set binwidth to 1
+        center=0.5  # Center bins at the half (0.5) hour
+    ) +
+    scale_x_continuous(breaks = 0:24)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+</div>
 <div id="section" class="section level2">
-<h2>3-6</h2>
-</div>
-<div id="section-1" class="section level2">
-<h2>3-7</h2>
-</div>
-<div id="section-2" class="section level2">
-<h2>3-8</h2>
-</div>
-<div id="section-3" class="section level2">
 <h2>3-10</h2>
 </div>
-<div id="section-4" class="section level2">
+<div id="section-1" class="section level2">
 <h2>3-11</h2>
 </div>
-<div id="section-5" class="section level2">
+<div id="section-2" class="section level2">
 <h2>3-12</h2>
 </div>
 </div>
