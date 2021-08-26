@@ -544,19 +544,48 @@ md_speeding %&gt;%
     geom_point(alpha = 0.3, size = 0.5)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
 </div>
+<div id="violins-with-boxplots" class="section level2">
+<h2>4-8 Violins with boxplots</h2>
+<p>If we still want the handy summary statistics that a boxplot provides while not sacrificing the benefits of a violin plot, we can simply add a geom_boxplot() on top of the violin geometry in our plot object.</p>
+<p>One issue we run into when doing this, however, is that the boxplots are awkwardly wide. We only need to see where the horizontal lines are and not much more. Luckily, geom_boxplot() has the argument width, which scales the width of the boxplot (e.g. 0.5 = half-width).</p>
+<p>Modify the plot we just made to have a boxplot between the violin and point geometries. In addition, change the points to have shape = 95 which is a horizontal tick mark. Lastly, we forgot to tell the user our kernel width, let’s do that now.</p>
+<pre class="r"><code>md_speeding %&gt;% 
+    filter(vehicle_color == &#39;RED&#39;) %&gt;%
+    ggplot(aes(x = gender, y = speed)) + 
+    geom_violin(bw = 2.5) +
+    # add a transparent boxplot and shrink its width to 0.3
+    geom_boxplot(alpha = 0, width = 0.3) +
+    # Reset point size to default and set point shape to 95
+    geom_point(alpha = 0.3, shape  = 95) +
+    # Supply a subtitle detailing the kernel width
+    labs(subtitle = &#39;Gaussian kernel SD = 2.5&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+</div>
+<div id="comparing-lots-of-distributions" class="section level2">
+<h2>4-9 Comparing lots of distributions</h2>
+<p>Let’s revisit the faceted plot we made before, but now with our handy new techniques. Can we get a better handle on the relationships with our new plot types?</p>
+<p>The supplied code makes the same visualization you did in the last lesson. Change the code to use violin plots to display the density instead of jitter plots to draw the individual data. Like in the last exercise, shrink the boxplot width so they mostly sit within the violin plots. Last, don’t forget to add a subtitle to the plot telling the viewer the width of your violin plot kernels!</p>
+<pre class="r"><code>md_speeding %&gt;% 
+    ggplot(aes(x = gender, y = speed)) + 
+    # replace with violin plot with kernel width of 2.5, change color argument to fill 
+    geom_violin(bw = 2.5, fill = &#39;steelblue&#39;) +
+    # reduce width to 0.3
+    geom_boxplot(alpha = 0, width=0.3) +
+    facet_wrap(~vehicle_color) +
+    labs(subtitle=&quot;Gaussian kernel width: 2.5&quot;,
+        title = &#39;Speed of different car colors, separated by gender of driver&#39;
+        # add a subtitle w/ kernel width
+
+    )</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+</div>
 <div id="section" class="section level2">
-<h2>4-8</h2>
-</div>
-<div id="section-1" class="section level2">
-<h2>4-9</h2>
-</div>
-<div id="section-2" class="section level2">
 <h2>4-11</h2>
 </div>
-<div id="section-3" class="section level2">
+<div id="section-1" class="section level2">
 <h2>4-12</h2>
 </div>
-<div id="section-4" class="section level2">
+<div id="section-2" class="section level2">
 <h2>4-13</h2>
 </div>
 </div>
