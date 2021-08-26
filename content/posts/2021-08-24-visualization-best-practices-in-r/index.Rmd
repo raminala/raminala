@@ -12,6 +12,8 @@ tags:
 library(tidyverse)
 library(waffle)
 who_disease <- read_csv("who_disease.csv")
+md_speeding <- read_csv("md_speeding.csv")
+
 ```
 
 ## 1-2 Familiarizing with disease data
@@ -384,3 +386,101 @@ amr_pertussis %>% filter(cases > 0) %>%
 	theme_minimal() +
 	coord_flip()
 ```
+
+## 3-2 Orienting with the data
+
+Let's take our first look at the new speeding dataset.
+
+First, print the dataframe to your screen and try and get a sense of it. You can use filter()s, group_by()s or any of your tidyverse functions to do this.
+
+The supplied code is what we used to make the histogram of blue car speeds in the slides. Modify this code to look at how many miles-per-hour red cars were going over the speed limit (speed_over). Give the plot a title while you're at it to let people know what they're looking at.
+
+```{r}
+# Print data to console
+print(md_speeding)
+
+# Change filter to red cars
+md_speeding %>% 
+	filter(vehicle_color == 'RED') %>% 
+	# switch x mapping to speed_over column
+	ggplot(aes(x = speed_over)) +
+	geom_histogram() +
+	# give plot a title
+	ggtitle("MPH over speed limit | Red cars")
+```
+
+## 3-3 Looking at all data
+
+Looking at the speed for a given car color is a little contrived so let's change the example we saw in the slides to include all of the data.
+
+Your job is to fill in the code to make a histogram of the speed_over column of the data.
+
+In addition, to allow the reader to more easily anchor themselves with respect to the axes, lower the alpha of the histogram to allow the grid lines to show through. Pair this with the addition of theme_minimal() to darken the grid lines and lighten the background to compensate for the lighter bars.
+
+```{r}
+ggplot(md_speeding) + 
+	# Add the histogram geometry 
+	geom_histogram(
+        # Map speed_over to x
+		aes(speed_over),
+		# Lower alpha to 0.7
+		alpha=0.7, bins = 30
+	) +
+	# Add minimal theme
+	theme_minimal()
+```
+
+## 3-4 Changing y-axis to density
+
+By default, you will notice that the y-axis is the 'count' of points that fell within a given bin. This is nice and interpretable, but what if we wanted to interpret the plot as a true density curve like it's trying to estimate? I.e. all the (bar widths) * (bar heights) sum to 1?
+
+To do this we simply add y = stat(density) to the aesthetic mappings, this will re-scale the y-axis from counts to an empirical probability estimate. Note this won't change the shape of the plot at all, but will simply give you a different interpretation of the y-axis.
+
+Let's try it out on the hour of the day that a speeder was pulled over (hour_of_day). In addition, lower the opacity of the bars a bit so the grid lines show through to allow easier comparisons.
+
+```{r}
+ggplot(md_speeding) +
+	geom_histogram(
+		# set x and y aesthetics to hour_of_day and stat(density) respectively.
+		aes(hour_of_day, y = stat(density)),
+		# make points see-through by setting alpha to 0.8
+		alpha = 0.8, bins = 30
+	)
+```
+
+## 3-6 
+
+```{r}
+
+```
+
+## 3-7 
+
+```{r}
+
+```
+
+## 3-8 
+
+```{r}
+
+```
+
+## 3-10 
+
+```{r}
+
+```
+
+## 3-11 
+
+```{r}
+
+```
+
+## 3-12 
+
+```{r}
+
+```
+
