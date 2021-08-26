@@ -469,4 +469,68 @@ ggplot(truck_speeding, aes(x = hour_of_day)) +
     )</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
 </div>
+<div id="a-simple-boxplot" class="section level2">
+<h2>4-2 A simple boxplot</h2>
+<p>Let’s get started by simply making a boxplot similar to the ones we made in the slides.</p>
+<p>Modify the filter() to look at ‘RED’ cars instead of blue and then map the x-axis to gender and the y-axis to driver speed. Add your boxplot geometry and give it a title.</p>
+<pre class="r"><code>md_speeding %&gt;% 
+    filter(vehicle_color == &#39;RED&#39;) %&gt;%
+    # Map x and y to gender and speed columns respectively
+    ggplot(aes(gender, speed)) + 
+    # add a boxplot geometry
+    geom_boxplot() +
+    # give plot supplied title
+    labs(title = &#39;Speed of red cars by gender of driver&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+</div>
+<div id="adding-some-jitter" class="section level2">
+<h2>4-3 Adding some jitter</h2>
+<p>We can improve the previous plot by adding jittered points behind the boxplot. Make the jittered points a nice ‘steelblue’ color and set their alpha to 0.3 in order to visualize any overlap that may happen by chance.</p>
+<p>You will also need to make the boxplot transparent in order to see the points that fall under the ‘box’ of the box plot.</p>
+<pre class="r"><code>md_speeding %&gt;% 
+    filter(vehicle_color == &#39;RED&#39;) %&gt;%
+    ggplot(aes(x = gender, y = speed)) + 
+    # add jittered points with alpha of 0.3 and color &#39;steelblue&#39;
+    geom_jitter(color=&quot;steelblue&quot;, alpha = 0.3) +
+    # make boxplot transparent with alpha = 0
+    geom_boxplot(alpha = 0) +
+    labs(title = &#39;Speed of red cars by gender of driver&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+</div>
+<div id="faceting-to-show-all-colors" class="section level2">
+<h2>4-4 Faceting to show all colors</h2>
+<p>As we may expect, there doesn’t appear to be too big of a difference in genders for red cars. What happens if we instead facet to look at this comparison across all the colors?</p>
+<p>It’s not uncommon when comparing distributions to want to look at a large number of conditions. When doing this faceting, we’re looking at all 10k points.</p>
+<pre class="r"><code># remove color filter
+md_speeding %&gt;% 
+    ggplot(aes(x = gender, y = speed)) + 
+    geom_jitter(alpha = 0.3, color = &#39;steelblue&#39;) +
+    geom_boxplot(alpha = 0) +
+    # add a facet_wrap by vehicle_color
+    facet_wrap(~vehicle_color) +
+    # change title to reflect new faceting
+    labs(title = &#39;Speed of different car colors, separated by gender of driver&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+</div>
+<div id="section" class="section level2">
+<h2>4-6</h2>
+</div>
+<div id="section-1" class="section level2">
+<h2>4-7</h2>
+</div>
+<div id="section-2" class="section level2">
+<h2>4-8</h2>
+</div>
+<div id="section-3" class="section level2">
+<h2>4-9</h2>
+</div>
+<div id="section-4" class="section level2">
+<h2>4-11</h2>
+</div>
+<div id="section-5" class="section level2">
+<h2>4-12</h2>
+</div>
+<div id="section-6" class="section level2">
+<h2>4-13</h2>
+</div>
 </div>

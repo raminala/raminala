@@ -555,3 +555,106 @@ ggplot(md_speeding, aes(x = percentage_over_limit)) +
     )
 ```
 
+## 4-2 A simple boxplot
+
+Let's get started by simply making a boxplot similar to the ones we made in the slides.
+
+Modify the filter() to look at 'RED' cars instead of blue and then map the x-axis to gender and the y-axis to driver speed. Add your boxplot geometry and give it a title.
+
+```{r}
+md_speeding %>% 
+    filter(vehicle_color == 'RED') %>%
+    # Map x and y to gender and speed columns respectively
+    ggplot(aes(gender, speed)) + 
+    # add a boxplot geometry
+    geom_boxplot() +
+    # give plot supplied title
+    labs(title = 'Speed of red cars by gender of driver')
+```
+
+
+## 4-3 Adding some jitter
+
+We can improve the previous plot by adding jittered points behind the boxplot. Make the jittered points a nice 'steelblue' color and set their alpha to 0.3 in order to visualize any overlap that may happen by chance.
+
+You will also need to make the boxplot transparent in order to see the points that fall under the 'box' of the box plot.
+
+```{r}
+md_speeding %>% 
+    filter(vehicle_color == 'RED') %>%
+    ggplot(aes(x = gender, y = speed)) + 
+    # add jittered points with alpha of 0.3 and color 'steelblue'
+    geom_jitter(color="steelblue", alpha = 0.3) +
+    # make boxplot transparent with alpha = 0
+    geom_boxplot(alpha = 0) +
+    labs(title = 'Speed of red cars by gender of driver')
+```
+
+
+## 4-4 Faceting to show all colors
+
+As we may expect, there doesn't appear to be too big of a difference in genders for red cars. What happens if we instead facet to look at this comparison across all the colors?
+
+It's not uncommon when comparing distributions to want to look at a large number of conditions. When doing this faceting, we're looking at all 10k points.
+
+```{r}
+# remove color filter
+md_speeding %>% 
+    ggplot(aes(x = gender, y = speed)) + 
+    geom_jitter(alpha = 0.3, color = 'steelblue') +
+    geom_boxplot(alpha = 0) +
+    # add a facet_wrap by vehicle_color
+    facet_wrap(~vehicle_color) +
+    # change title to reflect new faceting
+    labs(title = 'Speed of different car colors, separated by gender of driver')
+```
+
+
+## 4-6 
+
+```{r}
+
+```
+
+
+## 4-7 
+
+```{r}
+
+```
+
+
+## 4-8 
+
+```{r}
+
+```
+
+
+## 4-9 
+
+```{r}
+
+```
+
+
+## 4-11 
+
+```{r}
+
+```
+
+
+## 4-12 
+
+```{r}
+
+```
+
+
+## 4-13 
+
+```{r}
+
+```
+
