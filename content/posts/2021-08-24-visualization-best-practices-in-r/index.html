@@ -457,5 +457,16 @@ ggplot(truck_speeding, aes(x = hour_of_day)) +
 <p>The code supplied will make a basic KDE of the percentage_over_limit for all citations. At first glance, the settings makes sense. We have a lot of data so we set our bin width nice and narrow: just one percent. Also, the rug plot, which has been thoughtfully added, has a lowered alpha of 0.7.</p>
 <p>Running this code, you will immediately see it’s not a great plot. The density estimate looks like a porcupine and the rug plot is essentially a thick black bar due to massive overlap.</p>
 <p>Fix it by upping the bin width a bit to 2.5 and lowering the alpha of the rug plot to 0.05 to try and get some sense of the point overlap. Don’t forget to change the subtitle to reflect the change in the kernel width!</p>
+<pre class="r"><code>ggplot(md_speeding, aes(x = percentage_over_limit)) +
+    # Increase bin width to 2.5
+    geom_density(fill = &#39;steelblue&#39;, bw = 2.5,  alpha = 0.7) + 
+    # lower rugplot alpha to 0.05
+    geom_rug(alpha = 0.05) + 
+    labs(
+        title = &#39;Distribution of % over speed limit&#39;, 
+        # modify subtitle to reflect change in kernel width
+        subtitle = &quot;Gaussian kernel SD = 2.5&quot;
+    )</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
 </div>
 </div>
