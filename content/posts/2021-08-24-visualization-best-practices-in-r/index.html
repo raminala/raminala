@@ -319,4 +319,88 @@ ggplot(amr_pertussis, aes(x =reorder(country,cases) , y = cases)) +
     coord_flip()</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 </div>
+<div id="orienting-with-the-data" class="section level2">
+<h2>3-2 Orienting with the data</h2>
+<p>Let’s take our first look at the new speeding dataset.</p>
+<p>First, print the dataframe to your screen and try and get a sense of it. You can use filter()s, group_by()s or any of your tidyverse functions to do this.</p>
+<p>The supplied code is what we used to make the histogram of blue car speeds in the slides. Modify this code to look at how many miles-per-hour red cars were going over the speed limit (speed_over). Give the plot a title while you’re at it to let people know what they’re looking at.</p>
+<pre class="r"><code># Print data to console
+print(md_speeding)</code></pre>
+<pre><code>## # A tibble: 10,499 x 16
+##       X1 work_zone vehicle_type vehicle_year vehicle_color race     gender
+##    &lt;dbl&gt; &lt;lgl&gt;     &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt;    &lt;chr&gt; 
+##  1     1 FALSE     Automobile           2003 BLUE          HISPANIC F     
+##  2     2 FALSE     Automobile           2017 GREY          HISPANIC M     
+##  3     3 FALSE     Automobile           2016 WHITE         WHITE    M     
+##  4     4 FALSE     Automobile           2006 RED           HISPANIC M     
+##  5     5 FALSE     Automobile           2013 GREY          OTHER    F     
+##  6     6 FALSE     Automobile           2017 RED           WHITE    M     
+##  7     7 FALSE     Automobile           2003 GREY          BLACK    M     
+##  8     8 FALSE     Automobile           2004 GREY          OTHER    M     
+##  9     9 FALSE     Automobile           2000 WHITE         ASIAN    M     
+## 10    10 FALSE     Automobile           2007 BLACK         BLACK    F     
+## # ... with 10,489 more rows, and 9 more variables: driver_state &lt;chr&gt;,
+## #   speed_limit &lt;dbl&gt;, speed &lt;dbl&gt;, day_of_week &lt;chr&gt;, day_of_month &lt;dbl&gt;,
+## #   month &lt;chr&gt;, hour_of_day &lt;dbl&gt;, speed_over &lt;dbl&gt;,
+## #   percentage_over_limit &lt;dbl&gt;</code></pre>
+<pre class="r"><code># Change filter to red cars
+md_speeding %&gt;% 
+    filter(vehicle_color == &#39;RED&#39;) %&gt;% 
+    # switch x mapping to speed_over column
+    ggplot(aes(x = speed_over)) +
+    geom_histogram() +
+    # give plot a title
+    ggtitle(&quot;MPH over speed limit | Red cars&quot;)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+</div>
+<div id="looking-at-all-data" class="section level2">
+<h2>3-3 Looking at all data</h2>
+<p>Looking at the speed for a given car color is a little contrived so let’s change the example we saw in the slides to include all of the data.</p>
+<p>Your job is to fill in the code to make a histogram of the speed_over column of the data.</p>
+<p>In addition, to allow the reader to more easily anchor themselves with respect to the axes, lower the alpha of the histogram to allow the grid lines to show through. Pair this with the addition of theme_minimal() to darken the grid lines and lighten the background to compensate for the lighter bars.</p>
+<pre class="r"><code>ggplot(md_speeding) + 
+    # Add the histogram geometry 
+    geom_histogram(
+        # Map speed_over to x
+        aes(speed_over),
+        # Lower alpha to 0.7
+        alpha=0.7, bins = 30
+    ) +
+    # Add minimal theme
+    theme_minimal()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+</div>
+<div id="changing-y-axis-to-density" class="section level2">
+<h2>3-4 Changing y-axis to density</h2>
+<p>By default, you will notice that the y-axis is the ‘count’ of points that fell within a given bin. This is nice and interpretable, but what if we wanted to interpret the plot as a true density curve like it’s trying to estimate? I.e. all the (bar widths) * (bar heights) sum to 1?</p>
+<p>To do this we simply add y = stat(density) to the aesthetic mappings, this will re-scale the y-axis from counts to an empirical probability estimate. Note this won’t change the shape of the plot at all, but will simply give you a different interpretation of the y-axis.</p>
+<p>Let’s try it out on the hour of the day that a speeder was pulled over (hour_of_day). In addition, lower the opacity of the bars a bit so the grid lines show through to allow easier comparisons.</p>
+<pre class="r"><code>ggplot(md_speeding) +
+    geom_histogram(
+        # set x and y aesthetics to hour_of_day and stat(density) respectively.
+        aes(hour_of_day, y = stat(density)),
+        # make points see-through by setting alpha to 0.8
+        alpha = 0.8, bins = 30
+    )</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+</div>
+<div id="section" class="section level2">
+<h2>3-6</h2>
+</div>
+<div id="section-1" class="section level2">
+<h2>3-7</h2>
+</div>
+<div id="section-2" class="section level2">
+<h2>3-8</h2>
+</div>
+<div id="section-3" class="section level2">
+<h2>3-10</h2>
+</div>
+<div id="section-4" class="section level2">
+<h2>3-11</h2>
+</div>
+<div id="section-5" class="section level2">
+<h2>3-12</h2>
+</div>
 </div>
