@@ -543,6 +543,15 @@ Running this code, you will immediately see it's not a great plot. The density e
 Fix it by upping the bin width a bit to 2.5 and lowering the alpha of the rug plot to 0.05 to try and get some sense of the point overlap. Don't forget to change the subtitle to reflect the change in the kernel width!
 
 ```{r}
-
+ggplot(md_speeding, aes(x = percentage_over_limit)) +
+    # Increase bin width to 2.5
+    geom_density(fill = 'steelblue', bw = 2.5,  alpha = 0.7) + 
+    # lower rugplot alpha to 0.05
+    geom_rug(alpha = 0.05) + 
+    labs(
+        title = 'Distribution of % over speed limit', 
+        # modify subtitle to reflect change in kernel width
+        subtitle = "Gaussian kernel SD = 2.5"
+    )
 ```
 
