@@ -37,10 +37,19 @@ In this exercise, you will access the cluster component directly. This is useful
 k-means models also have a print method to give a human friendly output of basic modeling results. This is available by using print() or simply typing the name of the model.
 
 ```{r}
+# Print the cluster membership component of the model
+
+print(km.out$cluster)
+# Print the km.out object
+print(km.out)
 
 ```
 
-## 1-6 
+## 1-6 Visualizing and interpreting results of kmeans()
+
+One of the more intuitive ways to interpret the results of k-means models is by plotting the data as a scatter plot and using color to label the samples' cluster membership. In this exercise, you will use the standard plot() function to accomplish this.
+
+To create a scatter plot, you can pass data with two features (i.e. columns) to plot() with an extra argument col = km.out$cluster, which sets the color of each point in the scatter plot according to its cluster membership.
 
 ```{r}
 
