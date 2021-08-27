@@ -11,12 +11,12 @@ tags:
 ```{r}
 x <- read.csv("x.csv")
 library(tidyverse)
-x %>% ggplot(aes(V1,V2))+geom_point(alpha=0.9, shape="x")
+x %>% ggplot(aes(V1,V2))+geom_point(alpha=0.9, shape="x", size=2)
 ```
 
 ## 1-4 k-means clustering
 
-We have created some two-dimensional data and stored it in a variable called x in your workspace. The scatter plot on the right is a visual representation of the data.
+We have created some two-dimensional data and stored it in a variable called x in your workspace. Above scatter plot is a visual representation of the data.
 
 In this exercise, your task is to create a k-means model of the x data using 3 clusters, then to look at the structure of the resulting model using the summary() function.
 
