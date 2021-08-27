@@ -1,0 +1,54 @@
+---
+title: Unsupervised Learning in R
+author: ''
+date: '2021-08-26'
+slug: []
+categories: []
+tags:
+  - Unsupervised Learning
+---
+
+```{r}
+x <- read.csv("x.csv")
+```
+
+## 1-4 k-means clustering
+
+We have created some two-dimensional data and stored it in a variable called x in your workspace. The scatter plot on the right is a visual representation of the data.
+
+In this exercise, your task is to create a k-means model of the x data using 3 clusters, then to look at the structure of the resulting model using the summary() function.
+
+```{r}
+
+```
+
+## 1-5 
+
+```{r}
+
+```
+
+## 1-6 
+
+```{r}
+
+```
+
+## 1-8 
+
+```{r}
+
+```
+
+## 1-9 
+
+```{r}
+
+```
+
+## 1-11 
+
+```{r}
+
+```
+
