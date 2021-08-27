@@ -9,7 +9,9 @@ tags:
 ---
 
 ```{r}
-x <- read.csv("x.csv")
+x <- read.csv("x.csv") %>%select(c(V1,V2))
+pokemon<-read.csv("pokemon.csv")%>%select(-c(X))
+
 library(tidyverse)
 x %>% ggplot(aes(V1,V2))+geom_point(alpha=0.9, shape="x", size=2)
 ```
@@ -22,7 +24,7 @@ In this exercise, your task is to create a k-means model of the x data using 3 c
 
 ```{r}
 # Create the k-means model: km.out
-km.out <- kmeans(x, centers = 3, nstart = 20)
+km.out <- kmeans(x, centers = 3, nstart = 200)
 
 # Inspect the result
 summary(km.out)
@@ -82,6 +84,25 @@ for(i in 1:6) {
 }
 ```
 
+
+```{r}
+# Set up 2 x 3 plotting grid
+par(mfrow = c(2, 3))
+
+# Set seed
+set.seed(1)
+
+for(i in 1:6) {
+  # Run kmeans() on x with three clusters and one start
+  km.out <- kmeans(x, centers = 3, nstart = 1)
+  
+  # Plot clusters
+  plot(x, col = km.out$cluster, 
+       main = km.out$tot.withinss)
+}
+```
+
+
 ## 1-9 Selecting number of clusters
 
 The k-means algorithm assumes the number of clusters as part of the input. If you know the number of clusters in advance (e.g. due to certain business constraints) this makes setting the number of clusters easy. However, as you saw in the video, if you do not know the number of clusters and need to determine it, you will need to run the algorithm multiple times, each time with a different number of clusters. From this, you can observe how a measure of model quality changes with the number of clusters.
@@ -121,8 +142,7 @@ The second part of this exercise includes plotting the outcomes of the clusterin
 An additional note: this exercise utilizes the iter.max argument to kmeans(). As you've seen, kmeans() is an iterative algorithm, repeating over and over until some stopping criterion is reached. The default number of iterations for kmeans() is 10, which is not enough for the algorithm to converge and reach its stopping criterion, so we'll set the number of iterations to 50 to overcome this issue. To see what happens when kmeans() does not converge, try running the example with a lower number of iterations (e.g. 3). This is another example of what might happen when you encounter real data and use real cases.
 
 
----
-
+```{r}
 # Initialize total within sum of squares error: wss
 wss <- 0
 
@@ -153,8 +173,6 @@ plot(pokemon[, c("Defense", "Speed")],
      col = km.out$cluster,
      main = paste("k-means clustering of Pokemon with", k, "clusters"),
      xlab = "Defense", ylab = "Speed")
-     
----
-
+```
 
 
