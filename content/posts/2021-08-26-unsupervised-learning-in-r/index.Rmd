@@ -52,7 +52,9 @@ One of the more intuitive ways to interpret the results of k-means models is by 
 To create a scatter plot, you can pass data with two features (i.e. columns) to plot() with an extra argument col = km.out$cluster, which sets the color of each point in the scatter plot according to its cluster membership.
 
 ```{r}
-
+# Scatter plot of x
+x %>%
+  ggplot(aes(V1,V2))+geom_point(color=km.out$cluster)
 ```
 
 ## 1-8 
