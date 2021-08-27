@@ -10,6 +10,8 @@ tags:
 
 ```{r}
 x <- read.csv("x.csv")
+library(tidyverse)
+x %>% ggplot(aes(V1,V2))+geom_point(alpha=0.9, shape="x")
 ```
 
 ## 1-4 k-means clustering
@@ -19,10 +21,20 @@ We have created some two-dimensional data and stored it in a variable called x i
 In this exercise, your task is to create a k-means model of the x data using 3 clusters, then to look at the structure of the resulting model using the summary() function.
 
 ```{r}
+# Create the k-means model: km.out
+km.out <- kmeans(x, centers = 3, nstart = 20)
 
+# Inspect the result
+summary(km.out)
 ```
 
-## 1-5 
+## 1-5 Results of kmeans()
+
+The kmeans() function produces several outputs. In the video, we discussed one output of modeling, the cluster membership.
+
+In this exercise, you will access the cluster component directly. This is useful anytime you need the cluster membership for each observation of the data used to build the clustering model. A future exercise will show an example of how this cluster membership might be used to help communicate the results of k-means modeling.
+
+k-means models also have a print method to give a human friendly output of basic modeling results. This is available by using print() or simply typing the name of the model.
 
 ```{r}
 

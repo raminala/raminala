@@ -11,24 +11,53 @@ tags:
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
-<pre class="r"><code>x &lt;- read.csv(&quot;x.csv&quot;)</code></pre>
+<pre class="r"><code>x &lt;- read.csv(&quot;x.csv&quot;)
+library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
+## v tibble  3.1.2     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>x %&gt;% ggplot(aes(V1,V2))+geom_point(alpha=0.9, shape=&quot;x&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 <div id="k-means-clustering" class="section level2">
 <h2>1-4 k-means clustering</h2>
 <p>We have created some two-dimensional data and stored it in a variable called x in your workspace. The scatter plot on the right is a visual representation of the data.</p>
 <p>In this exercise, your task is to create a k-means model of the x data using 3 clusters, then to look at the structure of the resulting model using the summary() function.</p>
+<pre class="r"><code># Create the k-means model: km.out
+km.out &lt;- kmeans(x, centers = 3, nstart = 20)
+
+# Inspect the result
+summary(km.out)</code></pre>
+<pre><code>##              Length Class  Mode   
+## cluster      300    -none- numeric
+## centers        9    -none- numeric
+## totss          1    -none- numeric
+## withinss       3    -none- numeric
+## tot.withinss   1    -none- numeric
+## betweenss      1    -none- numeric
+## size           3    -none- numeric
+## iter           1    -none- numeric
+## ifault         1    -none- numeric</code></pre>
+</div>
+<div id="results-of-kmeans" class="section level2">
+<h2>1-5 Results of kmeans()</h2>
+<p>The kmeans() function produces several outputs. In the video, we discussed one output of modeling, the cluster membership.</p>
+<p>In this exercise, you will access the cluster component directly. This is useful anytime you need the cluster membership for each observation of the data used to build the clustering model. A future exercise will show an example of how this cluster membership might be used to help communicate the results of k-means modeling.</p>
+<p>k-means models also have a print method to give a human friendly output of basic modeling results. This is available by using print() or simply typing the name of the model.</p>
 </div>
 <div id="section" class="section level2">
-<h2>1-5</h2>
-</div>
-<div id="section-1" class="section level2">
 <h2>1-6</h2>
 </div>
-<div id="section-2" class="section level2">
+<div id="section-1" class="section level2">
 <h2>1-8</h2>
 </div>
-<div id="section-3" class="section level2">
+<div id="section-2" class="section level2">
 <h2>1-9</h2>
 </div>
-<div id="section-4" class="section level2">
+<div id="section-3" class="section level2">
 <h2>1-11</h2>
 </div>
