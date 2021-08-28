@@ -181,7 +181,7 @@ plot(pokemon[, c("Defense", "Speed")],
 
 In this exercise, you will create your first hierarchical clustering model using the hclust() function.
 
-We have created some data that has two dimensions and placed it in a variable called x. Your task is to create a hierarchical clustering model of x2. Remember from the video that the first step to hierarchical clustering is determining the similarity between observations, which you will do with the dist() function.
+We have created some data that has two dimensions and placed it in a variable called x2. Your task is to create a hierarchical clustering model of x2. Remember from the video that the first step to hierarchical clustering is determining the similarity between observations, which you will do with the dist() function.
 
 You will look at the structure of the resulting model using the summary() function.
 
