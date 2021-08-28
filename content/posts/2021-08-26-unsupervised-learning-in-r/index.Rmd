@@ -207,21 +207,63 @@ cutree(hclust.out, h = 7)
 cutree(hclust.out, k = 3)
 ```
 
-## 2-7 
+## 2-7 Linkage methods
+
+In this exercise, you will produce hierarchical clustering models using different linkages and plot the dendrogram for each, observing the overall structure of the trees.
+
+You'll be asked to interpret the results in the next exercise.
 
 ```{r}
+# Cluster using complete linkage: hclust.complete
+hclust.complete <- hclust(dist(x2), method = "complete")
 
+# Cluster using average linkage: hclust.average
+hclust.average <- hclust(dist(x2), method = "average")
+
+# Cluster using single linkage: hclust.single
+hclust.single <- hclust(dist(x2), method = "single")
+
+# Plot dendrogram of hclust.complete
+plot(hclust.complete, main = "Complete")
+
+# Plot dendrogram of hclust.average
+plot(hclust.average, main = "Average")
+
+# Plot dendrogram of hclust.single
+plot(hclust.single, main = "Single")
 ```
 
-## 2-9 
+## 2-9 Practical matters: scaling
+
+Recall from the video that clustering real data may require scaling the features if they have different distributions. So far in this chapter, you have been working with synthetic data that did not need scaling.
+
+In this exercise, you will go back to working with "real" data, the pokemon dataset introduced in the first chapter. You will observe the distribution (mean and standard deviation) of each feature, scale the data accordingly, then produce a hierarchical clustering model using the complete linkage method.
 
 ```{r}
+# View column means
+colMeans(pokemon)
 
+# View column standard deviations
+ apply(pokemon, 2, sd)
+
+# Scale the data
+pokemon.scaled <- scale(pokemon)
+
+# Create hierarchical clustering model: hclust.pokemon
+hclust.pokemon <- hclust(dist(pokemon.scaled), method = "complete")
 ```
 
-## 2-10 
+## 2-10 Comparing kmeans() and hclust()
+
+Comparing k-means and hierarchical clustering, you'll see the two methods produce different cluster memberships. This is because the two algorithms make different assumptions about how the data is generated. In a more advanced course, we could choose to use one model over another based on the quality of the models' assumptions, but for now, it's enough to observe that they are different.
+
+This exercise will have you compare results from the two models on the pokemon dataset to see how they differ.
 
 ```{r}
+# Apply cutree() to hclust.pokemon: cut.pokemon
+cut.pokemon <- cutree(hclust.pokemon, k = 3)
 
+# Compare methods
+table(km.out$cluster, cut.pokemon)
 ```
 

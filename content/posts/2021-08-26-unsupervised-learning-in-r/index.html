@@ -54,38 +54,38 @@ summary(km.out)</code></pre>
 <pre class="r"><code># Print the cluster membership component of the model
 
 print(km.out$cluster)</code></pre>
-<pre><code>##   [1] 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3
-##  [38] 3 3 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3
-##  [75] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2
-## [112] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-## [149] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-## [186] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-## [223] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 1 3 3 3 3
-## [260] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 1 3 3 1 3 3 3 3 3 3 1 3 3 3 3 3 3 1 3 3
-## [297] 3 1 3 3</code></pre>
+<pre><code>##   [1] 2 2 2 2 2 2 2 2 2 2 2 2 3 2 2 2 2 3 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3
+##  [38] 3 3 2 2 2 2 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3
+##  [75] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1
+## [112] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## [149] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## [186] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## [223] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 3 2 3 3 3 3
+## [260] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 3 3 2 3 3 3 3 3 3 2 3 3 3 3 3 3 2 3 3
+## [297] 3 2 3 3</code></pre>
 <pre class="r"><code># Print the km.out object
 print(km.out)</code></pre>
-<pre><code>## K-means clustering with 3 clusters of sizes 98, 150, 52
+<pre><code>## K-means clustering with 3 clusters of sizes 150, 98, 52
 ## 
 ## Cluster means:
 ##           V1          V2
-## 1  2.2171113  2.05110690
-## 2 -5.0556758  1.96991743
+## 1 -5.0556758  1.96991743
+## 2  2.2171113  2.05110690
 ## 3  0.6642455 -0.09132968
 ## 
 ## Clustering vector:
-##   [1] 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3
-##  [38] 3 3 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3
-##  [75] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2
-## [112] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-## [149] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-## [186] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-## [223] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 1 3 3 3 3
-## [260] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 1 3 3 1 3 3 3 3 3 3 1 3 3 3 3 3 3 1 3 3
-## [297] 3 1 3 3
+##   [1] 2 2 2 2 2 2 2 2 2 2 2 2 3 2 2 2 2 3 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3
+##  [38] 3 3 2 2 2 2 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3
+##  [75] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1
+## [112] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## [149] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## [186] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## [223] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 3 2 3 3 3 3
+## [260] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 3 3 2 3 3 3 3 3 3 2 3 3 3 3 3 3 2 3 3
+## [297] 3 2 3 3
 ## 
 ## Within cluster sum of squares by cluster:
-## [1] 148.64781 295.16925  95.50625
+## [1] 295.16925 148.64781  95.50625
 ##  (between_SS / total_SS =  87.2 %)
 ## 
 ## Available components:
@@ -270,12 +270,63 @@ cutree(hclust.out, k = 3)</code></pre>
 <pre><code>##  [1] 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 3 3 3 3 3 3 3 2 2 2
 ## [39] 2 2 2 2 2 2 2 2 2 2 2 2</code></pre>
 </div>
-<div id="section" class="section level2">
-<h2>2-7</h2>
+<div id="linkage-methods" class="section level2">
+<h2>2-7 Linkage methods</h2>
+<p>In this exercise, you will produce hierarchical clustering models using different linkages and plot the dendrogram for each, observing the overall structure of the trees.</p>
+<p>You’ll be asked to interpret the results in the next exercise.</p>
+<pre class="r"><code># Cluster using complete linkage: hclust.complete
+hclust.complete &lt;- hclust(dist(x2), method = &quot;complete&quot;)
+
+# Cluster using average linkage: hclust.average
+hclust.average &lt;- hclust(dist(x2), method = &quot;average&quot;)
+
+# Cluster using single linkage: hclust.single
+hclust.single &lt;- hclust(dist(x2), method = &quot;single&quot;)
+
+# Plot dendrogram of hclust.complete
+plot(hclust.complete, main = &quot;Complete&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code># Plot dendrogram of hclust.average
+plot(hclust.average, main = &quot;Average&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+<pre class="r"><code># Plot dendrogram of hclust.single
+plot(hclust.single, main = &quot;Single&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-3.png" width="672" /></p>
 </div>
-<div id="section-1" class="section level2">
-<h2>2-9</h2>
+<div id="practical-matters-scaling" class="section level2">
+<h2>2-9 Practical matters: scaling</h2>
+<p>Recall from the video that clustering real data may require scaling the features if they have different distributions. So far in this chapter, you have been working with synthetic data that did not need scaling.</p>
+<p>In this exercise, you will go back to working with “real” data, the pokemon dataset introduced in the first chapter. You will observe the distribution (mean and standard deviation) of each feature, scale the data accordingly, then produce a hierarchical clustering model using the complete linkage method.</p>
+<pre class="r"><code># View column means
+colMeans(pokemon)</code></pre>
+<pre><code>##      HitPoints         Attack        Defense  SpecialAttack SpecialDefense 
+##       69.25875       79.00125       73.84250       72.82000       71.90250 
+##          Speed 
+##       68.27750</code></pre>
+<pre class="r"><code># View column standard deviations
+ apply(pokemon, 2, sd)</code></pre>
+<pre><code>##      HitPoints         Attack        Defense  SpecialAttack SpecialDefense 
+##       25.53467       32.45737       31.18350       32.72229       27.82892 
+##          Speed 
+##       29.06047</code></pre>
+<pre class="r"><code># Scale the data
+pokemon.scaled &lt;- scale(pokemon)
+
+# Create hierarchical clustering model: hclust.pokemon
+hclust.pokemon &lt;- hclust(dist(pokemon.scaled), method = &quot;complete&quot;)</code></pre>
 </div>
-<div id="section-2" class="section level2">
-<h2>2-10</h2>
+<div id="comparing-kmeans-and-hclust" class="section level2">
+<h2>2-10 Comparing kmeans() and hclust()</h2>
+<p>Comparing k-means and hierarchical clustering, you’ll see the two methods produce different cluster memberships. This is because the two algorithms make different assumptions about how the data is generated. In a more advanced course, we could choose to use one model over another based on the quality of the models’ assumptions, but for now, it’s enough to observe that they are different.</p>
+<p>This exercise will have you compare results from the two models on the pokemon dataset to see how they differ.</p>
+<pre class="r"><code># Apply cutree() to hclust.pokemon: cut.pokemon
+cut.pokemon &lt;- cutree(hclust.pokemon, k = 3)
+
+# Compare methods
+table(km.out$cluster, cut.pokemon)</code></pre>
+<pre><code>##    cut.pokemon
+##       1   2   3
+##   1 267   3   0
+##   2 350   5   0
+##   3 171   3   1</code></pre>
 </div>
