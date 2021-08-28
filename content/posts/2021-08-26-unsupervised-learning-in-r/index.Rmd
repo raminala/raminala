@@ -193,10 +193,18 @@ hclust.out <- hclust(d=dist(x2) )
 summary(hclust.out)
 ```
 
-## 2-5 
+## 2-5 Cutting the tree
+
+Remember from the video that cutree() is the R function that cuts a hierarchical model. The h and k arguments to cutree() allow you to cut the tree based on a certain height h or a certain number of clusters k.
+
+In this exercise, you will use cutree() to cut the hierarchical model you created earlier based on each of these two criteria.
 
 ```{r}
+# Cut by height
+cutree(hclust.out, h = 7)
 
+# Cut by number of clusters
+cutree(hclust.out, k = 3)
 ```
 
 ## 2-7 
