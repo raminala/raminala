@@ -12,7 +12,7 @@ tags:
 library(tidyverse)
 x <- read.csv("x.csv") %>%select(c(V1,V2))
 pokemon<-read.csv("pokemon.csv")%>%select(-c(X))
-
+x2 <- read.csv("x2.csv")
 
 x %>% ggplot(aes(V1,V2))+geom_point(alpha=0.9, shape="x", size=2)
 ```
@@ -68,7 +68,7 @@ At the top of each plot, the measure of model quality—total within cluster sum
 
 Because kmeans() initializes observations to random clusters, it is important to set the random number generator seed for reproducibility.
 
-```{r}
+```{r warning=FALSE}
 # Set up 2 x 3 plotting grid
 par(mfrow = c(2, 3))
 
@@ -176,4 +176,44 @@ plot(pokemon[, c("Defense", "Speed")],
      xlab = "Defense", ylab = "Speed")
 ```
 
+
+## 2-2 Hierarchical clustering with results
+
+In this exercise, you will create your first hierarchical clustering model using the hclust() function.
+
+We have created some data that has two dimensions and placed it in a variable called x. Your task is to create a hierarchical clustering model of x2. Remember from the video that the first step to hierarchical clustering is determining the similarity between observations, which you will do with the dist() function.
+
+You will look at the structure of the resulting model using the summary() function.
+
+```{r}
+# Create hierarchical clustering model: hclust.out
+hclust.out <- hclust(d=dist(x2) )
+
+# Inspect the result
+summary(hclust.out)
+```
+
+## 2-5 
+
+```{r}
+
+```
+
+## 2-7 
+
+```{r}
+
+```
+
+## 2-9 
+
+```{r}
+
+```
+
+## 2-10 
+
+```{r}
+
+```
 
