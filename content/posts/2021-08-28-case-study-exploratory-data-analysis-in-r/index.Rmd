@@ -9,3 +9,9 @@ tags:
   - data_wrangling
 ---
 
+
+```{r}
+library(tidyverse)
+#vote <- read.csv("vote.csv") %>%select(c(V1,V2))
+
+```
