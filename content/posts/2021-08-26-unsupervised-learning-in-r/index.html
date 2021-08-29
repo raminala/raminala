@@ -407,4 +407,27 @@ plot(cumsum(pve), xlab = &quot;Principal Component&quot;,
 <h2>3-11 Practical issues: scaling</h2>
 <p>You saw in the video that scaling your data before doing PCA changes the results of the PCA modeling. Here, you will perform PCA with and without scaling, then visualize the results using biplots.</p>
 <p>Sometimes scaling is appropriate when the variances of the variables are substantially different. This is commonly the case when variables have different units of measurement, for example, degrees Fahrenheit (temperature) and miles (distance). Making the decision to use scaling is an important step in performing a principal component analysis.</p>
+<pre class="r"><code># Mean of each variable
+colMeans(pokemon)</code></pre>
+<pre><code>##      HitPoints         Attack        Defense  SpecialAttack SpecialDefense 
+##       69.25875       79.00125       73.84250       72.82000       71.90250 
+##          Speed 
+##       68.27750</code></pre>
+<pre class="r"><code># Standard deviation of each variable
+apply(pokemon, 2, sd)</code></pre>
+<pre><code>##      HitPoints         Attack        Defense  SpecialAttack SpecialDefense 
+##       25.53467       32.45737       31.18350       32.72229       27.82892 
+##          Speed 
+##       29.06047</code></pre>
+<pre class="r"><code># PCA model with scaling: pr.with.scaling
+pr.with.scaling &lt;- prcomp(pokemon, scale = TRUE)
+
+# PCA model without scaling: pr.without.scaling
+pr.without.scaling &lt;- prcomp(pokemon, scale = FALSE)
+
+# Create biplots of both for comparison
+biplot(pr.with.scaling)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<pre class="r"><code>biplot(pr.without.scaling)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-2.png" width="672" /></p>
 </div>

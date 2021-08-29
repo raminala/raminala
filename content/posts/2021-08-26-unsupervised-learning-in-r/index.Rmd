@@ -348,6 +348,20 @@ You saw in the video that scaling your data before doing PCA changes the results
 Sometimes scaling is appropriate when the variances of the variables are substantially different. This is commonly the case when variables have different units of measurement, for example, degrees Fahrenheit (temperature) and miles (distance). Making the decision to use scaling is an important step in performing a principal component analysis.
 
 ```{r}
+# Mean of each variable
+colMeans(pokemon)
 
+# Standard deviation of each variable
+apply(pokemon, 2, sd)
+
+# PCA model with scaling: pr.with.scaling
+pr.with.scaling <- prcomp(pokemon, scale = TRUE)
+
+# PCA model without scaling: pr.without.scaling
+pr.without.scaling <- prcomp(pokemon, scale = FALSE)
+
+# Create biplots of both for comparison
+biplot(pr.with.scaling)
+biplot(pr.without.scaling)
 ```
 
