@@ -334,6 +334,27 @@ table(km.out$cluster, cut.pokemon)</code></pre>
 <h2>3-2 PCA using prcomp()</h2>
 <p>In this exercise, you will create your first PCA model and observe the diagnostic results.</p>
 <p>We have loaded the Pokemon data from earlier, which has four dimensions, and placed it in a variable called pokemon. Your task is to create a PCA model of the data, then to inspect the resulting model using the summary() function.</p>
+<p>hint: (for unknown reason) do not consider SpecialAttack and SpecialDefence variables.</p>
+<pre class="r"><code># Perform scaled PCA: pr.out
+pr.out &lt;- prcomp(x = pokemon[-c(4,5)], scale = TRUE, center = TRUE) 
+
+pr.out</code></pre>
+<pre><code>## Standard deviations (1, .., p=4):
+## [1] 1.3721424 0.9932783 0.8526020 0.6353685
+## 
+## Rotation (n x k) = (4 x 4):
+##                 PC1         PC2        PC3        PC4
+## HitPoints 0.5009303 -0.06463396  0.8300858 -0.2363236
+## Attack    0.6301797  0.02703796 -0.1621455  0.7588487
+## Defense   0.4556878 -0.61865282 -0.4521283 -0.4529871
+## Speed     0.3798566  0.78253440 -0.2832778 -0.4038596</code></pre>
+<pre class="r"><code># Inspect model output
+summary(pr.out)</code></pre>
+<pre><code>## Importance of components:
+##                           PC1    PC2    PC3    PC4
+## Standard deviation     1.3721 0.9933 0.8526 0.6354
+## Proportion of Variance 0.4707 0.2467 0.1817 0.1009
+## Cumulative Proportion  0.4707 0.7173 0.8991 1.0000</code></pre>
 </div>
 <div id="variance-explained" class="section level2">
 <h2>3-8 Variance explained</h2>

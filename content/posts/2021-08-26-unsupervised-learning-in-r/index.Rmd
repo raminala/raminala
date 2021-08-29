@@ -273,8 +273,15 @@ In this exercise, you will create your first PCA model and observe the diagnosti
 
 We have loaded the Pokemon data from earlier, which has four dimensions, and placed it in a variable called pokemon. Your task is to create a PCA model of the data, then to inspect the resulting model using the summary() function.
 
-```{r}
+hint: (for unknown reason) do not consider SpecialAttack and SpecialDefence variables.
 
+```{r}
+# Perform scaled PCA: pr.out
+pr.out <- prcomp(x = pokemon[-c(4,5)], scale = TRUE, center = TRUE) 
+
+pr.out
+# Inspect model output
+summary(pr.out)
 ```
 
 ## 3-8 Variance explained
