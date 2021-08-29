@@ -54,38 +54,38 @@ summary(km.out)</code></pre>
 <pre class="r"><code># Print the cluster membership component of the model
 
 print(km.out$cluster)</code></pre>
-<pre><code>##   [1] 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3
-##  [38] 3 3 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3
-##  [75] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2
-## [112] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-## [149] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-## [186] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-## [223] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 1 3 3 3 3
-## [260] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 1 3 3 1 3 3 3 3 3 3 1 3 3 3 3 3 3 1 3 3
-## [297] 3 1 3 3</code></pre>
+<pre><code>##   [1] 3 3 3 3 3 3 3 3 3 3 3 3 2 3 3 3 3 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2
+##  [38] 2 2 3 3 3 3 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2
+##  [75] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 1 1 1 1 1 1 1 1 1 1
+## [112] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## [149] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## [186] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## [223] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 3 2 2 2 2
+## [260] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 2 2 3 2 2 2 2 2 2 3 2 2 2 2 2 2 3 2 2
+## [297] 2 3 2 2</code></pre>
 <pre class="r"><code># Print the km.out object
 print(km.out)</code></pre>
-<pre><code>## K-means clustering with 3 clusters of sizes 98, 150, 52
+<pre><code>## K-means clustering with 3 clusters of sizes 150, 52, 98
 ## 
 ## Cluster means:
 ##           V1          V2
-## 1  2.2171113  2.05110690
-## 2 -5.0556758  1.96991743
-## 3  0.6642455 -0.09132968
+## 1 -5.0556758  1.96991743
+## 2  0.6642455 -0.09132968
+## 3  2.2171113  2.05110690
 ## 
 ## Clustering vector:
-##   [1] 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3
-##  [38] 3 3 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3
-##  [75] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2
-## [112] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-## [149] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-## [186] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-## [223] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 1 3 3 3 3
-## [260] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 1 3 3 1 3 3 3 3 3 3 1 3 3 3 3 3 3 1 3 3
-## [297] 3 1 3 3
+##   [1] 3 3 3 3 3 3 3 3 3 3 3 3 2 3 3 3 3 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2
+##  [38] 2 2 3 3 3 3 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2
+##  [75] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 1 1 1 1 1 1 1 1 1 1
+## [112] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## [149] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## [186] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## [223] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 3 2 2 2 2
+## [260] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 2 2 3 2 2 2 2 2 2 3 2 2 2 2 2 2 3 2 2
+## [297] 2 3 2 2
 ## 
 ## Within cluster sum of squares by cluster:
-## [1] 148.64781 295.16925  95.50625
+## [1] 295.16925  95.50625 148.64781
 ##  (between_SS / total_SS =  87.2 %)
 ## 
 ## Available components:
@@ -368,15 +368,40 @@ summary(pr.out)</code></pre>
 ## Speed     0.3798566  0.78253440 -0.2832778 -0.4038596</code></pre>
 <p>A: 2</p>
 </div>
+<div id="interpreting-biplots-1" class="section level2">
+<h2>3-7 Interpreting biplots (1)</h2>
+<p>As stated in the video, the biplot() function plots both the principal components loadings and the mapping of the observations to their first two principal component values. The next couple of exercises will check your interpretation of the biplot() visualization.</p>
+<p>Using the biplot() of the pr.out model, which two original variables have approximately the same loadings in the first two principal components?</p>
+<pre class="r"><code>biplot(pr.out)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>A: Attack and HitPoints</p>
+<p>Q: which two Pokemon are the least similar in terms of the second principal component?</p>
+<p>A: Kadabra and Torkoal</p>
+</div>
 <div id="variance-explained" class="section level2">
 <h2>3-8 Variance explained</h2>
 <p>The second common plot type for understanding PCA models is a scree plot. A scree plot shows the variance explained as the number of principal components increases. Sometimes the cumulative variance explained is plotted as well.</p>
 <p>In this and the next exercise, you will prepare data from the pr.out model you created at the beginning of the chapter for use in a scree plot. Preparing the data for plotting is required because there is not a built-in function in R to create this type of plot.</p>
+<pre class="r"><code># Variability of each principal component: pr.var
+pr.var &lt;- pr.out$sdev^2
+
+# Variance explained by each principal component: pve
+pve &lt;-  pr.var / sum(pr.var)</code></pre>
 </div>
 <div id="visualize-variance-explained" class="section level2">
 <h2>3-9 Visualize variance explained</h2>
 <p>Now you will create a scree plot showing the proportion of variance explained by each principal component, as well as the cumulative proportion of variance explained.</p>
 <p>Recall from the video that these plots can help to determine the number of principal components to retain. One way to determine the number of principal components to retain is by looking for an elbow in the scree plot showing that as the number of principal components increases, the rate at which variance is explained decreases substantially. In the absence of a clear elbow, you can use the scree plot as a guide for setting a threshold.</p>
+<pre class="r"><code># Plot variance explained for each principal component
+plot(pve, xlab = &quot;Principal Component&quot;,
+     ylab = &quot;Proportion of Variance Explained&quot;,
+     ylim = c(0, 1), type = &quot;b&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<pre class="r"><code># Plot cumulative proportion of variance explained
+plot(cumsum(pve), xlab = &quot;Principal Component&quot;,
+     ylab = &quot;Cumulative Proportion of Variance Explained&quot;,
+     ylim = c(0, 1), type = &quot;b&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-2.png" width="672" /></p>
 </div>
 <div id="practical-issues-scaling" class="section level2">
 <h2>3-11 Practical issues: scaling</h2>
