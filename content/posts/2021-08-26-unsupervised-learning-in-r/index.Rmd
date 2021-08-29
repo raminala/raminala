@@ -267,3 +267,43 @@ cut.pokemon <- cutree(hclust.pokemon, k = 3)
 table(km.out$cluster, cut.pokemon)
 ```
 
+## 3-2 PCA using prcomp()
+
+In this exercise, you will create your first PCA model and observe the diagnostic results.
+
+We have loaded the Pokemon data from earlier, which has four dimensions, and placed it in a variable called pokemon. Your task is to create a PCA model of the data, then to inspect the resulting model using the summary() function.
+
+```{r}
+
+```
+
+## 3-8 Variance explained
+
+The second common plot type for understanding PCA models is a scree plot. A scree plot shows the variance explained as the number of principal components increases. Sometimes the cumulative variance explained is plotted as well.
+
+In this and the next exercise, you will prepare data from the pr.out model you created at the beginning of the chapter for use in a scree plot. Preparing the data for plotting is required because there is not a built-in function in R to create this type of plot.
+
+```{r}
+
+```
+
+## 3-9 Visualize variance explained
+
+Now you will create a scree plot showing the proportion of variance explained by each principal component, as well as the cumulative proportion of variance explained.
+
+Recall from the video that these plots can help to determine the number of principal components to retain. One way to determine the number of principal components to retain is by looking for an elbow in the scree plot showing that as the number of principal components increases, the rate at which variance is explained decreases substantially. In the absence of a clear elbow, you can use the scree plot as a guide for setting a threshold.
+
+```{r}
+
+```
+
+## 3-11 Practical issues: scaling
+
+You saw in the video that scaling your data before doing PCA changes the results of the PCA modeling. Here, you will perform PCA with and without scaling, then visualize the results using biplots.
+
+Sometimes scaling is appropriate when the variances of the variables are substantially different. This is commonly the case when variables have different units of measurement, for example, degrees Fahrenheit (temperature) and miles (distance). Making the decision to use scaling is an important step in performing a principal component analysis.
+
+```{r}
+
+```
+
