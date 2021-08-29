@@ -284,6 +284,14 @@ pr.out
 summary(pr.out)
 ```
 
+Q: What is the minimum number of principal components that are required to describe at least 75% of the cumulative variance in this dataset?
+
+```{r}
+pr.out
+```
+
+A: 2
+
 ## 3-8 Variance explained
 
 The second common plot type for understanding PCA models is a scree plot. A scree plot shows the variance explained as the number of principal components increases. Sometimes the cumulative variance explained is plotted as well.
