@@ -292,6 +292,23 @@ pr.out
 
 A: 2
 
+## 3-7 Interpreting biplots (1)
+
+As stated in the video, the biplot() function plots both the principal components loadings and the mapping of the observations to their first two principal component values. The next couple of exercises will check your interpretation of the biplot() visualization.
+
+Using the biplot() of the pr.out model, which two original variables have approximately the same loadings in the first two principal components?
+
+```{r}
+biplot(pr.out)
+```
+
+A: Attack and HitPoints
+
+Q: which two Pokemon are the least similar in terms of the second principal component?
+
+A: Kadabra and Torkoal
+
+
 ## 3-8 Variance explained
 
 The second common plot type for understanding PCA models is a scree plot. A scree plot shows the variance explained as the number of principal components increases. Sometimes the cumulative variance explained is plotted as well.
@@ -299,7 +316,11 @@ The second common plot type for understanding PCA models is a scree plot. A scre
 In this and the next exercise, you will prepare data from the pr.out model you created at the beginning of the chapter for use in a scree plot. Preparing the data for plotting is required because there is not a built-in function in R to create this type of plot.
 
 ```{r}
+# Variability of each principal component: pr.var
+pr.var <- pr.out$sdev^2
 
+# Variance explained by each principal component: pve
+pve <-  pr.var / sum(pr.var)
 ```
 
 ## 3-9 Visualize variance explained
@@ -309,7 +330,15 @@ Now you will create a scree plot showing the proportion of variance explained by
 Recall from the video that these plots can help to determine the number of principal components to retain. One way to determine the number of principal components to retain is by looking for an elbow in the scree plot showing that as the number of principal components increases, the rate at which variance is explained decreases substantially. In the absence of a clear elbow, you can use the scree plot as a guide for setting a threshold.
 
 ```{r}
+# Plot variance explained for each principal component
+plot(pve, xlab = "Principal Component",
+     ylab = "Proportion of Variance Explained",
+     ylim = c(0, 1), type = "b")
 
+# Plot cumulative proportion of variance explained
+plot(cumsum(pve), xlab = "Principal Component",
+     ylab = "Cumulative Proportion of Variance Explained",
+     ylim = c(0, 1), type = "b")
 ```
 
 ## 3-11 Practical issues: scaling
