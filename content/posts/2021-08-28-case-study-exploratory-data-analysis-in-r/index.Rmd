@@ -26,7 +26,7 @@ The vote column in the dataset has a number that represents that country's vote:
 9 = Not a member
 One step of data cleaning is removing observations (rows) that you're not interested in. In this case, you want to remove "Not present" and "Not a member".
 
-```{r}
+```{r echo=True, include=FALSE}
 # Filter for votes that are "yes", "abstain", or "no"
 votes %>% filter(vote<=3)
 ```
@@ -37,7 +37,7 @@ The next step of data cleaning is manipulating your variables (columns) to make 
 
 In this case, you have a session column that is hard to interpret intuitively. But since the UN started voting in 1946, and holds one session per year, you can get the year of a UN resolution by adding 1945 to the session number.
 
-```{r}
+```{r  echo=True, include=FALSE}
 # Add another %>% step to add a year column
 votes %>%
   filter(vote <= 3) %>%
