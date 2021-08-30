@@ -98,11 +98,92 @@ group_by(year) %&gt;%
 <div id="summarizing-by-country" class="section level2">
 <h2>1-8 Summarizing by country</h2>
 <p>In the last exercise, you performed a summary of the votes within each year. You could instead summarize() within each country, which would let you compare voting patterns between countries.</p>
+<pre class="r"><code># Summarize by country: by_country
+by_country &lt;- votes_processed %&gt;%
+  group_by(country) %&gt;%
+  summarize(total = n(),
+            percent_yes = mean(vote == 1))</code></pre>
 </div>
-<div id="section" class="section level2">
-<h2>1-10</h2>
+<div id="sorting-by-percentage-of-yes-votes" class="section level2">
+<h2>1-10 Sorting by percentage of “yes” votes</h2>
+<p>Now that you’ve summarized the dataset by country, you can start examining it and answering interesting questions.</p>
+<p>For example, you might be especially interested in the countries that voted “yes” least often, or the ones that voted “yes” most often.</p>
+<pre class="r"><code># You have the votes summarized by country
+by_country &lt;- votes_processed %&gt;%
+  group_by(country) %&gt;%
+  summarize(total = n(),
+            percent_yes = mean(vote == 1))
+
+# Print the by_country dataset
+print(by_country)</code></pre>
+<pre><code>## # A tibble: 200 x 3
+##    country           total percent_yes
+##    &lt;chr&gt;             &lt;int&gt;       &lt;dbl&gt;
+##  1 Afghanistan        2373       0.859
+##  2 Albania            1695       0.717
+##  3 Algeria            2213       0.899
+##  4 Andorra             719       0.638
+##  5 Angola             1431       0.924
+##  6 Antigua &amp; Barbuda  1302       0.912
+##  7 Argentina          2553       0.768
+##  8 Armenia             758       0.747
+##  9 Australia          2575       0.557
+## 10 Austria            2389       0.622
+## # ... with 190 more rows</code></pre>
+<pre class="r"><code># Sort in ascending order of percent_yes
+by_country %&gt;% arrange(percent_yes)</code></pre>
+<pre><code>## # A tibble: 200 x 3
+##    country                          total percent_yes
+##    &lt;chr&gt;                            &lt;int&gt;       &lt;dbl&gt;
+##  1 Zanzibar                             2       0    
+##  2 United States                     2568       0.269
+##  3 Palau                              369       0.339
+##  4 Israel                            2380       0.341
+##  5 &lt;NA&gt;                              1075       0.397
+##  6 United Kingdom                    2558       0.417
+##  7 France                            2527       0.427
+##  8 Micronesia (Federated States of)   724       0.442
+##  9 Marshall Islands                   757       0.491
+## 10 Belgium                           2568       0.492
+## # ... with 190 more rows</code></pre>
+<pre class="r"><code># Now sort in descending order
+by_country %&gt;% arrange(desc(percent_yes))</code></pre>
+<pre><code>## # A tibble: 200 x 3
+##    country              total percent_yes
+##    &lt;chr&gt;                &lt;int&gt;       &lt;dbl&gt;
+##  1 São Tomé &amp; Príncipe   1091       0.976
+##  2 Seychelles             881       0.975
+##  3 Djibouti              1598       0.961
+##  4 Guinea-Bissau         1538       0.960
+##  5 Timor-Leste            326       0.957
+##  6 Mauritius             1831       0.950
+##  7 Zimbabwe              1361       0.949
+##  8 Comoros               1133       0.947
+##  9 United Arab Emirates  1934       0.947
+## 10 Mozambique            1701       0.947
+## # ... with 190 more rows</code></pre>
 </div>
-<div id="section-1" class="section level2">
-<h2>1-11</h2>
+<div id="filtering-summarized-output" class="section level2">
+<h2>1-11 Filtering summarized output</h2>
+<p>In the last exercise, you may have noticed that the country that voted least frequently, Zanzibar, had only 2 votes in the entire dataset. You certainly can’t make any substantial conclusions based on that data!</p>
+<p>Typically in a progressive analysis, when you find that a few of your observations have very little data while others have plenty, you set some threshold to filter them out.</p>
+<pre class="r"><code># Filter out countries with fewer than 100 votes
+by_country %&gt;%
+  arrange(percent_yes) %&gt;%
+  filter(total&gt;100)</code></pre>
+<pre><code>## # A tibble: 197 x 3
+##    country                          total percent_yes
+##    &lt;chr&gt;                            &lt;int&gt;       &lt;dbl&gt;
+##  1 United States                     2568       0.269
+##  2 Palau                              369       0.339
+##  3 Israel                            2380       0.341
+##  4 &lt;NA&gt;                              1075       0.397
+##  5 United Kingdom                    2558       0.417
+##  6 France                            2527       0.427
+##  7 Micronesia (Federated States of)   724       0.442
+##  8 Marshall Islands                   757       0.491
+##  9 Belgium                           2568       0.492
+## 10 Canada                            2576       0.508
+## # ... with 187 more rows</code></pre>
 </div>
 </div>
