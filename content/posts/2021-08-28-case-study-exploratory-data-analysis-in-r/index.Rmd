@@ -12,6 +12,55 @@ tags:
 
 ```{r}
 library(tidyverse)
-#vote <- read.csv("vote.csv") %>%select(c(V1,V2))
+votes <- read.csv("votes.csv")
+```
+
+## 1-2 Filtering rows
+
+The vote column in the dataset has a number that represents that country's vote:
+
+1 = Yes
+2 = Abstain
+3 = No
+8 = Not present
+9 = Not a member
+One step of data cleaning is removing observations (rows) that you're not interested in. In this case, you want to remove "Not present" and "Not a member".
+
+```{r}
+# Filter for votes that are "yes", "abstain", or "no"
+votes %>% filter(vote<=3)
+```
+
+## 1-3 Adding a year column
+
+The next step of data cleaning is manipulating your variables (columns) to make them more informative.
+
+In this case, you have a session column that is hard to interpret intuitively. But since the UN started voting in 1946, and holds one session per year, you can get the year of a UN resolution by adding 1945 to the session number.
+
+```{r}
+# Add another %>% step to add a year column
+votes %>%
+  filter(vote <= 3) %>%
+mutate(year=session+1945)
+```
+
+## 1-4 Adding a country column
+
+The country codes in the ccode column are what's called Correlates of War codes. This isn't ideal for an analysis, since you'd like to work with recognizable country names.
+
+You can use the countrycode package to translate. For example:
+
+library(countrycode)
+
+# Translate the country code 2
+> countrycode(2, "cown", "country.name")
+[1] "United States"
+
+# Translate multiple country codes
+> countrycode(c(2, 20, 40), "cown", "country.name")
+[1] "United States" "Canada"        "Cuba"
+
+```{r}
 
 ```
+
