@@ -80,7 +80,7 @@ In this analysis, you're going to focus on "% of votes that are yes" as a metric
 
 You'll start by finding this summary for the entire dataset: the fraction of all votes in their history that were "yes". Note that within your call to summarize(), you can use n() to find the total number of votes and mean(vote == 1) to find the fraction of "yes" votes.
 
-```{r}
+```{r echo=T, results='hide'}
 # Print votes_processed
 print(votes_processed)
 
@@ -96,7 +96,7 @@ The summarize() function is especially useful because it can be used within grou
 
 For example, you might like to know how much the average "agreeableness" of countries changed from year to year. To examine this, you can use group_by() to perform your summary not for the entire dataset, but within each year.
 
-```{r}
+```{r echo=T, results='hide'}
 # Change this code to summarize by year
 votes_processed %>%
 group_by(year) %>%
