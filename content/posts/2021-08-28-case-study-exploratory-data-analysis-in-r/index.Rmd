@@ -510,15 +510,43 @@ votes_tidied <- votes_gathered %>%
                         ec = "Economic development"))
 ```
 
-## 4-9 
+## 4-9 Summarize by country, year, and topic
+
+In previous exercises, you summarized the votes dataset by country, by year, and by country-year combination.
+
+Now that you have topic as an additional variable, you can summarize the votes for each combination of country, year, and topic (e.g. for the United States in 2013 on the topic of nuclear weapons.)
 
 ```{r}
+# Print votes_tidied
+print (votes_tidied)
 
+# Summarize the percentage "yes" per country-year-topic
+by_country_year_topic <- votes_tidied %>%
+group_by(country, year, topic) %>%
+summarize(total= n(),
+percent_yes= mean(vote ==1)) %>%
+ungroup()
+# Print by_country_year_topic
+print(by_country_year_topic)
 ```
 
-## 4-10 
+## 4-10 Visualizing trends in topics for one country
+
+You can now visualize the trends in percentage "yes" over time for all six topics side-by-side. Here, you'll visualize them just for the United States.
 
 ```{r}
+# Load the ggplot2 package
+library(ggplot2)
+
+# Filter by_country_year_topic for just the US
+US_by_country_year_topic <- by_country_year_topic %>%
+filter(country=="United States")
+
+# Plot % yes over time for the US, faceting by topic
+US_by_country_year_topic %>% ggplot(aes(year, percent_yes))+
+geom_line()+
+facet_wrap(~topic)
+
 
 ```
 
