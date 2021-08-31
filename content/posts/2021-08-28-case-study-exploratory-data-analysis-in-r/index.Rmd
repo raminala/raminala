@@ -294,16 +294,29 @@ nested <- by_year_country %>%
 nested %>%
 unnest()
 ```
-## 3-13 Nesting a data frame
+## 3-13 Performing linear regression on each nested dataset
 
-Right now, the by_year_country data frame has one row per country-vote pair. So that you can model each country individually, you're going to "nest" all columns besides country, which will result in a data frame with one row per country. The data for each individual country will then be stored in a list column called data.
+Now that you've divided the data for each country into a separate dataset in the data column, you need to fit a linear model to each of these datasets.
+
+The map() function from purrr works by applying a formula to each item in a list, where . represents the individual item. For example, you could add one to each of a list of numbers:
+
+map(numbers, ~ 1 + .)
+This means that to fit a model to each dataset, you can do:
+
+map(data, ~ lm(percent_yes ~ year, data = .))
+where . represents each individual item from the data column in by_year_country. Recall that each item in the data column is a dataset that pertains to a specific country.
 
 ```{r}
-
+# Perform a linear regression on each item in the data column
+by_year_country %>%
+  nest(-country) %>%
+  mutate(model=map(data,~ lm(percent_yes ~ year,  .)))
 ```
-## 3-14 Nesting a data frame
+## 3-14 Tidy each linear regression model
 
-Right now, the by_year_country data frame has one row per country-vote pair. So that you can model each country individually, you're going to "nest" all columns besides country, which will result in a data frame with one row per country. The data for each individual country will then be stored in a list column called data.
+You've now performed a linear regression on each nested dataset and have a linear model stored in the list column model. But you can't recombine the models until you've tidied each into a table of coefficients. To do that, you'll need to use map() one more time and the tidy() function from the broom package.
+
+Recall that you can simply give a function to map() (e.g. map(models, tidy)) in order to apply that function to each item of a list.
 
 ```{r}
 
