@@ -15,7 +15,7 @@ tags:
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
 <pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
-## v tibble  3.1.2     v dplyr   1.0.6
+## v tibble  3.1.1     v dplyr   1.0.6
 ## v tidyr   1.1.3     v stringr 1.4.0
 ## v readr   1.4.0     v forcats 0.5.1</code></pre>
 <pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
@@ -567,5 +567,58 @@ summarize(percent_yes=mean(vote == 1))
 ggplot(US_co_by_year, aes(year, percent_yes)) +
   geom_line()</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+</div>
+<div id="using-gather-to-tidy-a-dataset" class="section level2">
+<h2>4-7 Using gather to tidy a dataset</h2>
+<p>In order to represent the joined vote-topic data in a tidy form so we can analyze and graph by topic, we need to transform the data so that each row has one combination of country-vote-topic. This will change the data from having six columns (me, nu, di, hr, co, ec) to having two columns (topic and has_topic).</p>
+<pre class="r"><code># Gather the six me/nu/di/hr/co/ec columns
+votes_joined %&gt;% gather(topic, has_topic, me:ec)
+
+
+# Perform gather again, then filter
+votes_gathered &lt;- votes_joined %&gt;% gather(topic, has_topic, me:ec) %&gt;%
+filter(has_topic ==1)</code></pre>
+<p>use pivot_longer</p>
+<pre class="r"><code># Gather the six me/nu/di/hr/co/ec columns
+votes_joined %&gt;% pivot_longer(cols=me:ec,
+                              names_to= &quot;topic&quot;,
+                              values_to=&quot;has_topic&quot;)
+
+
+# Perform gather again, then filter
+votes_joined %&gt;% pivot_longer(cols=me:ec,
+                              names_to= &quot;topic&quot;,
+                              values_to=&quot;has_topic&quot;) %&gt;%
+filter(has_topic ==1)</code></pre>
+</div>
+<div id="recoding-the-topics" class="section level2">
+<h2>4-8 Recoding the topics</h2>
+<p>There’s one more step of data cleaning to make this more interpretable. Right now, topics are represented by two-letter codes:</p>
+<p>me: Palestinian conflict
+nu: Nuclear weapons and nuclear material
+di: Arms control and disarmament
+hr: Human rights
+co: Colonialism
+ec: Economic development
+So that you can interpret the data more easily, recode the data to replace these codes with their full name. You can do that with dplyr’s recode() function, which replaces values with ones you specify:</p>
+<p>example &lt;- c(“apple”, “banana”, “apple”, “orange”)
+recode(example,
+apple = “plum”,
+banana = “grape”)</p>
+<pre class="r"><code># Replace the two-letter codes in topic: votes_tidied
+votes_tidied &lt;- votes_gathered %&gt;%
+  mutate(topic = recode(topic,
+                        me = &quot;Palestinian conflict&quot;,
+                        nu = &quot;Nuclear weapons and nuclear material&quot;,
+                        di = &quot;Arms control and disarmament&quot;,
+                        hr = &quot;Human rights&quot;,
+                        co = &quot;Colonialism&quot;,
+                        ec = &quot;Economic development&quot;))</code></pre>
+</div>
+<div id="section" class="section level2">
+<h2>4-9</h2>
+</div>
+<div id="section-1" class="section level2">
+<h2>4-10</h2>
 </div>
 </div>
