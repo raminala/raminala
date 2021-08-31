@@ -405,10 +405,10 @@ To do this, you'll make use of the inner_join() function from dplyr.
 
 ```{r}
 # Print the votes_processed dataset
-votes_processed
+head(votes_processed)
 
 # Print the descriptions dataset
-descriptions
+head(descriptions)
 
 # Join them together based on the "rcid" and "session" columns
 votes_joined <- votes_processed %>%
@@ -416,6 +416,7 @@ votes_joined <- votes_processed %>%
 ```
 
 ## 4-3 Filtering the joined dataset
+
 There are six columns in the descriptions dataset (and therefore in the new joined dataset) that describe the topic of a resolution:
 
 me: Palestinian conflict
@@ -425,6 +426,17 @@ hr: Human rights
 co: Colonialism
 ec: Economic development
 Each contains a 1 if the resolution is related to this topic and a 0 otherwise.
+
+```{r}
+# Filter for votes related to colonialism
+votes_joined %>%
+filter(co==1)
+
+```
+
+## 4-4 Visualizing colonialism votes
+
+In an earlier exercise, you graphed the percentage of votes each year where the US voted "yes". Now you'll create that same graph, but only for votes related to colonialism.
 
 ```{r}
 
