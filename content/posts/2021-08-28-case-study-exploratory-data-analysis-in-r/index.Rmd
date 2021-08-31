@@ -450,3 +450,67 @@ ggplot(US_co_by_year, aes(year, percent_yes)) +
   geom_line()
 ```
 
+## 4-7 Using gather to tidy a dataset
+
+In order to represent the joined vote-topic data in a tidy form so we can analyze and graph by topic, we need to transform the data so that each row has one combination of country-vote-topic. This will change the data from having six columns (me, nu, di, hr, co, ec) to having two columns (topic and has_topic).
+
+```{r}
+# Gather the six me/nu/di/hr/co/ec columns
+votes_joined %>% gather(topic, has_topic, me:ec)
+
+
+# Perform gather again, then filter
+votes_gathered <- votes_joined %>% gather(topic, has_topic, me:ec) %>%
+filter(has_topic ==1)
+```
+
+use pivot_longer
+
+```{r}
+# Gather the six me/nu/di/hr/co/ec columns
+votes_joined %>% pivot_longer(cols=me:ec,
+                              names_to= "topic",
+                              values_to="has_topic")
+
+
+# Perform gather again, then filter
+votes_joined %>% pivot_longer(cols=me:ec,
+                              names_to= "topic",
+                              values_to="has_topic") %>%
+filter(has_topic ==1)
+```
+
+
+## 4-8 Recoding the topics
+
+There's one more step of data cleaning to make this more interpretable. Right now, topics are represented by two-letter codes:
+
+me: Palestinian conflict
+nu: Nuclear weapons and nuclear material
+di: Arms control and disarmament
+hr: Human rights
+co: Colonialism
+ec: Economic development
+So that you can interpret the data more easily, recode the data to replace these codes with their full name. You can do that with dplyr's recode() function, which replaces values with ones you specify:
+
+example <- c("apple", "banana", "apple", "orange")
+recode(example,
+       apple = "plum",
+       banana = "grape")
+
+```{r}
+
+```
+
+## 4-9 
+
+```{r}
+
+```
+
+## 4-10 
+
+```{r}
+
+```
+
