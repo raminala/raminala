@@ -319,11 +319,18 @@ You've now performed a linear regression on each nested dataset and have a linea
 Recall that you can simply give a function to map() (e.g. map(models, tidy)) in order to apply that function to each item of a list.
 
 ```{r}
+# Load the broom package
+library(broom)
 
+# Add another mutate that applies tidy() to each model
+by_year_country %>%
+  nest(-country) %>%
+  mutate(model = map(data, ~ lm(percent_yes ~ year, data = .)),
+         tidied = map(model, tidy))
 ```
-## 3-15 Nesting a data frame
+## 3-15 Unnesting a data frame
 
-Right now, the by_year_country data frame has one row per country-vote pair. So that you can model each country individually, you're going to "nest" all columns besides country, which will result in a data frame with one row per country. The data for each individual country will then be stored in a list column called data.
+You now have a tidied version of each model stored in the tidied column. You want to combine all of those into a large data frame, similar to how you combined the US and UK tidied models earlier. Recall that the unnest() function from tidyr achieves this.
 
 ```{r}
 
