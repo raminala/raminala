@@ -516,7 +516,7 @@ In previous exercises, you summarized the votes dataset by country, by year, and
 
 Now that you have topic as an additional variable, you can summarize the votes for each combination of country, year, and topic (e.g. for the United States in 2013 on the topic of nuclear weapons.)
 
-```{r}
+```{r echo=T, results='hide'}
 # Print votes_tidied
 print (votes_tidied)
 
@@ -534,7 +534,7 @@ print(by_country_year_topic)
 
 You can now visualize the trends in percentage "yes" over time for all six topics side-by-side. Here, you'll visualize them just for the United States.
 
-```{r}
+```{r echo=T, results='hide'}
 # Load the ggplot2 package
 library(ggplot2)
 

@@ -615,10 +615,37 @@ votes_tidied &lt;- votes_gathered %&gt;%
                         co = &quot;Colonialism&quot;,
                         ec = &quot;Economic development&quot;))</code></pre>
 </div>
-<div id="section" class="section level2">
-<h2>4-9</h2>
+<div id="summarize-by-country-year-and-topic" class="section level2">
+<h2>4-9 Summarize by country, year, and topic</h2>
+<p>In previous exercises, you summarized the votes dataset by country, by year, and by country-year combination.</p>
+<p>Now that you have topic as an additional variable, you can summarize the votes for each combination of country, year, and topic (e.g. for the United States in 2013 on the topic of nuclear weapons.)</p>
+<pre class="r"><code># Print votes_tidied
+print (votes_tidied)
+
+# Summarize the percentage &quot;yes&quot; per country-year-topic
+by_country_year_topic &lt;- votes_tidied %&gt;%
+group_by(country, year, topic) %&gt;%
+summarize(total= n(),
+percent_yes= mean(vote ==1)) %&gt;%
+ungroup()</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;country&#39;, &#39;year&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code># Print by_country_year_topic
+print(by_country_year_topic)</code></pre>
 </div>
-<div id="section-1" class="section level2">
-<h2>4-10</h2>
+<div id="visualizing-trends-in-topics-for-one-country" class="section level2">
+<h2>4-10 Visualizing trends in topics for one country</h2>
+<p>You can now visualize the trends in percentage “yes” over time for all six topics side-by-side. Here, you’ll visualize them just for the United States.</p>
+<pre class="r"><code># Load the ggplot2 package
+library(ggplot2)
+
+# Filter by_country_year_topic for just the US
+US_by_country_year_topic &lt;- by_country_year_topic %&gt;%
+filter(country==&quot;United States&quot;)
+
+# Plot % yes over time for the US, faceting by topic
+US_by_country_year_topic %&gt;% ggplot(aes(year, percent_yes))+
+geom_line()+
+facet_wrap(~topic)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
 </div>
 </div>
