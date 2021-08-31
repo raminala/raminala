@@ -648,4 +648,24 @@ geom_line()+
 facet_wrap(~topic)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
 </div>
+<div id="nesting-by-topic-and-country" class="section level2">
+<h2>4-12 Nesting by topic and country</h2>
+<p>In the last chapter, you constructed a linear model for each country by nesting the data in each country, fitting a model to each dataset, then tidying each model with broom and unnesting the coefficients. The code looked something like this:</p>
+<p>country_coefficients &lt;- by_year_country %&gt;%
+nest(-country) %&gt;%
+mutate(model = map(data, ~ lm(percent_yes ~ year, data = .)),
+tidied = map(model, tidy)) %&gt;%
+unnest(tidied)
+Now, you’ll again be modeling change in “percentage” yes over time, but instead of fitting one model for each country, you’ll fit one for each combination of country and topic.</p>
+</div>
+<div id="interpreting-tidy-models" class="section level2">
+<h2>4-13 Interpreting tidy models</h2>
+<p>Now you have both the slope and intercept terms for each model. Just as you did in the last chapter with the tidied coefficients, you’ll need to filter for only the slope terms.</p>
+<p>You’ll also have to extract only cases that are statistically significant, which means adjusting the p-value for the number of models, and then filtering to include only significant changes.</p>
+</div>
+<div id="checking-models-visually" class="section level2">
+<h2>4-15 Checking models visually</h2>
+<p>In the last exercise, you found that over its history, Vanuatu (an island nation in the Pacific Ocean) sharply changed its pattern of voting on the topic of Palestinian conflict.</p>
+<p>Let’s examine this country’s voting patterns more closely. Recall that the by_country_year_topic dataset contained one row for each combination of country, year, and topic. You can use that to create a plot of Vanuatu’s voting, faceted by topic.</p>
+</div>
 </div>
