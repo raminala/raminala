@@ -443,13 +443,113 @@ country_coefficients</code></pre>
 ## 10 Belgium   &lt;grouped_df ~ &lt;lm&gt;   year     3.20e-3  0.000765      4.19   2.07e-4
 ## # ... with 390 more rows</code></pre>
 </div>
-<div id="section" class="section level2">
-<h2>3-17</h2>
+<div id="filtering-model-terms" class="section level2">
+<h2>3-17 Filtering model terms</h2>
+<p>You currently have both the intercept and slope terms for each by-country model. You’re probably more interested in how each is changing over time, so you want to focus on the slope terms.</p>
+<pre class="r"><code># Print the country_coefficients dataset
+print(country_coefficients)</code></pre>
+<pre><code>## # A tibble: 400 x 8
+##    country   data          model  term    estimate std.error statistic   p.value
+##    &lt;chr&gt;     &lt;list&gt;        &lt;list&gt; &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+##  1 Afghanis~ &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -1.11e+1  1.47         -7.52   1.44e-8
+##  2 Afghanis~ &lt;grouped_df ~ &lt;lm&gt;   year     6.01e-3  0.000743      8.09   3.06e-9
+##  3 Argentina &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -9.46e+0  2.10         -4.50   8.32e-5
+##  4 Argentina &lt;grouped_df ~ &lt;lm&gt;   year     5.15e-3  0.00106       4.85   3.05e-5
+##  5 Australia &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -4.55e+0  2.15         -2.12   4.22e-2
+##  6 Australia &lt;grouped_df ~ &lt;lm&gt;   year     2.57e-3  0.00108       2.37   2.42e-2
+##  7 Belarus   &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -7.00e+0  1.50         -4.66   5.33e-5
+##  8 Belarus   &lt;grouped_df ~ &lt;lm&gt;   year     3.91e-3  0.000759      5.15   1.28e-5
+##  9 Belgium   &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -5.85e+0  1.52         -3.86   5.22e-4
+## 10 Belgium   &lt;grouped_df ~ &lt;lm&gt;   year     3.20e-3  0.000765      4.19   2.07e-4
+## # ... with 390 more rows</code></pre>
+<pre class="r"><code># Filter for only the slope terms
+country_coefficients %&gt;%
+filter(term == &quot;year&quot;)</code></pre>
+<pre><code>## # A tibble: 200 x 8
+##    country    data           model term  estimate std.error statistic    p.value
+##    &lt;chr&gt;      &lt;list&gt;         &lt;lis&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+##  1 Afghanist~ &lt;grouped_df [~ &lt;lm&gt;  year   0.00601  0.000743      8.09    3.06e-9
+##  2 Argentina  &lt;grouped_df [~ &lt;lm&gt;  year   0.00515  0.00106       4.85    3.05e-5
+##  3 Australia  &lt;grouped_df [~ &lt;lm&gt;  year   0.00257  0.00108       2.37    2.42e-2
+##  4 Belarus    &lt;grouped_df [~ &lt;lm&gt;  year   0.00391  0.000759      5.15    1.28e-5
+##  5 Belgium    &lt;grouped_df [~ &lt;lm&gt;  year   0.00320  0.000765      4.19    2.07e-4
+##  6 Bolivia    &lt;grouped_df [~ &lt;lm&gt;  year   0.00580  0.000966      6.01    1.06e-6
+##  7 Brazil     &lt;grouped_df [~ &lt;lm&gt;  year   0.00611  0.000817      7.48    1.64e-8
+##  8 Canada     &lt;grouped_df [~ &lt;lm&gt;  year   0.00152  0.000955      1.59    1.22e-1
+##  9 Chile      &lt;grouped_df [~ &lt;lm&gt;  year   0.00678  0.000822      8.24    2.05e-9
+## 10 Colombia   &lt;grouped_df [~ &lt;lm&gt;  year   0.00616  0.000965      6.38    3.58e-7
+## # ... with 190 more rows</code></pre>
 </div>
-<div id="section-1" class="section level2">
-<h2>3-18</h2>
+<div id="filtering-for-significant-countries" class="section level2">
+<h2>3-18 Filtering for significant countries</h2>
+<p>Not all slopes are significant, and you can use the p-value to guess which are and which are not.</p>
+<p>However, when you have lots of p-values, like one for each country, you run into the problem of multiple hypothesis testing, where you have to set a stricter threshold. The p.adjust() function is a simple way to correct for this, where p.adjust(p.value) on a vector of p-values returns a set that you can trust.</p>
+<p>Here you’ll add two steps to process the slope_terms dataset: use a mutate to create the new, adjusted p-value column, and filter to filter for those below a .05 threshold.</p>
+<pre class="r"><code># Filter for only the slope terms
+slope_terms &lt;- country_coefficients %&gt;%
+  filter(term == &quot;year&quot;)
+
+# Add p.adjusted column, then filter
+slope_terms %&gt;%
+  mutate(p.adjusted = p.adjust(p.value)) %&gt;%
+  filter(p.adjusted &lt; .05)</code></pre>
+<pre><code>## # A tibble: 61 x 9
+##    country  data     model term  estimate std.error statistic p.value p.adjusted
+##    &lt;chr&gt;    &lt;list&gt;   &lt;lis&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;
+##  1 Afghani~ &lt;groupe~ &lt;lm&gt;  year   0.00601  0.000743      8.09 3.06e-9    5.95e-7
+##  2 Argenti~ &lt;groupe~ &lt;lm&gt;  year   0.00515  0.00106       4.85 3.05e-5    4.81e-3
+##  3 Belarus  &lt;groupe~ &lt;lm&gt;  year   0.00391  0.000759      5.15 1.28e-5    2.08e-3
+##  4 Belgium  &lt;groupe~ &lt;lm&gt;  year   0.00320  0.000765      4.19 2.07e-4    3.01e-2
+##  5 Bolivia  &lt;groupe~ &lt;lm&gt;  year   0.00580  0.000966      6.01 1.06e-6    1.88e-4
+##  6 Brazil   &lt;groupe~ &lt;lm&gt;  year   0.00611  0.000817      7.48 1.64e-8    3.12e-6
+##  7 Chile    &lt;groupe~ &lt;lm&gt;  year   0.00678  0.000822      8.24 2.05e-9    3.99e-7
+##  8 Colombia &lt;groupe~ &lt;lm&gt;  year   0.00616  0.000965      6.38 3.58e-7    6.56e-5
+##  9 Costa R~ &lt;groupe~ &lt;lm&gt;  year   0.00654  0.000812      8.05 3.39e-9    6.54e-7
+## 10 Cuba     &lt;groupe~ &lt;lm&gt;  year   0.00461  0.000721      6.40 3.43e-7    6.31e-5
+## # ... with 51 more rows</code></pre>
 </div>
-<div id="section-2" class="section level2">
-<h2>3-19</h2>
+<div id="sorting-by-slope" class="section level2">
+<h2>3-19 Sorting by slope</h2>
+<p>Now that you’ve filtered for countries where the trend is probably not due to chance, you may be interested in countries whose percentage of “yes” votes is changing most quickly over time. Thus, you want to find the countries with the highest and lowest slopes; that is, the estimate column.</p>
+<pre class="r"><code># Filter by adjusted p-values
+filtered_countries &lt;- country_coefficients %&gt;%
+  filter(term == &quot;year&quot;) %&gt;%
+  mutate(p.adjusted = p.adjust(p.value)) %&gt;%
+  filter(p.adjusted &lt; .05)
+
+# Sort for the countries increasing most quickly
+filtered_countries %&gt;%
+  arrange(desc(estimate))</code></pre>
+<pre><code>## # A tibble: 61 x 9
+##    country   data   model term  estimate std.error statistic  p.value p.adjusted
+##    &lt;chr&gt;     &lt;list&gt; &lt;lis&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;
+##  1 South Af~ &lt;grou~ &lt;lm&gt;  year   0.0119   0.00140       8.47 1.60e- 8    3.05e-6
+##  2 Kazakhst~ &lt;grou~ &lt;lm&gt;  year   0.0110   0.00195       5.62 3.24e- 4    4.51e-2
+##  3 Yemen Ar~ &lt;grou~ &lt;lm&gt;  year   0.0109   0.00159       6.84 1.20e- 6    2.11e-4
+##  4 Kyrgyzst~ &lt;grou~ &lt;lm&gt;  year   0.00973  0.000988      9.84 2.38e- 5    3.78e-3
+##  5 Malawi    &lt;grou~ &lt;lm&gt;  year   0.00908  0.00181       5.02 4.48e- 5    7.03e-3
+##  6 Dominica~ &lt;grou~ &lt;lm&gt;  year   0.00806  0.000914      8.81 5.96e-10    1.17e-7
+##  7 Portugal  &lt;grou~ &lt;lm&gt;  year   0.00802  0.00171       4.68 7.13e- 5    1.10e-2
+##  8 Honduras  &lt;grou~ &lt;lm&gt;  year   0.00772  0.000921      8.38 1.43e- 9    2.81e-7
+##  9 Peru      &lt;grou~ &lt;lm&gt;  year   0.00730  0.000976      7.48 1.65e- 8    3.12e-6
+## 10 Nicaragua &lt;grou~ &lt;lm&gt;  year   0.00708  0.00107       6.60 1.92e- 7    3.55e-5
+## # ... with 51 more rows</code></pre>
+<pre class="r"><code># Sort for the countries decreasing most quickly
+filtered_countries %&gt;%
+  arrange(estimate)</code></pre>
+<pre><code>## # A tibble: 61 x 9
+##    country   data    model term  estimate std.error statistic p.value p.adjusted
+##    &lt;chr&gt;     &lt;list&gt;  &lt;lis&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;
+##  1 South Ko~ &lt;group~ &lt;lm&gt;  year  -0.00921  0.00155      -5.96 1.39e-4  0.0209   
+##  2 Israel    &lt;group~ &lt;lm&gt;  year  -0.00685  0.00117      -5.85 1.89e-6  0.000331 
+##  3 United S~ &lt;group~ &lt;lm&gt;  year  -0.00624  0.000928     -6.72 1.37e-7  0.0000254
+##  4 Belgium   &lt;group~ &lt;lm&gt;  year   0.00320  0.000765      4.19 2.07e-4  0.0301   
+##  5 Guinea    &lt;group~ &lt;lm&gt;  year   0.00362  0.000833      4.35 1.87e-4  0.0275   
+##  6 Morocco   &lt;group~ &lt;lm&gt;  year   0.00380  0.000860      4.42 1.46e-4  0.0218   
+##  7 Belarus   &lt;group~ &lt;lm&gt;  year   0.00391  0.000759      5.15 1.28e-5  0.00208  
+##  8 Iran      &lt;group~ &lt;lm&gt;  year   0.00391  0.000856      4.57 6.91e-5  0.0107   
+##  9 Congo - ~ &lt;group~ &lt;lm&gt;  year   0.00397  0.000922      4.30 2.27e-4  0.0326   
+## 10 Sudan     &lt;group~ &lt;lm&gt;  year   0.00399  0.000961      4.15 2.98e-4  0.0420   
+## # ... with 51 more rows</code></pre>
 </div>
 </div>

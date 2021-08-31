@@ -344,21 +344,55 @@ country_coefficients <- by_year_country %>%
 country_coefficients
 ```
 
-## 3-17 
+## 3-17 Filtering model terms
+
+You currently have both the intercept and slope terms for each by-country model. You're probably more interested in how each is changing over time, so you want to focus on the slope terms.
 
 ```{r}
+# Print the country_coefficients dataset
+print(country_coefficients)
 
+# Filter for only the slope terms
+country_coefficients %>%
+filter(term == "year")
 ```
 
-## 3-18 
+## 3-18 Filtering for significant countries
+
+Not all slopes are significant, and you can use the p-value to guess which are and which are not.
+
+However, when you have lots of p-values, like one for each country, you run into the problem of multiple hypothesis testing, where you have to set a stricter threshold. The p.adjust() function is a simple way to correct for this, where p.adjust(p.value) on a vector of p-values returns a set that you can trust.
+
+Here you'll add two steps to process the slope_terms dataset: use a mutate to create the new, adjusted p-value column, and filter to filter for those below a .05 threshold.
 
 ```{r}
+# Filter for only the slope terms
+slope_terms <- country_coefficients %>%
+  filter(term == "year")
 
+# Add p.adjusted column, then filter
+slope_terms %>%
+  mutate(p.adjusted = p.adjust(p.value)) %>%
+  filter(p.adjusted < .05)
 ```
 
-## 3-19 
+## 3-19 Sorting by slope
+
+Now that you've filtered for countries where the trend is probably not due to chance, you may be interested in countries whose percentage of "yes" votes is changing most quickly over time. Thus, you want to find the countries with the highest and lowest slopes; that is, the estimate column.
 
 ```{r}
+# Filter by adjusted p-values
+filtered_countries <- country_coefficients %>%
+  filter(term == "year") %>%
+  mutate(p.adjusted = p.adjust(p.value)) %>%
+  filter(p.adjusted < .05)
 
+# Sort for the countries increasing most quickly
+filtered_countries %>%
+  arrange(desc(estimate))
+
+# Sort for the countries decreasing most quickly
+filtered_countries %>%
+  arrange(estimate)
 ```
 
