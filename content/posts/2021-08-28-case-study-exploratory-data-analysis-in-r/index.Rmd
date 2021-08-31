@@ -381,7 +381,7 @@ slope_terms %>%
 
 Now that you've filtered for countries where the trend is probably not due to chance, you may be interested in countries whose percentage of "yes" votes is changing most quickly over time. Thus, you want to find the countries with the highest and lowest slopes; that is, the estimate column.
 
-```{r}
+```{r echo=T, results='hide'}
 # Filter by adjusted p-values
 filtered_countries <- country_coefficients %>%
   filter(term == "year") %>%
@@ -403,7 +403,7 @@ In the first chapter, you created the votes_processed dataset, containing inform
 
 To do this, you'll make use of the inner_join() function from dplyr.
 
-```{r}
+```{r echo=T, results='hide'}
 # Print the votes_processed dataset
 head(votes_processed)
 
@@ -427,7 +427,7 @@ co: Colonialism
 ec: Economic development
 Each contains a 1 if the resolution is related to this topic and a 0 otherwise.
 
-```{r}
+```{r echo=T, results='hide'}
 # Filter for votes related to colonialism
 votes_joined %>%
 filter(co==1)
@@ -439,6 +439,14 @@ filter(co==1)
 In an earlier exercise, you graphed the percentage of votes each year where the US voted "yes". Now you'll create that same graph, but only for votes related to colonialism.
 
 ```{r}
+# Filter, then summarize by year: US_co_by_year
+US_co_by_year <- votes_joined %>%
+filter(country == 'United States', co==1) %>%
+group_by(year) %>%
+summarize(percent_yes=mean(vote == 1))
 
+# Graph the % of "yes" votes over time
+ggplot(US_co_by_year, aes(year, percent_yes)) +
+  geom_line()
 ```
 
