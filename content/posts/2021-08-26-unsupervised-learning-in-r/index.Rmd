@@ -393,7 +393,37 @@ diagnosis <- as.numeric(wisc.df$diagnosis == "M")
 
 
 
+## 4-4 Performing PCA
+
+The next step in your analysis is to perform PCA on wisc.data.
+
+You saw in the last chapter that it's important to check if the data need to be scaled before performing PCA. Recall two common reasons for scaling data:
+
+The input variables use different units of measurement.
+The input variables have significantly different variances.
 
 
+```{r}
 
+```
+
+## 4-5 Interpreting PCA results
+
+Now you'll use some visualizations to better understand your PCA model. You were introduced to one of these visualizations, the biplot, in an earlier chapter.
+
+You'll run into some common challenges with using biplots on real-world data containing a non-trivial number of observations and variables, then you'll look at some alternative visualizations. You are encouraged to experiment with additional visualizations before moving on to the next exercise.
+
+```{r}
+
+```
+
+## 4-6 Variance explained
+
+In this exercise, you will produce scree plots showing the proportion of variance explained as the number of principal components increases. The data from PCA must be prepared for these plots, as there is not a built-in function in R to create them directly from the PCA model.
+
+As you look at these plots, ask yourself if there's an elbow in the amount of variance explained that might lead you to pick a natural number of principal components. If an obvious elbow does not exist, as is typical in real-world datasets, consider how else you might determine the number of principal components to retain based on the scree plot.
+
+```{r}
+
+```
 
