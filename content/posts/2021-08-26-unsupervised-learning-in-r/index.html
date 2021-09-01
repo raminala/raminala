@@ -54,38 +54,38 @@ summary(km.out)</code></pre>
 <pre class="r"><code># Print the cluster membership component of the model
 
 print(km.out$cluster)</code></pre>
-<pre><code>##   [1] 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3
-##  [38] 3 3 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3
-##  [75] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2
+<pre><code>##   [1] 3 3 3 3 3 3 3 3 3 3 3 3 1 3 3 3 3 1 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1
+##  [38] 1 1 3 3 3 3 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1
+##  [75] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 2 2
 ## [112] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
 ## [149] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
 ## [186] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-## [223] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 1 3 3 3 3
-## [260] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 1 3 3 1 3 3 3 3 3 3 1 3 3 3 3 3 3 1 3 3
-## [297] 3 1 3 3</code></pre>
+## [223] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 3 1 1 1 1
+## [260] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 1 1 3 1 1 1 1 1 1 3 1 1 1 1 1 1 3 1 1
+## [297] 1 3 1 1</code></pre>
 <pre class="r"><code># Print the km.out object
 print(km.out)</code></pre>
-<pre><code>## K-means clustering with 3 clusters of sizes 98, 150, 52
+<pre><code>## K-means clustering with 3 clusters of sizes 52, 150, 98
 ## 
 ## Cluster means:
 ##           V1          V2
-## 1  2.2171113  2.05110690
+## 1  0.6642455 -0.09132968
 ## 2 -5.0556758  1.96991743
-## 3  0.6642455 -0.09132968
+## 3  2.2171113  2.05110690
 ## 
 ## Clustering vector:
-##   [1] 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3
-##  [38] 3 3 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3
-##  [75] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2
+##   [1] 3 3 3 3 3 3 3 3 3 3 3 3 1 3 3 3 3 1 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1
+##  [38] 1 1 3 3 3 3 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1
+##  [75] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 2 2
 ## [112] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
 ## [149] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
 ## [186] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-## [223] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 1 3 3 3 3
-## [260] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 1 3 3 1 3 3 3 3 3 3 1 3 3 3 3 3 3 1 3 3
-## [297] 3 1 3 3
+## [223] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 3 1 1 1 1
+## [260] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 1 1 3 1 1 1 1 1 1 3 1 1 1 1 1 1 3 1 1
+## [297] 1 3 1 1
 ## 
 ## Within cluster sum of squares by cluster:
-## [1] 148.64781 295.16925  95.50625
+## [1]  95.50625 295.16925 148.64781
 ##  (between_SS / total_SS =  87.2 %)
 ## 
 ## Available components:
@@ -355,17 +355,29 @@ summary(pr.out)</code></pre>
 ## Standard deviation     1.3721 0.9933 0.8526 0.6354
 ## Proportion of Variance 0.4707 0.2467 0.1817 0.1009
 ## Cumulative Proportion  0.4707 0.7173 0.8991 1.0000</code></pre>
+<pre class="r"><code>apply(pokemon[-c(4,5)],2,sd)</code></pre>
+<pre><code>## HitPoints    Attack   Defense     Speed 
+##  25.53467  32.45737  31.18350  29.06047</code></pre>
+<pre class="r"><code>print(&quot;----------------------------------&quot;)</code></pre>
+<pre><code>## [1] &quot;----------------------------------&quot;</code></pre>
+<pre class="r"><code>apply(pokemon[-c(4,5)],2,mean)</code></pre>
+<pre><code>## HitPoints    Attack   Defense     Speed 
+##  69.25875  79.00125  73.84250  68.27750</code></pre>
+<pre class="r"><code>print(&quot;----------------------------------&quot;)</code></pre>
+<pre><code>## [1] &quot;----------------------------------&quot;</code></pre>
+<pre class="r"><code>apply(scale(pokemon[-c(4,5)]),2,sd)</code></pre>
+<pre><code>## HitPoints    Attack   Defense     Speed 
+##         1         1         1         1</code></pre>
+<pre class="r"><code>apply(scale(pokemon[-c(4,5)]),2,mean)</code></pre>
+<pre><code>##     HitPoints        Attack       Defense         Speed 
+## -2.514484e-16  3.427136e-17 -3.949261e-17 -1.101395e-16</code></pre>
 <p>Q: What is the minimum number of principal components that are required to describe at least 75% of the cumulative variance in this dataset?</p>
-<pre class="r"><code>pr.out</code></pre>
-<pre><code>## Standard deviations (1, .., p=4):
-## [1] 1.3721424 0.9932783 0.8526020 0.6353685
-## 
-## Rotation (n x k) = (4 x 4):
-##                 PC1         PC2        PC3        PC4
-## HitPoints 0.5009303 -0.06463396  0.8300858 -0.2363236
-## Attack    0.6301797  0.02703796 -0.1621455  0.7588487
-## Defense   0.4556878 -0.61865282 -0.4521283 -0.4529871
-## Speed     0.3798566  0.78253440 -0.2832778 -0.4038596</code></pre>
+<pre class="r"><code>summary(pr.out)</code></pre>
+<pre><code>## Importance of components:
+##                           PC1    PC2    PC3    PC4
+## Standard deviation     1.3721 0.9933 0.8526 0.6354
+## Proportion of Variance 0.4707 0.2467 0.1817 0.1009
+## Cumulative Proportion  0.4707 0.7173 0.8991 1.0000</code></pre>
 <p>A: 2</p>
 </div>
 <div id="interpreting-biplots-1" class="section level2">
@@ -373,7 +385,7 @@ summary(pr.out)</code></pre>
 <p>As stated in the video, the biplot() function plots both the principal components loadings and the mapping of the observations to their first two principal component values. The next couple of exercises will check your interpretation of the biplot() visualization.</p>
 <p>Using the biplot() of the pr.out model, which two original variables have approximately the same loadings in the first two principal components?</p>
 <pre class="r"><code>biplot(pr.out)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <p>A: Attack and HitPoints</p>
 <p>Q: which two Pokemon are the least similar in terms of the second principal component?</p>
 <p>A: Kadabra and Torkoal</p>
@@ -396,12 +408,12 @@ pve &lt;-  pr.var / sum(pr.var)</code></pre>
 plot(pve, xlab = &quot;Principal Component&quot;,
      ylab = &quot;Proportion of Variance Explained&quot;,
      ylim = c(0, 1), type = &quot;b&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <pre class="r"><code># Plot cumulative proportion of variance explained
 plot(cumsum(pve), xlab = &quot;Principal Component&quot;,
      ylab = &quot;Cumulative Proportion of Variance Explained&quot;,
      ylim = c(0, 1), type = &quot;b&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-2.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-2.png" width="672" /></p>
 </div>
 <div id="practical-issues-scaling" class="section level2">
 <h2>3-11 Practical issues: scaling</h2>
@@ -427,9 +439,9 @@ pr.without.scaling &lt;- prcomp(pokemon, scale = FALSE)
 
 # Create biplots of both for comparison
 biplot(pr.with.scaling)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <pre class="r"><code>biplot(pr.without.scaling)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-2.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-2.png" width="672" /></p>
 </div>
 <div id="preparing-the-data" class="section level2">
 <h2>4-2 Preparing the data</h2>
@@ -533,15 +545,15 @@ summary(wisc.pr)</code></pre>
 <p>You’ll run into some common challenges with using biplots on real-world data containing a non-trivial number of observations and variables, then you’ll look at some alternative visualizations. You are encouraged to experiment with additional visualizations before moving on to the next exercise.</p>
 <pre class="r"><code># Create a biplot of wisc.pr
 biplot(wisc.pr)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 <pre class="r"><code># Scatter plot observations by components 1 and 2
 plot(wisc.pr$x[, c(1, 2)], col = (diagnosis + 1), 
      xlab = &quot;PC1&quot;, ylab = &quot;PC2&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-22-2.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-2.png" width="672" /></p>
 <pre class="r"><code># Repeat for components 1 and 3
 plot(wisc.pr$x[, c(1, 3)], col = (diagnosis + 1), 
      xlab = &quot;PC1&quot;, ylab = &quot;PC3&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-22-3.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-3.png" width="672" /></p>
 <pre class="r"><code># Do additional data exploration of your choosing below (optional)</code></pre>
 </div>
 <div id="variance-explained-1" class="section level2">
@@ -566,26 +578,91 @@ plot(pve, xlab = &quot;Principal Component&quot;,
 plot(cumsum(pve), xlab = &quot;Principal Component&quot;, 
      ylab = &quot;Cumulative Proportion of Variance Explained&quot;, 
      ylim = c(0, 1), type = &quot;b&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 </div>
 <div id="hierarchical-clustering-of-case-data" class="section level2">
 <h2>4-9 Hierarchical clustering of case data</h2>
 <p>The goal of this exercise is to do hierarchical clustering of the observations. Recall from Chapter 2 that this type of clustering does not assume in advance the number of natural groups that exist in the data.</p>
 <p>As part of the preparation for hierarchical clustering, distance between all pairs of observations are computed. Furthermore, there are different ways to link clusters together, with single, complete, and average being the most common linkage methods.</p>
+<pre class="r"><code># Scale the wisc.data data: data.scaled
+data.scaled &lt;- scale(wisc.data)
+
+# Calculate the (Euclidean) distances: data.dist
+data.dist &lt;- dist(data.scaled)
+
+# Create a hierarchical clustering model: wisc.hclust
+wisc.hclust &lt;- hclust(data.dist, method = &quot;complete&quot;)</code></pre>
+</div>
+<div id="results-of-hierarchical-clustering" class="section level2">
+<h2>4-10 Results of hierarchical clustering</h2>
+<p>Let’s use the hierarchical clustering model you just created to determine a height (or distance between clusters) where a certain number of clusters exists. The variables you created before—wisc.data, diagnosis, wisc.pr, pve, and wisc.hclust—are all available in your workspace.</p>
+<p>Using the plot() function, what is the height at which the clustering model has 4 clusters?</p>
+<pre class="r"><code>plot(wisc.hclust)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-26-1.png" width="672" />
+A: 20</p>
 </div>
 <div id="selecting-number-of-clusters-1" class="section level2">
 <h2>4-11 Selecting number of clusters</h2>
 <p>In this exercise, you will compare the outputs from your hierarchical clustering model to the actual diagnoses. Normally when performing unsupervised learning like this, a target variable isn’t available. We do have it with this dataset, however, so it can be used to check the performance of the clustering model.</p>
 <p>When performing supervised learning—that is, when you’re trying to predict some target variable of interest and that target variable is available in the original data—using clustering to create new features may or may not improve the performance of the final model. This exercise will help you determine if, in this case, hierarchical clustering provides a promising new feature.</p>
+<pre class="r"><code># Cut tree so that it has 4 clusters: wisc.hclust.clusters
+wisc.hclust.clusters &lt;- cutree(wisc.hclust, k = 4)
+
+# Compare cluster membership to actual diagnoses
+table(wisc.hclust.clusters, diagnosis)</code></pre>
+<pre><code>##                     diagnosis
+## wisc.hclust.clusters   0   1
+##                    1  12 165
+##                    2   2   5
+##                    3 343  40
+##                    4   0   2</code></pre>
 </div>
 <div id="k-means-clustering-and-comparing-results" class="section level2">
 <h2>4-12 k-means clustering and comparing results</h2>
 <p>As you now know, there are two main types of clustering: hierarchical and k-means.</p>
 <p>In this exercise, you will create a k-means clustering model on the Wisconsin breast cancer data and compare the results to the actual diagnoses and the results of your hierarchical clustering model. Take some time to see how each clustering model performs in terms of separating the two diagnoses and how the clustering models compare to each other.</p>
+<pre class="r"><code># Create a k-means model on wisc.data: wisc.km
+wisc.km &lt;- kmeans(scale(wisc.data), centers = 2, nstart = 20)
+
+# Compare k-means to actual diagnoses
+table(wisc.km$cluster , diagnosis)</code></pre>
+<pre><code>##    diagnosis
+##       0   1
+##   1 343  37
+##   2  14 175</code></pre>
+<pre class="r"><code># Compare k-means to hierarchical clustering
+table(wisc.km$cluster, wisc.hclust.clusters)</code></pre>
+<pre><code>##    wisc.hclust.clusters
+##       1   2   3   4
+##   1  17   0 363   0
+##   2 160   7  20   2</code></pre>
 </div>
 <div id="clustering-on-pca-results" class="section level2">
 <h2>4-13 Clustering on PCA results</h2>
 <p>In this final exercise, you will put together several steps you used earlier and, in doing so, you will experience some of the creativity that is typical in unsupervised learning.</p>
 <p>Recall from earlier exercises that the PCA model required significantly fewer features to describe 80% and 95% of the variability of the data. In addition to normalizing data and potentially avoiding overfitting, PCA also uncorrelates the variables, sometimes improving the performance of other modeling techniques.</p>
 <p>Let’s see if PCA improves or degrades the performance of hierarchical clustering.</p>
+<pre class="r"><code># Create a hierarchical clustering model: wisc.pr.hclust
+wisc.pr.hclust &lt;- hclust(dist(wisc.pr$x[, 1:7]), method = &quot;complete&quot;)
+
+# Cut model into 4 clusters: wisc.pr.hclust.clusters
+wisc.pr.hclust.clusters &lt;- cutree(wisc.pr.hclust, k = 4)
+
+# Compare to actual diagnoses
+table(diagnosis, wisc.pr.hclust.clusters)</code></pre>
+<pre><code>##          wisc.pr.hclust.clusters
+## diagnosis   1   2   3   4
+##         0   5 350   2   0
+##         1 113  97   0   2</code></pre>
+<pre class="r"><code># Compare to k-means and hierarchical
+table(diagnosis, wisc.hclust.clusters)</code></pre>
+<pre><code>##          wisc.hclust.clusters
+## diagnosis   1   2   3   4
+##         0  12   2 343   0
+##         1 165   5  40   2</code></pre>
+<pre class="r"><code>table(diagnosis, wisc.km$cluster)</code></pre>
+<pre><code>##          
+## diagnosis   1   2
+##         0 343  14
+##         1  37 175</code></pre>
 </div>
