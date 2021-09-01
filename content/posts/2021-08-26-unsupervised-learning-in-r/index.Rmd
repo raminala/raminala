@@ -283,11 +283,20 @@ pr.out
 # Inspect model output
 summary(pr.out)
 ```
+```{r}
+apply(pokemon[-c(4,5)],2,sd)
+print("----------------------------------")
+apply(pokemon[-c(4,5)],2,mean)
+print("----------------------------------")
+apply(scale(pokemon[-c(4,5)]),2,sd)
+apply(scale(pokemon[-c(4,5)]),2,mean)
+```
+
 
 Q: What is the minimum number of principal components that are required to describe at least 75% of the cumulative variance in this dataset?
 
 ```{r}
-pr.out
+summary(pr.out)
 ```
 
 A: 2
@@ -472,8 +481,25 @@ As part of the preparation for hierarchical clustering, distance between all pai
 
 
 ```{r}
+# Scale the wisc.data data: data.scaled
+data.scaled <- scale(wisc.data)
 
+# Calculate the (Euclidean) distances: data.dist
+data.dist <- dist(data.scaled)
+
+# Create a hierarchical clustering model: wisc.hclust
+wisc.hclust <- hclust(data.dist, method = "complete")
 ```
+
+## 4-10 Results of hierarchical clustering
+Let's use the hierarchical clustering model you just created to determine a height (or distance between clusters) where a certain number of clusters exists. The variables you created before—wisc.data, diagnosis, wisc.pr, pve, and wisc.hclust—are all available in your workspace.
+
+Using the plot() function, what is the height at which the clustering model has 4 clusters?
+
+```{r}
+plot(wisc.hclust)
+```
+A: 20
 
 ## 4-11 Selecting number of clusters
 
@@ -483,7 +509,11 @@ When performing supervised learning—that is, when you're trying to predict som
 
 
 ```{r}
+# Cut tree so that it has 4 clusters: wisc.hclust.clusters
+wisc.hclust.clusters <- cutree(wisc.hclust, k = 4)
 
+# Compare cluster membership to actual diagnoses
+table(wisc.hclust.clusters, diagnosis)
 ```
 
 ## 4-12 k-means clustering and comparing results
@@ -495,7 +525,14 @@ In this exercise, you will create a k-means clustering model on the Wisconsin br
 
 
 ```{r}
+# Create a k-means model on wisc.data: wisc.km
+wisc.km <- kmeans(scale(wisc.data), centers = 2, nstart = 20)
 
+# Compare k-means to actual diagnoses
+table(wisc.km$cluster , diagnosis)
+
+# Compare k-means to hierarchical clustering
+table(wisc.km$cluster, wisc.hclust.clusters)
 ```
 
 ## 4-13 Clustering on PCA results
@@ -508,6 +545,17 @@ Let's see if PCA improves or degrades the performance of hierarchical clustering
 
 
 ```{r}
+# Create a hierarchical clustering model: wisc.pr.hclust
+wisc.pr.hclust <- hclust(dist(wisc.pr$x[, 1:7]), method = "complete")
 
+# Cut model into 4 clusters: wisc.pr.hclust.clusters
+wisc.pr.hclust.clusters <- cutree(wisc.pr.hclust, k = 4)
+
+# Compare to actual diagnoses
+table(diagnosis, wisc.pr.hclust.clusters)
+
+# Compare to k-means and hierarchical
+table(diagnosis, wisc.hclust.clusters)
+table(diagnosis, wisc.km$cluster)
 ```
 
