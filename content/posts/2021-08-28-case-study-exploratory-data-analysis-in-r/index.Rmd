@@ -561,8 +561,24 @@ country_coefficients <- by_year_country %>%
   unnest(tidied)
 Now, you'll again be modeling change in "percentage" yes over time, but instead of fitting one model for each country, you'll fit one for each combination of country and topic.
 
-```{r}
+```{r echo=T, results='hide'}
+# Load purrr, tidyr, and broom
+library(purrr)
+library(tidyr)
+library(broom)
 
+# Print by_country_year_topic
+by_country_year_topic
+
+# Fit model on the by_country_year_topic dataset
+country_topic_coefficients <- by_country_year_topic %>%
+  nest(-country, -topic) %>%
+  mutate(model = map(data, ~ lm(percent_yes ~ year, data = .)),
+         tidied = map(model, tidy)) %>%
+  unnest(tidied)
+
+# Print country_topic_coefficients
+country_topic_coefficients
 ```
 
 
@@ -573,7 +589,11 @@ Now you have both the slope and intercept terms for each model. Just as you did 
 You'll also have to extract only cases that are statistically significant, which means adjusting the p-value for the number of models, and then filtering to include only significant changes.
 
 ```{r}
-
+# Create country_topic_filtered
+country_topic_filtered <- country_topic_coefficients %>%
+  filter(term == "year") %>%
+  mutate(p.adjusted = p.adjust(p.value)) %>%
+  filter(p.adjusted < .05)
 ```
 
 
@@ -585,6 +605,13 @@ Let's examine this country's voting patterns more closely. Recall that the by_co
 
 
 ```{r}
+# Create vanuatu_by_country_year_topic
+vanuatu_by_country_year_topic <- by_country_year_topic %>%
+  filter(country == "Vanuatu")
 
+# Plot of percentage "yes" over time, faceted by topic
+ggplot(vanuatu_by_country_year_topic, aes(year, percent_yes)) +
+  geom_line() +
+  facet_wrap(~ topic)
 ```
 
