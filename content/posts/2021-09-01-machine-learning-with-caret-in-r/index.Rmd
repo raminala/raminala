@@ -260,3 +260,127 @@ predict(my_model, new_data)
 predict(model, Boston)
 ```
 
+## 2-3 Try a 60/40 split
+
+As you saw in the video, you'll be working with the Sonar dataset in this chapter, using a 60% training set and a 40% test set. We'll practice making a train/test split one more time, just to be sure you have the hang of it. Recall that you can use the sample() function to get a random permutation of the row indices in a dataset, to use when making train/test splits, e.g.:
+
+n_obs <- nrow(my_data)
+permuted_rows <- sample(n_obs)
+And then use those row indices to randomly reorder the dataset, e.g.:
+
+my_data <- my_data[permuted_rows, ]
+Once your dataset is randomly ordered, you can split off the first 60% as a training set and the last 40% as a test set.
+
+
+```{r}
+
+```
+
+## 2-4 Fit a logistic regression model
+
+Once you have your random training and test sets you can fit a logistic regression model to your training set using the glm() function. glm() is a more advanced version of lm() that allows for more varied types of regression models, aside from plain vanilla ordinary least squares regression.
+
+Be sure to pass the argument family = "binomial" to glm() to specify that you want to do logistic (rather than linear) regression. For example:
+
+glm(Target ~ ., family = "binomial", dataset)
+
+Don't worry about warnings like
+
+glm.fit: algorithm did not converge or glm.fit: fitted probabilities numerically 0 or 1 occurred.
+
+These are common on smaller datasets and usually don't cause any issues. They typically mean your dataset is perfectly separable, which can cause problems for the math behind the model, but R's glm() function is almost always robust enough to handle this case with no problems.
+
+Once you have a glm() model fit to your dataset, you can predict the outcome (e.g. rock or mine) on the test set using the predict() function with the argument type = "response":
+
+predict(my_model, test, type = "response")
+
+
+```{r}
+
+```
+
+## 2-7 Calculate a confusion matrix
+
+As you saw in the video, a confusion matrix is a very useful tool for calibrating the output of a model and examining all possible outcomes of your predictions (true positive, true negative, false positive, false negative).
+
+Before you make your confusion matrix, you need to "cut" your predicted probabilities at a given threshold to turn probabilities into a factor of class predictions. Combine ifelse() with factor() as follows:
+
+pos_or_neg <- ifelse(probability_prediction > threshold, positive_class, negative_class)
+p_class <- factor(pos_or_neg, levels = levels(test_values))
+
+confusionMatrix() in caret improves on table() from base R by adding lots of useful ancillary statistics in addition to the base rates in the table. You can calculate the confusion matrix (and the associated statistics) using the predicted outcomes as well as the actual outcomes, e.g.:
+
+confusionMatrix(p_class, test_values)
+
+
+```{r}
+
+```
+
+## 2-13 Try another threshold
+
+In the previous exercises, you used a threshold of 0.50 to cut your predicted probabilities to make class predictions (rock vs mine). However, this classification threshold does not always align with the goals for a given modeling problem.
+
+For example, pretend you want to identify the objects you are really certain are mines. In this case, you might want to use a probability threshold of 0.90 to get fewer predicted mines, but with greater confidence in each prediction.
+
+The code pattern for cutting probabilities into predicted classes, then calculating a confusion matrix, was shown in Exercise 7 of this chapter.
+
+
+```{r}
+
+```
+
+## 2-14 From probabilites to confusion matrix
+
+Conversely, say you want to be really certain that your model correctly identifies all the mines as mines. In this case, you might use a prediction threshold of 0.10, instead of 0.90.
+
+The code pattern for cutting probabilities into predicted classes, then calculating a confusion matrix, was shown in Exercise 7 of this chapter.
+
+
+```{r}
+
+```
+
+## 2-17 Plot an ROC curve
+
+As you saw in the video, an ROC curve is a really useful shortcut for summarizing the performance of a classifier over all possible thresholds. This saves you a lot of tedious work computing class predictions for many different thresholds and examining the confusion matrix for each.
+
+My favorite package for computing ROC curves is caTools, which contains a function called colAUC(). This function is very user-friendly and can actually calculate ROC curves for multiple predictors at once. In this case, you only need to calculate the ROC curve for one predictor, e.g.:
+
+colAUC(predicted_probabilities, actual, plotROC = TRUE)
+
+The function will return a score called AUC (more on that later) and the plotROC = TRUE argument will return the plot of the ROC curve for visual inspection.
+
+
+```{r}
+
+```
+
+## 2-20 Customizing trainControl
+
+As you saw in the video, area under the ROC curve is a very useful, single-number summary of a model's ability to discriminate the positive from the negative class (e.g. mines from rocks). An AUC of 0.5 is no better than random guessing, an AUC of 1.0 is a perfectly predictive model, and an AUC of 0.0 is perfectly anti-predictive (which rarely happens).
+
+This is often a much more useful metric than simply ranking models by their accuracy at a set threshold, as different models might require different calibration steps (looking at a confusion matrix at each step) to find the optimal classification threshold for that model.
+
+You can use the trainControl() function in caret to use AUC (instead of acccuracy), to tune the parameters of your models. The twoClassSummary() convenience function allows you to do this easily.
+
+When using twoClassSummary(), be sure to always include the argument classProbs = TRUE or your model will throw an error! (You cannot calculate AUC with just class predictions. You need to have class probabilities as well.)
+
+
+```{r}
+
+```
+
+## 2-21 Using custom trainControl
+
+Now that you have a custom trainControl object, it's easy to fit caret models that use AUC rather than accuracy to tune and evaluate the model. You can just pass your custom trainControl object to the train() function via the trControl argument, e.g.:
+
+train(<standard arguments here>, trControl = myControl)
+
+This syntax gives you a convenient way to store a lot of custom modeling parameters and then use them across multiple different calls to train(). You will make extensive use of this trick in Chapter 5.
+
+
+```{r}
+
+```
+
