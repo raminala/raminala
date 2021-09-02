@@ -1,0 +1,99 @@
+---
+title: Machine Learning with caret in R
+author: ''
+date: '2021-09-01'
+slug: []
+categories: []
+tags:
+  - Machine Learning
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+## 1-3 In-sample RMSE for linear regression on diamonds
+
+As you saw in the video, included in the course is the diamonds dataset, which is a classic dataset from the ggplot2 package. The dataset contains physical attributes of diamonds as well as the price they sold for. One interesting modeling challenge is predicting diamond price based on their attributes using something like a linear regression.
+
+Recall that to fit a linear regression, you use the lm() function in the following format:
+
+mod <- lm(y ~ x, my_data)
+To make predictions using mod on the original data, you call the predict() function:
+
+pred <- predict(mod, my_data)
+
+
+```{r}
+# Fit lm model: model
+model <- lm(price~., diamonds)
+
+# Predict on full data: p
+p <- predict(model, diamonds)
+
+# Compute errors: error
+error <- p-diamonds$price
+
+# Calculate RMSE
+sqrt(mean(error ^ 2))
+
+rmse(model,diamonds)
+```
+
+## 1-6 
+
+
+```{r}
+
+```
+
+## 1-7 
+
+
+```{r}
+
+```
+
+## 1-8 
+
+
+```{r}
+
+```
+
+## 1-9 
+
+
+```{r}
+
+```
+
+## 1-13 
+
+
+```{r}
+
+```
+
+## 1-14 
+
+
+```{r}
+
+```
+
+## 1-15 
+
+
+```{r}
+
+```
+
+## 1-16 
+
+
+```{r}
+
+```
+
