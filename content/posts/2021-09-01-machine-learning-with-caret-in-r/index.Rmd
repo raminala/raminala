@@ -130,11 +130,43 @@ error <- p-test$price
 sqrt(mean(error^2))
 ```
 
-## 1-13 
+## 1-13 10-fold cross-validation
+
+As you saw in the video, a better approach to validating models is to use multiple systematic test sets, rather than a single random train/test split. Fortunately, the caret package makes this very easy to do:
+
+model <- train(y ~ ., my_data)
+
+caret supports many types of cross-validation, and you can specify which type of cross-validation and the number of cross-validation folds with the trainControl() function, which you pass to the trControl argument in train():
+
+model <- train(
+  y ~ ., 
+  my_data,
+  method = "lm",
+  trControl = trainControl(
+    method = "cv", 
+    number = 10,
+    verboseIter = TRUE
+  )
+)
+
+It's important to note that you pass the method for modeling to the main train() function and the method for cross-validation to the trainControl() function.
 
 
 ```{r}
+# Fit lm model using 10-fold CV: model
+model <- train(
+  price~., 
+  diamonds,
+  method = "lm",
+  trControl = trainControl(
+    method = "cv", 
+    number = 10,
+    verboseIter = TRUE
+  )
+)
 
+# Print model to console
+model
 ```
 
 ## 1-14 

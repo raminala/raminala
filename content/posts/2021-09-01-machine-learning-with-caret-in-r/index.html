@@ -92,15 +92,29 @@ error &lt;- p-test$price
 sqrt(mean(error^2))</code></pre>
 <pre><code>## [1] 1137.466</code></pre>
 </div>
-<div id="section" class="section level2">
-<h2>1-13</h2>
+<div id="fold-cross-validation" class="section level2">
+<h2>1-13 10-fold cross-validation</h2>
+<p>As you saw in the video, a better approach to validating models is to use multiple systematic test sets, rather than a single random train/test split. Fortunately, the caret package makes this very easy to do:</p>
+<p>model &lt;- train(y ~ ., my_data)
+caret supports many types of cross-validation, and you can specify which type of cross-validation and the number of cross-validation folds with the trainControl() function, which you pass to the trControl argument in train():</p>
+<p>model &lt;- train(
+y ~ .,
+my_data,
+method = “lm”,
+trControl = trainControl(
+method = “cv”,
+number = 10,
+verboseIter = TRUE
+)
+)
+It’s important to note that you pass the method for modeling to the main train() function and the method for cross-validation to the trainControl() function.</p>
 </div>
-<div id="section-1" class="section level2">
+<div id="section" class="section level2">
 <h2>1-14</h2>
 </div>
-<div id="section-2" class="section level2">
+<div id="section-1" class="section level2">
 <h2>1-15</h2>
 </div>
-<div id="section-3" class="section level2">
+<div id="section-2" class="section level2">
 <h2>1-16</h2>
 </div>
