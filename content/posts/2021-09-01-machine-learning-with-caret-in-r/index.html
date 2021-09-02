@@ -1,0 +1,106 @@
+---
+title: Machine Learning with caret in R
+author: ''
+date: '2021-09-01'
+slug: []
+categories: []
+tags:
+  - Machine Learning
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(tidyverse)</code></pre>
+<div id="in-sample-rmse-for-linear-regression-on-diamonds" class="section level2">
+<h2>1-3 In-sample RMSE for linear regression on diamonds</h2>
+<p>As you saw in the video, included in the course is the diamonds dataset, which is a classic dataset from the ggplot2 package. The dataset contains physical attributes of diamonds as well as the price they sold for. One interesting modeling challenge is predicting diamond price based on their attributes using something like a linear regression.</p>
+<p>Recall that to fit a linear regression, you use the lm() function in the following format:</p>
+<p>mod &lt;- lm(y ~ x, my_data)
+To make predictions using mod on the original data, you call the predict() function:</p>
+<p>pred &lt;- predict(mod, my_data)</p>
+<pre class="r"><code># Fit lm model: model
+model &lt;- lm(price~., diamonds)
+
+# Predict on full data: p
+p &lt;- predict(model, diamonds)
+
+# Compute errors: error
+error &lt;- p-diamonds$price
+
+# Calculate RMSE
+sqrt(mean(error ^ 2))</code></pre>
+<pre><code>## [1] 1129.843</code></pre>
+<pre class="r"><code>#rmse(model,diamonds)</code></pre>
+</div>
+<div id="randomly-order-the-data-frame" class="section level2">
+<h2>1-6 Randomly order the data frame</h2>
+<p>One way you can take a train/test split of a dataset is to order the dataset randomly, then divide it into the two sets. This ensures that the training set and test set are both random samples and that any biases in the ordering of the dataset (e.g. if it had originally been ordered by price or size) are not retained in the samples we take for training and testing your models. You can think of this like shuffling a brand new deck of playing cards before dealing hands.</p>
+<p>First, you set a random seed so that your work is reproducible and you get the same random split each time you run your script:</p>
+<p>set.seed(42)</p>
+<p>Next, you use the sample() function to shuffle the row indices of the diamonds dataset. You can later use these indices to reorder the dataset.</p>
+<p>rows &lt;- sample(nrow(diamonds))</p>
+<p>Finally, you can use this random vector to reorder the diamonds dataset:</p>
+<p>diamonds &lt;- diamonds[rows, ]</p>
+<pre class="r"><code># Set seed
+set.seed(42)
+
+# Shuffle row indices: rows
+rows &lt;- sample(nrow(diamonds))
+
+# Randomly order data
+shuffled_diamonds &lt;- diamonds &lt;- diamonds[rows, ]</code></pre>
+</div>
+<div id="try-an-8020-split" class="section level2">
+<h2>1-7 Try an 80/20 split</h2>
+<p>Now that your dataset is randomly ordered, you can split the first 80% of it into a training set, and the last 20% into a test set. You can do this by choosing a split point approximately 80% of the way through your data:</p>
+<p>split &lt;- round(nrow(mydata) * 0.80)</p>
+<p>You can then use this point to break off the first 80% of the dataset as a training set:</p>
+<p>mydata[1:split, ]</p>
+<p>And then you can use that same point to determine the test set:</p>
+<p>mydata[(split + 1):nrow(mydata), ]</p>
+<pre class="r"><code># Determine row to split on: split
+split &lt;- round(nrow(diamonds) * 0.80)
+
+# Create train
+train &lt;- diamonds[1:split, ]
+
+# Create test
+test &lt;- diamonds[(split + 1):nrow(diamonds), ]</code></pre>
+</div>
+<div id="predict-on-test-set" class="section level2">
+<h2>1-8 Predict on test set</h2>
+<p>Now that you have a randomly split training set and test set, you can use the lm() function as you did in the first exercise to fit a model to your training set, rather than the entire dataset. Recall that you can use the formula interface to the linear regression function to fit a model with a specified target variable using all other variables in the dataset as predictors:</p>
+<p>mod &lt;- lm(y ~ ., training_data)
+You can use the predict() function to make predictions from that model on new data. The new dataset must have all of the columns from the training data, but they can be in a different order with different values. Here, rather than re-predicting on the training set, you can predict on the test set, which you did not use for training the model. This will allow you to determine the out-of-sample error for the model in the next exercise:</p>
+<p>p &lt;- predict(model, new_data)</p>
+<pre class="r"><code># Fit lm model on train: model
+model &lt;- lm(price~., train)
+
+# Predict on test: p
+p &lt;- predict(model, test)</code></pre>
+</div>
+<div id="calculate-test-set-rmse-by-hand" class="section level2">
+<h2>1-9 Calculate test set RMSE by hand</h2>
+<p>Now that you have predictions on the test set, you can use these predictions to calculate an error metric (in this case RMSE) on the test set and see how the model performs out-of-sample, rather than in-sample as you did in the first exercise. You first do this by calculating the errors between the predicted diamond prices and the actual diamond prices by subtracting the predictions from the actual values.</p>
+<p>Once you have an error vector, calculating RMSE is as simple as squaring it, taking the mean, then taking the square root:</p>
+<p>sqrt(mean(error^2))</p>
+<pre class="r"><code># Compute errors: error
+error &lt;- p-test$price
+
+# Calculate RMSE
+sqrt(mean(error^2))</code></pre>
+<pre><code>## [1] 1137.466</code></pre>
+</div>
+<div id="section" class="section level2">
+<h2>1-13</h2>
+</div>
+<div id="section-1" class="section level2">
+<h2>1-14</h2>
+</div>
+<div id="section-2" class="section level2">
+<h2>1-15</h2>
+</div>
+<div id="section-3" class="section level2">
+<h2>1-16</h2>
+</div>
