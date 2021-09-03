@@ -13,6 +13,8 @@ library(tidyverse)
 library(caret)
 Boston <- read_csv("Boston.csv")
 Sonar <- read_csv("Sonar.csv")
+
+names(Sonar)
 ```
 
 
@@ -314,7 +316,11 @@ predict(my_model, test, type = "response")
 
 
 ```{r}
+# Fit glm model: model
+model <- glm(factor(Class) ~ ., family = "binomial", train)
 
+# Predict on test: p
+p <- predict(model, test, type = "response")
 ```
 
 ## 2-7 Calculate a confusion matrix
@@ -332,7 +338,14 @@ confusionMatrix(p_class, test_values)
 
 
 ```{r}
+# If p exceeds threshold of 0.5, M else R: m_or_r
+m_or_r <- ifelse(p>0.5, "M", "R")
 
+# Convert to factor: p_class
+p_class <- factor(m_or_r)
+
+# Create confusion matrix
+confusionMatrix(p_class, factor(test[["Class"]]))
 ```
 
 ## 2-13 Try another threshold
