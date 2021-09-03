@@ -12,6 +12,7 @@ tags:
 library(tidyverse)
 library(caret)
 Boston <- read_csv("Boston.csv")
+Sonar <- read_csv("Sonar.csv")
 ```
 
 
@@ -273,6 +274,23 @@ Once your dataset is randomly ordered, you can split off the first 60% as a trai
 
 
 ```{r}
+# Get the number of observations
+n_obs <- nrow(Sonar)
+
+# Shuffle row indices: permuted_rows
+permuted_rows <- sample(n_obs)
+
+# Randomly order data: Sonar
+Sonar_shuffled <- Sonar[permuted_rows,]
+
+# Identify row to split on: split
+split <- round(n_obs * 0.6)
+
+# Create train
+train <- Sonar_shuffled[1:split,]
+
+# Create test
+test <- Sonar_shuffled[(split+1):n_obs,]
 
 ```
 

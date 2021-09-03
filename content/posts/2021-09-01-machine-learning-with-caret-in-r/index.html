@@ -13,7 +13,8 @@ tags:
 
 <pre class="r"><code>library(tidyverse)
 library(caret)
-Boston &lt;- read_csv(&quot;Boston.csv&quot;)</code></pre>
+Boston &lt;- read_csv(&quot;Boston.csv&quot;)
+Sonar &lt;- read_csv(&quot;Sonar.csv&quot;)</code></pre>
 <div id="in-sample-rmse-for-linear-regression-on-diamonds" class="section level2">
 <h2>1-3 In-sample RMSE for linear regression on diamonds</h2>
 <p>As you saw in the video, included in the course is the diamonds dataset, which is a classic dataset from the ggplot2 package. The dataset contains physical attributes of diamonds as well as the price they sold for. One interesting modeling challenge is predicting diamond price based on their attributes using something like a linear regression.</p>
@@ -262,6 +263,23 @@ permuted_rows &lt;- sample(n_obs)
 And then use those row indices to randomly reorder the dataset, e.g.:</p>
 <p>my_data &lt;- my_data[permuted_rows, ]
 Once your dataset is randomly ordered, you can split off the first 60% as a training set and the last 40% as a test set.</p>
+<pre class="r"><code># Get the number of observations
+n_obs &lt;- nrow(Sonar)
+
+# Shuffle row indices: permuted_rows
+permuted_rows &lt;- sample(n_obs)
+
+# Randomly order data: Sonar
+Sonar_shuffled &lt;- Sonar[permuted_rows,]
+
+# Identify row to split on: split
+split &lt;- round(n_obs * 0.6)
+
+# Create train
+train &lt;- Sonar_shuffled[1:split,]
+
+# Create test
+test &lt;- Sonar_shuffled[(split+1):n_obs,]</code></pre>
 </div>
 <div id="fit-a-logistic-regression-model" class="section level2">
 <h2>2-4 Fit a logistic regression model</h2>
