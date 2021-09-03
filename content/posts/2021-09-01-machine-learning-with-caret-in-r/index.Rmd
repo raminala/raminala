@@ -470,6 +470,8 @@ Q: What's the primary advantage of random forests over linear models?
 A:  random forest is a more flexible model than a linear model, but just as easy to fit.
 
 ```{r}
+library(Rcpp)
+
 # Fit random forest: model
 model <- train(
   quality ~ .,
