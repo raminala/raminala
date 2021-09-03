@@ -16,6 +16,8 @@ Boston <- read_csv("Boston.csv")
 Sonar <- read_csv("Sonar.csv") %>% mutate(Class=as.factor(Class))
 #%>% mutate(V1=as.numeric(V1))
 
+wine <- read_csv("wine.csv")
+
 class(Sonar$Class)
 class(Sonar$V1)
 class(Sonar$V20)
@@ -455,5 +457,99 @@ model <- train(
 
 # Print model to console
 model
+```
+
+## 3-3 Fit a random forest
+
+As you saw in the video, random forest models are much more flexible than linear models, and can model complicated nonlinear effects as well as automatically capture interactions between variables. They tend to give very good results on real world data, so let's try one out on the wine quality dataset, where the goal is to predict the human-evaluated quality of a batch of wine, given some of the machine-measured chemical and physical properties of that batch.
+
+Fitting a random forest model is exactly the same as fitting a generalized linear regression model, as you did in the previous chapter. You simply change the method argument in the train function to be "ranger". The ranger package is a rewrite of R's classic randomForest package and fits models much faster, but gives almost exactly the same results. We suggest that all beginners use the ranger package for random forest modeling.
+
+Q: What's the primary advantage of random forests over linear models?
+
+A:  random forest is a more flexible model than a linear model, but just as easy to fit.
+
+```{r}
+# Fit random forest: model
+model <- train(
+  quality ~ .,
+  tuneLength = 1,
+  data = wine, 
+  method = "ranger",
+  trControl = trainControl(
+    method = "cv", 
+    number = 5, 
+    verboseIter = TRUE
+  )
+)
+
+# Print model to console
+model
+```
+
+## 3-6 Try a longer tune length
+
+Recall from the video that random forest models have a primary tuning parameter of mtry, which controls how many variables are exposed to the splitting search routine at each split. For example, suppose that a tree has a total of 10 splits and mtry = 2. This means that there are 10 samples of 2 predictors each time a split is evaluated.
+
+Use a larger tuning grid this time, but stick to the defaults provided by the train() function. Try a tuneLength of 3, rather than 1, to explore some more potential models, and plot the resulting model using the plot function.
+
+```{r}
+
+```
+
+## 3-9 Fit a random forest with custom tuning
+
+Now that you've explored the default tuning grids provided by the train() function, let's customize your models a bit more.
+
+You can provide any number of values for mtry, from 2 up to the number of columns in the dataset. In practice, there are diminishing returns for much larger values of mtry, so you will use a custom tuning grid that explores 2 simple models (mtry = 2 and mtry = 3) as well as one more complicated model (mtry = 7).
+
+```{r}
+
+```
+
+## 3-12 Make a custom trainControl
+
+The wine quality dataset was a regression problem, but now you are looking at a classification problem. This is a simulated dataset based on the "don't overfit" competition on Kaggle a number of years ago.
+
+Classification problems are a little more complicated than regression problems because you have to provide a custom summaryFunction to the train() function to use the AUC metric to rank your models. Start by making a custom trainControl, as you did in the previous chapter. Be sure to set classProbs = TRUE, otherwise the twoClassSummary for summaryFunction will break.
+
+```{r}
+
+```
+
+## 3-13 Fit glmnet with custom trainControl
+
+Now that you have a custom trainControl object, fit a glmnet model to the "don't overfit" dataset. Recall from the video that glmnet is an extension of the generalized linear regression model (or glm) that places constraints on the magnitude of the coefficients to prevent overfitting. This is more commonly known as "penalized" regression modeling and is a very useful technique on datasets with many predictors and few values.
+
+glmnet is capable of fitting two different kinds of penalized models, controlled by the alpha parameter:
+
+Ridge regression (or alpha = 0)
+Lasso regression (or alpha = 1)
+You'll now fit a glmnet model to the "don't overfit" dataset using the defaults provided by the caret package.
+
+```{r}
+
+```
+
+## 3-14 glmnet with custom trainControl and tuning
+
+As you saw in the video, the glmnet model actually fits many models at once (one of the great things about the package). You can exploit this by passing a large number of lambda values, which control the amount of penalization in the model. train() is smart enough to only fit one model per alpha value and pass all of the lambda values at once for simultaneous fitting.
+
+My favorite tuning grid for glmnet models is:
+
+expand.grid(
+  alpha = 0:1,
+  lambda = seq(0.0001, 1, length = 100)
+)
+This grid explores a large number of lambda values (100, in fact), from a very small one to a very large one. (You could increase the maximum lambda to 10, but in this exercise 1 is a good upper bound.)
+
+If you want to explore fewer models, you can use a shorter lambda sequence. For example, lambda = seq(0.0001, 1, length = 10) would fit 10 models per value of alpha.
+
+You also look at the two forms of penalized models with this tuneGrid: ridge regression and lasso regression. alpha = 0 is pure ridge regression, and alpha = 1 is pure lasso regression. You can fit a mixture of the two models (i.e. an elastic net) using an alpha between 0 and 1. For example, alpha = 0.05 would be 95% ridge regression and 5% lasso regression.
+
+In this problem you'll just explore the 2 extremes – pure ridge and pure lasso regression – for the purpose of illustrating their differences.
+
+```{r}
+
 ```
 
