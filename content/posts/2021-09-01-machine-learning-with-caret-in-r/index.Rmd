@@ -470,7 +470,7 @@ Q: What's the primary advantage of random forests over linear models?
 A:  random forest is a more flexible model than a linear model, but just as easy to fit.
 
 ```{r}
-
+#44
 ```
 
 ## 3-6 Try a longer tune length
@@ -480,7 +480,7 @@ Recall from the video that random forest models have a primary tuning parameter 
 Use a larger tuning grid this time, but stick to the defaults provided by the train() function. Try a tuneLength of 3, rather than 1, to explore some more potential models, and plot the resulting model using the plot function.
 
 ```{r}
-
+#44
 ```
 
 ## 3-9 Fit a random forest with custom tuning
@@ -490,7 +490,7 @@ Now that you've explored the default tuning grids provided by the train() functi
 You can provide any number of values for mtry, from 2 up to the number of columns in the dataset. In practice, there are diminishing returns for much larger values of mtry, so you will use a custom tuning grid that explores 2 simple models (mtry = 2 and mtry = 3) as well as one more complicated model (mtry = 7).
 
 ```{r}
-
+#44
 ```
 
 ## 3-12 Make a custom trainControl
@@ -500,7 +500,7 @@ The wine quality dataset was a regression problem, but now you are looking at a 
 Classification problems are a little more complicated than regression problems because you have to provide a custom summaryFunction to the train() function to use the AUC metric to rank your models. Start by making a custom trainControl, as you did in the previous chapter. Be sure to set classProbs = TRUE, otherwise the twoClassSummary for summaryFunction will break.
 
 ```{r}
-
+#44
 ```
 
 ## 3-13 Fit glmnet with custom trainControl
@@ -514,7 +514,7 @@ Lasso regression (or alpha = 1)
 You'll now fit a glmnet model to the "don't overfit" dataset using the defaults provided by the caret package.
 
 ```{r}
-
+#44
 ```
 
 ## 3-14 glmnet with custom trainControl and tuning
@@ -536,6 +536,6 @@ You also look at the two forms of penalized models with this tuneGrid: ridge reg
 In this problem you'll just explore the 2 extremes – pure ridge and pure lasso regression – for the purpose of illustrating their differences.
 
 ```{r}
-
+#44
 ```
 
