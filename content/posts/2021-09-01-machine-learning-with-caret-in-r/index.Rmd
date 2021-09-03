@@ -11,10 +11,11 @@ tags:
 ```{r warning=FALSE, message=FALSE}
 library(tidyverse)
 library(caret)
+library(caTools)
 Boston <- read_csv("Boston.csv")
 Sonar <- read_csv("Sonar.csv")
 
-names(Sonar)
+
 ```
 
 
@@ -358,7 +359,14 @@ The code pattern for cutting probabilities into predicted classes, then calculat
 
 
 ```{r}
+# If p exceeds threshold of 0.9, M else R: m_or_r
+m_or_r <- ifelse(p>0.9, "M", "R")
 
+# Convert to factor: p_class
+p_class <- factor(m_or_r)
+
+# Create confusion matrix
+confusionMatrix(p_class, factor(test[["Class"]]))
 ```
 
 ## 2-14 From probabilites to confusion matrix
@@ -369,7 +377,15 @@ The code pattern for cutting probabilities into predicted classes, then calculat
 
 
 ```{r}
+# If p exceeds threshold of 0.1, M else R: m_or_r
+m_or_r <- ifelse(p>0.1, "M", "R")
 
+# Convert to factor: p_class
+p_class <- factor(m_or_r)
+
+# Create confusion matrix
+
+confusionMatrix(p_class, factor(test[["Class"]]))
 ```
 
 ## 2-17 Plot an ROC curve
@@ -384,6 +400,11 @@ The function will return a score called AUC (more on that later) and the plotROC
 
 
 ```{r}
+# Predict on test: p
+p <- predict(model, test, type = "response")
+
+# Make ROC curve
+colAUC(p, test[["Class"]], plotROC = TRUE)
 
 ```
 
@@ -399,7 +420,14 @@ When using twoClassSummary(), be sure to always include the argument classProbs 
 
 
 ```{r}
-
+# Create trainControl object: myControl
+myControl <- trainControl(
+  method = "cv",
+  number = 10,
+  summaryFunction = twoClassSummary,
+  classProbs = TRUE, # IMPORTANT!
+  verboseIter = TRUE
+)
 ```
 
 ## 2-21 Using custom trainControl
@@ -412,6 +440,11 @@ This syntax gives you a convenient way to store a lot of custom modeling paramet
 
 
 ```{r}
+# Train glm with custom trainControl: model
+model <- train(Class ~ ., Sonar,trControl = myControl, method = "glm")
 
+
+# Print model to console
+print(model)
 ```
 
