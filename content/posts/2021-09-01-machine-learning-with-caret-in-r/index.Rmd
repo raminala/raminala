@@ -12,6 +12,8 @@ tags:
 library(tidyverse)
 library(caret)
 library(caTools)
+library(Rcpp)
+
 Boston <- read_csv("Boston.csv")
 Sonar <- read_csv("Sonar.csv") %>% mutate(Class=as.factor(Class))
 #%>% mutate(V1=as.numeric(V1))
@@ -470,7 +472,7 @@ Q: What's the primary advantage of random forests over linear models?
 A:  random forest is a more flexible model than a linear model, but just as easy to fit.
 
 ```{r}
-library(Rcpp)
+
 
 # Fit random forest: model
 model <- train(
