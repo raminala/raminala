@@ -284,16 +284,16 @@ n_obs <- nrow(Sonar)
 permuted_rows <- sample(n_obs)
 
 # Randomly order data: Sonar
-Sonar_shuffled <- Sonar[permuted_rows,]
+Sonar_shuffled <- Sonar[permuted_rows, ]
 
 # Identify row to split on: split
 split <- round(n_obs * 0.6)
 
 # Create train
-train <- Sonar_shuffled[1:split,]
+train <- Sonar_shuffled[1:split, ]
 
 # Create test
-test <- Sonar_shuffled[(split+1):n_obs,]
+test <- Sonar_shuffled[(split + 1):n_obs, ]
 
 ```
 
@@ -324,10 +324,6 @@ model <- glm(Class ~ ., family = "binomial", train)
 p <- predict(model, test, type = "response")
 ```
 
-```{r}
-
-```
-
 
 ## 2-7 Calculate a confusion matrix
 
@@ -345,10 +341,10 @@ confusionMatrix(p_class, test_values)
 
 ```{r}
 # If p exceeds threshold of 0.5, M else R: m_or_r
-m_or_r <- ifelse(p>0.5, "M", "R")
+m_or_r <- ifelse(p > 0.5, "M", "R")
 
 # Convert to factor: p_class
-p_class <- factor(m_or_r)
+p_class <- factor(m_or_r, levels = levels(test[["Class"]]))
 
 # Create confusion matrix
 confusionMatrix(p_class, test[["Class"]])
@@ -365,13 +361,13 @@ The code pattern for cutting probabilities into predicted classes, then calculat
 
 ```{r}
 # If p exceeds threshold of 0.9, M else R: m_or_r
-m_or_r <- ifelse(p>0.9, "M", "R")
+m_or_r <- ifelse(p > 0.9, "M", "R")
 
 # Convert to factor: p_class
-p_class <- factor(m_or_r)
+p_class <- factor(m_or_r, levels = levels(test[["Class"]]))
 
 # Create confusion matrix
-confusionMatrix(p_class, factor(test[["Class"]]))
+confusionMatrix(p_class, test[["Class"]])
 ```
 
 ## 2-14 From probabilites to confusion matrix
@@ -383,14 +379,13 @@ The code pattern for cutting probabilities into predicted classes, then calculat
 
 ```{r}
 # If p exceeds threshold of 0.1, M else R: m_or_r
-m_or_r <- ifelse(p>0.1, "M", "R")
+m_or_r <- ifelse(p > 0.1, "M", "R")
 
 # Convert to factor: p_class
-p_class <- factor(m_or_r)
+p_class <- factor(m_or_r, levels = levels(test[["Class"]]))
 
 # Create confusion matrix
-
-confusionMatrix(p_class, factor(test[["Class"]]))
+confusionMatrix(p_class, test[["Class"]])
 ```
 
 ## 2-17 Plot an ROC curve
@@ -444,12 +439,16 @@ train(<standard arguments here>, trControl = myControl)
 This syntax gives you a convenient way to store a lot of custom modeling parameters and then use them across multiple different calls to train(). You will make extensive use of this trick in Chapter 5.
 
 
-```{r}
+```{r warning=FALSE}
 # Train glm with custom trainControl: model
-model <- train(Class ~ ., Sonar,trControl = myControl, method = "glm")
-
+model <- train(
+  Class ~ ., 
+  Sonar, 
+  method = "glm",
+  trControl = myControl
+)
 
 # Print model to console
-print(model)
+model
 ```
 
