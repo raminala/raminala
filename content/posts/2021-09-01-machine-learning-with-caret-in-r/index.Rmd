@@ -498,7 +498,24 @@ Recall from the video that random forest models have a primary tuning parameter 
 Use a larger tuning grid this time, but stick to the defaults provided by the train() function. Try a tuneLength of 3, rather than 1, to explore some more potential models, and plot the resulting model using the plot function.
 
 ```{r}
-#44
+# Fit random forest: model
+model <- train(
+  quality~.,
+  tuneLength = 3,
+  data = wine, 
+  method = "ranger",
+  trControl = trainControl(
+    method = "cv", 
+    number = 5, 
+    verboseIter = TRUE
+  )
+)
+
+# Print model to console
+print(model)
+
+# Plot model
+plot(model)
 ```
 
 ## 3-9 Fit a random forest with custom tuning
@@ -508,7 +525,31 @@ Now that you've explored the default tuning grids provided by the train() functi
 You can provide any number of values for mtry, from 2 up to the number of columns in the dataset. In practice, there are diminishing returns for much larger values of mtry, so you will use a custom tuning grid that explores 2 simple models (mtry = 2 and mtry = 3) as well as one more complicated model (mtry = 7).
 
 ```{r}
-#44
+# From previous step
+tuneGrid <- data.frame(
+  .mtry = c(2, 3, 7),
+  .splitrule = "variance",
+  .min.node.size = 5
+)
+
+# Fit random forest: model
+model <- train(
+  quality~.,
+  tuneGrid = tuneGrid,
+  data = wine, 
+  method = "ranger",
+  trControl = trainControl(
+    method = "cv", 
+    number = 5, 
+    verboseIter = TRUE
+  )
+)
+
+# Print model to console
+print(model)
+
+# Plot model
+plot(model)
 ```
 
 ## 3-12 Make a custom trainControl
@@ -517,8 +558,17 @@ The wine quality dataset was a regression problem, but now you are looking at a 
 
 Classification problems are a little more complicated than regression problems because you have to provide a custom summaryFunction to the train() function to use the AUC metric to rank your models. Start by making a custom trainControl, as you did in the previous chapter. Be sure to set classProbs = TRUE, otherwise the twoClassSummary for summaryFunction will break.
 
+glmnet models place constraints on your coefficients, which helps prevent overfitting.
+
 ```{r}
-#44
+# Create custom trainControl: myControl
+myControl <- trainControl(
+  method = "cv", 
+  number = 10,
+  summaryFunction = twoClassSummary,
+  classProbs = TRUE, # IMPORTANT!
+  verboseIter = TRUE
+)
 ```
 
 ## 3-13 Fit glmnet with custom trainControl
@@ -532,7 +582,19 @@ Lasso regression (or alpha = 1)
 You'll now fit a glmnet model to the "don't overfit" dataset using the defaults provided by the caret package.
 
 ```{r}
-#44
+# Fit glmnet model: model
+model <- train(
+  y~., 
+  overfit,
+  method = "glmnet",
+  trControl = myControl
+)
+
+# Print model to console
+print(model)
+
+# Print maximum ROC statistic
+max(model[["results"]][["ROC"]])
 ```
 
 ## 3-14 glmnet with custom trainControl and tuning
@@ -554,6 +616,22 @@ You also look at the two forms of penalized models with this tuneGrid: ridge reg
 In this problem you'll just explore the 2 extremes – pure ridge and pure lasso regression – for the purpose of illustrating their differences.
 
 ```{r}
-#44
+# Train glmnet with custom trainControl and tuning: model
+model <- train(
+  y ~ ., 
+  overfit,
+  tuneGrid = expand.grid(
+    alpha = 0:1,
+    lambda = seq(0.0001, 1, length = 20)
+  ),
+  method = "glmnet",
+  trControl = myControl
+)
+
+# Print model to console
+model
+
+# Print maximum ROC statistic
+max(model[["results"]][["ROC"]])
 ```
 
