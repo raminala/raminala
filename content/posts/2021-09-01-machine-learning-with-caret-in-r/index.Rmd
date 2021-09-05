@@ -672,14 +672,40 @@ In the previous exercise, you used median imputation to fill in missing values i
 
 An alternative to median imputation is k-nearest neighbors, or KNN, imputation. This is a more advanced form of imputation where missing values are replaced with values from other rows that are similar to the current row. While this is a lot more complicated to implement in practice than simple median imputation, it is very easy to explore in caret using the preProcess argument to train(). You can simply use preProcess = "knnImpute" to change the method of imputation used prior to model fitting.
 
-```{r}
+```
+# Apply KNN imputation: knn_model
+knn_model <- train(
+  x = breast_cancer_x, 
+  y = breast_cancer_y,
+  method = "glm",
+  trControl = myControl,
+  preProcess = "knnImpute"
+)
 
+# Print knn_model to console
+knn_model
 ```
 
-## 4-10 
+## 4-10 Combining preprocessing methods
 
-```{r}
+The preProcess argument to train() doesn't just limit you to imputing missing values. It also includes a wide variety of other preProcess techniques to make your life as a data scientist much easier. You can read a full list of them by typing ?preProcess and reading the help page for this function.
 
+One set of preprocessing functions that is particularly useful for fitting regression models is standardization: centering and scaling. You first center by subtracting the mean of each column from each value in that column, then you scale by dividing by the standard deviation.
+
+Standardization transforms your data such that for each column, the mean is 0 and the standard deviation is 1. This makes it easier for regression models to find a good solution.
+
+```
+# Update model with standardization
+model <- train(
+  x = breast_cancer_x, 
+  y = breast_cancer_y,
+  method = "glm",
+  trControl = myControl,
+  preProcess = c("medianImpute", "center", "scale")
+)
+
+# Print updated model
+model
 ```
 
 ## 4-1 
