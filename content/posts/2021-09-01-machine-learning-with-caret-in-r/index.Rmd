@@ -476,7 +476,7 @@ Q: What's the primary advantage of random forests over linear models?
 
 A:  random forest is a more flexible model than a linear model, but just as easy to fit.
 
-```{r}
+```
 
 
 # Fit random forest: model
@@ -502,7 +502,7 @@ Recall from the video that random forest models have a primary tuning parameter 
 
 Use a larger tuning grid this time, but stick to the defaults provided by the train() function. Try a tuneLength of 3, rather than 1, to explore some more potential models, and plot the resulting model using the plot function.
 
-```{r}
+```
 # Fit random forest: model
 model <- train(
   quality~.,
@@ -529,7 +529,7 @@ Now that you've explored the default tuning grids provided by the train() functi
 
 You can provide any number of values for mtry, from 2 up to the number of columns in the dataset. In practice, there are diminishing returns for much larger values of mtry, so you will use a custom tuning grid that explores 2 simple models (mtry = 2 and mtry = 3) as well as one more complicated model (mtry = 7).
 
-```{r}
+```
 # From previous step
 tuneGrid <- data.frame(
   .mtry = c(2, 3, 7),
@@ -565,7 +565,7 @@ Classification problems are a little more complicated than regression problems b
 
 glmnet models place constraints on your coefficients, which helps prevent overfitting.
 
-```{r}
+```
 # Create custom trainControl: myControl
 myControl <- trainControl(
   method = "cv", 
@@ -586,7 +586,7 @@ Ridge regression (or alpha = 0)
 Lasso regression (or alpha = 1)
 You'll now fit a glmnet model to the "don't overfit" dataset using the defaults provided by the caret package.
 
-```{r}
+```
 # Fit glmnet model: model
 model <- train(
   y~., 
@@ -666,7 +666,11 @@ median_model
 
 
 
-## 4-6 
+## 4-6 Use KNN imputation
+
+In the previous exercise, you used median imputation to fill in missing values in the breast cancer dataset, but that is not the only possible method for dealing with missing data.
+
+An alternative to median imputation is k-nearest neighbors, or KNN, imputation. This is a more advanced form of imputation where missing values are replaced with values from other rows that are similar to the current row. While this is a lot more complicated to implement in practice than simple median imputation, it is very easy to explore in caret using the preProcess argument to train(). You can simply use preProcess = "knnImpute" to change the method of imputation used prior to model fitting.
 
 ```{r}
 
@@ -693,6 +697,7 @@ median_model
 ## 4-1 
 
 ```{r}
-
+sssssss<-wine[1:50,c(1,3)]
+colnames(wine)
 ```
 
