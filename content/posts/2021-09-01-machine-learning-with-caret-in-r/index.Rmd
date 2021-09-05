@@ -20,9 +20,14 @@ Sonar <- read_csv("Sonar.csv") %>% mutate(Class=as.factor(Class))
 
 wine <- read_csv("wine.csv")
 
-class(Sonar$Class)
-class(Sonar$V1)
-class(Sonar$V20)
+breast_cancer_x <- read_csv("breast_cancer_x.csv")
+breast_cancer_y <- read_csv("breast_cancer_y.csv")%>% mutate(x=as.factor(x))
+#breast_cancer <- read_csv("breast_cancer.csv")%>% mutate(y=as.factor(y))
+#class(breast_cancer$y)
+#class(Sonar$V1)
+#class(Sonar$V20)
+#class(breast_cancer_y)
+levels(breast_cancer_y$x)
 ```
 
 
@@ -633,5 +638,61 @@ model
 
 # Print maximum ROC statistic
 max(model[["results"]][["ROC"]])
+```
+
+## 4-3 Apply median imputation
+
+In this chapter, you'll be using a version of the Wisconsin Breast Cancer dataset. This dataset presents a classic binary classification problem: 50% of the samples are benign, 50% are malignant, and the challenge is to identify which are which.
+
+This dataset is interesting because many of the predictors contain missing values and most rows of the dataset have at least one missing value. This presents a modeling challenge, because most machine learning algorithms cannot handle missing values out of the box. For example, your first instinct might be to fit a logistic regression model to this data, but prior to doing this you need a strategy for handling the NAs.
+
+Fortunately, the train() function in caret contains an argument called preProcess, which allows you to specify that median imputation should be used to fill in the missing values. In previous chapters, you created models with the train() function using formulas such as y ~ .. An alternative way is to specify the x and y arguments to train(), where x is an object with samples in rows and features in columns and y is a numeric or factor vector containing the outcomes. Said differently, x is a matrix or data frame that contains the whole dataset you'd use for the data argument to the lm() call, for example, but excludes the response variable column; y is a vector that contains just the response variable column.
+
+For this exercise, the argument x to train() is loaded in your workspace as breast_cancer_x and y as breast_cancer_y.
+
+---
+# Apply median imputation: median_model
+median_model <- train(
+  x = breast_cancer_x, 
+  y = breast_cancer_y,
+  method = "glm",
+  trControl = myControl,
+  preProcess = "medianImpute"
+)
+
+# Print median_model to console
+median_model
+---
+
+
+
+## 4-6 
+
+```{r}
+
+```
+
+## 4-10 
+
+```{r}
+
+```
+
+## 4-1 
+
+```{r}
+
+```
+
+## 4-1 
+
+```{r}
+
+```
+
+## 4-1 
+
+```{r}
+
 ```
 
