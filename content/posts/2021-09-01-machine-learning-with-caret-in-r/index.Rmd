@@ -708,7 +708,24 @@ model <- train(
 model
 ```
 
-## 4-1 
+Q: What's the best reason to remove near zero variance predictors from your data before building a model?
+
+A: To reduce model-fitting time without reducing model accuracy.
+
+
+## 4-13 Remove near zero variance predictors
+
+As you saw in the video, for the next set of exercises, you'll be using the blood-brain dataset. This is a biochemical dataset in which the task is to predict the following value for a set of biochemical compounds:
+
+log((concentration of compound in brain) /
+      (concentration of compound in blood))
+This gives a quantitative metric of the compound's ability to cross the blood-brain barrier, and is useful for understanding the biological properties of that barrier.
+
+One interesting aspect of this dataset is that it contains many variables and many of these variables have extemely low variances. This means that there is very little information in these variables because they mostly consist of a single value (e.g. zero).
+
+Fortunately, caret contains a utility function called nearZeroVar() for removing such variables to save time during modeling.
+
+nearZeroVar() takes in data x, then looks at the ratio of the most common value to the second most common value, freqCut, and the percentage of distinct values out of the number of total samples, uniqueCut. By default, caret uses freqCut = 19 and uniqueCut = 10, which is fairly conservative. I like to be a little more aggressive and use freqCut = 2 and uniqueCut = 20 when calling nearZeroVar().
 
 ```{r}
 
@@ -723,7 +740,6 @@ model
 ## 4-1 
 
 ```{r}
-sssssss<-wine[1:50,c(1,3)]
-colnames(wine)
+
 ```
 
