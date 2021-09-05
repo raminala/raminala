@@ -22,6 +22,10 @@ wine <- read_csv("wine.csv")
 
 breast_cancer_x <- read_csv("breast_cancer_x.csv")
 breast_cancer_y <- read_csv("breast_cancer_y.csv")%>% mutate(x=as.factor(x))
+
+bloodbrain_x <- read_csv("bloodbrain_x.csv")
+bloodbrain_y <- read_csv("bloodbrain_y.csv")
+
 #breast_cancer <- read_csv("breast_cancer.csv")%>% mutate(y=as.factor(y))
 #class(breast_cancer$y)
 #class(Sonar$V1)
@@ -719,6 +723,7 @@ As you saw in the video, for the next set of exercises, you'll be using the bloo
 
 log((concentration of compound in brain) /
       (concentration of compound in blood))
+      
 This gives a quantitative metric of the compound's ability to cross the blood-brain barrier, and is useful for understanding the biological properties of that barrier.
 
 One interesting aspect of this dataset is that it contains many variables and many of these variables have extemely low variances. This means that there is very little information in these variables because they mostly consist of a single value (e.g. zero).
@@ -727,17 +732,35 @@ Fortunately, caret contains a utility function called nearZeroVar() for removing
 
 nearZeroVar() takes in data x, then looks at the ratio of the most common value to the second most common value, freqCut, and the percentage of distinct values out of the number of total samples, uniqueCut. By default, caret uses freqCut = 19 and uniqueCut = 10, which is fairly conservative. I like to be a little more aggressive and use freqCut = 2 and uniqueCut = 20 when calling nearZeroVar().
 
+Make a new data frame called bloodbrain_x_small with the near-zero variance variables removed. Use setdiff() to isolate the column names that you wish to keep (i.e. that you don't want to remove.)
+
+```{r}
+# Identify near zero variance predictors: remove_cols
+remove_cols <- nearZeroVar(bloodbrain_x, names = TRUE, 
+                           freqCut = 2, uniqueCut = 20)
+
+# Get all column names from bloodbrain_x: all_cols
+all_cols <- names(bloodbrain_x)
+
+# Remove from data: bloodbrain_x_small
+bloodbrain_x_small <- bloodbrain_x[ , setdiff(all_cols, remove_cols)]
+```
+
+## 4-15 Fit model on reduced blood-brain data
+
+Now that you've reduced your dataset, you can fit a glm model to it using the train() function. This model will run faster than using the full dataset and will yield very similar predictive accuracy.
+
+Furthermore, zero variance variables can cause problems with cross-validation (e.g. if one fold ends up with only a single unique value for that variable), so removing them prior to modeling means you are less likely to get errors during the fitting process.
+
 ```{r}
 
 ```
 
-## 4-1 
+## 4-17 Using PCA as an alternative to nearZeroVar()
 
-```{r}
+An alternative to removing low-variance predictors is to run PCA on your dataset. This is sometimes preferable because it does not throw out all of your data: many different low variance predictors may end up combined into one high variance PCA variable, which might have a positive impact on your model's accuracy.
 
-```
-
-## 4-1 
+This is an especially good trick for linear models: the pca option in the preProcess argument will center and scale your data, combine low variance variables, and ensure that all of your predictors are orthogonal. This creates an ideal dataset for linear regression modeling, and can often improve the accuracy of your models.
 
 ```{r}
 
