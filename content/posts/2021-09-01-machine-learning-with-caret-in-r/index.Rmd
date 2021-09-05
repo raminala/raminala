@@ -752,7 +752,16 @@ Now that you've reduced your dataset, you can fit a glm model to it using the tr
 
 Furthermore, zero variance variables can cause problems with cross-validation (e.g. if one fold ends up with only a single unique value for that variable), so removing them prior to modeling means you are less likely to get errors during the fitting process.
 
-```{r}
+```
+# Fit model on reduced data: model
+model <- train(
+  x = bloodbrain_x_small, 
+  y = bloodbrain_y, 
+  method = "glm"
+)
+
+# Print model to console
+model
 
 ```
 
