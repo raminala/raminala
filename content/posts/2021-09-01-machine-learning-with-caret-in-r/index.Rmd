@@ -26,6 +26,9 @@ breast_cancer_y <- read_csv("breast_cancer_y.csv")%>% mutate(x=as.factor(x))
 bloodbrain_x <- read_csv("bloodbrain_x.csv")
 bloodbrain_y <- read_csv("bloodbrain_y.csv")
 
+churn_x <- read_csv("churn_x.csv")
+churn_y <- read_csv("churn_y.csv")
+
 #breast_cancer <- read_csv("breast_cancer.csv")%>% mutate(y=as.factor(y))
 #class(breast_cancer$y)
 #class(Sonar$V1)
