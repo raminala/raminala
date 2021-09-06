@@ -777,7 +777,16 @@ This is an especially good trick for linear models: the pca option in the prePro
 Note that the PCA model's accuracy is slightly higher than the nearZeroVar() model.
 
 ```{r}
+# Fit glm model using PCA: model
+model <- train(
+  x = bloodbrain_x, 
+  y = bloodbrain_y,
+  method = "glm", 
+  preProcess = "pca"
+)
 
+# Print model to console
+model
 ```
 
 ## 5-3 Make custom train/test indices
@@ -790,7 +799,17 @@ In this chapter, you will be exploring two different types of predictive models:
 
 
 ```{r}
+# Create custom indices: myFolds
+myFolds <- createFolds(churn_y, k = 5)
 
+# Create reusable trainControl object: myControl
+myControl <- trainControl(
+  summaryFunction = twoClassSummary,
+  classProbs = TRUE, # IMPORTANT!
+  verboseIter = TRUE,
+  savePredictions = TRUE,
+  index = myFolds
+)
 ```
 
 
