@@ -18,6 +18,8 @@ signs <- read_csv("signs.csv") #%>% na.omit()
 next_sign <- read_csv("next_sign.csv")
 #glimpse(signs)
 where9am <- read_csv("where9am.csv")
+
+donors <- read_csv("donors.csv")
 ```
 ## 1-2
 
@@ -178,7 +180,8 @@ When building a regression model, it is often helpful to form a hypothesis about
 
 In this exercise, you will use these three factors to create a simple model of donation behavior. The dataset donors is available in your workspace.
 
----
+
+```{r}
 # Examine the dataset to identify potential independent variables
 str(donors)
 
@@ -190,7 +193,9 @@ donation_model <- glm(donated~bad_address+interest_religion+interest_veterans, d
 
 # Summarize the model results
 summary(donation_model)
----
+```
+
+
 
 ## 3-3 Making a binary prediction
 
@@ -200,7 +205,7 @@ Because a logistic regression model estimates the probability of the outcome, it
 
 The dataset donors and the model donation_model are already loaded in your workspace.
 
----
+```{r}
 # Estimate the donation probability
 donors$donation_prob <- predict(donation_model, type = "response")
 
@@ -212,7 +217,9 @@ donors$donation_pred <- ifelse(donors$donation_prob > 0.0504, 1, 0)
 
 # Calculate the model's accuracy
 mean(donors$donation_pred == donors$donated)
----
+```
+
+
 
 ## 3-6 Calculating ROC Curves and AUC
 
@@ -222,7 +229,7 @@ In this exercise you will create a ROC curve and compute the area under the curv
 
 The dataset donors with the column of predicted probabilities, donation_prob ,is already loaded in your workspace.
 
----
+```{r}
 # Load the pROC package
 library(pROC)
 
@@ -234,7 +241,7 @@ plot(ROC, col = "blue")
 
 # Calculate the area under the curve (AUC)
 auc(ROC)
----
+```
 
 
 ## 3-9 Coding categorical features
@@ -249,7 +256,8 @@ In the donors dataset, wealth_rating uses numbers to indicate the donor's wealth
 3 = High
 This exercise illustrates how to prepare this type of categorical feature and examines its impact on a logistic regression model. The dataframe donors is loaded in your workspace.
 
----
+```{r}
+
 # Convert the wealth rating to a factor
 donors$wealth_levels <- factor(donors$wealth_rating, levels = c(0, 1, 2, 3),
 labels = c("Unknown", "Low", "Medium", "High"))
@@ -259,7 +267,9 @@ donors$wealth_levels <- relevel(donors$wealth_levels, ref = "Medium")
 
 # See how our factor coding impacts the model
 summary(glm(donated~wealth_levels, data = donors, family = "binomial"))
----
+
+```
+
 
 ## 3-10 Handling missing data
 
@@ -269,7 +279,8 @@ One workaround is to replace, or impute, the missing values with an estimated va
 
 The dataframe donors is loaded in your workspace.
 
----
+
+```{r}
 # Find the average age among non-missing values
 summary(donors$age)
 
@@ -278,7 +289,9 @@ donors$imputed_age <- ifelse(is.na(donors$age), round(mean(donors$age, na.rm = T
 
 # Create missing value indicator for age
 donors$missing_age <- ifelse(is.na(donors$age), 1, 0)
----
+```
+
+
 
 ## 3-12 Building a more sophisticated model
 
@@ -290,7 +303,9 @@ Money
 Donors that haven't given both recently and frequently may be especially likely to give again; in other words, the combined impact of recency and frequency may be greater than the sum of the separate effects.
 
 Because these predictors together have a greater impact on the dependent variable, their joint effect must be modeled as an interaction. The donors dataset has been loaded for you.
----
+
+```{r}
+
 # Build a recency, frequency, and money (RFM) model
 rfm_model <- glm(donated~money + recency * frequency, donors, family = "binomial")
 
@@ -305,7 +320,10 @@ library(pROC)
 ROC <- roc(donors$donated, rfm_prob)
 plot(ROC, col = "red")
 auc(ROC)
----
+```
+
+
+
 
 ## 3-15 Building a stepwise regression model
 
@@ -313,7 +331,7 @@ In the absence of subject-matter expertise, stepwise regression can assist with 
 
 In this exercise, you will use a forward stepwise approach to add predictors to the model one-by-one until no additional benefit is seen. The donors dataset has been loaded for you.
 
----
+```{r}
 # Specify a null model with no predictors
 null_model <- glm(donated~1, data = donors, family = "binomial")
 
@@ -331,7 +349,12 @@ library(pROC)
 ROC <- roc(donors$donated, step_prob)
 plot(ROC, col = "red")
 auc(ROC)
----
+```
+
+
+
+
+
 
 ##4-2 Building a simple decision tree
 

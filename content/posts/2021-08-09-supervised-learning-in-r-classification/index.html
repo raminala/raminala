@@ -14,7 +14,7 @@ tags:
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
 <pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
-## v tibble  3.1.2     v dplyr   1.0.6
+## v tibble  3.1.1     v dplyr   1.0.6
 ## v tidyr   1.1.3     v stringr 1.4.0
 ## v readr   1.4.0     v forcats 0.5.1</code></pre>
 <pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
@@ -46,6 +46,25 @@ where9am &lt;- read_csv(&quot;where9am.csv&quot;)</code></pre>
 ##   X1 = col_double(),
 ##   daytype = col_character(),
 ##   location = col_character()
+## )</code></pre>
+<pre class="r"><code>donors &lt;- read_csv(&quot;donors.csv&quot;)</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   donated = col_double(),
+##   veteran = col_double(),
+##   bad_address = col_double(),
+##   age = col_double(),
+##   has_children = col_double(),
+##   wealth_rating = col_double(),
+##   interest_veterans = col_double(),
+##   interest_religion = col_double(),
+##   pet_owner = col_double(),
+##   catalog_shopper = col_double(),
+##   recency = col_character(),
+##   frequency = col_character(),
+##   money = col_character(),
+##   donation_prob = col_double()
 ## )</code></pre>
 <div id="section" class="section level2">
 <h2>1-2</h2>
@@ -319,87 +338,118 @@ predict(locmodel, saturday9am , type = &quot;prob&quot;)</code></pre>
 <p>The remaining columns are features of the prospective donors that may influence their donation behavior. These are the model’s independent variables.</p>
 <p>When building a regression model, it is often helpful to form a hypothesis about which independent variables will be predictive of the dependent variable. The bad_address column, which is set to 1 for an invalid mailing address and 0 otherwise, seems like it might reduce the chances of a donation. Similarly, one might suspect that religious interest (interest_religion) and interest in veterans affairs (interest_veterans) would be associated with greater charitable giving.</p>
 <p>In this exercise, you will use these three factors to create a simple model of donation behavior. The dataset donors is available in your workspace.</p>
-<table style="width:6%;">
-<colgroup>
-<col width="5%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td># Examine the dataset to identify potential independent variables
-str(donors)</td>
-</tr>
-<tr class="even">
-<td># Explore the dependent variable</td>
-</tr>
-<tr class="odd">
-<td>table(donors$donated)
-# Build the donation model
-donation_model &lt;- glm(donated~bad_address+interest_religion+interest_veterans, data = donors, family = “binomial”)</td>
-</tr>
-<tr class="even">
-<td># Summarize the model results
-summary(donation_model)</td>
-</tr>
-</tbody>
-</table>
+<pre class="r"><code># Examine the dataset to identify potential independent variables
+str(donors)</code></pre>
+<pre><code>## spec_tbl_df [93,462 x 14] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+##  $ donated          : num [1:93462] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ veteran          : num [1:93462] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ bad_address      : num [1:93462] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ age              : num [1:93462] 60 46 NA 70 78 NA 38 NA NA 65 ...
+##  $ has_children     : num [1:93462] 0 1 0 0 1 0 1 0 0 0 ...
+##  $ wealth_rating    : num [1:93462] 0 3 1 2 1 0 2 3 1 0 ...
+##  $ interest_veterans: num [1:93462] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ interest_religion: num [1:93462] 0 0 0 0 1 0 0 0 0 0 ...
+##  $ pet_owner        : num [1:93462] 0 0 0 0 0 0 1 0 0 0 ...
+##  $ catalog_shopper  : num [1:93462] 0 0 0 0 1 0 0 0 0 0 ...
+##  $ recency          : chr [1:93462] &quot;CURRENT&quot; &quot;CURRENT&quot; &quot;CURRENT&quot; &quot;CURRENT&quot; ...
+##  $ frequency        : chr [1:93462] &quot;FREQUENT&quot; &quot;FREQUENT&quot; &quot;FREQUENT&quot; &quot;FREQUENT&quot; ...
+##  $ money            : chr [1:93462] &quot;MEDIUM&quot; &quot;HIGH&quot; &quot;MEDIUM&quot; &quot;MEDIUM&quot; ...
+##  $ donation_prob    : num [1:93462] 0.0497 0.0497 0.0497 0.0497 0.0529 ...
+##  - attr(*, &quot;spec&quot;)=
+##   .. cols(
+##   ..   donated = col_double(),
+##   ..   veteran = col_double(),
+##   ..   bad_address = col_double(),
+##   ..   age = col_double(),
+##   ..   has_children = col_double(),
+##   ..   wealth_rating = col_double(),
+##   ..   interest_veterans = col_double(),
+##   ..   interest_religion = col_double(),
+##   ..   pet_owner = col_double(),
+##   ..   catalog_shopper = col_double(),
+##   ..   recency = col_character(),
+##   ..   frequency = col_character(),
+##   ..   money = col_character(),
+##   ..   donation_prob = col_double()
+##   .. )</code></pre>
+<pre class="r"><code># Explore the dependent variable
+
+table(donors$donated)</code></pre>
+<pre><code>## 
+##     0     1 
+## 88751  4711</code></pre>
+<pre class="r"><code># Build the donation model
+donation_model &lt;- glm(donated~bad_address+interest_religion+interest_veterans, data = donors, family = &quot;binomial&quot;)
+
+# Summarize the model results
+summary(donation_model)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = donated ~ bad_address + interest_religion + interest_veterans, 
+##     family = &quot;binomial&quot;, data = donors)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.3480  -0.3192  -0.3192  -0.3192   2.5678  
+## 
+## Coefficients:
+##                   Estimate Std. Error  z value Pr(&gt;|z|)    
+## (Intercept)       -2.95139    0.01652 -178.664   &lt;2e-16 ***
+## bad_address       -0.30780    0.14348   -2.145   0.0319 *  
+## interest_religion  0.06724    0.05069    1.327   0.1847    
+## interest_veterans  0.11009    0.04676    2.354   0.0186 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 37330  on 93461  degrees of freedom
+## Residual deviance: 37316  on 93458  degrees of freedom
+## AIC: 37324
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
 </div>
 <div id="making-a-binary-prediction" class="section level2">
 <h2>3-3 Making a binary prediction</h2>
 <p>In the previous exercise, you used the glm() function to build a logistic regression model of donor behavior. As with many of R’s machine learning methods, you can apply the predict() function to the model object to forecast future behavior. By default, predict() outputs predictions in terms of log odds unless type = “response” is specified. This converts the log odds to probabilities.</p>
 <p>Because a logistic regression model estimates the probability of the outcome, it is up to you to determine the threshold at which the probability implies action. One must balance the extremes of being too cautious versus being too aggressive. For example, if you were to solicit only the people with a 99% or greater donation probability, you may miss out on many people with lower estimated probabilities that still choose to donate. This balance is particularly important to consider for severely imbalanced outcomes, such as in this dataset where donations are relatively rare.</p>
 <p>The dataset donors and the model donation_model are already loaded in your workspace.</p>
-<table style="width:6%;">
-<colgroup>
-<col width="5%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td># Estimate the donation probability
-donors$donation_prob &lt;- predict(donation_model, type = “response”)</td>
-</tr>
-<tr class="even">
-<td># Find the donation probability of the average prospect
-mean(donors$donated)</td>
-</tr>
-<tr class="odd">
-<td># Predict a donation if probability of donation is greater than average (0.0504)
-donors<span class="math inline">\(donation_pred &lt;- ifelse(donors\)</span>donation_prob &gt; 0.0504, 1, 0)</td>
-</tr>
-<tr class="even">
-<td># Calculate the model’s accuracy
-mean(donors<span class="math inline">\(donation_pred == donors\)</span>donated)</td>
-</tr>
-</tbody>
-</table>
+<pre class="r"><code># Estimate the donation probability
+donors$donation_prob &lt;- predict(donation_model, type = &quot;response&quot;)
+
+# Find the donation probability of the average prospect
+mean(donors$donated)</code></pre>
+<pre><code>## [1] 0.05040551</code></pre>
+<pre class="r"><code># Predict a donation if probability of donation is greater than average (0.0504)
+donors$donation_pred &lt;- ifelse(donors$donation_prob &gt; 0.0504, 1, 0)
+
+# Calculate the model&#39;s accuracy
+mean(donors$donation_pred == donors$donated)</code></pre>
+<pre><code>## [1] 0.794815</code></pre>
 </div>
 <div id="calculating-roc-curves-and-auc" class="section level2">
 <h2>3-6 Calculating ROC Curves and AUC</h2>
 <p>The previous exercises have demonstrated that accuracy is a very misleading measure of model performance on imbalanced datasets. Graphing the model’s performance better illustrates the tradeoff between a model that is overly agressive and one that is overly passive.</p>
 <p>In this exercise you will create a ROC curve and compute the area under the curve (AUC) to evaluate the logistic regression model of donations you built earlier.</p>
 <p>The dataset donors with the column of predicted probabilities, donation_prob ,is already loaded in your workspace.</p>
-<table style="width:6%;">
-<colgroup>
-<col width="5%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td># Load the pROC package
-library(pROC)</td>
-</tr>
-<tr class="even">
-<td># Create a ROC curve
-ROC &lt;- roc(donors<span class="math inline">\(donated, donors\)</span>donation_prob)</td>
-</tr>
-<tr class="odd">
-<td># Plot the ROC curve
-plot(ROC, col = “blue”)</td>
-</tr>
-<tr class="even">
-<td># Calculate the area under the curve (AUC)
-auc(ROC)</td>
-</tr>
-</tbody>
-</table>
+<pre class="r"><code># Load the pROC package
+library(pROC)</code></pre>
+<pre><code>## Type &#39;citation(&quot;pROC&quot;)&#39; for a citation.</code></pre>
+<pre><code>## 
+## Attaching package: &#39;pROC&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     cov, smooth, var</code></pre>
+<pre class="r"><code># Create a ROC curve
+ROC &lt;- roc(donors$donated, donors$donation_prob)</code></pre>
+<pre><code>## Setting levels: control = 0, case = 1</code></pre>
+<pre><code>## Setting direction: controls &lt; cases</code></pre>
+<pre class="r"><code># Plot the ROC curve
+plot(ROC, col = &quot;blue&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code># Calculate the area under the curve (AUC)
+auc(ROC)</code></pre>
+<pre><code>## Area under the curve: 0.5102</code></pre>
 </div>
 <div id="coding-categorical-features" class="section level2">
 <h2>3-9 Coding categorical features</h2>
@@ -410,51 +460,54 @@ auc(ROC)</td>
 2 = Medium
 3 = High
 This exercise illustrates how to prepare this type of categorical feature and examines its impact on a logistic regression model. The dataframe donors is loaded in your workspace.</p>
-<table style="width:6%;">
-<colgroup>
-<col width="5%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td># Convert the wealth rating to a factor
-donors<span class="math inline">\(wealth_levels &lt;- factor(donors\)</span>wealth_rating, levels = c(0, 1, 2, 3),
-labels = c(“Unknown”, “Low”, “Medium”, “High”))</td>
-</tr>
-<tr class="even">
-<td># Use relevel() to change reference category
-donors<span class="math inline">\(wealth_levels &lt;- relevel(donors\)</span>wealth_levels, ref = “Medium”)</td>
-</tr>
-<tr class="odd">
-<td># See how our factor coding impacts the model
-summary(glm(donated~wealth_levels, data = donors, family = “binomial”))</td>
-</tr>
-</tbody>
-</table>
+<pre class="r"><code># Convert the wealth rating to a factor
+donors$wealth_levels &lt;- factor(donors$wealth_rating, levels = c(0, 1, 2, 3),
+labels = c(&quot;Unknown&quot;, &quot;Low&quot;, &quot;Medium&quot;, &quot;High&quot;))
+
+# Use relevel() to change reference category
+donors$wealth_levels &lt;- relevel(donors$wealth_levels, ref = &quot;Medium&quot;)
+
+# See how our factor coding impacts the model
+summary(glm(donated~wealth_levels, data = donors, family = &quot;binomial&quot;))</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = donated ~ wealth_levels, family = &quot;binomial&quot;, data = donors)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.3320  -0.3243  -0.3175  -0.3175   2.4582  
+## 
+## Coefficients:
+##                      Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)          -2.91894    0.03614 -80.772   &lt;2e-16 ***
+## wealth_levelsUnknown -0.04373    0.04243  -1.031    0.303    
+## wealth_levelsLow     -0.05245    0.05332  -0.984    0.325    
+## wealth_levelsHigh     0.04804    0.04768   1.008    0.314    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 37330  on 93461  degrees of freedom
+## Residual deviance: 37323  on 93458  degrees of freedom
+## AIC: 37331
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
 </div>
 <div id="handling-missing-data" class="section level2">
 <h2>3-10 Handling missing data</h2>
 <p>Some of the prospective donors have missing age data. Unfortunately, R will exclude any cases with NA values when building a regression model.</p>
 <p>One workaround is to replace, or impute, the missing values with an estimated value. After doing so, you may also create a missing data indicator to model the possibility that cases with missing data are different in some way from those without.</p>
 <p>The dataframe donors is loaded in your workspace.</p>
-<table style="width:6%;">
-<colgroup>
-<col width="5%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td># Find the average age among non-missing values
-summary(donors$age)</td>
-</tr>
-<tr class="even">
-<td># Impute missing age values with the mean age
-donors<span class="math inline">\(imputed_age &lt;- ifelse(is.na(donors\)</span>age), round(mean(donors<span class="math inline">\(age, na.rm = TRUE), 2), donors\)</span>age)</td>
-</tr>
-<tr class="odd">
-<td># Create missing value indicator for age
-donors<span class="math inline">\(missing_age &lt;- ifelse(is.na(donors\)</span>age), 1, 0)</td>
-</tr>
-</tbody>
-</table>
+<pre class="r"><code># Find the average age among non-missing values
+summary(donors$age)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##    1.00   48.00   62.00   61.65   75.00   98.00   22546</code></pre>
+<pre class="r"><code># Impute missing age values with the mean age
+donors$imputed_age &lt;- ifelse(is.na(donors$age), round(mean(donors$age, na.rm = TRUE), 2), donors$age)
+
+# Create missing value indicator for age
+donors$missing_age &lt;- ifelse(is.na(donors$age), 1, 0)</code></pre>
 </div>
 <div id="building-a-more-sophisticated-model" class="section level2">
 <h2>3-12 Building a more sophisticated model</h2>
@@ -463,64 +516,195 @@ donors<span class="math inline">\(missing_age &lt;- ifelse(is.na(donors\)</span>
 Frequency
 Money
 Donors that haven’t given both recently and frequently may be especially likely to give again; in other words, the combined impact of recency and frequency may be greater than the sum of the separate effects.</p>
+<p>Because these predictors together have a greater impact on the dependent variable, their joint effect must be modeled as an interaction. The donors dataset has been loaded for you.</p>
+<pre class="r"><code># Build a recency, frequency, and money (RFM) model
+rfm_model &lt;- glm(donated~money + recency * frequency, donors, family = &quot;binomial&quot;)
+
+# Summarize the RFM model to see how the parameters were coded
+summary(rfm_model)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = donated ~ money + recency * frequency, family = &quot;binomial&quot;, 
+##     data = donors)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.3696  -0.3696  -0.2895  -0.2895   2.7924  
+## 
+## Coefficients:
+##                                   Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                       -3.01142    0.04279 -70.375   &lt;2e-16 ***
+## moneyMEDIUM                        0.36186    0.04300   8.415   &lt;2e-16 ***
+## recencyLAPSED                     -0.86677    0.41434  -2.092   0.0364 *  
+## frequencyINFREQUENT               -0.50148    0.03107 -16.143   &lt;2e-16 ***
+## recencyLAPSED:frequencyINFREQUENT  1.01787    0.51713   1.968   0.0490 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 37330  on 93461  degrees of freedom
+## Residual deviance: 36938  on 93457  degrees of freedom
+## AIC: 36948
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<pre class="r"><code># Compute predicted probabilities for the RFM model
+rfm_prob &lt;- predict(rfm_model, , type=&quot;response&quot;)
+
+# Plot the ROC curve and find AUC for the new model
+library(pROC)
+ROC &lt;- roc(donors$donated, rfm_prob)</code></pre>
+<pre><code>## Setting levels: control = 0, case = 1</code></pre>
+<pre><code>## Setting direction: controls &lt; cases</code></pre>
+<pre class="r"><code>plot(ROC, col = &quot;red&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>auc(ROC)</code></pre>
+<pre><code>## Area under the curve: 0.5785</code></pre>
 </div>
-<div id="because-these-predictors-together-have-a-greater-impact-on-the-dependent-variable-their-joint-effect-must-be-modeled-as-an-interaction.-the-donors-dataset-has-been-loaded-for-you." class="section level2">
-<h2>Because these predictors together have a greater impact on the dependent variable, their joint effect must be modeled as an interaction. The donors dataset has been loaded for you.</h2>
-</div>
-</div>
-<div id="build-a-recency-frequency-and-money-rfm-model" class="section level1">
-<h1>Build a recency, frequency, and money (RFM) model</h1>
-<p>rfm_model &lt;- glm(donated~money + recency * frequency, donors, family = “binomial”)</p>
-</div>
-<div id="summarize-the-rfm-model-to-see-how-the-parameters-were-coded" class="section level1">
-<h1>Summarize the RFM model to see how the parameters were coded</h1>
-<p>summary(rfm_model)</p>
-</div>
-<div id="compute-predicted-probabilities-for-the-rfm-model" class="section level1">
-<h1>Compute predicted probabilities for the RFM model</h1>
-<p>rfm_prob &lt;- predict(rfm_model, , type=“response”)</p>
-</div>
-<div id="plot-the-roc-curve-and-find-auc-for-the-new-model" class="section level1">
-<h1>Plot the ROC curve and find AUC for the new model</h1>
-<p>library(pROC)
-ROC &lt;- roc(donors$donated, rfm_prob)
-plot(ROC, col = “red”)
-auc(ROC)
-—</p>
 <div id="building-a-stepwise-regression-model" class="section level2">
 <h2>3-15 Building a stepwise regression model</h2>
 <p>In the absence of subject-matter expertise, stepwise regression can assist with the search for the most important predictors of the outcome of interest.</p>
 <p>In this exercise, you will use a forward stepwise approach to add predictors to the model one-by-one until no additional benefit is seen. The donors dataset has been loaded for you.</p>
-<table style="width:6%;">
-<colgroup>
-<col width="5%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td># Specify a null model with no predictors
-null_model &lt;- glm(donated~1, data = donors, family = “binomial”)</td>
-</tr>
-<tr class="even">
-<td># Specify the full model using all of the potential predictors
-full_model &lt;- glm(donated~., data = donors, family = “binomial”)</td>
-</tr>
-<tr class="odd">
-<td># Use a forward stepwise algorithm to build a parsimonious model
-step_model &lt;- step(null_model, scope = list(lower = null_model, upper = full_model), direction = “forward”)</td>
-</tr>
-<tr class="even">
-<td># Estimate the stepwise donation probability
-step_prob &lt;- predict(step_model, type=“response”)</td>
-</tr>
-<tr class="odd">
-<td># Plot the ROC of the stepwise model
+<pre class="r"><code># Specify a null model with no predictors
+null_model &lt;- glm(donated~1, data = donors, family = &quot;binomial&quot;)
+
+# Specify the full model using all of the potential predictors
+full_model &lt;- glm(donated~., data = donors, family = &quot;binomial&quot;)
+
+# Use a forward stepwise algorithm to build a parsimonious model
+step_model &lt;- step(null_model, scope = list(lower = null_model, upper = full_model), direction = &quot;forward&quot;)</code></pre>
+<pre><code>## Start:  AIC=37332.13
+## donated ~ 1</code></pre>
+<pre><code>## Warning in add1.glm(fit, scope$add, scale = scale, trace = trace, k = k, : using
+## the 70916/93462 rows from a combined fit</code></pre>
+<pre><code>##                     Df Deviance   AIC
+## + frequency          1    28502 37122
+## + money              1    28621 37241
+## + wealth_rating      1    28705 37326
+## + has_children       1    28705 37326
+## + age                1    28707 37328
+## + imputed_age        1    28707 37328
+## + wealth_levels      3    28704 37328
+## + interest_veterans  1    28709 37330
+## + donation_prob      1    28710 37330
+## + donation_pred      1    28710 37330
+## + catalog_shopper    1    28710 37330
+## + pet_owner          1    28711 37331
+## &lt;none&gt;                    28714 37332
+## + interest_religion  1    28712 37333
+## + recency            1    28713 37333
+## + bad_address        1    28714 37334
+## + veteran            1    28714 37334
+## 
+## Step:  AIC=37024.77
+## donated ~ frequency</code></pre>
+<pre><code>## Warning in add1.glm(fit, scope$add, scale = scale, trace = trace, k = k, : using
+## the 70916/93462 rows from a combined fit</code></pre>
+<pre><code>##                     Df Deviance   AIC
+## + money              1    28441 36966
+## + wealth_rating      1    28493 37018
+## + wealth_levels      3    28490 37019
+## + has_children       1    28494 37019
+## + donation_prob      1    28498 37023
+## + interest_veterans  1    28498 37023
+## + catalog_shopper    1    28499 37024
+## + donation_pred      1    28499 37024
+## + age                1    28499 37024
+## + imputed_age        1    28499 37024
+## + pet_owner          1    28499 37024
+## &lt;none&gt;                    28502 37025
+## + interest_religion  1    28501 37026
+## + recency            1    28501 37026
+## + bad_address        1    28502 37026
+## + veteran            1    28502 37027
+## 
+## Step:  AIC=36949.71
+## donated ~ frequency + money</code></pre>
+<pre><code>## Warning in add1.glm(fit, scope$add, scale = scale, trace = trace, k = k, : using
+## the 70916/93462 rows from a combined fit</code></pre>
+<pre><code>##                     Df Deviance   AIC
+## + wealth_levels      3    28427 36942
+## + wealth_rating      1    28431 36942
+## + has_children       1    28432 36943
+## + interest_veterans  1    28438 36948
+## + donation_prob      1    28438 36949
+## + catalog_shopper    1    28438 36949
+## + donation_pred      1    28439 36949
+## + age                1    28439 36949
+## + imputed_age        1    28439 36949
+## + pet_owner          1    28439 36949
+## &lt;none&gt;                    28441 36950
+## + interest_religion  1    28440 36951
+## + recency            1    28441 36951
+## + bad_address        1    28441 36951
+## + veteran            1    28441 36952
+## 
+## Step:  AIC=36945.48
+## donated ~ frequency + money + wealth_levels</code></pre>
+<pre><code>## Warning in add1.glm(fit, scope$add, scale = scale, trace = trace, k = k, : using
+## the 70916/93462 rows from a combined fit</code></pre>
+<pre><code>##                     Df Deviance   AIC
+## + has_children       1    28416 36937
+## + age                1    28424 36944
+## + imputed_age        1    28424 36944
+## + interest_veterans  1    28424 36945
+## + donation_prob      1    28424 36945
+## + catalog_shopper    1    28425 36945
+## + donation_pred      1    28425 36945
+## &lt;none&gt;                    28427 36945
+## + pet_owner          1    28425 36946
+## + interest_religion  1    28426 36947
+## + recency            1    28427 36947
+## + bad_address        1    28427 36947
+## + veteran            1    28427 36947
+## 
+## Step:  AIC=36938.4
+## donated ~ frequency + money + wealth_levels + has_children</code></pre>
+<pre><code>## Warning in add1.glm(fit, scope$add, scale = scale, trace = trace, k = k, : using
+## the 70916/93462 rows from a combined fit</code></pre>
+<pre><code>##                     Df Deviance   AIC
+## + pet_owner          1    28413 36937
+## + donation_prob      1    28413 36937
+## + catalog_shopper    1    28413 36937
+## + interest_veterans  1    28413 36937
+## + donation_pred      1    28414 36938
+## &lt;none&gt;                    28416 36938
+## + interest_religion  1    28415 36939
+## + age                1    28416 36940
+## + imputed_age        1    28416 36940
+## + recency            1    28416 36940
+## + bad_address        1    28416 36940
+## + veteran            1    28416 36940
+## 
+## Step:  AIC=36932.25
+## donated ~ frequency + money + wealth_levels + has_children + 
+##     pet_owner</code></pre>
+<pre><code>## Warning in add1.glm(fit, scope$add, scale = scale, trace = trace, k = k, : using
+## the 70916/93462 rows from a combined fit</code></pre>
+<pre><code>##                     Df Deviance   AIC
+## &lt;none&gt;                    28413 36932
+## + donation_prob      1    28411 36932
+## + interest_veterans  1    28411 36932
+## + catalog_shopper    1    28412 36933
+## + donation_pred      1    28412 36933
+## + age                1    28412 36933
+## + imputed_age        1    28412 36933
+## + recency            1    28413 36934
+## + interest_religion  1    28413 36934
+## + bad_address        1    28413 36934
+## + veteran            1    28413 36934</code></pre>
+<pre class="r"><code># Estimate the stepwise donation probability
+step_prob &lt;- predict(step_model,  type=&quot;response&quot;)
+
+# Plot the ROC of the stepwise model
 library(pROC)
-ROC &lt;- roc(donors$donated, step_prob)
-plot(ROC, col = “red”)
-auc(ROC)</td>
-</tr>
-</tbody>
-</table>
+ROC &lt;- roc(donors$donated, step_prob)</code></pre>
+<pre><code>## Setting levels: control = 0, case = 1</code></pre>
+<pre><code>## Setting direction: controls &lt; cases</code></pre>
+<pre class="r"><code>plot(ROC, col = &quot;red&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<pre class="r"><code>auc(ROC)</code></pre>
+<pre><code>## Area under the curve: 0.5849</code></pre>
 <p>##4-2 Building a simple decision tree</p>
 <p>The loans dataset contains 11,312 randomly-selected people who applied for and later received loans from Lending Club, a US-based peer-to-peer lending company.</p>
 <p>You will use a decision tree to try to learn patterns in the outcome of these loans (either repaid or default) based on the requested loan amount and credit score at the time of application.</p>
@@ -569,10 +753,10 @@ library(rpart.plot)
 
 # Plot the loan_model with default settings
 rpart.plot(loan_model)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 <pre class="r"><code># Plot the loan_model with customized settings
 rpart.plot(loan_model, type = 3, box.palette = c(&quot;red&quot;, &quot;green&quot;), fallen.leaves = TRUE)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-2.png" width="672" /></p>
 </div>
 <div id="creating-random-test-datasets" class="section level2">
 <h2>4-7 Creating random test datasets</h2>
@@ -608,11 +792,11 @@ loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
 table(loans_test$pred, loans_test$outcome)</code></pre>
 <pre><code>##          
 ##           default repaid
-##   default     787    591
-##   repaid      626    824</code></pre>
+##   default     780    619
+##   repaid      620    809</code></pre>
 <pre class="r"><code># Compute the accuracy on the test dataset
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5696605</code></pre>
+<pre><code>## [1] 0.5618812</code></pre>
 </div>
 <div id="preventing-overgrown-trees" class="section level2">
 <h2>4-11 Preventing overgrown trees</h2>
@@ -628,14 +812,14 @@ loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
 
 # Compute the accuracy of the simpler tree
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5799151</code></pre>
+<pre><code>## [1] 0.5749646</code></pre>
 <pre class="r"><code># Swap maxdepth for a minimum split of 500 
 loan_model &lt;- rpart(outcome ~ ., data = loans_train, method = &quot;class&quot;, control = rpart.control(cp = 0, minsplit = 500))
 
 # Run this. How does the accuracy change?
 loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
 mean(loans_test$pred == loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5912306</code></pre>
+<pre><code>## [1] 0.5781471</code></pre>
 </div>
 <div id="creating-a-nicely-pruned-tree" class="section level2">
 <h2>4-12 Creating a nicely pruned tree</h2>
@@ -648,14 +832,14 @@ loan_model &lt;- rpart(outcome ~ ., data = loans_train, method = &quot;class&quo
 
 # Examine the complexity plot
 plotcp(loan_model)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 <pre class="r"><code># Prune the tree
 loan_model_pruned &lt;- prune(loan_model, cp = 0.0014)
 
 # Compute the accuracy of the pruned tree
 loans_test$pred &lt;- predict(loan_model_pruned, loans_test, type = &quot;class&quot;)
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5823904</code></pre>
+<pre><code>## [1] 0.5894625</code></pre>
 </div>
 <div id="building-a-random-forest-model" class="section level2">
 <h2>4-16 Building a random forest model</h2>
@@ -680,6 +864,6 @@ loan_model &lt;- randomForest(factor(outcome) ~ ., data = loans_train)
 # Compute the accuracy of the random forest
 loans_test$pred &lt;- predict(loan_model, loans_test)
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5880481</code></pre>
+<pre><code>## [1] 0.5908769</code></pre>
 </div>
 </div>
