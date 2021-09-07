@@ -12,6 +12,7 @@ tags:
 library(naniar)
 
 dat_hw <- read.csv("dat_hw.csv")
+airquality <- read.csv("airquality.csv")
 ```
 
 ## 1-2 Using and finding missing values
