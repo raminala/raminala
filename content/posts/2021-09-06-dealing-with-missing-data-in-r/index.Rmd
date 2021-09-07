@@ -126,19 +126,41 @@ pedestrian %>% group_by(month) %>% miss_var_run(var = hourly_counts)
 pedestrian %>% group_by(month) %>% miss_var_span(var = hourly_counts, span_every = 2000)
 ```
 
-## 1-10 
+## 1-10 Your first missing data visualizations
+
+It can be difficult to get a handle on where the missing values are in your data, and here is where visualization can really help.
+
+The function vis_miss() creates an overview visualization of the missingness in the data. It also has options to cluster rows based on missingness, using cluster = TRUE; as well as options for sorting the columns, from most missing to least missing (sort_miss = TRUE).
+
+```{r}
+# Visualize all of the missingness in the `riskfactors`  dataset
+vis_miss(riskfactors)
+
+# Visualize and cluster all of the missingness in the `riskfactors` dataset
+vis_miss(riskfactors, cluster  = TRUE)
+
+# visualize and sort the columns by missingness in the `riskfactors` dataset
+vis_miss(riskfactors, sort_miss = TRUE)
+```
+
+## 1-11 Visualizing missing cases and variables
+
+To get a clear picture of the missingness across variables and cases, use gg_miss_var() and gg_miss_case(). These are the visual counterpart to miss_var_summary() and miss_case_summary().
+
+These can be split up into multiple plots with one for each category by choosing a variable to facet by.
 
 ```{r}
 
 ```
 
-## 1-11 
+## 1-12 Visualizing missingness patterns
 
-```{r}
+Let's practice a few different ways to visualize patterns of missingness using:
 
-```
-
-## 1-12 
+gg_miss_upset() to give an overall pattern of missingness.
+gg_miss_fct() for a dataset that has a factor of interest: marriage.
+and gg_miss_span() to explore the missingness in a time series dataset.
+What do you notice with the missingness and the faceting in the data?
 
 ```{r}
 
