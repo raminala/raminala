@@ -1,0 +1,72 @@
+---
+title: Dealing With Missing Data in R
+author: ''
+date: '2021-09-06'
+slug: []
+categories: []
+tags:
+  - data_wrangling
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(naniar)
+
+dat_hw &lt;- read.csv(&quot;dat_hw.csv&quot;)</code></pre>
+<div id="using-and-finding-missing-values" class="section level2">
+<h2>1-2 Using and finding missing values</h2>
+<p>When working with missing data, there are a couple of commands that you should be familiar with - firstly, you should be able to identify if there are any missing values, and where these are.</p>
+<p>Using the any_na() and are_na() tools, identify which values are missing.</p>
+<pre class="r"><code># Create x, a vector, with values NA, NaN, Inf, &quot;.&quot;, and &quot;missing&quot;
+x &lt;- c(NA, NaN, Inf, &quot;.&quot;, &quot;missing&quot;)
+
+# Use any_na() and are_na() on to explore the missings
+any_na(x)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>are_na(x)</code></pre>
+<pre><code>## [1]  TRUE FALSE FALSE FALSE FALSE</code></pre>
+</div>
+<div id="how-many-missing-values-are-there" class="section level2">
+<h2>1-3 How many missing values are there?</h2>
+<p>One of the first things that you will want to check with a new dataset is if there are any missing missing values, and how many there are.</p>
+<p>You could use are_na() to and count up the missing values, but the most efficient way to count missings is to use the n_miss() function. This will tell you the total number of missing values in the data.</p>
+<p>You can then find the percent of missing values in the data with the pct_miss function. This will tell you the percentage of missing values in the data.</p>
+<p>You can also find the complement to these - how many complete values there are - using n_complete and pct_complete.</p>
+<pre class="r"><code># Use n_miss() to count the total number of missing values in dat_hw
+n_miss(dat_hw)</code></pre>
+<pre><code>## [1] 30</code></pre>
+<pre class="r"><code># Use n_miss() on dat_hw$weight to count the total number of missing values
+n_miss(dat_hw$weight)</code></pre>
+<pre><code>## [1] 15</code></pre>
+<pre class="r"><code># Use n_complete() on dat_hw to count the total number of complete values
+n_complete(dat_hw)</code></pre>
+<pre><code>## [1] 170</code></pre>
+<pre class="r"><code># Use n_complete() on dat_hw$weight to count the total number of complete values
+n_complete(dat_hw$weight)</code></pre>
+<pre><code>## [1] 85</code></pre>
+<pre class="r"><code># Use prop_miss() and prop_complete() on dat_hw to count the total number of missing values in each of the variables
+prop_miss(dat_hw)</code></pre>
+<pre><code>## [1] 0.15</code></pre>
+<pre class="r"><code>prop_complete(dat_hw)</code></pre>
+<pre><code>## [1] 0.85</code></pre>
+</div>
+<div id="summarizing-missingness" class="section level2">
+<h2>1-6 Summarizing missingness</h2>
+<p>Now that you understand the behavior of missing values in R, and how to count them, let’s scale up our summaries for cases (rows) and variables, using miss_var_summary() and miss_case_summary(), and also explore how they can be applied for groups in a dataframe, using the group_by function from dplyr.</p>
+</div>
+<div id="section" class="section level2">
+<h2>1-7</h2>
+</div>
+<div id="section-1" class="section level2">
+<h2>1-8</h2>
+</div>
+<div id="section-2" class="section level2">
+<h2>1-10</h2>
+</div>
+<div id="section-3" class="section level2">
+<h2>1-11</h2>
+</div>
+<div id="section-4" class="section level2">
+<h2>1-12</h2>
+</div>
