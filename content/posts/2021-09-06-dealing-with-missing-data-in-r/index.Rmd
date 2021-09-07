@@ -10,9 +10,11 @@ tags:
 
 ```{r}
 library(naniar)
+library(tidyverse)
 
 dat_hw <- read.csv("dat_hw.csv")
 airquality <- read.csv("airquality.csv")
+
 ```
 
 ## 1-2 Using and finding missing values
@@ -63,19 +65,65 @@ prop_complete(dat_hw)
 Now that you understand the behavior of missing values in R, and how to count them, let's scale up our summaries for cases (rows) and variables, using miss_var_summary() and miss_case_summary(), and also explore how they can be applied for groups in a dataframe, using the group_by function from dplyr.
 
 ```{r}
+# Summarize missingness in each variable of the `airquality` dataset
+miss_var_summary(airquality)
 
+# Summarize missingness in each case of the `airquality` dataset
+miss_case_summary(airquality)
+
+# Return the summary of missingness in each variable, 
+# grouped by Month, in the `airquality` dataset
+airquality %>% group_by(Month) %>% miss_var_summary()
+
+# Return the summary of missingness in each case, 
+# grouped by Month, in the `airquality` dataset
+airquality %>% group_by(Month) %>% miss_case_summary()
 ```
 
-## 1-7 
+## 1-7 Tabulating Missingness
+
+The summaries of missingness we just calculated give us the number and percentage of missing observations for the cases and variables.
+
+Another way to summarize missingness is by tabulating the number of times that there are 0, 1, 2, 3, missings in a variable, or in a case.
+
+In this exercise we are going to tabulate the number of missings in each case and variable using miss_var_table() and miss_case_table(), and also combine these summaries with the the group_by operator from dplyr. to explore the summaries over a grouping variable in the dataset.
 
 ```{r}
+# Tabulate missingness in each variable and case of the `airquality` dataset
+miss_var_table(airquality)
+miss_case_table(airquality)
 
+# Tabulate the missingness in each variable, grouped by Month, in the `airquality` dataset
+airquality %>% group_by(Month) %>% miss_var_table()
+
+# Tabulate of missingness in each case, grouped by Month, in the `airquality` dataset
+airquality %>% group_by(Month) %>% miss_case_table()
 ```
 
-## 1-8 
+## 1-8 Other summaries of missingness
+
+Some summaries of missingness are particularly useful for different types of data. For example, miss_var_span() and miss_var_run().
+
+miss_var_span() calculates the number of missing values in a specified variable for a repeating span. This is really useful in time series data, to look for weekly (7 day) patterns of missingness.
+
+miss_var_run() calculates the number of "runs" or "streaks" of missingness. This is useful to find unusual patterns of missingness, for example, you might find a repeating pattern of 5 complete and 5 missings.
+
+Both miss_var_span() and miss_var_run() work with the group_by operator from dplyr.
 
 ```{r}
+# Calculate the summaries for each run of missingness for the variable, hourly_counts
+miss_var_run(pedestrian, var = hourly_counts)
 
+# Calculate the summaries for each span of missingness, 
+# for a span of 4000, for the variable hourly_counts
+miss_var_span(pedestrian, var = hourly_counts, span_every = 4000)
+
+# For each `month` variable, calculate the run of missingness for hourly_counts
+pedestrian %>% group_by(month) %>% miss_var_run(var = hourly_counts)
+
+# For each `month` variable, calculate the span of missingness 
+# of a span of 2000, for the variable hourly_counts
+pedestrian %>% group_by(month) %>% miss_var_span(var = hourly_counts, span_every = 2000)
 ```
 
 ## 1-10 
