@@ -186,6 +186,6 @@ gg_miss_span(pedestrian, var = hourly_counts, span_every = 3000)
 
 # Using the pedestrian dataset, explore the impact of month by faceting by month
 # and explore how missingness changes for a span of 1000
-gg_miss_span(pedestrian, var = month , span_every = 1000, facet = hourly_counts)
+gg_miss_span(pedestrian, var = hourly_counts, span_every = 1000, facet = month)
 ```
 
