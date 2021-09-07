@@ -150,7 +150,19 @@ To get a clear picture of the missingness across variables and cases, use gg_mis
 These can be split up into multiple plots with one for each category by choosing a variable to facet by.
 
 ```{r}
+# Visualize the number of missings in cases using `gg_miss_case()`
+gg_miss_case(riskfactors)
 
+# Explore the number of missings in cases using `gg_miss_case()` 
+# and facet by the variable `education`
+gg_miss_case(riskfactors, facet = education)
+
+# Visualize the number of missings in variables using `gg_miss_var()`
+gg_miss_var(riskfactors)
+
+# Explore the number of missings in variables using `gg_miss_var()` 
+# and facet by the variable `education`
+gg_miss_var(riskfactors, facet = education)
 ```
 
 ## 1-12 Visualizing missingness patterns
@@ -163,6 +175,17 @@ and gg_miss_span() to explore the missingness in a time series dataset.
 What do you notice with the missingness and the faceting in the data?
 
 ```{r}
+# Using the airquality dataset, explore the missingness pattern using gg_miss_upset()
+gg_miss_upset(airquality)
 
+# With the riskfactors dataset, explore how the missingness changes across the marital variable using gg_miss_fct()
+gg_miss_fct(x = riskfactors, fct = marital)
+
+# Using the pedestrian dataset, explore how the missingness of hourly_counts changes over a span of 3000 
+gg_miss_span(pedestrian, var = hourly_counts, span_every = 3000)
+
+# Using the pedestrian dataset, explore the impact of month by faceting by month
+# and explore how missingness changes for a span of 1000
+gg_miss_span(pedestrian, var = month , span_every = 1000, facet = hourly_counts)
 ```
 
