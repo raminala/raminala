@@ -21,20 +21,20 @@ Sonar <- read_csv("Sonar.csv") %>% mutate(Class=as.factor(Class))
 wine <- read_csv("wine.csv")
 
 breast_cancer_x <- read_csv("breast_cancer_x.csv")
-breast_cancer_y <- read_csv("breast_cancer_y.csv")%>% mutate(x=as.factor(x))
+breast_cancer_y <- read_csv("breast_cancer_y.csv") %>% mutate(x=as.factor(x))
 
 bloodbrain_x <- read_csv("bloodbrain_x.csv")
-bloodbrain_y <- read_csv("bloodbrain_y.csv")
+bloodbrain_y <- read_csv("bloodbrain_y.csv") %>% mutate(x=as.factor(x))
 
 churn_x <- read_csv("churn_x.csv")
-churn_y <- read_csv("churn_y.csv")
+churn_y <- read_csv("churn_y.csv") %>% mutate(x=as.factor(x))
 
 #breast_cancer <- read_csv("breast_cancer.csv")%>% mutate(y=as.factor(y))
-#class(breast_cancer$y)
+class(churn_y$x)
 #class(Sonar$V1)
 #class(Sonar$V20)
 #class(breast_cancer_y)
-levels(breast_cancer_y$x)
+levels(churn_y$x)
 ```
 
 
@@ -820,9 +820,16 @@ Now that you have a reusable trainControl object called myControl, you can start
 You'll start with one of my favorite models, glmnet, which penalizes linear and logistic regression models on the size and number of coefficients to help prevent overfitting.
 
 
-```{r}
-
-```
+---
+# Fit glmnet model: model_glmnet
+model_glmnet <- train(
+  x = churn_x, 
+  y = churn_y,
+  metric = "ROC",
+  method = "glmnet",
+  trControl = myControl
+)
+---
 
 ## 5-9 Random forest with custom trainControl
 
@@ -830,10 +837,21 @@ Another one of my favorite models is the random forest, which combines an ensemb
 
 Rather than using the classic randomForest package, you'll be using the ranger package, which is a re-implementation of randomForest that produces almost the exact same results, but is faster, more stable, and uses less memory. I highly recommend it as a starting point for random forest modeling in R.
 
+Q: What's the drawback of using a random forest model for churn prediction?
 
-```{r}
+A: You no longer have model coefficients to help interpret the model.
 
-```
+
+---
+# Fit random forest: model_rf
+model_rf <- train(
+  x = churn_x, 
+  y = churn_y,
+  metric = "ROC",
+  method = "ranger",
+  trControl = myControl
+)
+---
 
 ## 5-12 Create a resamples object
 
@@ -842,9 +860,16 @@ Now that you have fit two models to the churn dataset, it's time to compare thei
 You can compare models in caret using the resamples() function, provided they have the same training data and use the same trainControl object with preset cross-validation folds. resamples() takes as input a list of models and can be used to compare dozens of models at once (though in this case you are only comparing two models).
 
 
-```{r}
+---
+# Create model_list
+model_list <- list(item1 = model_glmnet, item2 = model_rf)
 
-```
+# Pass model_list to resamples(): resamples
+resamples <- resamples(model_list)
+
+# Summarize the results
+summary(resamples)
+---
 
 ## 5-14 Create a box-and-whisker plot
 
@@ -857,9 +882,10 @@ You can make this plot using the bwplot() function, which makes a box and whiske
 If you do not specify a metric to plot, bwplot() will automatically plot 3 of them.
 
 
-```{r}
-
-```
+---
+# Create bwplot
+bwplot(resamples, metric = "ROC")
+---
 
 ## 5-15 Create a scatterplot
 
@@ -868,9 +894,10 @@ Another useful plot for comparing models is the scatterplot, also known as the x
 It's particularly useful for identifying if one model is consistently better than the other across all folds, or if there are situations when the inferior model produces better predictions on a particular subset of the data.
 
 
-```{r}
-
-```
+---
+# Create xyplot
+xyplot(resamples, metric = "ROC")
+---
 
 ## 5-16 Ensembling models
 
@@ -881,7 +908,11 @@ caretEnsemble provides the caretList() function for creating multiple caret mode
 In this exercise, I've made a caretList for you, containing the glmnet and ranger models you fit on the churn dataset. Use the caretStack() function to make a stack of caret models, with the two sub-models (glmnet and ranger) feeding into another (hopefully more accurate!) caret model.
 
 
-```{r}
+---
+# Create ensemble model: stack
+stack <- caretStack(model_list, method = "glm")
 
-```
+# Look at summary
+summary(stack)
+---
 
