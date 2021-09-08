@@ -8,7 +8,7 @@ tags:
   - data_wrangling
 ---
 
-```{r}
+```{r warning=FALSE, results='hide'}
 library(naniar)
 library(tidyverse)
 
@@ -113,7 +113,7 @@ miss_var_run() calculates the number of "runs" or "streaks" of missingness. This
 Both miss_var_span() and miss_var_run() work with the group_by operator from dplyr.
 
 ```{r}
-pedestrian
+#pedestrian
 # Calculate the summaries for each run of missingness for the variable, hourly_counts
 miss_var_run(pedestrian, var = hourly_counts)
 
@@ -255,7 +255,7 @@ This replaces all cases that are equal to "N/A".
 ~.x %in% c("N/A", "missing", "na", " ")
 Replaces all cases that have "N/A", "missing", "na", or " ".
 
-```{r}
+```{r results='hide'}
 # Use `replace_with_na_at()` to replace with NA
 replace_with_na_at(pacman,
                    .vars = c("year", "month", "day"), 
