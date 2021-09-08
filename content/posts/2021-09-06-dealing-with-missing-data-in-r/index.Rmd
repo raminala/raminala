@@ -281,6 +281,6 @@ Every player should have played 4 games, one at each of these times, but it look
 Use the complete() function to make these implicit missing values explicit
 
 ```{r}
-frogger
+
 ```
 
