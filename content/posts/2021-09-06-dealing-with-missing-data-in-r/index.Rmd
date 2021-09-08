@@ -284,3 +284,25 @@ Use the complete() function to make these implicit missing values explicit
 
 ```
 
+## 2-7 Fix explicit missings using fill()
+
+One type of missing value that can be obvious to deal with is where the first entry of a group is given, but subsequent entries are marked NA.
+
+These missing values often result from empty values in spreadsheets to avoid entering multiple names multiple times; as well as for "human readability".
+
+This type of problem can be solved by using the fill() function from the tidyr package.
+
+```{r}
+
+```
+
+## 2-8 Using complete() and fill() together
+
+Now let's put it together!
+
+Use complete() and fill() together to fix explicit and implicitly missing values in the frogger dataset.
+
+```{r}
+
+```
+
