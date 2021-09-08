@@ -15,7 +15,7 @@ tags:
 library(tidyverse)</code></pre>
 <pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
 <pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
-## v tibble  3.1.2     v dplyr   1.0.6
+## v tibble  3.1.1     v dplyr   1.0.6
 ## v tidyr   1.1.3     v stringr 1.4.0
 ## v readr   1.4.0     v forcats 0.5.1</code></pre>
 <pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
@@ -459,21 +459,15 @@ replace_with_na_all(pacman, ~.x %in% c(&quot;N/A&quot;, &quot;missing&quot;, &qu
 <p>This dataset contains 4 scores per player recorded at different times: morning, afternoon, evening, and late_night.</p>
 <p>Every player should have played 4 games, one at each of these times, but it looks like not every player completed all of these games.</p>
 <p>Use the complete() function to make these implicit missing values explicit</p>
-<pre class="r"><code>frogger</code></pre>
-<pre><code>##     name       time  value
-## 1  jesse    morning   6678
-## 2  jesse  afternoon 800060
-## 3  jesse    evening 475528
-## 4  jesse late_night 143533
-## 5   andy    morning 425115
-## 6   andy  afternoon 587468
-## 7   andy late_night 111000
-## 8    nic  afternoon 588532
-## 9    nic late_night 915533
-## 10   dan    morning 388148
-## 11   dan    evening 180912
-## 12  alex    morning 552670
-## 13  alex  afternoon  98355
-## 14  alex    evening 266055
-## 15  alex late_night 121056</code></pre>
+</div>
+<div id="fix-explicit-missings-using-fill" class="section level2">
+<h2>2-7 Fix explicit missings using fill()</h2>
+<p>One type of missing value that can be obvious to deal with is where the first entry of a group is given, but subsequent entries are marked NA.</p>
+<p>These missing values often result from empty values in spreadsheets to avoid entering multiple names multiple times; as well as for “human readability”.</p>
+<p>This type of problem can be solved by using the fill() function from the tidyr package.</p>
+</div>
+<div id="using-complete-and-fill-together" class="section level2">
+<h2>2-8 Using complete() and fill() together</h2>
+<p>Now let’s put it together!</p>
+<p>Use complete() and fill() together to fix explicit and implicitly missing values in the frogger dataset.</p>
 </div>
