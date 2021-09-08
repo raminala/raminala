@@ -14,6 +14,8 @@ library(tidyverse)
 
 dat_hw <- read.csv("dat_hw.csv")
 airquality <- read.csv("airquality.csv")
+pacman <- read.csv("pacman.csv")
+frogger <- read.csv("frogger.csv")
 
 ```
 
@@ -111,6 +113,7 @@ miss_var_run() calculates the number of "runs" or "streaks" of missingness. This
 Both miss_var_span() and miss_var_run() work with the group_by operator from dplyr.
 
 ```{r}
+pedestrian
 # Calculate the summaries for each run of missingness for the variable, hourly_counts
 miss_var_run(pedestrian, var = hourly_counts)
 
@@ -175,6 +178,7 @@ and gg_miss_span() to explore the missingness in a time series dataset.
 What do you notice with the missingness and the faceting in the data?
 
 ```{r}
+riskfactors
 # Using the airquality dataset, explore the missingness pattern using gg_miss_upset()
 gg_miss_upset(airquality)
 
@@ -187,5 +191,96 @@ gg_miss_span(pedestrian, var = hourly_counts, span_every = 3000)
 # Using the pedestrian dataset, explore the impact of month by faceting by month
 # and explore how missingness changes for a span of 1000
 gg_miss_span(pedestrian, var = hourly_counts, span_every = 1000, facet = month)
+```
+
+## 2-2 Using miss_scan_count
+
+You have a dataset with missing values coded as "N/A", "missing", and "na". But before we go ahead and start replacing these with NA, we should get an idea of how big the problem is.
+
+Use miss_scan_count to count the possible missings in the dataset, pacman, a dataset of pacman scores, containing three columns:
+
+year: the year that person made that score.
+initial: the initials of the person.
+score: the scores of that person.
+
+```{r}
+# Explore the strange missing values "N/A"
+miss_scan_count(data = pacman, search = list("N/A"))
+
+# Explore the strange missing values "missing"
+miss_scan_count(data = pacman, search = list("missing"))
+
+# Explore the strange missing values "na"
+miss_scan_count(data = pacman, search = list("na"))
+
+# Explore the strange missing values " " (a single space)
+miss_scan_count(data = pacman, search = list(" "))
+
+# Explore all of the strange missing values, "N/A", "missing", "na", " "
+miss_scan_count(data = pacman, search = list("N/A", "missing","na", " "))
+```
+
+
+## 2-3 Using replace_with_na
+
+Following on from the previous dataset, we now know that we have a few strange missing values.
+
+Now, we are going to do something about it, and replace these values with missings (e.g. NA) using the function replace_with_na().
+
+```{r}
+# Print the top of the pacman data using `head()`
+head(pacman)
+
+# Replace the strange missing values "N/A", "na", and  
+# "missing" with `NA` for the variables, year, and score
+pacman_clean <- replace_with_na(pacman, replace = list(year = c("N/A", "na", "missing"),
+                                score = c("N/A", "na", "missing")))
+                                        
+# Test if `pacman_clean` still has these values in it?
+miss_scan_count(pacman_clean, search = list("N/A", "na", "missing"))
+```
+
+## 2-4 Using replace_with_na scoped variants
+
+To reduce code repetition when replacing values with NA, use the "scoped variants" of replace_with_na():
+
+replace_with_na_at()
+replace_with_na_if()
+replace_with_na_all()
+The syntax of replacement looks like this:
+
+~.x == "N/A"
+This replaces all cases that are equal to "N/A".
+
+~.x %in% c("N/A", "missing", "na", " ")
+Replaces all cases that have "N/A", "missing", "na", or " ".
+
+```{r}
+# Use `replace_with_na_at()` to replace with NA
+replace_with_na_at(pacman,
+                   .vars = c("year", "month", "day"), 
+                   ~.x %in% c("N/A", "missing", "na", " "))
+
+# Use `replace_with_na_if()` to replace with NA the character values using `is.character`
+replace_with_na_if(pacman,
+                   .predicate = is.character, 
+                   ~.x %in% c("N/A", "missing", "na", " "))
+
+# Use `replace_with_na_all()` to replace with NA
+replace_with_na_all(pacman, ~.x %in% c("N/A", "missing", "na", " "))
+```
+
+## 2-6 Fix implicit missings using complete()
+
+We are going to explore a new dataset, frogger.
+
+This dataset contains 4 scores per player recorded at different times: morning, afternoon, evening, and late_night.
+
+Every player should have played 4 games, one at each of these times, but it looks like not every player completed all of these games.
+
+Use the complete() function to make these implicit missing values explicit
+
+```{r}
+frogger
 ```
 
