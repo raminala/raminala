@@ -742,6 +742,24 @@ oceanbuoys %&gt;%
 <p>Summary statistics are useful to calculate, but as they say, a picture tells you a thousand words.</p>
 <p>In this exercise, we are going to explore how you can use nabular data to explore the variation in a variable by the missingness of another.</p>
 <p>We are going to use the oceanbuoys dataset from naniar.</p>
+<pre class="r"><code># First explore the missingness structure of `oceanbuoys` using `vis_miss()`
+vis_miss(oceanbuoys)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<pre class="r"><code># Explore the distribution of `wind_ew` for the missingness  
+# of `air_temp_c_NA` using  `geom_density()`
+bind_shadow(oceanbuoys) %&gt;%
+  ggplot(aes(x = wind_ew, 
+             color = air_temp_c_NA)) + 
+  geom_density()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-2.png" width="672" /></p>
+<pre class="r"><code># Explore the distribution of sea temperature for the  
+# missingness of humidity (humidity_NA) using  `geom_density()`
+  bind_shadow(oceanbuoys) %&gt;%
+  ggplot(aes(x = sea_temp_c,
+             color = humidity_NA)) + 
+  geom_density()</code></pre>
+<pre><code>## Warning: Removed 3 rows containing non-finite values (stat_density).</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-3.png" width="672" /></p>
 </div>
 <div id="nabular-data-and-summarising-by-missingness" class="section level2">
 <h2>3-7 Nabular data and summarising by missingness</h2>

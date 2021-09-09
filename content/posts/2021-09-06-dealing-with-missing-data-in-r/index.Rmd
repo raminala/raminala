@@ -426,7 +426,22 @@ In this exercise, we are going to explore how you can use nabular data to explor
 We are going to use the oceanbuoys dataset from naniar.
 
 ```{r}
+# First explore the missingness structure of `oceanbuoys` using `vis_miss()`
+vis_miss(oceanbuoys)
 
+# Explore the distribution of `wind_ew` for the missingness  
+# of `air_temp_c_NA` using  `geom_density()`
+bind_shadow(oceanbuoys) %>%
+  ggplot(aes(x = wind_ew, 
+             color = air_temp_c_NA)) + 
+  geom_density()
+
+# Explore the distribution of sea temperature for the  
+# missingness of humidity (humidity_NA) using  `geom_density()`
+  bind_shadow(oceanbuoys) %>%
+  ggplot(aes(x = sea_temp_c,
+             color = humidity_NA)) + 
+  geom_density()
 ```
 
 ## 3-7 Nabular data and summarising by missingness
