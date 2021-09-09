@@ -16,7 +16,7 @@ dat_hw <- read.csv("dat_hw.csv")
 airquality <- read.csv("airquality.csv")
 pacman <- read.csv("pacman.csv")
 frogger <- read.csv("frogger.csv")
-
+frogger2 <- read.csv("frogger2.csv")
 ```
 
 ## 1-2 Using and finding missing values
@@ -278,10 +278,16 @@ This dataset contains 4 scores per player recorded at different times: morning, 
 
 Every player should have played 4 games, one at each of these times, but it looks like not every player completed all of these games.
 
-Use the complete() function to make these implicit missing values explicit
+Use the complete() function to make these implicit missing values explicit.
 
 ```{r}
+# Print the frogger data to have a look at it
+print(frogger)
 
+# Use `complete()` on the `time` and `name` variables to  
+# make implicit missing values explicit
+frogger_tidy <- frogger %>% complete(time, name)
+frogger_tidy
 ```
 
 ## 2-7 Fix explicit missings using fill()
@@ -293,7 +299,12 @@ These missing values often result from empty values in spreadsheets to avoid ent
 This type of problem can be solved by using the fill() function from the tidyr package.
 
 ```{r}
+# Print the frogger2 data to have a look at it
 
+frogger2
+
+# Use `fill()` to fill down the name variable in the frogger2 dataset
+frogger2 %>% fill(name)
 ```
 
 ## 2-8 Using complete() and fill() together
@@ -301,6 +312,148 @@ This type of problem can be solved by using the fill() function from the tidyr p
 Now let's put it together!
 
 Use complete() and fill() together to fix explicit and implicitly missing values in the frogger dataset.
+
+```{r}
+# Print the frogger data to have a look at it
+frogger2
+
+# Correctly fill() and complete() missing values so that our dataset becomes sensible
+frogger2 %>%
+  fill(name) %>%
+  complete(name, time)
+```
+
+## 2-11 Exploring missingness dependence
+
+To learn about the structure of the missingness in data, you can explore how sorting changes how missingness is presented.
+
+For the oceanbuoys dataset, explore the missingness with vis_miss(), and then arrange by a few different variables
+
+This is not a definitive process, but it will get you started to ask the right questions of your data. We explore more powerful techniques in the next chapter.
+
+```{r}
+# Arrange by year
+oceanbuoys %>% arrange(year) %>% vis_miss()
+
+# Arrange by latitude
+oceanbuoys %>% arrange(latitude) %>% vis_miss()
+
+# Arrange by wind_ew (wind east west)
+oceanbuoys %>% arrange(wind_ew) %>% vis_miss()
+```
+
+## 3-2 Creating shadow matrix data
+
+Missing data can be tricky to think about, as they don't usually proclaim themselves for you, and instead hide amongst the weeds of the data.
+
+One way to help expose missing values is to change the way we think about the data - by thinking about every single data value being missing or not missing.
+
+The as_shadow() function in R transforms a dataframe into a shadow matrix, a special data format where the values are either missing (NA), or Not Missing (!NA).
+
+The column names of a shadow matrix are the same as the data, but have a suffix added _NA.
+
+To keep track of and compare data values to their missingness state, use the bind_shadow() function. Having data in this format, with the shadow matrix column bound to the regular data is called nabular data.
+
+```{r}
+# Create shadow matrix data with `as_shadow()`
+as_shadow(oceanbuoys)
+
+# Create nabular data by binding the shadow to the data with `bind_shadow()`
+bind_shadow(oceanbuoys)
+
+# Bind only the variables with missing values by using bind_shadow(only_miss = TRUE)
+bind_shadow(oceanbuoys, only_miss = TRUE)
+```
+
+## 3-3 Performing grouped summaries of missingness
+
+Now that you can create nabular data, let's use it to explore the data. Let's calculate summary statistics based on the missingness of another variable.
+
+To do this we are going to use the following steps:
+
+First, bind_shadow() turns the data into nabular data.
+
+Next, perform some summaries on the data using group_by() and summarize() to calculate the mean and standard deviation, using the mean() and sd() functions.
+
+```{r}
+
+```
+
+## 3-4 Further exploring more combinations of missingness
+
+It can be useful to get a bit of extra information about the number of cases in each missing condition.
+
+In this exercise, we are going to add information about the number of observed cases using n() inside the summarize() function.
+
+We will then add an additional level of grouping by looking at the combination of humidity being missing (humidity_NA) and air temperature being missing (air_temp_c_NA).
+
+```{r}
+
+```
+
+## 3-6 Nabular data and filling by missingness
+
+Summary statistics are useful to calculate, but as they say, a picture tells you a thousand words.
+
+In this exercise, we are going to explore how you can use nabular data to explore the variation in a variable by the missingness of another.
+
+We are going to use the oceanbuoys dataset from naniar.
+
+```{r}
+
+```
+
+## 3-7 Nabular data and summarising by missingness
+
+In this exercise, we are going to explore how to use nabular data to explore the variation in a variable by the missingness of another.
+
+We are going to use the oceanbuoys dataset from naniar, and then create multiple plots of the data using facets.
+
+This allows you to explore different layers of missingness.
+
+```{r}
+
+```
+
+## 3-8 Explore variation by missingness: box plots
+
+Previous exercises use nabular data along with density plots to explore the variation in a variable by the missingness of another.
+
+We are going to use the oceanbuoys dataset from naniar, using box plots instead of facets or others to explore different layers of missingness.
+
+```{r}
+
+```
+
+## 3-10 Exploring missing data with scatter plots
+
+Missing values in a scatter plot in ggplot2 are removed by default, with a warning.
+
+We can display missing values in a scatter plot, using geom_miss_point() - a special ggplot2 geom that shifts the missing values into the plot, displaying them 10% below the minimum of the variable.
+
+Let's practice using this visualization with the oceanbuoys dataset.
+
+```{r}
+
+```
+
+## 3-11 Using facets to explore missingness
+
+Because geom_miss_point() is a ggplot geom, you can use it with ggplot2 features like faceting.
+
+This means we can rapidly explore the missingness and stay within the familiar bounds of ggplot2.
+
+```{r}
+
+```
+
+## 3-12 Faceting to explore missingness (multiple plots)
+
+Another useful technique with geommisspoint() is to explore the missingness by creating multiple plots.
+
+Just as we have done in the previous exercises, we can use the nabular data to help us create additional faceted plots.
+
+We can even create multiple faceted plots according to values in the data, such as year, and features of the data, such as missingness.
 
 ```{r}
 

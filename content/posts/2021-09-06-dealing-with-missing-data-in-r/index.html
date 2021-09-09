@@ -15,7 +15,7 @@ tags:
 library(tidyverse)</code></pre>
 <pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
 <pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
-## v tibble  3.1.1     v dplyr   1.0.6
+## v tibble  3.1.2     v dplyr   1.0.6
 ## v tidyr   1.1.3     v stringr 1.4.0
 ## v readr   1.4.0     v forcats 0.5.1</code></pre>
 <pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
@@ -24,7 +24,8 @@ library(tidyverse)</code></pre>
 <pre class="r"><code>dat_hw &lt;- read.csv(&quot;dat_hw.csv&quot;)
 airquality &lt;- read.csv(&quot;airquality.csv&quot;)
 pacman &lt;- read.csv(&quot;pacman.csv&quot;)
-frogger &lt;- read.csv(&quot;frogger.csv&quot;)</code></pre>
+frogger &lt;- read.csv(&quot;frogger.csv&quot;)
+frogger2 &lt;- read.csv(&quot;frogger2.csv&quot;)</code></pre>
 <div id="using-and-finding-missing-values" class="section level2">
 <h2>1-2 Using and finding missing values</h2>
 <p>When working with missing data, there are a couple of commands that you should be familiar with - firstly, you should be able to identify if there are any missing values, and where these are.</p>
@@ -458,16 +459,265 @@ replace_with_na_all(pacman, ~.x %in% c(&quot;N/A&quot;, &quot;missing&quot;, &qu
 <p>We are going to explore a new dataset, frogger.</p>
 <p>This dataset contains 4 scores per player recorded at different times: morning, afternoon, evening, and late_night.</p>
 <p>Every player should have played 4 games, one at each of these times, but it looks like not every player completed all of these games.</p>
-<p>Use the complete() function to make these implicit missing values explicit</p>
+<p>Use the complete() function to make these implicit missing values explicit.</p>
+<pre class="r"><code># Print the frogger data to have a look at it
+print(frogger)</code></pre>
+<pre><code>##     name       time  value
+## 1  jesse    morning   6678
+## 2  jesse  afternoon 800060
+## 3  jesse    evening 475528
+## 4  jesse late_night 143533
+## 5   andy    morning 425115
+## 6   andy  afternoon 587468
+## 7   andy late_night 111000
+## 8    nic  afternoon 588532
+## 9    nic late_night 915533
+## 10   dan    morning 388148
+## 11   dan    evening 180912
+## 12  alex    morning 552670
+## 13  alex  afternoon  98355
+## 14  alex    evening 266055
+## 15  alex late_night 121056</code></pre>
+<pre class="r"><code># Use `complete()` on the `time` and `name` variables to  
+# make implicit missing values explicit
+frogger_tidy &lt;- frogger %&gt;% complete(time, name)
+frogger_tidy</code></pre>
+<pre><code>## # A tibble: 20 x 3
+##    time       name   value
+##    &lt;chr&gt;      &lt;chr&gt;  &lt;int&gt;
+##  1 afternoon  alex   98355
+##  2 afternoon  andy  587468
+##  3 afternoon  dan       NA
+##  4 afternoon  jesse 800060
+##  5 afternoon  nic   588532
+##  6 evening    alex  266055
+##  7 evening    andy      NA
+##  8 evening    dan   180912
+##  9 evening    jesse 475528
+## 10 evening    nic       NA
+## 11 late_night alex  121056
+## 12 late_night andy  111000
+## 13 late_night dan       NA
+## 14 late_night jesse 143533
+## 15 late_night nic   915533
+## 16 morning    alex  552670
+## 17 morning    andy  425115
+## 18 morning    dan   388148
+## 19 morning    jesse   6678
+## 20 morning    nic       NA</code></pre>
 </div>
 <div id="fix-explicit-missings-using-fill" class="section level2">
 <h2>2-7 Fix explicit missings using fill()</h2>
 <p>One type of missing value that can be obvious to deal with is where the first entry of a group is given, but subsequent entries are marked NA.</p>
 <p>These missing values often result from empty values in spreadsheets to avoid entering multiple names multiple times; as well as for “human readability”.</p>
 <p>This type of problem can be solved by using the fill() function from the tidyr package.</p>
+<pre class="r"><code># Print the frogger2 data to have a look at it
+
+frogger2</code></pre>
+<pre><code>##     X  name       time  value year
+## 1   1 jesse    morning   6678 1981
+## 2   2  &lt;NA&gt;  afternoon 800060   NA
+## 3   3  &lt;NA&gt;    evening 475528   NA
+## 4   4  &lt;NA&gt; late_night 143533   NA
+## 5   5  andy    morning 425115   NA
+## 6   6  &lt;NA&gt;  afternoon 587468   NA
+## 7   7  &lt;NA&gt; late_night 111000   NA
+## 8   8   nic  afternoon 588532   NA
+## 9   9  &lt;NA&gt; late_night 915533   NA
+## 10 10   dan    morning 388148 1988
+## 11 11  &lt;NA&gt;    evening 180912   NA
+## 12 12  alex    morning 552670   NA
+## 13 13  &lt;NA&gt;  afternoon  98355   NA
+## 14 14  &lt;NA&gt;    evening 266055   NA
+## 15 15  &lt;NA&gt; late_night 121056   NA</code></pre>
+<pre class="r"><code># Use `fill()` to fill down the name variable in the frogger2 dataset
+frogger2 %&gt;% fill(name)</code></pre>
+<pre><code>##     X  name       time  value year
+## 1   1 jesse    morning   6678 1981
+## 2   2 jesse  afternoon 800060   NA
+## 3   3 jesse    evening 475528   NA
+## 4   4 jesse late_night 143533   NA
+## 5   5  andy    morning 425115   NA
+## 6   6  andy  afternoon 587468   NA
+## 7   7  andy late_night 111000   NA
+## 8   8   nic  afternoon 588532   NA
+## 9   9   nic late_night 915533   NA
+## 10 10   dan    morning 388148 1988
+## 11 11   dan    evening 180912   NA
+## 12 12  alex    morning 552670   NA
+## 13 13  alex  afternoon  98355   NA
+## 14 14  alex    evening 266055   NA
+## 15 15  alex late_night 121056   NA</code></pre>
 </div>
 <div id="using-complete-and-fill-together" class="section level2">
 <h2>2-8 Using complete() and fill() together</h2>
 <p>Now let’s put it together!</p>
 <p>Use complete() and fill() together to fix explicit and implicitly missing values in the frogger dataset.</p>
+<pre class="r"><code># Print the frogger data to have a look at it
+frogger2</code></pre>
+<pre><code>##     X  name       time  value year
+## 1   1 jesse    morning   6678 1981
+## 2   2  &lt;NA&gt;  afternoon 800060   NA
+## 3   3  &lt;NA&gt;    evening 475528   NA
+## 4   4  &lt;NA&gt; late_night 143533   NA
+## 5   5  andy    morning 425115   NA
+## 6   6  &lt;NA&gt;  afternoon 587468   NA
+## 7   7  &lt;NA&gt; late_night 111000   NA
+## 8   8   nic  afternoon 588532   NA
+## 9   9  &lt;NA&gt; late_night 915533   NA
+## 10 10   dan    morning 388148 1988
+## 11 11  &lt;NA&gt;    evening 180912   NA
+## 12 12  alex    morning 552670   NA
+## 13 13  &lt;NA&gt;  afternoon  98355   NA
+## 14 14  &lt;NA&gt;    evening 266055   NA
+## 15 15  &lt;NA&gt; late_night 121056   NA</code></pre>
+<pre class="r"><code># Correctly fill() and complete() missing values so that our dataset becomes sensible
+frogger2 %&gt;%
+  fill(name) %&gt;%
+  complete(name, time)</code></pre>
+<pre><code>## # A tibble: 20 x 5
+##    name  time           X  value  year
+##    &lt;chr&gt; &lt;chr&gt;      &lt;int&gt;  &lt;int&gt; &lt;int&gt;
+##  1 alex  afternoon     13  98355    NA
+##  2 alex  evening       14 266055    NA
+##  3 alex  late_night    15 121056    NA
+##  4 alex  morning       12 552670    NA
+##  5 andy  afternoon      6 587468    NA
+##  6 andy  evening       NA     NA    NA
+##  7 andy  late_night     7 111000    NA
+##  8 andy  morning        5 425115    NA
+##  9 dan   afternoon     NA     NA    NA
+## 10 dan   evening       11 180912    NA
+## 11 dan   late_night    NA     NA    NA
+## 12 dan   morning       10 388148  1988
+## 13 jesse afternoon      2 800060    NA
+## 14 jesse evening        3 475528    NA
+## 15 jesse late_night     4 143533    NA
+## 16 jesse morning        1   6678  1981
+## 17 nic   afternoon      8 588532    NA
+## 18 nic   evening       NA     NA    NA
+## 19 nic   late_night     9 915533    NA
+## 20 nic   morning       NA     NA    NA</code></pre>
+</div>
+<div id="exploring-missingness-dependence" class="section level2">
+<h2>2-11 Exploring missingness dependence</h2>
+<p>To learn about the structure of the missingness in data, you can explore how sorting changes how missingness is presented.</p>
+<p>For the oceanbuoys dataset, explore the missingness with vis_miss(), and then arrange by a few different variables</p>
+<p>This is not a definitive process, but it will get you started to ask the right questions of your data. We explore more powerful techniques in the next chapter.</p>
+<pre class="r"><code># Arrange by year
+oceanbuoys %&gt;% arrange(year) %&gt;% vis_miss()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<pre class="r"><code># Arrange by latitude
+oceanbuoys %&gt;% arrange(latitude) %&gt;% vis_miss()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-2.png" width="672" /></p>
+<pre class="r"><code># Arrange by wind_ew (wind east west)
+oceanbuoys %&gt;% arrange(wind_ew) %&gt;% vis_miss()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-3.png" width="672" /></p>
+</div>
+<div id="creating-shadow-matrix-data" class="section level2">
+<h2>3-2 Creating shadow matrix data</h2>
+<p>Missing data can be tricky to think about, as they don’t usually proclaim themselves for you, and instead hide amongst the weeds of the data.</p>
+<p>One way to help expose missing values is to change the way we think about the data - by thinking about every single data value being missing or not missing.</p>
+<p>The as_shadow() function in R transforms a dataframe into a shadow matrix, a special data format where the values are either missing (NA), or Not Missing (!NA).</p>
+<p>The column names of a shadow matrix are the same as the data, but have a suffix added _NA.</p>
+<p>To keep track of and compare data values to their missingness state, use the bind_shadow() function. Having data in this format, with the shadow matrix column bound to the regular data is called nabular data.</p>
+<pre class="r"><code># Create shadow matrix data with `as_shadow()`
+as_shadow(oceanbuoys)</code></pre>
+<pre><code>## # A tibble: 736 x 8
+##    year_NA latitude_NA longitude_NA sea_temp_c_NA air_temp_c_NA humidity_NA
+##    &lt;fct&gt;   &lt;fct&gt;       &lt;fct&gt;        &lt;fct&gt;         &lt;fct&gt;         &lt;fct&gt;      
+##  1 !NA     !NA         !NA          !NA           !NA           !NA        
+##  2 !NA     !NA         !NA          !NA           !NA           !NA        
+##  3 !NA     !NA         !NA          !NA           !NA           !NA        
+##  4 !NA     !NA         !NA          !NA           !NA           !NA        
+##  5 !NA     !NA         !NA          !NA           !NA           !NA        
+##  6 !NA     !NA         !NA          !NA           !NA           !NA        
+##  7 !NA     !NA         !NA          !NA           !NA           !NA        
+##  8 !NA     !NA         !NA          !NA           !NA           !NA        
+##  9 !NA     !NA         !NA          !NA           !NA           !NA        
+## 10 !NA     !NA         !NA          !NA           !NA           !NA        
+## # ... with 726 more rows, and 2 more variables: wind_ew_NA &lt;fct&gt;,
+## #   wind_ns_NA &lt;fct&gt;</code></pre>
+<pre class="r"><code># Create nabular data by binding the shadow to the data with `bind_shadow()`
+bind_shadow(oceanbuoys)</code></pre>
+<pre><code>## # A tibble: 736 x 16
+##     year latitude longitude sea_temp_c air_temp_c humidity wind_ew wind_ns
+##    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1  1997        0      -110       27.6       27.1     79.6   -6.40    5.40
+##  2  1997        0      -110       27.5       27.0     75.8   -5.30    5.30
+##  3  1997        0      -110       27.6       27       76.5   -5.10    4.5 
+##  4  1997        0      -110       27.6       26.9     76.2   -4.90    2.5 
+##  5  1997        0      -110       27.6       26.8     76.4   -3.5     4.10
+##  6  1997        0      -110       27.8       26.9     76.7   -4.40    1.60
+##  7  1997        0      -110       28.0       27.0     76.5   -2       3.5 
+##  8  1997        0      -110       28.0       27.1     78.3   -3.70    4.5 
+##  9  1997        0      -110       28.0       27.2     78.6   -4.20    5   
+## 10  1997        0      -110       28.0       27.2     76.9   -3.60    3.5 
+## # ... with 726 more rows, and 8 more variables: year_NA &lt;fct&gt;,
+## #   latitude_NA &lt;fct&gt;, longitude_NA &lt;fct&gt;, sea_temp_c_NA &lt;fct&gt;,
+## #   air_temp_c_NA &lt;fct&gt;, humidity_NA &lt;fct&gt;, wind_ew_NA &lt;fct&gt;, wind_ns_NA &lt;fct&gt;</code></pre>
+<pre class="r"><code># Bind only the variables with missing values by using bind_shadow(only_miss = TRUE)
+bind_shadow(oceanbuoys, only_miss = TRUE)</code></pre>
+<pre><code>## # A tibble: 736 x 11
+##     year latitude longitude sea_temp_c air_temp_c humidity wind_ew wind_ns
+##    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1  1997        0      -110       27.6       27.1     79.6   -6.40    5.40
+##  2  1997        0      -110       27.5       27.0     75.8   -5.30    5.30
+##  3  1997        0      -110       27.6       27       76.5   -5.10    4.5 
+##  4  1997        0      -110       27.6       26.9     76.2   -4.90    2.5 
+##  5  1997        0      -110       27.6       26.8     76.4   -3.5     4.10
+##  6  1997        0      -110       27.8       26.9     76.7   -4.40    1.60
+##  7  1997        0      -110       28.0       27.0     76.5   -2       3.5 
+##  8  1997        0      -110       28.0       27.1     78.3   -3.70    4.5 
+##  9  1997        0      -110       28.0       27.2     78.6   -4.20    5   
+## 10  1997        0      -110       28.0       27.2     76.9   -3.60    3.5 
+## # ... with 726 more rows, and 3 more variables: sea_temp_c_NA &lt;fct&gt;,
+## #   air_temp_c_NA &lt;fct&gt;, humidity_NA &lt;fct&gt;</code></pre>
+</div>
+<div id="performing-grouped-summaries-of-missingness" class="section level2">
+<h2>3-3 Performing grouped summaries of missingness</h2>
+<p>Now that you can create nabular data, let’s use it to explore the data. Let’s calculate summary statistics based on the missingness of another variable.</p>
+<p>To do this we are going to use the following steps:</p>
+<p>First, bind_shadow() turns the data into nabular data.</p>
+<p>Next, perform some summaries on the data using group_by() and summarize() to calculate the mean and standard deviation, using the mean() and sd() functions.</p>
+</div>
+<div id="further-exploring-more-combinations-of-missingness" class="section level2">
+<h2>3-4 Further exploring more combinations of missingness</h2>
+<p>It can be useful to get a bit of extra information about the number of cases in each missing condition.</p>
+<p>In this exercise, we are going to add information about the number of observed cases using n() inside the summarize() function.</p>
+<p>We will then add an additional level of grouping by looking at the combination of humidity being missing (humidity_NA) and air temperature being missing (air_temp_c_NA).</p>
+</div>
+<div id="nabular-data-and-filling-by-missingness" class="section level2">
+<h2>3-6 Nabular data and filling by missingness</h2>
+<p>Summary statistics are useful to calculate, but as they say, a picture tells you a thousand words.</p>
+<p>In this exercise, we are going to explore how you can use nabular data to explore the variation in a variable by the missingness of another.</p>
+<p>We are going to use the oceanbuoys dataset from naniar.</p>
+</div>
+<div id="nabular-data-and-summarising-by-missingness" class="section level2">
+<h2>3-7 Nabular data and summarising by missingness</h2>
+<p>In this exercise, we are going to explore how to use nabular data to explore the variation in a variable by the missingness of another.</p>
+<p>We are going to use the oceanbuoys dataset from naniar, and then create multiple plots of the data using facets.</p>
+<p>This allows you to explore different layers of missingness.</p>
+</div>
+<div id="explore-variation-by-missingness-box-plots" class="section level2">
+<h2>3-8 Explore variation by missingness: box plots</h2>
+<p>Previous exercises use nabular data along with density plots to explore the variation in a variable by the missingness of another.</p>
+<p>We are going to use the oceanbuoys dataset from naniar, using box plots instead of facets or others to explore different layers of missingness.</p>
+</div>
+<div id="exploring-missing-data-with-scatter-plots" class="section level2">
+<h2>3-10 Exploring missing data with scatter plots</h2>
+<p>Missing values in a scatter plot in ggplot2 are removed by default, with a warning.</p>
+<p>We can display missing values in a scatter plot, using geom_miss_point() - a special ggplot2 geom that shifts the missing values into the plot, displaying them 10% below the minimum of the variable.</p>
+<p>Let’s practice using this visualization with the oceanbuoys dataset.</p>
+</div>
+<div id="using-facets-to-explore-missingness" class="section level2">
+<h2>3-11 Using facets to explore missingness</h2>
+<p>Because geom_miss_point() is a ggplot geom, you can use it with ggplot2 features like faceting.</p>
+<p>This means we can rapidly explore the missingness and stay within the familiar bounds of ggplot2.</p>
+</div>
+<div id="faceting-to-explore-missingness-multiple-plots" class="section level2">
+<h2>3-12 Faceting to explore missingness (multiple plots)</h2>
+<p>Another useful technique with geommisspoint() is to explore the missingness by creating multiple plots.</p>
+<p>Just as we have done in the previous exercises, we can use the nabular data to help us create additional faceted plots.</p>
+<p>We can even create multiple faceted plots according to values in the data, such as year, and features of the data, such as missingness.</p>
 </div>
