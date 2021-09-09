@@ -680,12 +680,62 @@ bind_shadow(oceanbuoys, only_miss = TRUE)</code></pre>
 <p>To do this we are going to use the following steps:</p>
 <p>First, bind_shadow() turns the data into nabular data.</p>
 <p>Next, perform some summaries on the data using group_by() and summarize() to calculate the mean and standard deviation, using the mean() and sd() functions.</p>
+<pre class="r"><code># `bind_shadow()` and `group_by()` humidity missingness (`humidity_NA`)
+oceanbuoys %&gt;%
+  bind_shadow() %&gt;%
+  group_by(humidity_NA) %&gt;% 
+  summarize(wind_ew_mean = mean(wind_ew), # calculate mean of wind_ew
+            wind_ew_sd = sd(wind_ew)) # calculate standard deviation of wind_ew</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   humidity_NA wind_ew_mean wind_ew_sd
+##   &lt;fct&gt;              &lt;dbl&gt;      &lt;dbl&gt;
+## 1 !NA                -3.78       1.90
+## 2 NA                 -3.30       2.31</code></pre>
+<pre class="r"><code># Repeat this, but calculating summaries for wind north south (`wind_ns`).
+oceanbuoys %&gt;%
+  bind_shadow() %&gt;%
+  group_by(humidity_NA) %&gt;%
+  summarize(wind_ew_mean = mean(wind_ns), # calculate mean of wind_ew
+            wind_ew_sd = sd(wind_ns))</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   humidity_NA wind_ew_mean wind_ew_sd
+##   &lt;fct&gt;              &lt;dbl&gt;      &lt;dbl&gt;
+## 1 !NA                 2.78       2.06
+## 2 NA                  1.66       2.23</code></pre>
 </div>
 <div id="further-exploring-more-combinations-of-missingness" class="section level2">
 <h2>3-4 Further exploring more combinations of missingness</h2>
 <p>It can be useful to get a bit of extra information about the number of cases in each missing condition.</p>
 <p>In this exercise, we are going to add information about the number of observed cases using n() inside the summarize() function.</p>
 <p>We will then add an additional level of grouping by looking at the combination of humidity being missing (humidity_NA) and air temperature being missing (air_temp_c_NA).</p>
+<pre class="r"><code># Summarize wind_ew by the missingness of `air_temp_c_NA`
+oceanbuoys %&gt;% 
+  bind_shadow() %&gt;%
+  group_by(air_temp_c_NA) %&gt;%
+  summarize(wind_ew_mean = mean(wind_ew),
+            wind_ew_sd = sd(wind_ew),
+            n_obs = n())</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   air_temp_c_NA wind_ew_mean wind_ew_sd n_obs
+##   &lt;fct&gt;                &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt;
+## 1 !NA                  -3.91       1.85   655
+## 2 NA                   -2.17       2.14    81</code></pre>
+<pre class="r"><code># Summarize wind_ew by missingness of `air_temp_c_NA` and `humidity_NA`
+oceanbuoys %&gt;% 
+  bind_shadow() %&gt;%
+  group_by(air_temp_c_NA, humidity_NA) %&gt;%
+  summarize(wind_ew_mean = mean(wind_ew),
+            wind_ew_sd = sd(wind_ew),
+            n_obs = n())</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;air_temp_c_NA&#39;. You can override using the `.groups` argument.</code></pre>
+<pre><code>## # A tibble: 4 x 5
+## # Groups:   air_temp_c_NA [2]
+##   air_temp_c_NA humidity_NA wind_ew_mean wind_ew_sd n_obs
+##   &lt;fct&gt;         &lt;fct&gt;              &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt;
+## 1 !NA           !NA                -4.01       1.74   565
+## 2 !NA           NA                 -3.24       2.31    90
+## 3 NA            !NA                -2.06       2.08    78
+## 4 NA            NA                 -4.97       1.74     3</code></pre>
 </div>
 <div id="nabular-data-and-filling-by-missingness" class="section level2">
 <h2>3-6 Nabular data and filling by missingness</h2>

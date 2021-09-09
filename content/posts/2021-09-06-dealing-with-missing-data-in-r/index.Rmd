@@ -400,7 +400,21 @@ In this exercise, we are going to add information about the number of observed c
 We will then add an additional level of grouping by looking at the combination of humidity being missing (humidity_NA) and air temperature being missing (air_temp_c_NA).
 
 ```{r}
+# Summarize wind_ew by the missingness of `air_temp_c_NA`
+oceanbuoys %>% 
+  bind_shadow() %>%
+  group_by(air_temp_c_NA) %>%
+  summarize(wind_ew_mean = mean(wind_ew),
+            wind_ew_sd = sd(wind_ew),
+            n_obs = n())
 
+# Summarize wind_ew by missingness of `air_temp_c_NA` and `humidity_NA`
+oceanbuoys %>% 
+  bind_shadow() %>%
+  group_by(air_temp_c_NA, humidity_NA) %>%
+  summarize(wind_ew_mean = mean(wind_ew),
+            wind_ew_sd = sd(wind_ew),
+            n_obs = n())
 ```
 
 ## 3-6 Nabular data and filling by missingness
