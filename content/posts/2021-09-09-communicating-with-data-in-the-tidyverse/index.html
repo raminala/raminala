@@ -1,0 +1,39 @@
+---
+title: Communicating with Data in the Tidyverse
+author: ''
+date: '2021-09-09'
+slug: []
+categories: []
+tags:
+  - Markdown
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
+## v tibble  3.1.2     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>ilo_hourly_compensation &lt;- read.csv(&quot;ilo_hourly_compensation.csv&quot;)
+ilo_working_hours &lt;- read.csv(&quot;ilo_working_hours.csv&quot;)</code></pre>
+<div id="join-the-two-data-sets-together" class="section level2">
+<h2>1-2 Join the two data sets together</h2>
+<p>In the video, you have learned that the inner_join() function of dplyr needs to be given a “key” on which two data frames are joined. Actually, multiple keys that need to match can be specified. In this first exercise, you are going to join two data sets by two keys. The data frames ilo_hourly_compensation and ilo_working_hours are already loaded for you and are available in your workspace.</p>
+<p>This course touches on a lot of concepts you may have forgotten, so if you ever need a quick refresher, download the tidyverse Cheat Sheet and keep it handy!</p>
+<pre class="r"><code># Join both data frames
+ilo_data &lt;- ilo_hourly_compensation %&gt;%
+  inner_join(ilo_working_hours, by = c(&quot;country&quot;, &quot;year&quot;))
+
+# Count the resulting rows
+ilo_data  %&gt;% 
+    count()
+
+# Examine ilo_data
+ilo_data</code></pre>
+</div>

@@ -1,0 +1,37 @@
+---
+title: Communicating with Data in the Tidyverse
+author: ''
+date: '2021-09-09'
+slug: []
+categories: []
+tags:
+  - Markdown
+---
+
+```{r results='hide'}
+library(tidyverse)
+
+ilo_hourly_compensation <- read.csv("ilo_hourly_compensation.csv")
+ilo_working_hours <- read.csv("ilo_working_hours.csv")
+```
+
+## 1-2 Join the two data sets together
+
+In the video, you have learned that the inner_join() function of dplyr needs to be given a "key" on which two data frames are joined. Actually, multiple keys that need to match can be specified. In this first exercise, you are going to join two data sets by two keys. The data frames ilo_hourly_compensation and ilo_working_hours are already loaded for you and are available in your workspace.
+
+This course touches on a lot of concepts you may have forgotten, so if you ever need a quick refresher, download the tidyverse Cheat Sheet and keep it handy!
+
+
+```{r results='hide'}
+# Join both data frames
+ilo_data <- ilo_hourly_compensation %>%
+  inner_join(ilo_working_hours, by = c("country", "year"))
+
+# Count the resulting rows
+ilo_data  %>% 
+    count()
+
+# Examine ilo_data
+ilo_data
+```
+
