@@ -376,7 +376,19 @@ First, bind_shadow() turns the data into nabular data.
 Next, perform some summaries on the data using group_by() and summarize() to calculate the mean and standard deviation, using the mean() and sd() functions.
 
 ```{r}
-
+# `bind_shadow()` and `group_by()` humidity missingness (`humidity_NA`)
+oceanbuoys %>%
+  bind_shadow() %>%
+  group_by(humidity_NA) %>% 
+  summarize(wind_ew_mean = mean(wind_ew), # calculate mean of wind_ew
+            wind_ew_sd = sd(wind_ew)) # calculate standard deviation of wind_ew
+  
+# Repeat this, but calculating summaries for wind north south (`wind_ns`).
+oceanbuoys %>%
+  bind_shadow() %>%
+  group_by(humidity_NA) %>%
+  summarize(wind_ew_mean = mean(wind_ns), # calculate mean of wind_ew
+            wind_ew_sd = sd(wind_ns))
 ```
 
 ## 3-4 Further exploring more combinations of missingness
