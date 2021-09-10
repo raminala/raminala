@@ -1,11 +1,11 @@
 ---
-title: Fun with R
+title: "Fun with R"
 author: ''
 date: '2021-05-25'
-slug: fun-with-r
+output: word_document
 categories: []
-tags: 
-  - R
+tags: R
+slug: fun-with-r
 ---
 
 
