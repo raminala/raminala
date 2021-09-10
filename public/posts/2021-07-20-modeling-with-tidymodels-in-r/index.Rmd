@@ -1,0 +1,496 @@
+---
+title: Modeling with tidymodels in R
+author: ''
+date: '2021-07-20'
+slug: []
+categories:
+  - tidymodels
+tags:
+  - Machine Learning
+---
+
+```{r}
+library(tidymodels)
+library(tidyverse)
+```
+
+tidymodels is a collection of machine learning packages designed to simplify the machine learning workflow in R.
+
+```{r}
+home_sales <- read_csv("home_sales.csv")
+telecom_df <- read_csv("telecom_df.csv")
+```
+
+## 1-3 Creating training and test datasets
+
+The rsample package is designed to create training and test datasets. Creating a test dataset is important for estimating how a trained model will likely perform on new data. It also guards against overfitting, where a model memorizes patterns that exist only in the training data and performs poorly on new data.
+
+This data contains information on homes sold in the Seattle, Washington area between 2015 and 2016.
+The outcome variable in this data is selling_price.
+
+```{r}
+# Create a data split object
+
+# Create a data split object
+home_split <- initial_split(home_sales, 
+                            prop = 0.7, 
+                            strata = selling_price)
+
+# Create the training data
+home_training <- home_split %>%
+  training()
+
+# Create the test data
+home_test <- home_split %>% 
+  testing()
+
+# Check number of rows in each dataset
+nrow(home_training)
+nrow(home_test)
+
+
+```
+
+## 1-4 Distribution of outcome variable values
+
+Stratifying by the outcome variable when generating training and test datasets ensures that the outcome variable values have a similar range in both datasets.
+
+Since the original data is split at random, stratification avoids placing all the expensive homes in home_sales into the test dataset, for example. In this case, your model would most likely perform poorly because it was trained on less expensive homes.
+
+In this exercise, you will calculate summary statistics for the selling_price variable in the training and test datasets. The home_training and home_test tibbles have been loaded from the previous exercise.
+
+```{r}
+# Distribution of selling_price in training data
+home_training %>% 
+  summarize(min_sell_price = min(selling_price),
+            max_sell_price = max(selling_price),
+            mean_sell_price = mean(selling_price),
+            sd_sell_price = sd(selling_price))
+
+
+
+
+
+# Distribution of selling_price in test data
+home_test %>% 
+  summarize(min_sell_price = min(selling_price),
+            max_sell_price = max(selling_price),
+            mean_sell_price = mean(selling_price),
+            sd_sell_price = sd(selling_price))
+```
+
+## 1-6 Fitting a linear regression model
+
+The parsnip package provides a unified syntax for the model fitting process in R.
+
+With parsnip, it is easy to define models using the various packages, or engines, that exist in the R ecosystem.
+
+In this exercise, you will define a parsnip linear regression object and train your model to predict selling_price using home_age and sqft_living as predictor variables from the home_sales data.
+
+The home_training and home_test tibbles that you created in the previous lesson have been loaded into this session.
+
+```{r}
+
+# Specify a linear regression model, linear_model
+linear_model <- linear_reg() %>% 
+  # Set the model engine
+  set_engine('lm') %>% 
+  # Set the model mode
+  set_mode('regression')
+
+# Train the model with the training data
+lm_fit <- linear_model %>% 
+  fit(selling_price~home_age+sqft_living,
+      data = home_training)
+
+# Print lm_fit to view model information
+lm_fit
+
+
+tidy(lm_fit)
+```
+
+## 1-8 Predicting home selling prices
+
+After fitting a model using the training data, the next step is to use it to make predictions on the test dataset. The test dataset acts as a new source of data for the model and will allow you to evaluate how well it performs.
+
+Before you can evaluate model performance, you must add your predictions to the test dataset.
+
+In this exercise, you will use your trained model, lm_fit, to predict selling_price in the home_test dataset.
+
+Your trained model, lm_fit, as well as the test dataset, home_test have been loaded into your session.
+
+```{r}
+# Predict selling_price
+home_predictions <- predict(lm_fit,
+                        new_data = home_test)
+
+# View predicted selling prices
+home_predictions
+
+# Combine test data with predictions
+home_test_results <- home_test %>% 
+  select(selling_price, home_age, sqft_living) %>% 
+  bind_cols(home_predictions)
+
+# View results
+home_test_results
+```
+
+## 1-10 Model performance metrics
+
+Evaluating model results is an important step in the modeling process. Model evaluation should be done on the test dataset in order to see how well a model will generalize to new datasets.
+
+In the previous exercise, you trained a linear regression model to predict selling_price using home_age and sqft_living as predictor variables. You then created the home_test_results tibble using your trained model on the home_test data.
+
+In this exercise, you will calculate the RMSE and R squared metrics using your results in home_test_results.
+
+```{r}
+# Print home_test_results
+home_test_results
+
+# Caculate the RMSE metric
+home_test_results %>% 
+  rmse(selling_price , .pred)
+
+# Calculate the R squared metric
+home_test_results %>% 
+  rsq(selling_price , .pred)
+```
+
+## 1-11 R squared plot
+
+In the previous exercise, you got an R squared value of 0.651. The R squared metric ranges from 0 to 1, 0 being the worst and 1 the best.
+
+Calculating the R squared value is only the first step in studying your model's predictions.
+
+Making an R squared plot is extremely important because it will uncover potential problems with your model, such as non-linear patterns or regions where your model is either over or under-predicting the outcome variable.
+
+In this exercise, you will create an R squared plot of your model's performance.
+
+```{r}
+# Create an R squared plot of model performance
+ggplot(home_test_results, aes(x = selling_price, y = .pred)) +
+  geom_point(alpha = 0.5) + 
+  geom_abline(color = 'blue', linetype = 2) +
+  coord_obs_pred() +
+  labs(x = 'Actual Home Selling Price', y = 'Predicted Selling Price')
+```
+
+## 1-12 Complete model fitting process with last_fit()
+
+In this exercise, you will train and evaluate the performance of a linear regression model that predicts selling_price using all the predictors available in the home_sales tibble.
+
+This exercise will give you a chance to perform the entire model fitting process with tidymodels, from defining your model object to evaluating its performance on the test data.
+
+Earlier in the chapter, you created an rsample object called home_split by passing the home_sales tibble into initial_split(). The home_split object contains the instructions for randomly splitting home_sales into training and test sets.
+
+```{r}
+# Define a linear regression model
+linear_model <- linear_reg() %>% 
+  set_engine('lm') %>% 
+  set_mode('regression')
+
+# Train linear_model with last_fit()
+linear_fit <- linear_model %>% 
+  last_fit(selling_price ~ ., split = home_split)
+
+# Collect predictions and view results
+predictions_df <- linear_fit %>% collect_predictions()
+predictions_df
+                                        
+# Make an R squared plot using predictions_df
+ggplot(predictions_df, aes(x = selling_price , y = .pred)) + 
+  geom_point(alpha = 0.5) + 
+  geom_abline(color = 'blue', linetype = 2) +
+  coord_obs_pred() +
+  labs(x = 'Actual Home Selling Price', y = 'Predicted Selling Price')
+```
+
+## 2-2 Data resampling
+
+The first step in a machine learning project is to create training and test datasets for model fitting and evaluation. The test dataset provides an estimate of how your model will perform on new data and helps to guard against overfitting.
+
+You will be working with the telecom_df dataset which contains information on customers of a telecommunications company. The outcome variable is canceled_service and it records whether a customer canceled their contract with the company. The predictor variables contain information about customers' cell phone and internet usage as well as their contract type and monthly charges.
+
+```{r}
+# Create data split object
+telecom_split <- initial_split(telecom_df, prop = 0.75,
+                     strata = canceled_service)
+
+# Create the training data
+telecom_training <- telecom_split %>% 
+  training()
+
+# Create the test data
+telecom_test <- telecom_split %>% 
+  testing()
+
+# Check the number of rows
+nrow(telecom_training)
+nrow(telecom_test)
+```
+
+## 2-3 Fitting a logistic regression model
+
+In addition to regression models, the parsnip package also provides a general interface to classification models in R.
+
+In this exercise, you will define a parsnip logistic regression object and train your model to predict canceled_service using avg_call_mins, avg_intl_mins, and monthly_charges as predictor variables from the telecom_df data.
+
+```{r}
+# Specify a logistic regression model
+logistic_model <-  logistic_reg() %>% 
+  # Set the engine
+  set_engine('glm') %>% 
+  # Set the mode
+  set_mode('classification')
+
+# Print the model specification
+logistic_model
+
+
+# Fit to training data
+logistic_fit <- logistic_model %>% 
+  fit(factor(canceled_service)~avg_call_mins+ avg_intl_mins+monthly_charges,
+      data = telecom_training)
+
+# Print model fit object
+logistic_fit
+
+
+```
+
+## 2-4 Combining test dataset results
+
+Evaluating your model's performance on the test dataset gives insights into how well your model predicts on new data sources. These insights will help you communicate your model's value in solving problems or improving decision making.
+
+Before you can calculate classification metrics such as sensitivity or specificity, you must create a results tibble with the required columns for yardstick metric functions.
+
+In this exercise, you will use your trained model to predict the outcome variable in the telecom_test dataset and combine it with the true outcome values in the canceled_service column.
+
+
+```{r}
+# Predict outcome categories
+class_preds <- predict(logistic_fit, new_data = telecom_test,
+                       type = 'class')
+
+# Obtain estimated probabilities for each outcome value
+prob_preds <- predict(logistic_fit, new_data = telecom_test, 
+                      type = 'prob')
+
+# Combine test set results
+telecom_results <- telecom_test %>% 
+  select(canceled_service) %>% 
+  bind_cols(class_preds, prob_preds)
+
+# View results tibble
+telecom_results
+```
+
+## 2-7 Evaluating performance with yardstick
+
+In the previous exercise, you calculated classification metrics from a sample confusion matrix. The yardstick package was designed to automate this process.
+
+For classification models, yardstick functions require a tibble of model results as the first argument. This should include the actual outcome values, predicted outcome values, and estimated probabilities for each value of the outcome variable.
+
+In this exercise, you will use the results from your logistic regression model, telecom_results, to calculate performance metrics.
+
+```{r}
+# Calculate the confusion matrix
+conf_mat(telecom_results, truth = canceled_service,
+    estimate = .pred_class)
+
+# Calculate the accuracy
+accuracy(telecom_results, truth = factor(canceled_service),
+    estimate = .pred_class)
+
+# Calculate the sensitivity
+sens(telecom_results, truth = factor(canceled_service),
+    estimate = .pred_class)
+
+```
+
+## 2-8 Creating custom metric sets
+
+The yardstick package also provides the ability to create custom sets of model metrics. In cases where the cost of obtaining false negative errors is different from the cost of false positive errors, it may be important to examine a specific set of performance metrics.
+
+Instead of calculating accuracy, sensitivity, and specificity separately, you can create your own metric function that calculates all three at the same time.
+
+In this exercise, you will use the results from your logistic regression model, telecom_results, to calculate a custom set of performance metrics. You will also use a confusion matrix to calculate all available binary classification metrics in tidymodelsall at once.
+
+## 2-10 Plotting the confusion matrix
+
+Calculating performance metrics with the yardstick package provides insight into how well a classification model is performing on the test dataset. Most yardstick functions return a single number that summarizes classification performance.
+
+Many times, it is helpful to create visualizations of the confusion matrix to more easily communicate your results.
+
+In this exercise, you will make a heat map and mosaic plot of the confusion matrix from your logistic regression model on the telecom_df dataset.
+
+```{r}
+# Create a confusion matrix
+conf_mat(telecom_results,
+         truth = canceled_service ,
+         estimate = .pred_class) %>% 
+  # Create a heat map
+  autoplot(type = 'heatmap')
+
+
+# Create a confusion matrix
+conf_mat(telecom_results,
+         truth = canceled_service,
+         estimate = .pred_class) %>% 
+  # Create a mosaic plot
+  autoplot(type = 'mosaic')
+```
+
+## 2-11 ROC curves and area under the ROC curve
+
+ROC curves are used to visualize the performance of a classification model across a range of probability thresholds. An ROC curve with the majority of points near the upper left corner of the plot indicates that a classification model is able to correctly predict both the positive and negative outcomes correctly across a wide range of probability thresholds.
+
+The area under this curve provides a letter grade summary of model performance.
+
+In this exercise, you will create an ROC curve from your logistic regression model results and calculate the area under the ROC curve with yardstick.
+
+```{r}
+# Calculate metrics across thresholds
+threshold_df <- telecom_results %>% 
+  roc_curve(truth = factor(canceled_service) , .pred_yes)
+
+# View results
+threshold_df
+
+# Plot ROC curve
+threshold_df %>% 
+  autoplot()
+
+# Calculate ROC AUC
+roc_auc(telecom_results,
+    truth = factor(canceled_service) , 
+    .pred_yes)
+```
+
+## 2-13 Streamlining the modeling process
+
+The last_fit() function is designed to streamline the modeling workflow in tidymodels. Instead of training your model on the training data and building a results tibble using the test data, last_fit() accomplishes this with one function.
+
+In this exercise, you will train the same logistic regression model as you fit in the previous exercises, except with the last_fit() function.
+
+```{r}
+# Train model with last_fit()
+telecom_last_fit <- logistic_model %>% 
+  last_fit(factor(canceled_service) ~ avg_call_mins+avg_intl_mins+monthly_charges,
+           split = telecom_split)
+
+# View test set metrics
+telecom_last_fit %>% 
+  collect_metrics()
+```
+
+## 2-14 Collecting predictions and creating custom metrics
+
+Using the last_fit() modeling workflow also saves time in collecting model predictions. Instead of manually creating a tibble of model results, there are helper functions that extract this information automatically.
+
+In this exercise, you will use your trained model, telecom_last_fit, to create a tibble of model results on the test dataset as well as calculate custom performance metrics.
+
+```{r}
+# Collect predictions
+last_fit_results <- telecom_last_fit %>% 
+  collect_predictions()
+
+# View results
+last_fit_results
+
+# Custom metrics function
+#last_fit_metrics <- metric_set(accuracy, sens, spec, roc_auc)
+
+# Calculate metrics
+#last_fit_metrics(last_fit_results, truth = canceled_service, estimate = .pred_class,.pred_yes)
+```
+
+## 2-15 Complete modeling workflow
+
+In this exercise, you will use the last_fit() function to train a logistic regression model and evaluate its performance on the test data by assessing the ROC curve and the area under the ROC curve.
+
+Similar to previous exercises, you will predict canceled_service in the telecom_df data, but with an additional predictor variable to see if you can improve model performance.
+
+The telecom_df tibble, telecom_split, and logistic_model objects from the previous exercises have been loaded into your workspace. The telecom_split object contains the instructions for randomly splitting the telecom_df tibble into training and test sets. The logistic_model object is a parsnip specification of a logistic regression model.
+
+```{r}
+# Train a logistic regression model
+logistic_fit <- logistic_model %>% 
+  last_fit(factor(canceled_service) ~ avg_call_mins + avg_intl_mins + monthly_charges + months_with_company, 
+           split = telecom_split)
+
+# Collect metrics
+logistic_fit %>% 
+  collect_metrics()
+
+# Collect model predictions
+#logistic_fit %>% 
+ # collect_predictions() %>% 
+  # Plot ROC curve
+  #roc_curve(truth = canceled_service, .pred_yes) %>% 
+  #autoplot()
+```
+
+## 3-2 Exploring recipe objects
+
+The first step in feature engineering is to specify a recipe object with the recipe() function and add data preprocessing steps with one or more step_*() functions. Storing all of this information in a single recipe object makes it easier to manage complex feature engineering pipelines and transform new data sources.
+
+How many numeric and nominal predictor variables are encoded in the telecom_rec object?
+
+```{r}
+telecom_rec <- recipe(canceled_service ~ .,
+                      data = telecom_df) %>% 
+  step_log(avg_call_mins, base = 10)
+
+summary(telecom_rec)
+```
+
+## Creating recipe objects
+
+```{r}
+# Specify feature engineering recipe
+telecom_log_rec <- recipe(canceled_service ~ ., 
+                          data = telecom_training) %>%
+  # Add log transformation step
+  step_log(avg_call_mins, avg_intl_mins, base = 10)
+
+# View variable roles and data types
+telecom_log_rec %>%
+  summary()
+```
+
+## 3-6 Discovering correlated predictors
+
+Correlated predictor variables provide redundant information and can negatively impact the model fitting process. When two variables are highly correlated, their values change linearly with each other and hence provide the same information to your machine learning algorithms. This phenomenon is know as multicollinearity.
+
+Before beginning the model fitting process, it's important to explore your dataset to uncover these relationships and remove them in your feature engineering steps.
+
+```{r}
+telecom_training %>% 
+  # Select numeric columns
+  select_if(is.numeric) %>% 
+  # Calculate correlation matrix
+  cor()
+
+# Plot correlated predictors
+ggplot(telecom_training, aes(x = avg_data_gb, y = monthly_charges)) + 
+  # Add points
+  geom_point()  + 
+  # Add title
+  labs(title = "Monthly Charges vs. Average Data Usage",
+       y = 'Monthly Charges ($)', x = 'Average Data Usage (GB)') 
+```
+
+## 3-7 Removing correlated predictors with recipes
+Removing correlated predictor variables from your training and test datasets is an important feature engineering step to ensure your model fitting runs as smoothly as possible.
+
+Now that you have discovered that monthly_charges and avg_data_gb are highly correlated, you must add a correlation filter with step_corr() to your feature engineering pipeline for the telecommunications data.
+
+In this exercise, you will create a recipe object that removes correlated predictors from the telecommunications data.
+
+```{r}
+
+```
+

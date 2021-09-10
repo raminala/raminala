@@ -1,0 +1,199 @@
+---
+title: Project
+author: ''
+date: '2021-06-22'
+slug: []
+categories: []
+tags:
+  - data_visualization
+  - data_wrangling
+  - R
+  - Assignment
+---
+
+**Ramin Ala**
+
+```{r packages, message=FALSE, warning=FALSE, echo=FALSE}
+library(tidyverse)
+library(tidymodels) #Interesting collections of models.
+library(ggtext) #similar to ggplot but for text.
+library(knitr)
+library(kableExtra) 
+library(janitor)
+library(gganimate)
+library(gifski)
+```
+
+---
+
+## *Introduction*
+
+This post consists of a bit of data clean up and exploratory analysis of a dataset available in University of californium, Irvine's website. 
+
+
+## *Data: Air Quality in an Italian city*
+
+```{r, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE}
+air <- read_csv("AirQualityUCI.csv", na = c("n/a", "", "NA")) %>%
+  janitor::clean_names() %>%
+subset(co_gt!=-200 & pt08_s1_co!=-200 & nmhc_gt!=-200 & c6h6_gt!=-200 & pt08_s2_nmhc!=-200 & n_ox_gt!=-200 & pt08_s3_n_ox!=-200 & no2_gt!=-200 &
+        pt08_s4_no2!=-200 & pt08_s5_o3!=-200 & rh!=-200 & ah!=-200 & t!=-200, select = -c(x16,x17))  %>%
+  rename(co=pt08_s1_co, nmhc=pt08_s2_nmhc, nox=pt08_s3_n_ox, no2=pt08_s4_no2, o3=pt08_s5_o3)
+```
+
+The dataset includes `r ncol(air)` variables and `r nrow(air)` observations that represent air quality within an Italian city and in a significantly polluted area. level of **CO**, **Non Metanic Hydrocarbons**, **Benzene**, **Total Nitrogen Oxides (NOx)**, and **Nitrogen Dioxide (NO2)** measured. Relative and absolute humidity are among variables.
+
+This table shows important variables and their definition.
+
+```{r echo=FALSE, out.width="40%"}
+knitr::include_graphics("t1.jpg",
+  dpi = 30)
+```
+
+This dataset is available in the below link:
+
+https://archive.ics.uci.edu/ml/datasets/Air+Quality
+
+## *Corrolation between air quality and temperature*
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+ee <- air %>%
+  subset(select = -c(time,date,ah,rh,co_gt,n_ox_gt,c6h6_gt,no2_gt, nmhc_gt)) %>%
+  pivot_longer(-t, names_to = "categories", values_to = "percentage") %>%
+  
+  
+   ggplot(aes(t, percentage, color=categories))+
+  geom_point()+
+  geom_smooth(method = "lm", se = FALSE, color = "#8E2C90")+
+  facet_wrap("categories", dir = "v")+
+  labs(x="Temperature",y="Pullotion in air")
+
+ee
+```
+
+It seems that temperature does not have abigh impact on the air quality. However, apart from nox, levels of all other pollutant is slightly increase by increasing temperature.
+
+## *Corrolation between air quality and absolute humidity*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+ff <- air %>%
+  subset(select = -c(time,date,rh,t,co_gt,n_ox_gt,c6h6_gt,no2_gt, nmhc_gt)) %>%
+  pivot_longer(-ah, names_to = "categories", values_to = "percentage") %>%
+  
+  
+   ggplot(aes(ah, percentage, color=categories))+
+  geom_point()+
+  geom_smooth(method = "lm", se = FALSE, color = "#8E2C90")+
+  facet_wrap("categories", dir = "v")+
+  labs(x="Absolute humidity",y="Pullotion in air")
+
+ff
+```
+
+There are different data for relative and absolute humidity. Note absolute humidity is the measure of water vapor (moisture) in the air, regardless of temperature. Relative humidity also measures water vapor but RELATIVE to the temperature of the air. Trend of change is interestingly to big extent like temperature.
+
+
+
+## *average pollution by time of the day*
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+gg <- air %>%
+  subset(select = -c(date,rh, ah,t,co_gt,n_ox_gt,c6h6_gt,no2_gt, nmhc_gt)) %>%
+  pivot_longer(-time, names_to = "categories", values_to = "percentage") %>%
+  group_by(time) %>%
+  summarise(m=mean(percentage)) %>%
+  
+  ggplot(aes(m, as.factor(time)))+
+  geom_col(fill="#69b3a2", color="#e9ecef", alpha=0.6)+
+   labs(y="Time",x="Average Pullotion")
+gg
+```
+
+
+This plot show the average pollution in terms of time of the day. There are two picks in the level of pollutuon. First, 8 Am and the second 7 pm. Both of these hours are rush hours with lots of traffic. General intuition has always been that there is least air pollution at night because there are fewer cars on the road and fewer factories humming at that time of day.
+
+
+
+## *Goal: Predict level of nox pollutant from no2*
+
+## Specify model and Set model fitting *engine*
+
+```{r,  echo=FALSE, message=FALSE, warning=FALSE}
+linear_reg()
+
+linear_reg() %>%
+  set_engine("lm") # lm: linear model
+```
+
+## *Actual points and the linear fitting*
+
+```{r,  echo=FALSE, message=FALSE, warning=FALSE}
+jj <- air %>%
+  
+  ggplot(aes(no2, nox))+
+  geom_point( color="red")+
+   labs(x="no2",y="nox")+geom_smooth(method = "lm", se = FALSE, color = "#8E2C90")
+
+jj
+```
+
+## *Fit model & estimate parameters*
+
+```{r fit-model,  echo=FALSE, message=FALSE, warning=FALSE}
+linear_reg() %>%
+  set_engine("lm") %>%
+  fit(nox~no2, data = air) #in: inches #we want to predict height, using width
+```
+
+## *Model outputs*
+
+
+
+```{r,  echo=FALSE, message=FALSE, warning=FALSE}
+fgfg <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(co~no2, data = air) %>%
+  tidy()
+
+
+fgfg
+```
+
+
+## *Numerical Example*
+**According to available data and linear fitting, What level for Nox is expected if no2 is 2500?**
+
+Nox= -0.7743*no+2202.6401= -0.7743*2500+2202.6401= 266.8901
+
+
+## *Summary*
+
+  According to data visualization in this report, Pollution is a loose function of temperature and humidity but it depends on the time of day. It concluded that level of pollutant is higher at the start and finish of working hours when people are using personal cars to get office/home. Other aspect of this report is prediction of level of nox pollutant when no2 level in known using a simple linear regression.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

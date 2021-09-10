@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Case Study: Exploratory Data Analysis in R // Ramin Ala</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.83.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://ramin1ala.netlify.app/css/main.min.9dbf51e978afe3857b6cf4f89e41949fcd0410a29b2c2a5da404b58dfd6fc228.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Case Study: Exploratory Data Analysis in R"/>
+<meta name="twitter:description" content="library(tidyverse)## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --## v ggplot2 3.3.3 v purrr 0.3.4## v tibble 3.1.2 v dplyr 1.0.6## v tidyr 1.1.3 v stringr 1.4.0## v readr 1.4.0 v forcats 0.5.1## -- Conflicts ------------------------------------------ tidyverse_conflicts() --## x dplyr::filter() masks stats::filter()## x dplyr::lag() masks stats::lag()votes &lt;- read.csv(&quot;votes.csv&quot;)descriptions &lt;- read.csv(&quot;descriptions.csv&quot;)1-2 Filtering rowsThe vote column in the dataset has a number that represents that country’s vote:"/>
+
+    <meta property="og:title" content="Case Study: Exploratory Data Analysis in R" />
+<meta property="og:description" content="library(tidyverse)## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --## v ggplot2 3.3.3 v purrr 0.3.4## v tibble 3.1.2 v dplyr 1.0.6## v tidyr 1.1.3 v stringr 1.4.0## v readr 1.4.0 v forcats 0.5.1## -- Conflicts ------------------------------------------ tidyverse_conflicts() --## x dplyr::filter() masks stats::filter()## x dplyr::lag() masks stats::lag()votes &lt;- read.csv(&quot;votes.csv&quot;)descriptions &lt;- read.csv(&quot;descriptions.csv&quot;)1-2 Filtering rowsThe vote column in the dataset has a number that represents that country’s vote:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ramin1ala.netlify.app/posts/2021-08-28-case-study-exploratory-data-analysis-in-r/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-08-28T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-08-28T00:00:00&#43;00:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://ramin1ala.netlify.app/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>Ramin Ala</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/publications/">Publications</a>
+      </nav>
+      <p>An Electrical engineer with experience in RF and interest in data science.</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/raminala" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/ramin-ala-6645b3188/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://twitter.com/ala_ramin" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>Twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Case Study: Exploratory Data Analysis in R</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Aug 28, 2021
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          23 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://ramin1ala.netlify.app/tags/data_visualization/">data_visualization</a>
+              <a class="tag" href="https://ramin1ala.netlify.app/tags/data_wrangling/">data_wrangling</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+<script src="https://ramin1ala.netlify.app/posts/2021-08-28-case-study-exploratory-data-analysis-in-r/index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
+## v tibble  3.1.2     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>votes &lt;- read.csv(&quot;votes.csv&quot;)
+descriptions &lt;- read.csv(&quot;descriptions.csv&quot;)</code></pre>
+<div id="filtering-rows" class="section level2">
+<h2>1-2 Filtering rows</h2>
+<p>The vote column in the dataset has a number that represents that country’s vote:</p>
+<p>1 = Yes
+2 = Abstain
+3 = No
+8 = Not present
+9 = Not a member
+One step of data cleaning is removing observations (rows) that you’re not interested in. In this case, you want to remove “Not present” and “Not a member”.</p>
+<pre class="r"><code># Filter for votes that are &quot;yes&quot;, &quot;abstain&quot;, or &quot;no&quot;
+votes %&gt;% filter(vote&lt;=3)</code></pre>
+</div>
+<div id="adding-a-year-column" class="section level2">
+<h2>1-3 Adding a year column</h2>
+<p>The next step of data cleaning is manipulating your variables (columns) to make them more informative.</p>
+<p>In this case, you have a session column that is hard to interpret intuitively. But since the UN started voting in 1946, and holds one session per year, you can get the year of a UN resolution by adding 1945 to the session number.</p>
+<pre class="r"><code># Add another %&gt;% step to add a year column
+votes %&gt;%
+  filter(vote &lt;= 3) %&gt;%
+mutate(year=session+1945)</code></pre>
+</div>
+<div id="adding-a-country-column" class="section level2">
+<h2>1-4 Adding a country column</h2>
+<p>The country codes in the ccode column are what’s called Correlates of War codes. This isn’t ideal for an analysis, since you’d like to work with recognizable country names.</p>
+<p>You can use the countrycode package to translate. For example:</p>
+<p>library(countrycode)</p>
+</div>
+<div id="translate-the-country-code-2" class="section level1">
+<h1>Translate the country code 2</h1>
+<blockquote>
+<p>countrycode(2, “cown”, “country.name”)
+[1] “United States”</p>
+</blockquote>
+</div>
+<div id="translate-multiple-country-codes" class="section level1">
+<h1>Translate multiple country codes</h1>
+<blockquote>
+<p>countrycode(c(2, 20, 40), “cown”, “country.name”)
+[1] “United States” “Canada” “Cuba”</p>
+</blockquote>
+<pre class="r"><code># Load the countrycode package
+library(countrycode)
+
+# Convert country code 100
+countrycode(100, &quot;cown&quot;, &quot;country.name&quot;)</code></pre>
+<pre><code>## [1] &quot;Colombia&quot;</code></pre>
+<pre class="r"><code># Add a country column within the mutate: votes_processed
+votes_processed &lt;- votes %&gt;%
+  filter(vote &lt;= 3) %&gt;%
+  mutate(year = session + 1945,
+         country = countrycode(ccode, &quot;cown&quot;, &quot;country.name&quot;))</code></pre>
+<div id="summarizing-the-full-dataset" class="section level2">
+<h2>1-6 Summarizing the full dataset</h2>
+<p>In this analysis, you’re going to focus on “% of votes that are yes” as a metric for the “agreeableness” of countries.</p>
+<p>You’ll start by finding this summary for the entire dataset: the fraction of all votes in their history that were “yes”. Note that within your call to summarize(), you can use n() to find the total number of votes and mean(vote == 1) to find the fraction of “yes” votes.</p>
+</div>
+<div id="summarizing-by-year" class="section level2">
+<h2>1-7 Summarizing by year</h2>
+<p>The summarize() function is especially useful because it can be used within groups.</p>
+<p>For example, you might like to know how much the average “agreeableness” of countries changed from year to year. To examine this, you can use group_by() to perform your summary not for the entire dataset, but within each year.</p>
+<pre class="r"><code># Change this code to summarize by year
+votes_processed %&gt;%
+group_by(year) %&gt;%
+  summarize(total = n(),
+            percent_yes = mean(vote == 1))</code></pre>
+</div>
+<div id="summarizing-by-country" class="section level2">
+<h2>1-8 Summarizing by country</h2>
+<p>In the last exercise, you performed a summary of the votes within each year. You could instead summarize() within each country, which would let you compare voting patterns between countries.</p>
+<pre class="r"><code># Summarize by country: by_country
+by_country &lt;- votes_processed %&gt;%
+  group_by(country) %&gt;%
+  summarize(total = n(),
+            percent_yes = mean(vote == 1))</code></pre>
+</div>
+<div id="sorting-by-percentage-of-yes-votes" class="section level2">
+<h2>1-10 Sorting by percentage of “yes” votes</h2>
+<p>Now that you’ve summarized the dataset by country, you can start examining it and answering interesting questions.</p>
+<p>For example, you might be especially interested in the countries that voted “yes” least often, or the ones that voted “yes” most often.</p>
+<pre class="r"><code># You have the votes summarized by country
+by_country &lt;- votes_processed %&gt;%
+  group_by(country) %&gt;%
+  summarize(total = n(),
+            percent_yes = mean(vote == 1))
+
+# Print the by_country dataset
+print(by_country)</code></pre>
+<pre><code>## # A tibble: 200 x 3
+##    country           total percent_yes
+##    &lt;chr&gt;             &lt;int&gt;       &lt;dbl&gt;
+##  1 Afghanistan        2373       0.859
+##  2 Albania            1695       0.717
+##  3 Algeria            2213       0.899
+##  4 Andorra             719       0.638
+##  5 Angola             1431       0.924
+##  6 Antigua &amp; Barbuda  1302       0.912
+##  7 Argentina          2553       0.768
+##  8 Armenia             758       0.747
+##  9 Australia          2575       0.557
+## 10 Austria            2389       0.622
+## # ... with 190 more rows</code></pre>
+<pre class="r"><code># Sort in ascending order of percent_yes
+by_country %&gt;% arrange(percent_yes)</code></pre>
+<pre><code>## # A tibble: 200 x 3
+##    country                          total percent_yes
+##    &lt;chr&gt;                            &lt;int&gt;       &lt;dbl&gt;
+##  1 Zanzibar                             2       0    
+##  2 United States                     2568       0.269
+##  3 Palau                              369       0.339
+##  4 Israel                            2380       0.341
+##  5 &lt;NA&gt;                              1075       0.397
+##  6 United Kingdom                    2558       0.417
+##  7 France                            2527       0.427
+##  8 Micronesia (Federated States of)   724       0.442
+##  9 Marshall Islands                   757       0.491
+## 10 Belgium                           2568       0.492
+## # ... with 190 more rows</code></pre>
+<pre class="r"><code># Now sort in descending order
+by_country %&gt;% arrange(desc(percent_yes))</code></pre>
+<pre><code>## # A tibble: 200 x 3
+##    country              total percent_yes
+##    &lt;chr&gt;                &lt;int&gt;       &lt;dbl&gt;
+##  1 São Tomé &amp; Príncipe   1091       0.976
+##  2 Seychelles             881       0.975
+##  3 Djibouti              1598       0.961
+##  4 Guinea-Bissau         1538       0.960
+##  5 Timor-Leste            326       0.957
+##  6 Mauritius             1831       0.950
+##  7 Zimbabwe              1361       0.949
+##  8 Comoros               1133       0.947
+##  9 United Arab Emirates  1934       0.947
+## 10 Mozambique            1701       0.947
+## # ... with 190 more rows</code></pre>
+</div>
+<div id="filtering-summarized-output" class="section level2">
+<h2>1-11 Filtering summarized output</h2>
+<p>In the last exercise, you may have noticed that the country that voted least frequently, Zanzibar, had only 2 votes in the entire dataset. You certainly can’t make any substantial conclusions based on that data!</p>
+<p>Typically in a progressive analysis, when you find that a few of your observations have very little data while others have plenty, you set some threshold to filter them out.</p>
+<pre class="r"><code># Filter out countries with fewer than 100 votes
+by_country %&gt;%
+  arrange(percent_yes) %&gt;%
+  filter(total&gt;100)</code></pre>
+<pre><code>## # A tibble: 197 x 3
+##    country                          total percent_yes
+##    &lt;chr&gt;                            &lt;int&gt;       &lt;dbl&gt;
+##  1 United States                     2568       0.269
+##  2 Palau                              369       0.339
+##  3 Israel                            2380       0.341
+##  4 &lt;NA&gt;                              1075       0.397
+##  5 United Kingdom                    2558       0.417
+##  6 France                            2527       0.427
+##  7 Micronesia (Federated States of)   724       0.442
+##  8 Marshall Islands                   757       0.491
+##  9 Belgium                           2568       0.492
+## 10 Canada                            2576       0.508
+## # ... with 187 more rows</code></pre>
+</div>
+<div id="summarizing-by-year-and-country" class="section level2">
+<h2>2-6 Summarizing by year and country</h2>
+<p>You’re more interested in trends of voting within specific countries than you are in the overall trend. So instead of summarizing just by year, summarize by both year and country, constructing a dataset that shows what fraction of the time each country votes “yes” in each year.</p>
+<pre class="r"><code># Group by year and country: by_year_country
+by_year_country &lt;- votes_processed %&gt;%
+  group_by(year, country) %&gt;%
+  summarize(total = n(),
+            percent_yes = mean(vote == 1))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;year&#39;. You can override using the `.groups` argument.</code></pre>
+</div>
+<div id="plotting-just-the-uk-over-time" class="section level2">
+<h2>2-7 Plotting just the UK over time</h2>
+<p>Now that you have the percentage of time that each country voted “yes” within each year, you can plot the trend for a particular country. In this case, you’ll look at the trend for just the United Kingdom.</p>
+<p>This will involve using filter() on your data before giving it to ggplot2.</p>
+<pre class="r"><code># Start with by_year_country dataset
+by_year_country &lt;- votes_processed %&gt;%
+  group_by(year, country) %&gt;%
+  summarize(total = n(),
+            percent_yes = mean(vote == 1))
+
+# Print by_year_country
+#print(by_year_country)
+
+# Create a filtered version: UK_by_year
+UK_by_year &lt;- by_year_country %&gt;%
+filter(country==&quot;United Kingdom&quot;)
+
+# Line plot of percent_yes over time for UK only
+ggplot(UK_by_year, aes(year, percent_yes)) +
+  geom_line()</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-28-case-study-exploratory-data-analysis-in-r/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="plotting-multiple-countries" class="section level2">
+<h2>2-8 Plotting multiple countries</h2>
+<p>Plotting just one country at a time is interesting, but you really want to compare trends between countries. For example, suppose you want to compare voting trends for the United States, the UK, France, and India.</p>
+<p>You’ll have to filter to include all four of these countries and use another aesthetic (not just x- and y-axes) to distinguish the countries on the resulting visualization. Instead, you’ll use the color aesthetic to represent different countries.</p>
+<pre class="r"><code># Vector of four countries to examine
+countries &lt;- c(&quot;United States&quot;, &quot;United Kingdom&quot;,
+               &quot;France&quot;, &quot;India&quot;)
+
+# Filter by_year_country: filtered_4_countries
+filtered_4_countries &lt;- by_year_country %&gt;%
+filter(country %in% countries)
+#%in%
+# Line plot of % yes in four countries
+ggplot(filtered_4_countries, aes(year,percent_yes, color=country)) +
+  geom_line()</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-28-case-study-exploratory-data-analysis-in-r/index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+</div>
+<div id="faceting-the-time-series" class="section level2">
+<h2>2-10 Faceting the time series</h2>
+<p>Now you’ll take a look at six countries. While in the previous exercise you used color to represent distinct countries, this gets a little too crowded with six.</p>
+<p>Instead, you will facet, giving each country its own sub-plot. To do so, you add a facet_wrap() step after all of your layers.</p>
+<pre class="r"><code># Vector of six countries to examine
+countries &lt;- c(&quot;United States&quot;, &quot;United Kingdom&quot;,
+               &quot;France&quot;, &quot;Japan&quot;, &quot;Brazil&quot;, &quot;India&quot;)
+
+# Filtered by_year_country: filtered_6_countries
+filtered_6_countries &lt;- by_year_country %&gt;%
+filter(country %in% countries)
+
+# Line plot of % yes over time faceted by country
+ggplot(filtered_6_countries, aes(year, percent_yes)) +
+  geom_line() +
+  facet_wrap(~country)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-28-case-study-exploratory-data-analysis-in-r/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="faceting-with-free-y-axis" class="section level2">
+<h2>2-11 Faceting with free y-axis</h2>
+<p>In the previous plot, all six graphs had the same axis limits. This made the changes over time hard to examine for plots with relatively little change.</p>
+<p>Instead, you may want to let the plot choose a different y-axis for each facet.</p>
+<pre class="r"><code># Vector of six countries to examine
+countries &lt;- c(&quot;United States&quot;, &quot;United Kingdom&quot;,
+               &quot;France&quot;, &quot;Japan&quot;, &quot;Brazil&quot;, &quot;India&quot;)
+
+# Filtered by_year_country: filtered_6_countries
+filtered_6_countries &lt;- by_year_country %&gt;%
+  filter(country %in% countries)
+
+# Line plot of % yes over time faceted by country
+ggplot(filtered_6_countries, aes(year, percent_yes)) +
+  geom_line() +
+  facet_wrap(~ country, scale=&quot;free_y&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-28-case-study-exploratory-data-analysis-in-r/index_files/figure-html/unnamed-chunk-13-1.png" width="672" />
+## 3-9 Nesting a data frame</p>
+<p>Right now, the by_year_country data frame has one row per country-vote pair. So that you can model each country individually, you’re going to “nest” all columns besides country, which will result in a data frame with one row per country. The data for each individual country will then be stored in a list column called data.</p>
+<pre class="r"><code># Nest all columns besides country
+by_year_country %&gt;%
+nest(-country)</code></pre>
+<pre><code>## Warning: All elements of `...` must be named.
+## Did you want `data = c(year, total, percent_yes)`?</code></pre>
+<pre><code>## # A tibble: 200 x 2
+##    country     data                 
+##    &lt;chr&gt;       &lt;list&gt;               
+##  1 Afghanistan &lt;grouped_df [34 x 3]&gt;
+##  2 Argentina   &lt;grouped_df [34 x 3]&gt;
+##  3 Australia   &lt;grouped_df [34 x 3]&gt;
+##  4 Belarus     &lt;grouped_df [34 x 3]&gt;
+##  5 Belgium     &lt;grouped_df [34 x 3]&gt;
+##  6 Bolivia     &lt;grouped_df [34 x 3]&gt;
+##  7 Brazil      &lt;grouped_df [34 x 3]&gt;
+##  8 Canada      &lt;grouped_df [34 x 3]&gt;
+##  9 Chile       &lt;grouped_df [34 x 3]&gt;
+## 10 Colombia    &lt;grouped_df [34 x 3]&gt;
+## # ... with 190 more rows</code></pre>
+</div>
+<div id="list-columns" class="section level2">
+<h2>3-10 List columns</h2>
+<p>This “nested” data has an interesting structure. The second column, data, is a list, a type of R object that hasn’t yet come up in this course that allows complicated objects to be stored within each row. This is because each item of the data column is itself a data frame.</p>
+</div>
+</div>
+<div id="a-tibble-200-2" class="section level1">
+<h1>A tibble: 200 × 2</h1>
+<pre><code>                       country              data
+                         &lt;chr&gt;            &lt;list&gt;</code></pre>
+<p>1 Afghanistan &lt;tibble [34 × 3]&gt;
+2 Argentina &lt;tibble [34 × 3]&gt;
+3 Australia &lt;tibble [34 × 3]&gt;
+4 Belarus &lt;tibble [34 × 3]&gt;
+5 Belgium &lt;tibble [34 × 3]&gt;
+6 Bolivia, Plurinational State of &lt;tibble [34 × 3]&gt;
+7 Brazil &lt;tibble [34 × 3]&gt;
+8 Canada &lt;tibble [34 × 3]&gt;
+9 Chile &lt;tibble [34 × 3]&gt;
+10 Colombia &lt;tibble [34 × 3]&gt;
+You can use nested<span class="math inline">\(data to access this list column and double brackets to access a particular element. For example, nested\)</span>data[[1]] would give you the data frame with Afghanistan’s voting history (the percent_yes per year), since Afghanistan is the first row of the table.</p>
+<pre class="r"><code># All countries are nested besides country
+nested &lt;- by_year_country %&gt;%
+  nest(-country)</code></pre>
+<pre><code>## Warning: All elements of `...` must be named.
+## Did you want `data = c(year, total, percent_yes)`?</code></pre>
+<pre class="r"><code># Print the nested data for Brazil
+print(nested$data[7])</code></pre>
+<pre><code>## [[1]]
+## # A tibble: 34 x 3
+## # Groups:   year [34]
+##     year total percent_yes
+##    &lt;dbl&gt; &lt;int&gt;       &lt;dbl&gt;
+##  1  1947    38       0.658
+##  2  1949    64       0.469
+##  3  1951    25       0.64 
+##  4  1953    26       0.731
+##  5  1955    37       0.730
+##  6  1957    34       0.735
+##  7  1959    54       0.537
+##  8  1961    76       0.553
+##  9  1963    32       0.781
+## 10  1965    41       0.610
+## # ... with 24 more rows</code></pre>
+<div id="unnesting" class="section level2">
+<h2>3-11 Unnesting</h2>
+<p>The opposite of the nest() operation is the unnest() operation. This takes each of the data frames in the list column and brings those rows back to the main data frame.</p>
+<p>In this exercise, you are just undoing the nest() operation. In the next section, you’ll learn how to fit a model in between these nesting and unnesting steps that makes this process useful.</p>
+<pre class="r"><code># All countries are nested besides country
+nested &lt;- by_year_country %&gt;%
+  nest(-country)</code></pre>
+<pre><code>## Warning: All elements of `...` must be named.
+## Did you want `data = c(year, total, percent_yes)`?</code></pre>
+<pre class="r"><code># Unnest the data column to return it to its original form
+nested %&gt;%
+unnest()</code></pre>
+<pre><code>## Warning: `cols` is now required when using unnest().
+## Please use `cols = c(data)`</code></pre>
+<pre><code>## # A tibble: 4,744 x 4
+##    country      year total percent_yes
+##    &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;       &lt;dbl&gt;
+##  1 Afghanistan  1947    34       0.382
+##  2 Afghanistan  1949    51       0.608
+##  3 Afghanistan  1951    25       0.76 
+##  4 Afghanistan  1953    26       0.769
+##  5 Afghanistan  1955    37       0.730
+##  6 Afghanistan  1957    34       0.529
+##  7 Afghanistan  1959    54       0.611
+##  8 Afghanistan  1961    76       0.605
+##  9 Afghanistan  1963    32       0.781
+## 10 Afghanistan  1965    40       0.85 
+## # ... with 4,734 more rows</code></pre>
+</div>
+<div id="performing-linear-regression-on-each-nested-dataset" class="section level2">
+<h2>3-13 Performing linear regression on each nested dataset</h2>
+<p>Now that you’ve divided the data for each country into a separate dataset in the data column, you need to fit a linear model to each of these datasets.</p>
+<p>The map() function from purrr works by applying a formula to each item in a list, where . represents the individual item. For example, you could add one to each of a list of numbers:</p>
+<p>map(numbers, ~ 1 + .)
+This means that to fit a model to each dataset, you can do:</p>
+<p>map(data, ~ lm(percent_yes ~ year, data = .))
+where . represents each individual item from the data column in by_year_country. Recall that each item in the data column is a dataset that pertains to a specific country.</p>
+<pre class="r"><code># Perform a linear regression on each item in the data column
+by_year_country %&gt;%
+  nest(-country) %&gt;%
+  mutate(model=map(data,~ lm(percent_yes ~ year,  .)))</code></pre>
+<pre><code>## Warning: All elements of `...` must be named.
+## Did you want `data = c(year, total, percent_yes)`?</code></pre>
+<pre><code>## # A tibble: 200 x 3
+##    country     data                  model 
+##    &lt;chr&gt;       &lt;list&gt;                &lt;list&gt;
+##  1 Afghanistan &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;  
+##  2 Argentina   &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;  
+##  3 Australia   &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;  
+##  4 Belarus     &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;  
+##  5 Belgium     &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;  
+##  6 Bolivia     &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;  
+##  7 Brazil      &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;  
+##  8 Canada      &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;  
+##  9 Chile       &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;  
+## 10 Colombia    &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;  
+## # ... with 190 more rows</code></pre>
+</div>
+<div id="tidy-each-linear-regression-model" class="section level2">
+<h2>3-14 Tidy each linear regression model</h2>
+<p>You’ve now performed a linear regression on each nested dataset and have a linear model stored in the list column model. But you can’t recombine the models until you’ve tidied each into a table of coefficients. To do that, you’ll need to use map() one more time and the tidy() function from the broom package.</p>
+<p>Recall that you can simply give a function to map() (e.g. map(models, tidy)) in order to apply that function to each item of a list.</p>
+<pre class="r"><code># Load the broom package
+library(broom)
+
+# Add another mutate that applies tidy() to each model
+by_year_country %&gt;%
+  nest(-country) %&gt;%
+  mutate(model = map(data, ~ lm(percent_yes ~ year, data = .)),
+         tidied = map(model, tidy))</code></pre>
+<pre><code>## Warning: All elements of `...` must be named.
+## Did you want `data = c(year, total, percent_yes)`?</code></pre>
+<pre><code>## # A tibble: 200 x 4
+##    country     data                  model  tidied          
+##    &lt;chr&gt;       &lt;list&gt;                &lt;list&gt; &lt;list&gt;          
+##  1 Afghanistan &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;   &lt;tibble [2 x 5]&gt;
+##  2 Argentina   &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;   &lt;tibble [2 x 5]&gt;
+##  3 Australia   &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;   &lt;tibble [2 x 5]&gt;
+##  4 Belarus     &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;   &lt;tibble [2 x 5]&gt;
+##  5 Belgium     &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;   &lt;tibble [2 x 5]&gt;
+##  6 Bolivia     &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;   &lt;tibble [2 x 5]&gt;
+##  7 Brazil      &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;   &lt;tibble [2 x 5]&gt;
+##  8 Canada      &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;   &lt;tibble [2 x 5]&gt;
+##  9 Chile       &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;   &lt;tibble [2 x 5]&gt;
+## 10 Colombia    &lt;grouped_df [34 x 3]&gt; &lt;lm&gt;   &lt;tibble [2 x 5]&gt;
+## # ... with 190 more rows</code></pre>
+</div>
+<div id="unnesting-a-data-frame" class="section level2">
+<h2>3-15 Unnesting a data frame</h2>
+<p>You now have a tidied version of each model stored in the tidied column. You want to combine all of those into a large data frame, similar to how you combined the US and UK tidied models earlier. Recall that the unnest() function from tidyr achieves this.</p>
+<pre class="r"><code># Add one more step that unnests the tidied column
+country_coefficients &lt;- by_year_country %&gt;%
+  nest(-country) %&gt;%
+  mutate(model = map(data, ~ lm(percent_yes ~ year, data = .)),
+         tidied = map(model, tidy)) %&gt;%
+  unnest(tidied)</code></pre>
+<pre><code>## Warning: All elements of `...` must be named.
+## Did you want `data = c(year, total, percent_yes)`?</code></pre>
+<pre class="r"><code># Print the resulting country_coefficients variable
+country_coefficients</code></pre>
+<pre><code>## # A tibble: 400 x 8
+##    country   data          model  term    estimate std.error statistic   p.value
+##    &lt;chr&gt;     &lt;list&gt;        &lt;list&gt; &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+##  1 Afghanis~ &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -1.11e+1  1.47         -7.52   1.44e-8
+##  2 Afghanis~ &lt;grouped_df ~ &lt;lm&gt;   year     6.01e-3  0.000743      8.09   3.06e-9
+##  3 Argentina &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -9.46e+0  2.10         -4.50   8.32e-5
+##  4 Argentina &lt;grouped_df ~ &lt;lm&gt;   year     5.15e-3  0.00106       4.85   3.05e-5
+##  5 Australia &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -4.55e+0  2.15         -2.12   4.22e-2
+##  6 Australia &lt;grouped_df ~ &lt;lm&gt;   year     2.57e-3  0.00108       2.37   2.42e-2
+##  7 Belarus   &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -7.00e+0  1.50         -4.66   5.33e-5
+##  8 Belarus   &lt;grouped_df ~ &lt;lm&gt;   year     3.91e-3  0.000759      5.15   1.28e-5
+##  9 Belgium   &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -5.85e+0  1.52         -3.86   5.22e-4
+## 10 Belgium   &lt;grouped_df ~ &lt;lm&gt;   year     3.20e-3  0.000765      4.19   2.07e-4
+## # ... with 390 more rows</code></pre>
+</div>
+<div id="filtering-model-terms" class="section level2">
+<h2>3-17 Filtering model terms</h2>
+<p>You currently have both the intercept and slope terms for each by-country model. You’re probably more interested in how each is changing over time, so you want to focus on the slope terms.</p>
+<pre class="r"><code># Print the country_coefficients dataset
+print(country_coefficients)</code></pre>
+<pre><code>## # A tibble: 400 x 8
+##    country   data          model  term    estimate std.error statistic   p.value
+##    &lt;chr&gt;     &lt;list&gt;        &lt;list&gt; &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+##  1 Afghanis~ &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -1.11e+1  1.47         -7.52   1.44e-8
+##  2 Afghanis~ &lt;grouped_df ~ &lt;lm&gt;   year     6.01e-3  0.000743      8.09   3.06e-9
+##  3 Argentina &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -9.46e+0  2.10         -4.50   8.32e-5
+##  4 Argentina &lt;grouped_df ~ &lt;lm&gt;   year     5.15e-3  0.00106       4.85   3.05e-5
+##  5 Australia &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -4.55e+0  2.15         -2.12   4.22e-2
+##  6 Australia &lt;grouped_df ~ &lt;lm&gt;   year     2.57e-3  0.00108       2.37   2.42e-2
+##  7 Belarus   &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -7.00e+0  1.50         -4.66   5.33e-5
+##  8 Belarus   &lt;grouped_df ~ &lt;lm&gt;   year     3.91e-3  0.000759      5.15   1.28e-5
+##  9 Belgium   &lt;grouped_df ~ &lt;lm&gt;   (Inter~ -5.85e+0  1.52         -3.86   5.22e-4
+## 10 Belgium   &lt;grouped_df ~ &lt;lm&gt;   year     3.20e-3  0.000765      4.19   2.07e-4
+## # ... with 390 more rows</code></pre>
+<pre class="r"><code># Filter for only the slope terms
+country_coefficients %&gt;%
+filter(term == &quot;year&quot;)</code></pre>
+<pre><code>## # A tibble: 200 x 8
+##    country    data           model term  estimate std.error statistic    p.value
+##    &lt;chr&gt;      &lt;list&gt;         &lt;lis&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+##  1 Afghanist~ &lt;grouped_df [~ &lt;lm&gt;  year   0.00601  0.000743      8.09    3.06e-9
+##  2 Argentina  &lt;grouped_df [~ &lt;lm&gt;  year   0.00515  0.00106       4.85    3.05e-5
+##  3 Australia  &lt;grouped_df [~ &lt;lm&gt;  year   0.00257  0.00108       2.37    2.42e-2
+##  4 Belarus    &lt;grouped_df [~ &lt;lm&gt;  year   0.00391  0.000759      5.15    1.28e-5
+##  5 Belgium    &lt;grouped_df [~ &lt;lm&gt;  year   0.00320  0.000765      4.19    2.07e-4
+##  6 Bolivia    &lt;grouped_df [~ &lt;lm&gt;  year   0.00580  0.000966      6.01    1.06e-6
+##  7 Brazil     &lt;grouped_df [~ &lt;lm&gt;  year   0.00611  0.000817      7.48    1.64e-8
+##  8 Canada     &lt;grouped_df [~ &lt;lm&gt;  year   0.00152  0.000955      1.59    1.22e-1
+##  9 Chile      &lt;grouped_df [~ &lt;lm&gt;  year   0.00678  0.000822      8.24    2.05e-9
+## 10 Colombia   &lt;grouped_df [~ &lt;lm&gt;  year   0.00616  0.000965      6.38    3.58e-7
+## # ... with 190 more rows</code></pre>
+</div>
+<div id="filtering-for-significant-countries" class="section level2">
+<h2>3-18 Filtering for significant countries</h2>
+<p>Not all slopes are significant, and you can use the p-value to guess which are and which are not.</p>
+<p>However, when you have lots of p-values, like one for each country, you run into the problem of multiple hypothesis testing, where you have to set a stricter threshold. The p.adjust() function is a simple way to correct for this, where p.adjust(p.value) on a vector of p-values returns a set that you can trust.</p>
+<p>Here you’ll add two steps to process the slope_terms dataset: use a mutate to create the new, adjusted p-value column, and filter to filter for those below a .05 threshold.</p>
+<pre class="r"><code># Filter for only the slope terms
+slope_terms &lt;- country_coefficients %&gt;%
+  filter(term == &quot;year&quot;)
+
+# Add p.adjusted column, then filter
+slope_terms %&gt;%
+  mutate(p.adjusted = p.adjust(p.value)) %&gt;%
+  filter(p.adjusted &lt; .05)</code></pre>
+<pre><code>## # A tibble: 61 x 9
+##    country  data     model term  estimate std.error statistic p.value p.adjusted
+##    &lt;chr&gt;    &lt;list&gt;   &lt;lis&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;
+##  1 Afghani~ &lt;groupe~ &lt;lm&gt;  year   0.00601  0.000743      8.09 3.06e-9    5.95e-7
+##  2 Argenti~ &lt;groupe~ &lt;lm&gt;  year   0.00515  0.00106       4.85 3.05e-5    4.81e-3
+##  3 Belarus  &lt;groupe~ &lt;lm&gt;  year   0.00391  0.000759      5.15 1.28e-5    2.08e-3
+##  4 Belgium  &lt;groupe~ &lt;lm&gt;  year   0.00320  0.000765      4.19 2.07e-4    3.01e-2
+##  5 Bolivia  &lt;groupe~ &lt;lm&gt;  year   0.00580  0.000966      6.01 1.06e-6    1.88e-4
+##  6 Brazil   &lt;groupe~ &lt;lm&gt;  year   0.00611  0.000817      7.48 1.64e-8    3.12e-6
+##  7 Chile    &lt;groupe~ &lt;lm&gt;  year   0.00678  0.000822      8.24 2.05e-9    3.99e-7
+##  8 Colombia &lt;groupe~ &lt;lm&gt;  year   0.00616  0.000965      6.38 3.58e-7    6.56e-5
+##  9 Costa R~ &lt;groupe~ &lt;lm&gt;  year   0.00654  0.000812      8.05 3.39e-9    6.54e-7
+## 10 Cuba     &lt;groupe~ &lt;lm&gt;  year   0.00461  0.000721      6.40 3.43e-7    6.31e-5
+## # ... with 51 more rows</code></pre>
+</div>
+<div id="sorting-by-slope" class="section level2">
+<h2>3-19 Sorting by slope</h2>
+<p>Now that you’ve filtered for countries where the trend is probably not due to chance, you may be interested in countries whose percentage of “yes” votes is changing most quickly over time. Thus, you want to find the countries with the highest and lowest slopes; that is, the estimate column.</p>
+<pre class="r"><code># Filter by adjusted p-values
+filtered_countries &lt;- country_coefficients %&gt;%
+  filter(term == &quot;year&quot;) %&gt;%
+  mutate(p.adjusted = p.adjust(p.value)) %&gt;%
+  filter(p.adjusted &lt; .05)
+
+# Sort for the countries increasing most quickly
+filtered_countries %&gt;%
+  arrange(desc(estimate))
+
+# Sort for the countries decreasing most quickly
+filtered_countries %&gt;%
+  arrange(estimate)</code></pre>
+</div>
+<div id="joining-datasets-with-inner_join" class="section level2">
+<h2>4-2 Joining datasets with inner_join</h2>
+<p>In the first chapter, you created the votes_processed dataset, containing information about each country’s votes. You’ll now combine that with the new descriptions dataset, which includes topic information about each country, so that you can analyze votes within particular topics.</p>
+<p>To do this, you’ll make use of the inner_join() function from dplyr.</p>
+<pre class="r"><code># Print the votes_processed dataset
+head(votes_processed)
+
+# Print the descriptions dataset
+head(descriptions)
+
+# Join them together based on the &quot;rcid&quot; and &quot;session&quot; columns
+votes_joined &lt;- votes_processed %&gt;%
+  inner_join(descriptions, by = c(&quot;rcid&quot;, &quot;session&quot;))</code></pre>
+</div>
+<div id="filtering-the-joined-dataset" class="section level2">
+<h2>4-3 Filtering the joined dataset</h2>
+<p>There are six columns in the descriptions dataset (and therefore in the new joined dataset) that describe the topic of a resolution:</p>
+<p>me: Palestinian conflict
+nu: Nuclear weapons and nuclear material
+di: Arms control and disarmament
+hr: Human rights
+co: Colonialism
+ec: Economic development
+Each contains a 1 if the resolution is related to this topic and a 0 otherwise.</p>
+<pre class="r"><code># Filter for votes related to colonialism
+votes_joined %&gt;%
+filter(co==1)</code></pre>
+</div>
+<div id="visualizing-colonialism-votes" class="section level2">
+<h2>4-4 Visualizing colonialism votes</h2>
+<p>In an earlier exercise, you graphed the percentage of votes each year where the US voted “yes”. Now you’ll create that same graph, but only for votes related to colonialism.</p>
+<pre class="r"><code># Filter, then summarize by year: US_co_by_year
+US_co_by_year &lt;- votes_joined %&gt;%
+filter(country == &#39;United States&#39;, co==1) %&gt;%
+group_by(year) %&gt;%
+summarize(percent_yes=mean(vote == 1))
+
+# Graph the % of &quot;yes&quot; votes over time
+ggplot(US_co_by_year, aes(year, percent_yes)) +
+  geom_line()</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-28-case-study-exploratory-data-analysis-in-r/index_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+</div>
+<div id="using-gather-to-tidy-a-dataset" class="section level2">
+<h2>4-7 Using gather to tidy a dataset</h2>
+<p>In order to represent the joined vote-topic data in a tidy form so we can analyze and graph by topic, we need to transform the data so that each row has one combination of country-vote-topic. This will change the data from having six columns (me, nu, di, hr, co, ec) to having two columns (topic and has_topic).</p>
+<pre class="r"><code># Gather the six me/nu/di/hr/co/ec columns
+votes_joined %&gt;% gather(topic, has_topic, me:ec)
+
+
+# Perform gather again, then filter
+votes_gathered &lt;- votes_joined %&gt;% gather(topic, has_topic, me:ec) %&gt;%
+filter(has_topic ==1)</code></pre>
+<p>use pivot_longer</p>
+<pre class="r"><code># Gather the six me/nu/di/hr/co/ec columns
+votes_joined %&gt;% pivot_longer(cols=me:ec,
+                              names_to= &quot;topic&quot;,
+                              values_to=&quot;has_topic&quot;)
+
+
+# Perform gather again, then filter
+votes_joined %&gt;% pivot_longer(cols=me:ec,
+                              names_to= &quot;topic&quot;,
+                              values_to=&quot;has_topic&quot;) %&gt;%
+filter(has_topic ==1)</code></pre>
+</div>
+<div id="recoding-the-topics" class="section level2">
+<h2>4-8 Recoding the topics</h2>
+<p>There’s one more step of data cleaning to make this more interpretable. Right now, topics are represented by two-letter codes:</p>
+<p>me: Palestinian conflict
+nu: Nuclear weapons and nuclear material
+di: Arms control and disarmament
+hr: Human rights
+co: Colonialism
+ec: Economic development
+So that you can interpret the data more easily, recode the data to replace these codes with their full name. You can do that with dplyr’s recode() function, which replaces values with ones you specify:</p>
+<p>example &lt;- c(“apple”, “banana”, “apple”, “orange”)
+recode(example,
+apple = “plum”,
+banana = “grape”)</p>
+<pre class="r"><code># Replace the two-letter codes in topic: votes_tidied
+votes_tidied &lt;- votes_gathered %&gt;%
+  mutate(topic = recode(topic,
+                        me = &quot;Palestinian conflict&quot;,
+                        nu = &quot;Nuclear weapons and nuclear material&quot;,
+                        di = &quot;Arms control and disarmament&quot;,
+                        hr = &quot;Human rights&quot;,
+                        co = &quot;Colonialism&quot;,
+                        ec = &quot;Economic development&quot;))</code></pre>
+</div>
+<div id="summarize-by-country-year-and-topic" class="section level2">
+<h2>4-9 Summarize by country, year, and topic</h2>
+<p>In previous exercises, you summarized the votes dataset by country, by year, and by country-year combination.</p>
+<p>Now that you have topic as an additional variable, you can summarize the votes for each combination of country, year, and topic (e.g. for the United States in 2013 on the topic of nuclear weapons.)</p>
+<pre class="r"><code># Print votes_tidied
+print (votes_tidied)
+
+# Summarize the percentage &quot;yes&quot; per country-year-topic
+by_country_year_topic &lt;- votes_tidied %&gt;%
+group_by(country, year, topic) %&gt;%
+summarize(total= n(),
+percent_yes= mean(vote ==1)) %&gt;%
+ungroup()</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;country&#39;, &#39;year&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code># Print by_country_year_topic
+print(by_country_year_topic)</code></pre>
+</div>
+<div id="visualizing-trends-in-topics-for-one-country" class="section level2">
+<h2>4-10 Visualizing trends in topics for one country</h2>
+<p>You can now visualize the trends in percentage “yes” over time for all six topics side-by-side. Here, you’ll visualize them just for the United States.</p>
+<pre class="r"><code># Load the ggplot2 package
+library(ggplot2)
+
+# Filter by_country_year_topic for just the US
+US_by_country_year_topic &lt;- by_country_year_topic %&gt;%
+filter(country==&quot;United States&quot;)
+
+# Plot % yes over time for the US, faceting by topic
+US_by_country_year_topic %&gt;% ggplot(aes(year, percent_yes))+
+geom_line()+
+facet_wrap(~topic)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-28-case-study-exploratory-data-analysis-in-r/index_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+</div>
+<div id="nesting-by-topic-and-country" class="section level2">
+<h2>4-12 Nesting by topic and country</h2>
+<p>In the last chapter, you constructed a linear model for each country by nesting the data in each country, fitting a model to each dataset, then tidying each model with broom and unnesting the coefficients. The code looked something like this:</p>
+<p>country_coefficients &lt;- by_year_country %&gt;%
+nest(-country) %&gt;%
+mutate(model = map(data, ~ lm(percent_yes ~ year, data = .)),
+tidied = map(model, tidy)) %&gt;%
+unnest(tidied)
+Now, you’ll again be modeling change in “percentage” yes over time, but instead of fitting one model for each country, you’ll fit one for each combination of country and topic.</p>
+<pre class="r"><code># Load purrr, tidyr, and broom
+library(purrr)
+library(tidyr)
+library(broom)
+
+# Print by_country_year_topic
+by_country_year_topic
+
+# Fit model on the by_country_year_topic dataset
+country_topic_coefficients &lt;- by_country_year_topic %&gt;%
+  nest(-country, -topic) %&gt;%
+  mutate(model = map(data, ~ lm(percent_yes ~ year, data = .)),
+         tidied = map(model, tidy)) %&gt;%
+  unnest(tidied)</code></pre>
+<pre><code>## Warning: All elements of `...` must be named.
+## Did you want `data = c(year, total, percent_yes)`?</code></pre>
+<pre><code>## Warning in summary.lm(x): essentially perfect fit: summary may be unreliable
+
+## Warning in summary.lm(x): essentially perfect fit: summary may be unreliable
+
+## Warning in summary.lm(x): essentially perfect fit: summary may be unreliable
+
+## Warning in summary.lm(x): essentially perfect fit: summary may be unreliable
+
+## Warning in summary.lm(x): essentially perfect fit: summary may be unreliable
+
+## Warning in summary.lm(x): essentially perfect fit: summary may be unreliable
+
+## Warning in summary.lm(x): essentially perfect fit: summary may be unreliable
+
+## Warning in summary.lm(x): essentially perfect fit: summary may be unreliable
+
+## Warning in summary.lm(x): essentially perfect fit: summary may be unreliable
+
+## Warning in summary.lm(x): essentially perfect fit: summary may be unreliable
+
+## Warning in summary.lm(x): essentially perfect fit: summary may be unreliable
+
+## Warning in summary.lm(x): essentially perfect fit: summary may be unreliable
+
+## Warning in summary.lm(x): essentially perfect fit: summary may be unreliable
+
+## Warning in summary.lm(x): essentially perfect fit: summary may be unreliable</code></pre>
+<pre class="r"><code># Print country_topic_coefficients
+country_topic_coefficients</code></pre>
+</div>
+<div id="interpreting-tidy-models" class="section level2">
+<h2>4-13 Interpreting tidy models</h2>
+<p>Now you have both the slope and intercept terms for each model. Just as you did in the last chapter with the tidied coefficients, you’ll need to filter for only the slope terms.</p>
+<p>You’ll also have to extract only cases that are statistically significant, which means adjusting the p-value for the number of models, and then filtering to include only significant changes.</p>
+<pre class="r"><code># Create country_topic_filtered
+country_topic_filtered &lt;- country_topic_coefficients %&gt;%
+  filter(term == &quot;year&quot;) %&gt;%
+  mutate(p.adjusted = p.adjust(p.value)) %&gt;%
+  filter(p.adjusted &lt; .05)</code></pre>
+</div>
+<div id="checking-models-visually" class="section level2">
+<h2>4-15 Checking models visually</h2>
+<p>In the last exercise, you found that over its history, Vanuatu (an island nation in the Pacific Ocean) sharply changed its pattern of voting on the topic of Palestinian conflict.</p>
+<p>Let’s examine this country’s voting patterns more closely. Recall that the by_country_year_topic dataset contained one row for each combination of country, year, and topic. You can use that to create a plot of Vanuatu’s voting, faceted by topic.</p>
+<pre class="r"><code># Create vanuatu_by_country_year_topic
+vanuatu_by_country_year_topic &lt;- by_country_year_topic %&gt;%
+  filter(country == &quot;Vanuatu&quot;)
+
+# Plot of percentage &quot;yes&quot; over time, faceted by topic
+ggplot(vanuatu_by_country_year_topic, aes(year, percent_yes)) +
+  geom_line() +
+  facet_wrap(~ topic)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-28-case-study-exploratory-data-analysis-in-r/index_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+</div>
+</div>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

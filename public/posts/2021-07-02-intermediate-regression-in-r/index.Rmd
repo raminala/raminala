@@ -1,0 +1,571 @@
+---
+title: Intermediate Regression in R
+author: ''
+date: '2021-07-02'
+slug: []
+categories: []
+tags:
+  - Regression
+---
+
+**Standard error: tells us who the estimated average amount differs from the actual value average**
+
+**A low p-value means that, assuming the null hypothesis is true, there is a very low likelihood that this outcome was a result of luck. A high p-value means that, assuming the null hypothesis is true, this outcome was very likely.**
+
+```{r}
+library(tidyverse)
+library(moderndive)
+library(broom)
+library(yardstick)
+
+taiwan_real_estate <- read_csv("taiwan_real_estate.csv")
+churn <- read_csv("churn.csv")
+names(churn)
+names(taiwan_real_estate)
+```
+
+# 1-2
+
+
+
+
+
+
+```{r}
+# Fit a linear regr'n of price_twd_msq vs. n_convenience
+mdl_price_vs_conv <- lm(price_twd_msq~n_convenience,taiwan_real_estate)
+
+# See the result
+mdl_price_vs_conv
+
+#---------------------------------------------------------
+
+# Fit a linear regr'n of price_twd_msq vs. house_age_years, no intercept
+mdl_price_vs_age <- lm(price_twd_msq ~ house_age_years + 0, data = taiwan_real_estate)
+
+# See the result
+mdl_price_vs_age
+
+#---------------------------------------------------------
+
+# Fit a linear regr'n of price_twd_msq vs. n_convenience 
+# plus house_age_years, no intercept
+mdl_price_vs_both <- lm(price_twd_msq ~ house_age_years + n_convenience+0, data = taiwan_real_estate)
+
+# See the result
+mdl_price_vs_both
+```
+
+# 1-4
+
+```{r}
+# Using taiwan_real_estate, plot price_twd_msq vs. n_convenience
+taiwan_real_estate %>% ggplot(aes(n_convenience, price_twd_msq))+
+  # Add a point layer
+  geom_point() +
+  # Add a smooth trend line using linear regr'n, no ribbon
+  geom_smooth(method = "lm", se = FALSE)
+
+#---------------------------------------------------------
+
+
+# Using taiwan_real_estate, plot price_twd_msq vs. house_age_years
+taiwan_real_estate %>% ggplot(aes(house_age_years, price_twd_msq))+
+  # Add a box plot layer
+  geom_boxplot()
+
+
+
+  
+```
+
+# 1-5
+
+When it comes to a linear regression model with a numeric and a categorical explanatory variable, ggplot2 doesn't have an easy, "out of the box" way to show the predictions. Fortunately, the moderndive package includes an extra geom, geom_parallel_slopes() to make it simple.
+
+taiwan_real_estate is available; ggplot2 and moderndive are loaded.
+
+```{r}
+# Using taiwan_real_estate, plot price_twd_msq vs. n_convenience
+# colored by house_age_years
+taiwan_real_estate %>% ggplot(aes(n_convenience, price_twd_msq, color=house_age_years))+
+  # Add a point layer
+  geom_point() +
+  # Add parallel slopes, no ribbon
+  geom_parallel_slopes(se=FALSE)
+
+
+```
+
+# 1-7
+
+```{r}
+# Make a grid of explanatory data
+explanatory_data <- expand_grid(
+  # Set n_convenience to zero to ten
+ n_convenience = seq(0, 10),
+  # Set house_age_years to the unique values of that variable
+  house_age_years = unique(taiwan_real_estate$house_age_years)
+)
+
+# See the result
+explanatory_data
+
+
+# Add predictions to the data frame
+prediction_data <- explanatory_data %>% 
+  mutate(prediction_data=predict(
+mdl_price_vs_both, explanatory_data
+)
+  
+  )
+
+# See the result
+prediction_data
+
+
+#---------------------------------------------------------
+
+taiwan_real_estate %>% 
+  ggplot(aes(n_convenience, price_twd_msq, color = house_age_years)) +
+  geom_point() +
+  geom_parallel_slopes(se = FALSE) #+
+  # Add points using prediction_data, with size 5 and shape 15
+  #geom_point(data = prediction_data,size = 5, shape = 15)
+```
+
+# 1-8 Manually calculating predictions
+
+```{r}
+# Get the coefficients from mdl_price_vs_both
+coeffs <- coefficients(mdl_price_vs_both)
+
+# Extract the slope coefficient
+slope <- coeffs[1]
+
+# Extract the intercept coefficient for 0 to 15
+intercept_0_15 <- coeffs[2]
+
+# Extract the intercept coefficient for 15 to 30
+intercept_15_30 <- coeffs[3]
+
+# Extract the intercept coefficient for 30 to 45
+intercept_30_45 <- coeffs[4]
+
+
+#---------------------------------------------------------
+
+prediction_data <- explanatory_data %>% 
+  mutate(
+    # Consider the 3 cases to choose the intercept
+    intercept = case_when(
+      house_age_years == "0 to 15" ~ intercept_0_15,
+      house_age_years == "15 to 30" ~ intercept_15_30,
+      house_age_years == "30 to 45" ~ intercept_30_45 
+    ),
+    # Manually calculate the predictions
+    price_twd_msq = intercept + slope * n_convenience
+  )
+
+# See the results
+prediction_data
+
+
+```
+
+# 1-10 Comparing coefficients of determination
+
+Recall that the coefficient of determination is a measure of how well the linear regression line fits the observed values. An important motivation for including several explanatory variables in a linear regression is that you can improve the fit compared to considering only a single explanatory variable.
+
+Here you'll compare the coefficient of determination for the three Taiwan house price models, to see which gives the best result.
+
+```{r}
+mdl_price_vs_conv %>% 
+  # Get the model-level coefficients
+  glance() %>% 
+  # Select the coeffs of determination
+  select(r.squared, adj.r.squared)
+
+# Get the coeffs of determination for mdl_price_vs_age
+mdl_price_vs_age %>% 
+  glance() %>% 
+  select(r.squared, adj.r.squared)
+
+# Get the coeffs of determination for mdl_price_vs_both
+mdl_price_vs_both %>% 
+  glance() %>% 
+  select(r.squared, adj.r.squared)
+```
+
+# 1-11 Comparing residual standard error
+
+The other common metric for assessing model fit is the residual standard error (RSE), which measures the typical size of the residuals.
+
+In the last exercise you saw how including both explanatory variables into the model increased the coefficient of determination. How do you think using both explanatory variables will change the RSE?
+
+
+```{r}
+mdl_price_vs_conv %>% 
+  # Get the model-level coefficients
+  glance() %>% 
+  # Pull out the RSE
+  pull(sigma)
+
+# Get the RSE for mdl_price_vs_age
+mdl_price_vs_age%>% 
+ glance() %>% 
+  pull(sigma)
+
+
+# Get the RSE for mdl_price_vs_both
+mdl_price_vs_both%>% 
+ glance() %>% 
+  pull(sigma)
+
+```
+
+
+
+# 2-2 One model per category
+
+The model you ran on the whole dataset fits some parts of the data better than others. It's worth taking a look at what happens when you run a linear model on different parts of the dataset separately, to see if each model agrees or disagrees with the others.
+
+```{r}
+# From previous step
+taiwan_0_to_15 <- taiwan_real_estate %>%
+  filter(house_age_years == "0 to 15")
+taiwan_15_to_30 <- taiwan_real_estate %>%
+  filter(house_age_years == "15 to 30")
+taiwan_30_to_45 <- taiwan_real_estate %>%
+  filter(house_age_years == "30 to 45")
+
+# Model price vs. no. convenience stores using 0 to 15 data
+mdl_0_to_15 <- lm(price_twd_msq ~ n_convenience, data = taiwan_0_to_15)
+
+# Model price vs. no. convenience stores using 15 to 30 data
+mdl_15_to_30 <- lm(price_twd_msq ~ n_convenience, data = taiwan_15_to_30)
+
+# Model price vs. no. convenience stores using 30 to 45 data
+mdl_30_to_45 <- lm(price_twd_msq ~ n_convenience, data = taiwan_30_to_45)
+
+# See the results
+mdl_0_to_15
+mdl_15_to_30
+mdl_30_to_45
+```
+
+# 2-3 Predicting multiple models
+
+In order to see what each of the models for individual categories are doing, it's helpful to make predictions from them. The flow is exactly the same as the flow for making predictions on the whole model, though remember that you only have a single explanatory variable in these models (so expand_grid() isn't needed.)
+
+```{r}
+# From previous step
+explanatory_data <- tibble(
+  n_convenience = 0:10
+)
+
+# Add column of predictions using "0 to 15" model and explanatory data 
+prediction_data_0_to_15 <- explanatory_data %>% 
+  mutate(price_twd_msq=predict(mdl_0_to_15,explanatory_data))
+
+# Same again, with "15 to 30"
+prediction_data_15_to_30 <- explanatory_data %>% 
+  mutate(price_twd_msq=predict(mdl_15_to_30,explanatory_data))
+
+# Same again, with "30 to 45"
+prediction_data_30_to_45 <- explanatory_data %>% 
+  mutate(price_twd_msq=predict(mdl_30_to_45,explanatory_data))
+```
+
+
+# 2-4
+
+```{r}
+# Using taiwan_real_estate, plot price vs. no. of conv. stores
+# colored by house age
+ggplot(taiwan_real_estate, aes(n_convenience,price_twd_msq, color=house_age_years)) +
+  # Make it a scatter plot
+  geom_point() +
+  # Add smooth linear regression trend lines, no ribbon
+  geom_smooth(method=lm, se=FALSE)
+```
+
+# 2-5 Assessing model performance
+
+To test which approach is best – the whole dataset model or the models for each house age category – you need to calculate some metrics. Here's, you'll compare the coefficient of determination and the residual standard error for each model.
+
+```{r}
+# Get the coeff. of determination for mdl_all_ages
+
+#mdl_all_ages %>% glance() %>% pull(r.squared)
+
+# Get the coeff. of determination for mdl_0_to_15
+mdl_0_to_15 %>%
+glance() %>%
+pull(r.squared)
+
+
+
+# Get the coeff. of determination for mdl_15_to_30
+mdl_15_to_30 %>%
+glance() %>%
+pull(r.squared)
+
+
+# Get the coeff. of determination for mdl_30_to_45
+mdl_30_to_45 %>%
+glance() %>%
+pull(r.squared)
+
+
+#----------------------------------------------------
+
+
+# Get the RSE for mdl_all
+#mdl_all_ages %>%glance() %>%pull(sigma)
+
+# Get the RSE for mdl_0_to_15
+mdl_0_to_15 %>%
+glance() %>%
+pull(sigma)
+
+# Get the RSE for mdl_15_to_30
+mdl_15_to_30 %>%
+glance() %>%
+pull(sigma)
+
+# Get the RSE for mdl_30_to_45
+mdl_30_to_45 %>%
+glance() %>%
+pull(sigma)
+```
+
+# 2-7 Specifying an interaction
+
+So far you used a single parallel slopes model, which gave an OK fit for the whole dataset, then three separate models for each house age category, which gave a better fit for each individual category, but was clunky because you had three separate models to work with and explain. Ideally, you'd have a single model that had all the predictive power of the individual models.
+
+Defining this single model is achieved through adding interactions between explanatory variables. R's formula syntax is flexible, and gives you a couple of options, depending on whether you prefer concise code that is quick to type and to read, or explicit code that describes what you are doing in detail.
+
+```{r}
+# Model price vs both with an interaction using "times" syntax
+lm(price_twd_msq ~ n_convenience * house_age_years, data = taiwan_real_estate)
+
+# Model price vs both with an interaction using "colon" syntax
+lm(
+  price_twd_msq ~ n_convenience + house_age_years + n_convenience:house_age_years, 
+  data = taiwan_real_estate
+)
+```
+
+# 2-8 Interactions with understandable coeffs
+
+The previous model with the interaction term returned coefficients that were a little tricky to interpret. In order clarify what the model is predicting, you can reformulate the model in a way that returns understandable coefficients. For further clarity, you can compare the results to the models on the separate house age categories (mdl_0_to_15, mdl_15_to_30, and mdl_30_to_45).
+
+```{r}
+# Model price vs. house age plus an interaction, no intercept
+mdl_readable_inter <- lm(price_twd_msq ~ house_age_years + n_convenience:house_age_years + 0, data = taiwan_real_estate)
+
+# See the result
+mdl_readable_inter
+
+# Get coefficients
+coefficients(mdl_readable_inter)
+```
+
+# 2-10 Interactions with understandable coeffs
+
+As with every other regression model you've created, the fun part is making predictions. Fortunately, the code flow for this case is the same as the one without interactions – R can handle calculating the interactions without any extra prompting from you. The only thing you need to remember is the trick for getting combinations of explanatory variables.
+
+```{r}
+# Make a grid of explanatory data
+explanatory_data <- expand_grid(
+  # Set n_convenience to zero to ten
+  n_convenience= seq(0, 10),
+  # Set house_age_years to the unique values of that variable
+  house_age_years = unique(taiwan_real_estate$house_age_years)
+)
+
+# See the result
+explanatory_data
+
+
+
+# From previous step
+explanatory_data <- expand_grid(
+  n_convenience = 0:10,
+  house_age_years = unique(taiwan_real_estate$house_age_years)
+)
+
+# Add predictions to the data frame
+#prediction_data <- explanatory_data %>% 
+#  mutate(
+ #   price_twd_msq = predict(mdl_price_vs_both_inter, explanatory_data) )
+
+# See the result
+prediction_data
+
+
+
+explanatory_data <- expand_grid(
+  n_convenience = 0:10,
+  house_age_years = unique(taiwan_real_estate$house_age_years)
+)
+#prediction_data <- explanatory_data %>%  mutate(price_twd_msq =predict(mdl_price_vs_both_inter, explanatory_data)  )
+
+# 
+ggplot(taiwan_real_estate, aes(n_convenience, price_twd_msq, color = house_age_years)) +
+geom_point() +
+geom_smooth(method = "lm", se = FALSE) +
+geom_point(data = prediction_data, size = 5, shape = 15)
+```
+
+
+
+
+
+# 4-2 Visualizing multiple explanatory variables
+
+Logistic regression also supports multiple explanatory variables. Plotting has similar issues as the linear regression case: it quickly becomes difficult to include more numeric variables in the plot. Here we'll look at the case of two numeric explanatory variables, and the solution is basically the same as before: use color to denote the response.
+
+Here there are only two possible values of response (zero and one), and later when we add predicted responses, the values all lie between zero and one. Once you include predicted responses, the most important thing to determine from the plot is whether the predictions are close to zero, or close to one. That means that a 2-color gradient split at 0.5 is really useful: responses above 0.5 are one color, and responses below 0.5 are another color.
+
+```{r}
+names(churn)
+
+# Using churn, plot recency vs. length of relationship,
+# colored by churn status
+ggplot(churn, aes(time_since_first_purchase, time_since_last_purchase, color= has_churned)) +
+  # Make it a scatter plot, with transparency 0.5
+  geom_point(alpha=0.5) +
+  # Use a 2-color gradient split at 0.5
+  scale_color_gradient2(midpoint = 0.5)+
+  # Use the black and white theme
+  theme_bw()
+```
+
+
+
+# 4-3 Logistic regression with 2 explanatory variables
+
+To include multiple explanatory variables in logistic regression models, the syntax is the same as for linear regressions. The only change is the same as in the simple case: you run a generalized linear model with a binomial error family.
+
+Here you'll fit a model of churn status with both of the explanatory variables from the dataset: the length of customer relationship and the recency of purchase.
+
+Logistic regression also supports multiple explanatory variables. Plotting has similar issues as the linear regression case: it quickly becomes difficult to include more numeric variables in the plot. Here we'll look at the case of two numeric explanatory variables, and the solution is basically the same as before: use color to denote the response.
+
+Here there are only two possible values of response (zero and one), and later when we add predicted responses, the values all lie between zero and one. Once you include predicted responses, the most important thing to determine from the plot is whether the predictions are close to zero, or close to one. That means that a 2-color gradient split at 0.5 is really useful: responses above 0.5 are one color, and responses below 0.5 are another color.
+
+```{r}
+# Fit a logistic regression of churn status vs. length of
+# relationship, recency, and an interaction
+mdl_churn_vs_both_inter <- glm(has_churned ~ time_since_first_purchase * time_since_last_purchase, data=churn, family = binomial)
+
+
+# See the result
+mdl_churn_vs_both_inter
+```
+
+
+
+# 4-4 Logistic regression prediction
+
+As with linear regression, the joy of logistic regression is that you can make predictions. Let's step through the prediction flow one more time!
+
+```{r}
+# Make a grid of explanatory data
+explanatory_data <- expand_grid(
+  # Set len. relationship to seq from -2 to 4 in steps of 0.1
+  time_since_first_purchase = seq(-2,4,0.1),
+  # Set recency to seq from -1 to 6 in steps of 0.1
+  time_since_last_purchase = seq(-1,6,0.1)
+)
+
+# See the result
+explanatory_data
+
+
+
+#--------------------------
+
+# From previous steps
+explanatory_data <- expand_grid(
+  time_since_first_purchase = seq(-2, 4, 0.1),
+  time_since_last_purchase = seq(-1, 6, 0.1)
+)
+
+# Add a column of predictions using mdl_churn_vs_both_inter
+# and explanatory_data with type response
+prediction_data <- explanatory_data %>%
+mutate(has_churned= predict(mdl_churn_vs_both_inter, explanatory_data, type = "response"))
+
+
+# See the result
+prediction_data
+
+
+#--------------------------
+
+
+
+# From previous steps
+explanatory_data <- expand_grid(
+  time_since_first_purchase = seq(-2, 4, 0.1),
+  time_since_last_purchase = seq(-1, 6, 0.1)
+)
+prediction_data <- explanatory_data %>% 
+  mutate(
+    has_churned = predict(mdl_churn_vs_both_inter, explanatory_data, type = "response")
+  )
+
+# Extend the plot
+ggplot(
+  churn, 
+  aes(time_since_first_purchase, time_since_last_purchase, color = has_churned)
+) +
+  geom_point(alpha = 0.5) +
+  scale_color_gradient2(midpoint = 0.5) +
+  theme_bw() +
+  # Add points from prediction_data with size 3 and shape 15
+  geom_point(data=prediction_data, size= 3,  shape= 15)
+
+```
+
+
+
+# 4-4 Confusion matrix
+
+When the response variable has just two outcomes, like the case of churn, the measures of success for the model are "how many cases where the customer churned did the model correctly predict?" and "how many cases where the customer didn't churn did the model correctly predict?". These can be found by generating a confusion matrix and calculating summary metrics on it. A mosaic plot is the natural way to visualize the results.
+
+```{r}
+# Get the actual responses from churn
+actual_response <- churn$has_churned
+
+# Get the predicted responses from the model
+predicted_response <- round(fitted(mdl_churn_vs_both_inter))
+
+# Get a table of these values
+outcomes <- table(predicted_response, actual_response)
+
+# Convert the table to a conf_mat object
+confusion <- conf_mat(outcomes)
+
+# See the result
+confusion
+
+
+#------------------
+
+
+# From previous step
+actual_response <- churn$has_churned
+predicted_response <- round(fitted(mdl_churn_vs_both_inter))
+outcomes <- table(predicted_response, actual_response)
+confusion <- conf_mat(outcomes)
+
+# "Automatically" plot the confusion matrix
+autoplot(confusion)
+
+# Get summary metrics
+summary(confusion, event_level = "second")
+```
+

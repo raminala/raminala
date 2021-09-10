@@ -1,0 +1,139 @@
+---
+title: Data Wrangling using Tidyverse
+author: ''
+date: '2021-05-25'
+slug: data-wrangling-using-tidyverse
+categories: []
+tags: 
+  - R
+  - data_wrangling
+---
+
+## Import the Hotels.CSV file
+
+```{r warning=FALSE}
+
+
+library(tidyverse)
+
+#Use one of options to import hotels.CSV file
+
+hotels <- read_csv("hotels.csv")
+head(hotels)
+
+```
+```{r}
+names(hotels)
+```
+
+
+## Select a variabl
+
+```{r}
+select(hotels, lead_time)
+```
+
+
+
+```{r}
+select(hotels, hotel, lead_time)
+
+hotels %>%
+  select(hotel, lead_time) %>%
+  arrange(desc(lead_time))
+```
+
+## Select a range of variables
+
+```{r}
+hotels %>%
+  select(hotel:arrival_date_month)
+
+hotels %>%
+  select(starts_with("arrival")) #selects all variables that start with word arrival
+
+```
+
+## Select a range fo rows cases
+
+```{r}
+hotels %>%
+  #We will select 1st, 5th, 8th and 10th
+  slice(c(1,5,8,10))
+
+hotels %>%
+  filter(hotel=="City Hotel")
+
+
+
+hotels %>%
+  filter( 
+    adults == 0,
+    children >= 1
+    ) %>% 
+  select(adults, babies, children)
+
+# bookings with no adults and some children or babies in the room
+hotels %>%
+  filter( 
+    adults == 0,     
+    children >= 1 & babies >= 1     # & means and # | means or
+    ) %>%
+  select(adults, babies, children)
+```
+
+## Summarizing
+
+```{r}
+# count for multiple variables
+hotels %>%
+  count(hotel, market_segment)
+```
+
+```{r}
+# hotel type first
+hotels %>%
+  count(hotel, market_segment)
+```
+```{r}
+# market segment first
+hotels %>%
+  count(market_segment, hotel)
+```
+
+
+
+## Mutation
+
+```{r}
+# mutate to add a new variable
+little_ones <- hotels
+
+little_ones %<>%
+  mutate(little_ones = children + babies) %>%
+  select(children, babies, little_ones) %>%
+  arrange(desc(little_ones))
+
+```
+
+
+## Summary
+
+```{r}
+# mean average daily rate for all bookings
+hotels %>%
+  summarise(mean_adr = mean(adr))
+```
+
+
+
+```{r}
+# mean average daily rate for all booking at city and resort hotels
+
+summary <- hotels %>%
+    group_by(hotel) %>%
+  summarise(mean_adr = mean(adr))
+
+summary
+```
+

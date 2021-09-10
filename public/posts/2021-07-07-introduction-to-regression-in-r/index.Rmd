@@ -1,0 +1,475 @@
+---
+title: Introduction to Regression in R
+author: ''
+date: '2021-07-07'
+slug: []
+categories: []
+tags:
+  - Regression
+---
+
+```{r}
+library(tidyverse)
+library(broom)
+```
+
+
+
+```{r}
+taiwan_real_estate <- read_csv("taiwan_real_estate.csv")
+sp500_yearly_returns <- read_csv("sp500_yearly_returns.csv")
+
+ad_conversion <- read_csv("ad_conversion.csv")
+
+churn <- read_csv("churn.csv")
+
+```
+
+# 1-3 Visualizing two variables
+
+points 50% transparent by setting alpha to 0.5.
+adding a trend line, calculated using a linear regression.
+
+```{r}
+taiwan_real_estate %>%
+ggplot(aes(n_convenience, price_twd_msq))+
+geom_point(alpha=0.5)+
+  geom_smooth(method="lm", se=FALSE)
+```
+
+# 1-7 Linear regression with lm()
+
+
+```{r}
+# Run a linear regression of price_twd_msq vs. n_convenience
+lm(price_twd_msq~n_convenience, taiwan_real_estate)
+```
+
+
+# 1-9 Visualizing numeric vs. categorical
+
+
+```{r}
+# Using taiwan_real_estate, plot price_twd_msq
+taiwan_real_estate %>% ggplot(aes(price_twd_msq)) +
+  # Make it a histogram with 10 bins
+  geom_histogram(bins=10) +
+  # Facet the plot so each house age group gets its own panel
+  facet_wrap(vars(house_age_years))
+```
+
+# 1-10 Calculating means by category
+
+
+```{r}
+summary_stats <- taiwan_real_estate %>% 
+  # Group by house age
+  group_by(house_age_years) %>% 
+  # Summarize to calculate the mean house price/area
+  summarise(mean_by_group = mean(price_twd_msq))
+
+# See the result
+summary_stats
+```
+
+# 1-11 lm() with a categorical explanatory variable
+
+
+```{r}
+# Run a linear regression of price_twd_msq vs. house_age_years
+mdl_price_vs_age <- lm(price_twd_msq~house_age_years, taiwan_real_estate)
+
+# See the result
+mdl_price_vs_age
+
+
+#---------------------------------
+
+# Update the model formula to remove the intercept
+mdl_price_vs_age_no_intercept <- lm(
+  price_twd_msq ~ house_age_years+0, 
+  data = taiwan_real_estate
+)
+
+# See the result
+mdl_price_vs_age_no_intercept
+```
+
+# 2-2 Predicting house prices
+
+you specify values for each of the explanatory variables, feed them to the model, and you get a prediction for the corresponding response variable. The code flow is as follows:
+
+explanatory_data <- tibble(
+  explanatory_var = some_values
+)
+explanatory_data %>%
+  mutate(
+    response_var = predict(model, explanatory_data)
+  )
+  
+  
+```{r}
+taiwan_real_estate
+
+
+mdl_price_vs_conv <- lm(formula = price_twd_msq ~ n_convenience, data = taiwan_real_estate)
+
+
+
+# Create a tibble with n_convenience column from zero to ten
+explanatory_data <- tibble(n_convenience = 0:10)
+explanatory_data
+# Use mdl_price_vs_conv to predict with explanatory_data
+prediction_data <- explanatory_data %>% 
+  mutate(
+    price_twd_msq = predict(mdl_price_vs_conv, explanatory_data)
+  )
+
+# See the result
+prediction_data
+```
+  
+# 2-3 Visualizing predictions
+  
+  
+```{r}
+# Add to the plot
+ggplot(taiwan_real_estate, aes(n_convenience, price_twd_msq)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  # Add a point layer of prediction data, colored yellow
+  geom_point(data = prediction_data,
+color = "yellow")
+```
+  
+## 2-6 Extracting model elements
+
+
+```{r, echo=FALSE, message=FALSE, results='hide'}
+# Get the model coefficients of mdl_price_vs_conv
+coefficients(mdl_price_vs_conv)
+
+# Get the fitted values of mdl_price_vs_conv
+fitted(mdl_price_vs_conv)
+
+# Get the residuals of mdl_price_vs_conv
+residuals(mdl_price_vs_conv)
+
+# Print a summary of mdl_price_vs_conv
+summary (mdl_price_vs_conv)
+```
+
+## 2-7 Manually predicting house prices
+
+```{r}
+# Get the coefficients of mdl_price_vs_conv
+coeffs <- coefficients(mdl_price_vs_conv)
+
+# Get the intercept
+intercept <- coeffs[1]
+
+# Get the slope
+slope <- coeffs[2]
+
+explanatory_data %>% 
+  mutate(
+    # Manually calculate the predictions
+    price_twd_msq = slope*n_convenience+intercept
+  )
+
+# Compare to the results from predict()
+predict(mdl_price_vs_conv, explanatory_data)
+```
+
+## 2-8 Using broom
+
+Many programming tasks are easier if you keep all your data inside data frames. This is particularly true if you are a tidyverse fan, where dplyr and ggplot2 require you to use data frames. The broom package contains functions that decompose models into three data frames: one for the coefficient-level elements (the coefficients themselves, as well as p-values for each coefficient), the observation-level elements (like fitted values and residuals), and the model-level elements (mostly performance metrics).
+
+The functions in broom are generic. That is, they work with many model types, not just linear regression model objects. They also work with logistic regression model objects (as you'll see in Chapter 4), and many other types of model.
+
+
+```{r}
+# Get the coefficient-level elements of the model
+tidy(mdl_price_vs_conv)
+
+# Get the observation-level elements of the model
+augment(mdl_price_vs_conv)
+
+# Get the model-level elements of the model
+glance(mdl_price_vs_conv)
+```
+
+
+
+
+
+
+## 2-11 Plotting consecutive portfolio returns
+
+Regression to the mean is also an important concept in investing. Here you'll look at the annual returns from investing in companies in the Standard and Poor 500 index (S&P 500), in 2018 and 2019.
+
+```{r}
+# Using sp500_yearly_returns, plot return_2019 vs. return_2018
+sp500_yearly_returns %>% ggplot(aes(return_2018, return_2019)) +
+  # Make it a scatter plot
+  geom_point() +
+  # Add a line at y = x, colored green, size 1
+  geom_abline(color = "green", size = 1) +
+  # Add a linear regression trend line, no std. error ribbon
+  geom_smooth(method="lm", se=FALSE) +
+  # Fix the coordinate ratio
+  coord_fixed()
+```
+
+## 2-12 Modeling consecutive returns
+
+Let's quantify the relationship between returns in 2019 and 2018 by running a linear regression and making predictions. By looking at companies with extremely high or extremely low returns in 2018, we can see if their performance was similar in 2019.
+
+```{r}
+# Run a linear regression on return_2019 vs. return_2018
+# using sp500_yearly_returns
+mdl_returns <- lm(return_2019~return_2018, sp500_yearly_returns)
+
+# See the result
+mdl_returns
+
+#-----------------------------------------
+# Create a data frame with return_2018 at -1, 0, and 1 
+explanatory_data <- tibble(return_2018=-1:1)
+
+
+
+# Use mdl_returns to predict with explanatory_data
+predict(mdl_returns, explanatory_data)
+
+
+```
+
+## 2-14 Transforming the explanatory variable
+
+If there is no straight line relationship between the response variable and the explanatory variable, it is sometimes possible to create one by transforming one or both of the variables. Here, you'll look at transforming the explanatory variable.
+
+You'll take another look at the Taiwan real estate dataset, this time using the distance to the nearest MRT (metro) station as the explanatory variable. You'll use code to make every commuter's dream come true: shortening the distance to the metro station by taking the square root. Take that, geography!
+
+
+```{r}
+# Run the code to see the plot
+# Edit so x-axis is square root of dist_to_mrt_m
+ggplot(taiwan_real_estate, aes(dist_to_mrt_m, price_twd_msq)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+
+edit code
+
+```{r}
+# Run the code to see the plot
+# Edit so x-axis is square root of dist_to_mrt_m
+ggplot(taiwan_real_estate, aes(sqrt(dist_to_mrt_m), price_twd_msq)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+```{r}
+# Run a linear regression of price_twd_msq vs. 
+# square root of dist_to_mrt_m using taiwan_real_estate
+mdl_price_vs_dist <- lm(price_twd_msq~sqrt(dist_to_mrt_m), taiwan_real_estate)
+
+# See the result
+mdl_price_vs_dist
+```
+```{r}
+# From previous step
+mdl_price_vs_dist <- lm(
+  price_twd_msq ~ sqrt(dist_to_mrt_m), 
+  data = taiwan_real_estate
+)
+
+# Use this explanatory data
+explanatory_data <- tibble(
+  dist_to_mrt_m = seq(0, 80, 10) ^ 2
+)
+
+# Use mdl_price_vs_dist to predict explanatory_data
+prediction_data <- explanatory_data %>%
+mutate(
+  price_twd_msq= predict(mdl_price_vs_dist,explanatory_data)
+
+
+
+)
+# See the result
+prediction_data
+
+
+ggplot(taiwan_real_estate, aes(sqrt(dist_to_mrt_m), price_twd_msq)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  # Add points from prediction_data, colored green, size 5
+  geom_point(data=prediction_data, color = "green", size= 5)
+
+
+```
+
+
+## 2-15 ransforming the response variable too
+
+The response variable can be transformed too, but this means you need an extra step at the end to undo that transformation. That is, you "back transform" the predictions.
+
+In the video, you saw the first step of the digital advertising workflow: spending money to buy ads, and counting how many people see them (the "impressions"). The next step is determining how many people click on the advert after seeing it.
+
+```{r}
+# Run the code to see the plot
+# Edit to raise x, y aesthetics to power 0.25
+ggplot(ad_conversion, aes(n_impressions, n_clicks)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+```{r}
+# Run the code to see the plot
+# Edit to raise x, y aesthetics to power 0.25
+ggplot(ad_conversion, aes(n_impressions^0.25, n_clicks^0.25)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+```{r}
+# From previous steps
+mdl_click_vs_impression <- lm(
+  I(n_clicks ^ 0.25) ~ I(n_impressions ^ 0.25),
+  data = ad_conversion
+)
+explanatory_data <- tibble(
+  n_impressions = seq(0, 3e6, 5e5)
+)
+prediction_data <- explanatory_data %>% 
+  mutate(
+    n_clicks_025 = predict(mdl_click_vs_impression, explanatory_data),
+    n_clicks = n_clicks_025 ^ 4
+  )
+
+ggplot(ad_conversion, aes(n_impressions ^ 0.25, n_clicks ^ 0.25)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  # Add points from prediction_data, colored green
+  geom_point(data=prediction_data,  color="green")
+```
+
+## 3-2 Coefficient of determination
+
+The coefficient of determination is a measure of how well the linear regression line fits the observed values. For simple linear regression, it is equal to the square of the correlation between the explanatory and response variables.
+
+```{r}
+# Print a summary of mdl_click_vs_impression
+summary(mdl_click_vs_impression)
+
+#--------------------
+
+# Get coeff of determination for mdl_click_vs_impression_orig
+mdl_click_vs_impression %>% 
+  # Get the model-level details
+  glance() %>%
+ 
+  # Pull out r.squared
+  pull(r.squared)
+
+```
+
+## 3-3 Residual standard error
+
+Residual standard error (RSE) is a measure of the typical size of the residuals. Equivalently, it's a measure of how badly wrong you can expect predictions to be. Smaller numbers are better, with zero being a perfect fit to the data.
+
+```{r}
+# Get RSE for mdl_click_vs_impression
+mdl_click_vs_impression %>% 
+  # Get the model-level details
+  glance() %>% 
+  # Pull out sigma
+  pull(sigma)
+```
+
+## 3-8 Drawing diagnostic plots
+
+It's time for you to draw these diagnostic plots yourself. Let's go back to the Taiwan real estate dataset and the model of house prices versus number of convenience stores.
+
+Recall that autoplot() lets you specify which diagnostic plots you are interested in.
+
+1 residuals vs. fitted values
+2 Q-Q plot
+3 scale-location
+mdl_price_vs_conv is available, and ggplot2 and ggfortify are loaded.
+
+
+## 4-2 Exploring the explanatory variables
+
+When the response variable is logical, all the points lie on the y equals zero and y equals one lines, making it difficult to see what is happening. In the video, until you saw the trend line, it wasn't clear how the explanatory variable was distributed on each line. This can be solved with a histogram of the explanatory variable, faceted on the response.
+
+```{r}
+# Using churn, plot time_since_last_purchase
+ggplot(churn, aes(time_since_last_purchase)) +
+  # as a histogram with binwidth 0.25
+  geom_histogram(binwidth=0.25) +
+  # faceted in a grid with has_churned on each row
+  facet_grid(vars(has_churned))
+
+
+# Redraw the plot with time_since_first_purchase
+
+ggplot(churn, aes(time_since_first_purchase)) +
+  geom_histogram(binwidth=0.25) +
+   facet_grid(vars(has_churned))
+```
+
+
+
+## 4-3 Visualizing linear and logistic models
+
+As with linear regressions, ggplot2 will draw model predictions for a logistic regression without you having to worry about the modeling code yourself. To see how the predictions differ for linear and logistic regressions, try drawing both trend lines side by side. Spoiler: you should see a linear (straight line) trend from the linear model, and a logistic (S-shaped) trend from the logistic model.
+
+```{r}
+# Using churn plot has_churned vs. time_since_first_purchase
+churn %>% ggplot(aes(time_since_first_purchase, has_churned)) +
+  # Make it a scatter plot
+  geom_point() +
+  # Add an lm trend line, no std error ribbon, colored red
+  geom_smooth(method="lm", se=FALSE, color="red")+
+
+# Add a glm trend line, no std error ribbon, binomial family
+  geom_smooth(method = "glm", se = FALSE,method.args = list(family = binomial))
+
+```
+
+
+## 4-4 Logistic regression with glm()
+
+Linear regression and logistic regression are special cases of a broader type of models called generalized linear models ("GLMs"). A linear regression makes the assumption that the residuals follow a Gaussian (normal) distribution. By contrast, a logistic regression assumes that residuals follow a binomial distribution.
+
+Here, you'll model how the length of relationship with a customer affects churn.
+
+```{r}
+# Fit a logistic regression of churn vs. 
+# length of relationship using the churn dataset
+mdl_churn_vs_relationship <- glm(has_churned~time_since_first_purchase, data=churn, family = binomial)
+
+# See the result
+mdl_churn_vs_relationship
+```
+
+
+## 4-6 Probabilities
+
+There are four main ways of expressing the prediction from a logistic regression model – we'll look at each of them over the next four exercises. Firstly, since the response variable is either "yes" or "no", you can make a prediction of the probability of a "yes". Here, you'll calculate and visualize these probabilities.
+
+```{r}
+# Make a data frame of predicted probabilities
+
+#prediction_data <- explanatory_data %>% mutate(has_churned = predict(mdl_churn_vs_relationship, explanatory_data, type = "response"))
+
+# See the result
+#prediction_data
+```
+
+
+

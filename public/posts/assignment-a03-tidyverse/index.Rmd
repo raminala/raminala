@@ -1,0 +1,251 @@
+---
+title: 'Assignment A03: Tidyverse'
+author: ''
+date: '2021-06-02'
+slug: assignment-a03-tidyverse
+categories: []
+tags: 
+  - R
+  - data_wrangling
+  - Assignment
+---
+
+Using lego_sales.csv file, complete the following tasks using tidyverse. Submit the RmD file and link to the post on your website.
+
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+
+library(tidyverse)
+
+lego <- read_csv("lego_sales.csv")
+
+#head(lego)
+#glimpse(lego)
+#names(lego)
+
+```
+
+
+## 1- What are the three most common first names of customers?
+
+```{r}
+
+lego %>%
+    select(first_name) %>%
+    count(first_name) %>%
+    arrange(desc(n))
+
+```
+answer: 1-Jackson (13) 2,3- Jacob (11) , Joseph (11) are three most popular first names.
+
+## 2- What are the three most common themes of lego sets purchased?
+
+```{r}
+lego %>%
+    select(theme) %>%
+    count(theme) %>%
+    arrange(desc(n))
+```
+
+answer: 1-Star Wars (75) 2- Nexo Knights (64) 3- Gear & Mixels (55-tie) are common themes of lego sets purchased.
+
+## 3- Among the most common theme of lego sets purchased, what is the most common subtheme?
+
+```{r}
+lego %>%
+    select(theme, subtheme) %>%
+    filter(theme=="Star Wars" |
+           theme=="Nexo Knights" |
+           theme=="Gear" |
+           theme=="Mixels") %>%
+    count(subtheme) %>%
+    arrange(desc(n))
+```
+answer: Ultimate is the most common subtheme (purchased 22 times).
+
+    
+## 4- Create a new variable called age_group and group the ages into the following categories: “18 and under”, “19 - 25”, “26 - 35”, “36 - 50”, “51 and over”. Be sure to save the updated data set so you can use the new variable in other questions.
+    
+    
+```{r}
+lego_age_group <- lego %>%
+    mutate(age_group=case_when(
+        age <= 18 ~ "18 and under" ,
+        between(age, 19, 25) ~ "19 - 25" ,
+        between(age, 26, 35) ~ "26 - 35" ,
+        between(age, 36, 50) ~ "36 - 50" ,
+        age >= 51 ~ "51 and over" ,
+    ))
+
+# To represent result:
+lego_age_group %>%
+    select(first_name, age ,age_group)
+```
+
+## 5- What is the probability a randomly selected customer
+
+## is in the 19 - 25 age group?
+
+```{r}
+lego_age_group  %>%
+    count(age_group) %>%
+    mutate(probablity=n/sum(n))
+```
+
+The probablity is 0.2080645 or nearly 20.8%.
+
+## is in the 19 - 25 age group and purchased a Duplo theme set?
+
+
+```{r}
+
+lego_age_group  %>%
+        mutate(target_group=case_when(
+        theme== "Duplo" & between(age, 19, 25) ~ "19-25 age group and purchased a Duplo" ,
+        TRUE ~ "Not that group!" ,
+             )) %>%
+
+# To represent result:
+
+    select(theme ,age_group, target_group) %>%
+
+# To represent result:
+     count(target_group) %>%
+    mutate(probablity=n/sum(n))
+
+```
+
+
+The probablity is 0.01451613 or nearly 1.45%.
+
+## is in the 19 - 25 age group given they purchased a Duplo theme set?
+
+```{r}
+
+lego_age_group  %>%
+        filter(theme == "Duplo")  %>%
+        mutate(target_group=case_when(
+        between(age, 19, 25) ~ "purchased a Duplo an 19-25 age group" ,
+        TRUE ~ "purchased a Duplo an NOT 19-25 age group"
+             )) %>%
+
+# To represent result:
+
+    select(theme ,age_group, target_group) %>%
+
+# To represent result:
+     count(target_group) %>%
+    mutate(probablity=n/sum(n))
+```
+
+The probablity is 0.2571429 or nearly 25.71%.
+
+## 6- Which age group has purchased the largest number of lego sets? How many did they purchase? 
+
+
+```{r}
+new <- lego_age_group  %>%
+    group_by(age_group)  %>%
+    count(quantity)  %>%
+    summarise(Number_of_Purchase=sum(n*quantity))
+
+new
+
+
+```
+
+36 - 50 years. They purchased 313 sets.
+
+## 7- Which age group has spent the most money on legos? How much did they spend?
+  
+  
+```{r}
+new1 <- lego_age_group %>%
+    select(age_group, us_price, quantity) %>%
+    group_by(age_group)  %>%
+    summarise(Total=sum(quantity*us_price))
+
+
+
+new1
+```
+ 
+ 
+  36 - 50 years. They spent 9532.87 USD in total.
+  
+  
+
+
+## 8- Come up with a question you want to answer using this data, and write it down. Then, create a data visualization that answers the question, and briefly explain how your visualization answers the question.
+   
+ I want to know the correlation between the "pieces" and "us_price". For this purpose, categorize legos to four groups:  “75 and under pieces”, “76 - 150 pieces”, “151 - 400 pieces”, “401 pieces and over”.
+ first, show the number of each categories using bar and pie charts.
+ In all plots:
+ 
+ - relevel x-axis parameter from fewest to largest number of pieces. (fct_relevel())
+ 
+ - delete NA elements from counting. (drop_na())
+   
+```{r}
+lego_piece_price <- lego %>%
+  select(pieces, us_price) %>%
+    mutate(NumberOfPieces=case_when(
+        pieces <= 75 ~ "Under 75 pices" ,
+        between(pieces, 76, 150) ~ "76 to 150 pieces" ,
+        between(pieces, 151, 400) ~ "151 to 400 pieces" ,
+        pieces >= 401 ~ "over 400 pieces")) %>%
+  
+        mutate(NumberOfPieces=fct_relevel(NumberOfPieces, "Under 75 pices",
+                                    "76 to 150 pieces" ,
+                                   "151 to 400 pieces" ,
+                                  "over 400 pieces" )) %>%
+                                   drop_na()
+
+
+plot_ <- lego_piece_price %>%
+  group_by(NumberOfPieces) %>%
+ count()
+
+ggplot(plot_, aes(NumberOfPieces, n))+
+  geom_col()
+
+labels=c("Under 75 pices","76 to 150 pieces","151 to 400 pieces","over 400 pieces")
+
+
+pie(plot_$n,labels)
+
+```
+  
+Now, calculate average price of each categories.
+  
+```{r}
+pp <- lego_piece_price %>%
+  group_by(NumberOfPieces) %>%
+  arrange(.by_group = TRUE) %>%
+  summarise(average_price=mean(us_price))
+
+pp
+
+ggplot(pp, aes(NumberOfPieces, average_price))+
+  geom_col()
+```
+  
+   
+    
+## 9- Add one element to the plot from the previous exercise to change the look of the plot without changing the underlying data. For example, you can change the theme, background color, add annotations, etc. State the change you’re making and display the updated visualization. We encourage you to be creative!
+
+The pie chart I made in the question 8 did not use ggplot2 library (but basic pie plot), so it looks basic. ggplot has not a dedicated geom_ for pie chat, however, it has indirect method for generating a pie plot and employing capabilities of ggplot2 on that. (coord_polar()).
+
+The question is to generate a pie chart using ggplot2 and add labels to that. Pie plot should look like previous basic pie chart but more professional.
+
+
+```{r}
+
+ggplot(plot_, aes(x = "",n, fill=NumberOfPieces))+
+  geom_bar(stat = "identity", color = "black")+
+  labs(title = "the number of each categories") +
+  coord_polar("y") +
+  theme_void()
+
+```
+

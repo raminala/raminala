@@ -2,10 +2,9 @@
 title: "Communicating with Data in the Tidyverse"
 author: ''
 date: '2021-09-09'
-slug: []
-categories: []
+output:
+  word_document: default
 tags: Markdown
-slug: []
 ---
 
 ```{r results='hide'}

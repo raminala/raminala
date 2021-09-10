@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Modeling with tidymodels in R // Ramin Ala</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.83.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://ramin1ala.netlify.app/css/main.min.9dbf51e978afe3857b6cf4f89e41949fcd0410a29b2c2a5da404b58dfd6fc228.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Modeling with tidymodels in R"/>
+<meta name="twitter:description" content="library(tidymodels)## Registered S3 method overwritten by &#39;tune&#39;:## method from ## required_pkgs.model_spec parsnip## -- Attaching packages -------------------------------------- tidymodels 0.1.3 --## v broom 0.7.8 v recipes 0.1.16## v dials 0.0.9 v rsample 0.1.0 ## v dplyr 1.0.6 v tibble 3.1.2 ## v ggplot2 3.3.3 v tidyr 1.1.3 ## v infer 0.5.4 v tune 0.1.5 ## v modeldata 0.1.0 v workflows 0.2.2 ## v parsnip 0.1.6 v workflowsets 0."/>
+
+    <meta property="og:title" content="Modeling with tidymodels in R" />
+<meta property="og:description" content="library(tidymodels)## Registered S3 method overwritten by &#39;tune&#39;:## method from ## required_pkgs.model_spec parsnip## -- Attaching packages -------------------------------------- tidymodels 0.1.3 --## v broom 0.7.8 v recipes 0.1.16## v dials 0.0.9 v rsample 0.1.0 ## v dplyr 1.0.6 v tibble 3.1.2 ## v ggplot2 3.3.3 v tidyr 1.1.3 ## v infer 0.5.4 v tune 0.1.5 ## v modeldata 0.1.0 v workflows 0.2.2 ## v parsnip 0.1.6 v workflowsets 0." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ramin1ala.netlify.app/posts/2021-07-20-modeling-with-tidymodels-in-r/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-07-20T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-07-20T00:00:00&#43;00:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://ramin1ala.netlify.app/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>Ramin Ala</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/publications/">Publications</a>
+      </nav>
+      <p>An Electrical engineer with experience in RF and interest in data science.</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/raminala" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/ramin-ala-6645b3188/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://twitter.com/ala_ramin" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>Twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Modeling with tidymodels in R</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jul 20, 2021
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          20 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+<script src="https://ramin1ala.netlify.app/posts/2021-07-20-modeling-with-tidymodels-in-r/index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(tidymodels)</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;tune&#39;:
+##   method                   from   
+##   required_pkgs.model_spec parsnip</code></pre>
+<pre><code>## -- Attaching packages -------------------------------------- tidymodels 0.1.3 --</code></pre>
+<pre><code>## v broom        0.7.8      v recipes      0.1.16
+## v dials        0.0.9      v rsample      0.1.0 
+## v dplyr        1.0.6      v tibble       3.1.2 
+## v ggplot2      3.3.3      v tidyr        1.1.3 
+## v infer        0.5.4      v tune         0.1.5 
+## v modeldata    0.1.0      v workflows    0.2.2 
+## v parsnip      0.1.6      v workflowsets 0.0.2 
+## v purrr        0.3.4      v yardstick    0.0.8</code></pre>
+<pre><code>## -- Conflicts ----------------------------------------- tidymodels_conflicts() --
+## x purrr::discard() masks scales::discard()
+## x dplyr::filter()  masks stats::filter()
+## x dplyr::lag()     masks stats::lag()
+## x recipes::step()  masks stats::step()
+## * Use tidymodels_prefer() to resolve common conflicts.</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v readr   1.4.0     v forcats 0.5.1
+## v stringr 1.4.0</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x readr::col_factor() masks scales::col_factor()
+## x purrr::discard()    masks scales::discard()
+## x dplyr::filter()     masks stats::filter()
+## x stringr::fixed()    masks recipes::fixed()
+## x dplyr::lag()        masks stats::lag()
+## x readr::spec()       masks yardstick::spec()</code></pre>
+<p>tidymodels is a collection of machine learning packages designed to simplify the machine learning workflow in R.</p>
+<pre class="r"><code>home_sales &lt;- read_csv(&quot;home_sales.csv&quot;)</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   X1 = col_double(),
+##   selling_price = col_double(),
+##   home_age = col_double(),
+##   bedrooms = col_double(),
+##   bathrooms = col_double(),
+##   sqft_living = col_double(),
+##   sqft_lot = col_double(),
+##   sqft_basement = col_double(),
+##   floors = col_double()
+## )</code></pre>
+<pre class="r"><code>telecom_df &lt;- read_csv(&quot;telecom_df.csv&quot;)</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   X1 = col_double(),
+##   canceled_service = col_character(),
+##   cellular_service = col_character(),
+##   avg_data_gb = col_double(),
+##   avg_call_mins = col_double(),
+##   avg_intl_mins = col_double(),
+##   internet_service = col_character(),
+##   contract = col_character(),
+##   months_with_company = col_double(),
+##   monthly_charges = col_double()
+## )</code></pre>
+<div id="creating-training-and-test-datasets" class="section level2">
+<h2>1-3 Creating training and test datasets</h2>
+<p>The rsample package is designed to create training and test datasets. Creating a test dataset is important for estimating how a trained model will likely perform on new data. It also guards against overfitting, where a model memorizes patterns that exist only in the training data and performs poorly on new data.</p>
+<p>This data contains information on homes sold in the Seattle, Washington area between 2015 and 2016.
+The outcome variable in this data is selling_price.</p>
+<pre class="r"><code># Create a data split object
+
+# Create a data split object
+home_split &lt;- initial_split(home_sales, 
+                            prop = 0.7, 
+                            strata = selling_price)
+
+# Create the training data
+home_training &lt;- home_split %&gt;%
+  training()
+
+# Create the test data
+home_test &lt;- home_split %&gt;% 
+  testing()
+
+# Check number of rows in each dataset
+nrow(home_training)</code></pre>
+<pre><code>## [1] 1042</code></pre>
+<pre class="r"><code>nrow(home_test)</code></pre>
+<pre><code>## [1] 450</code></pre>
+</div>
+<div id="distribution-of-outcome-variable-values" class="section level2">
+<h2>1-4 Distribution of outcome variable values</h2>
+<p>Stratifying by the outcome variable when generating training and test datasets ensures that the outcome variable values have a similar range in both datasets.</p>
+<p>Since the original data is split at random, stratification avoids placing all the expensive homes in home_sales into the test dataset, for example. In this case, your model would most likely perform poorly because it was trained on less expensive homes.</p>
+<p>In this exercise, you will calculate summary statistics for the selling_price variable in the training and test datasets. The home_training and home_test tibbles have been loaded from the previous exercise.</p>
+<pre class="r"><code># Distribution of selling_price in training data
+home_training %&gt;% 
+  summarize(min_sell_price = min(selling_price),
+            max_sell_price = max(selling_price),
+            mean_sell_price = mean(selling_price),
+            sd_sell_price = sd(selling_price))</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   min_sell_price max_sell_price mean_sell_price sd_sell_price
+##            &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+## 1         350000         650000         478867.        80886.</code></pre>
+<pre class="r"><code># Distribution of selling_price in test data
+home_test %&gt;% 
+  summarize(min_sell_price = min(selling_price),
+            max_sell_price = max(selling_price),
+            mean_sell_price = mean(selling_price),
+            sd_sell_price = sd(selling_price))</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   min_sell_price max_sell_price mean_sell_price sd_sell_price
+##            &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+## 1         350000         650000         479589.        81282.</code></pre>
+</div>
+<div id="fitting-a-linear-regression-model" class="section level2">
+<h2>1-6 Fitting a linear regression model</h2>
+<p>The parsnip package provides a unified syntax for the model fitting process in R.</p>
+<p>With parsnip, it is easy to define models using the various packages, or engines, that exist in the R ecosystem.</p>
+<p>In this exercise, you will define a parsnip linear regression object and train your model to predict selling_price using home_age and sqft_living as predictor variables from the home_sales data.</p>
+<p>The home_training and home_test tibbles that you created in the previous lesson have been loaded into this session.</p>
+<pre class="r"><code># Specify a linear regression model, linear_model
+linear_model &lt;- linear_reg() %&gt;% 
+  # Set the model engine
+  set_engine(&#39;lm&#39;) %&gt;% 
+  # Set the model mode
+  set_mode(&#39;regression&#39;)
+
+# Train the model with the training data
+lm_fit &lt;- linear_model %&gt;% 
+  fit(selling_price~home_age+sqft_living,
+      data = home_training)
+
+# Print lm_fit to view model information
+lm_fit</code></pre>
+<pre><code>## parsnip model object
+## 
+## Fit time:  0ms 
+## 
+## Call:
+## stats::lm(formula = selling_price ~ home_age + sqft_living, data = data)
+## 
+## Coefficients:
+## (Intercept)     home_age  sqft_living  
+##    292888.2      -1526.3        103.1</code></pre>
+<pre class="r"><code>tidy(lm_fit)</code></pre>
+<pre><code>## # A tibble: 3 x 5
+##   term        estimate std.error statistic   p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)  292888.   7519.       39.0  2.39e-205
+## 2 home_age      -1526.    174.       -8.78 6.63e- 18
+## 3 sqft_living     103.      2.72     37.9  2.19e-198</code></pre>
+</div>
+<div id="predicting-home-selling-prices" class="section level2">
+<h2>1-8 Predicting home selling prices</h2>
+<p>After fitting a model using the training data, the next step is to use it to make predictions on the test dataset. The test dataset acts as a new source of data for the model and will allow you to evaluate how well it performs.</p>
+<p>Before you can evaluate model performance, you must add your predictions to the test dataset.</p>
+<p>In this exercise, you will use your trained model, lm_fit, to predict selling_price in the home_test dataset.</p>
+<p>Your trained model, lm_fit, as well as the test dataset, home_test have been loaded into your session.</p>
+<pre class="r"><code># Predict selling_price
+home_predictions &lt;- predict(lm_fit,
+                        new_data = home_test)
+
+# View predicted selling prices
+home_predictions</code></pre>
+<pre><code>## # A tibble: 450 x 1
+##      .pred
+##      &lt;dbl&gt;
+##  1 539503.
+##  2 381920.
+##  3 632172.
+##  4 489681.
+##  5 508946.
+##  6 450705.
+##  7 530021.
+##  8 488195.
+##  9 621277.
+## 10 406583.
+## # ... with 440 more rows</code></pre>
+<pre class="r"><code># Combine test data with predictions
+home_test_results &lt;- home_test %&gt;% 
+  select(selling_price, home_age, sqft_living) %&gt;% 
+  bind_cols(home_predictions)
+
+# View results
+home_test_results</code></pre>
+<pre><code>## # A tibble: 450 x 4
+##    selling_price home_age sqft_living   .pred
+##            &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;
+##  1        487000       10        2540 539503.
+##  2        411000       18        1130 381920.
+##  3        635000        4        3350 632172.
+##  4        464950       19        2190 489681.
+##  5        495000        3        2140 508946.
+##  6        552321       29        1960 450705.
+##  7        475000        0        2300 530021.
+##  8        540000       22        2220 488195.
+##  9        624000       26        3570 621277.
+## 10        398000       14        1310 406583.
+## # ... with 440 more rows</code></pre>
+</div>
+<div id="model-performance-metrics" class="section level2">
+<h2>1-10 Model performance metrics</h2>
+<p>Evaluating model results is an important step in the modeling process. Model evaluation should be done on the test dataset in order to see how well a model will generalize to new datasets.</p>
+<p>In the previous exercise, you trained a linear regression model to predict selling_price using home_age and sqft_living as predictor variables. You then created the home_test_results tibble using your trained model on the home_test data.</p>
+<p>In this exercise, you will calculate the RMSE and R squared metrics using your results in home_test_results.</p>
+<pre class="r"><code># Print home_test_results
+home_test_results</code></pre>
+<pre><code>## # A tibble: 450 x 4
+##    selling_price home_age sqft_living   .pred
+##            &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;
+##  1        487000       10        2540 539503.
+##  2        411000       18        1130 381920.
+##  3        635000        4        3350 632172.
+##  4        464950       19        2190 489681.
+##  5        495000        3        2140 508946.
+##  6        552321       29        1960 450705.
+##  7        475000        0        2300 530021.
+##  8        540000       22        2220 488195.
+##  9        624000       26        3570 621277.
+## 10        398000       14        1310 406583.
+## # ... with 440 more rows</code></pre>
+<pre class="r"><code># Caculate the RMSE metric
+home_test_results %&gt;% 
+  rmse(selling_price , .pred)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 rmse    standard      48554.</code></pre>
+<pre class="r"><code># Calculate the R squared metric
+home_test_results %&gt;% 
+  rsq(selling_price , .pred)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 rsq     standard       0.643</code></pre>
+</div>
+<div id="r-squared-plot" class="section level2">
+<h2>1-11 R squared plot</h2>
+<p>In the previous exercise, you got an R squared value of 0.651. The R squared metric ranges from 0 to 1, 0 being the worst and 1 the best.</p>
+<p>Calculating the R squared value is only the first step in studying your model’s predictions.</p>
+<p>Making an R squared plot is extremely important because it will uncover potential problems with your model, such as non-linear patterns or regions where your model is either over or under-predicting the outcome variable.</p>
+<p>In this exercise, you will create an R squared plot of your model’s performance.</p>
+<pre class="r"><code># Create an R squared plot of model performance
+ggplot(home_test_results, aes(x = selling_price, y = .pred)) +
+  geom_point(alpha = 0.5) + 
+  geom_abline(color = &#39;blue&#39;, linetype = 2) +
+  coord_obs_pred() +
+  labs(x = &#39;Actual Home Selling Price&#39;, y = &#39;Predicted Selling Price&#39;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-07-20-modeling-with-tidymodels-in-r/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="complete-model-fitting-process-with-last_fit" class="section level2">
+<h2>1-12 Complete model fitting process with last_fit()</h2>
+<p>In this exercise, you will train and evaluate the performance of a linear regression model that predicts selling_price using all the predictors available in the home_sales tibble.</p>
+<p>This exercise will give you a chance to perform the entire model fitting process with tidymodels, from defining your model object to evaluating its performance on the test data.</p>
+<p>Earlier in the chapter, you created an rsample object called home_split by passing the home_sales tibble into initial_split(). The home_split object contains the instructions for randomly splitting home_sales into training and test sets.</p>
+<pre class="r"><code># Define a linear regression model
+linear_model &lt;- linear_reg() %&gt;% 
+  set_engine(&#39;lm&#39;) %&gt;% 
+  set_mode(&#39;regression&#39;)
+
+# Train linear_model with last_fit()
+linear_fit &lt;- linear_model %&gt;% 
+  last_fit(selling_price ~ ., split = home_split)
+
+# Collect predictions and view results
+predictions_df &lt;- linear_fit %&gt;% collect_predictions()
+predictions_df</code></pre>
+<pre><code>## # A tibble: 450 x 5
+##    id                 .pred  .row selling_price .config             
+##    &lt;chr&gt;              &lt;dbl&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt;               
+##  1 train/test split 527861.     1        487000 Preprocessor1_Model1
+##  2 train/test split 399723.     3        411000 Preprocessor1_Model1
+##  3 train/test split 694380.     4        635000 Preprocessor1_Model1
+##  4 train/test split 475419.     8        464950 Preprocessor1_Model1
+##  5 train/test split 478196.    12        495000 Preprocessor1_Model1
+##  6 train/test split 468636.    15        552321 Preprocessor1_Model1
+##  7 train/test split 461785.    16        475000 Preprocessor1_Model1
+##  8 train/test split 513089.    20        540000 Preprocessor1_Model1
+##  9 train/test split 628497.    22        624000 Preprocessor1_Model1
+## 10 train/test split 380541.    24        398000 Preprocessor1_Model1
+## # ... with 440 more rows</code></pre>
+<pre class="r"><code># Make an R squared plot using predictions_df
+ggplot(predictions_df, aes(x = selling_price , y = .pred)) + 
+  geom_point(alpha = 0.5) + 
+  geom_abline(color = &#39;blue&#39;, linetype = 2) +
+  coord_obs_pred() +
+  labs(x = &#39;Actual Home Selling Price&#39;, y = &#39;Predicted Selling Price&#39;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-07-20-modeling-with-tidymodels-in-r/index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="data-resampling" class="section level2">
+<h2>2-2 Data resampling</h2>
+<p>The first step in a machine learning project is to create training and test datasets for model fitting and evaluation. The test dataset provides an estimate of how your model will perform on new data and helps to guard against overfitting.</p>
+<p>You will be working with the telecom_df dataset which contains information on customers of a telecommunications company. The outcome variable is canceled_service and it records whether a customer canceled their contract with the company. The predictor variables contain information about customers’ cell phone and internet usage as well as their contract type and monthly charges.</p>
+<pre class="r"><code># Create data split object
+telecom_split &lt;- initial_split(telecom_df, prop = 0.75,
+                     strata = canceled_service)
+
+# Create the training data
+telecom_training &lt;- telecom_split %&gt;% 
+  training()
+
+# Create the test data
+telecom_test &lt;- telecom_split %&gt;% 
+  testing()
+
+# Check the number of rows
+nrow(telecom_training)</code></pre>
+<pre><code>## [1] 731</code></pre>
+<pre class="r"><code>nrow(telecom_test)</code></pre>
+<pre><code>## [1] 244</code></pre>
+</div>
+<div id="fitting-a-logistic-regression-model" class="section level2">
+<h2>2-3 Fitting a logistic regression model</h2>
+<p>In addition to regression models, the parsnip package also provides a general interface to classification models in R.</p>
+<p>In this exercise, you will define a parsnip logistic regression object and train your model to predict canceled_service using avg_call_mins, avg_intl_mins, and monthly_charges as predictor variables from the telecom_df data.</p>
+<pre class="r"><code># Specify a logistic regression model
+logistic_model &lt;-  logistic_reg() %&gt;% 
+  # Set the engine
+  set_engine(&#39;glm&#39;) %&gt;% 
+  # Set the mode
+  set_mode(&#39;classification&#39;)
+
+# Print the model specification
+logistic_model</code></pre>
+<pre><code>## Logistic Regression Model Specification (classification)
+## 
+## Computational engine: glm</code></pre>
+<pre class="r"><code># Fit to training data
+logistic_fit &lt;- logistic_model %&gt;% 
+  fit(factor(canceled_service)~avg_call_mins+ avg_intl_mins+monthly_charges,
+      data = telecom_training)
+
+# Print model fit object
+logistic_fit</code></pre>
+<pre><code>## parsnip model object
+## 
+## Fit time:  0ms 
+## 
+## Call:  stats::glm(formula = factor(canceled_service) ~ avg_call_mins + 
+##     avg_intl_mins + monthly_charges, family = stats::binomial, 
+##     data = data)
+## 
+## Coefficients:
+##     (Intercept)    avg_call_mins    avg_intl_mins  monthly_charges  
+##       -1.736150         0.010784        -0.022900        -0.004793  
+## 
+## Degrees of Freedom: 730 Total (i.e. Null);  727 Residual
+## Null Deviance:       932.4 
+## Residual Deviance: 798.1     AIC: 806.1</code></pre>
+</div>
+<div id="combining-test-dataset-results" class="section level2">
+<h2>2-4 Combining test dataset results</h2>
+<p>Evaluating your model’s performance on the test dataset gives insights into how well your model predicts on new data sources. These insights will help you communicate your model’s value in solving problems or improving decision making.</p>
+<p>Before you can calculate classification metrics such as sensitivity or specificity, you must create a results tibble with the required columns for yardstick metric functions.</p>
+<p>In this exercise, you will use your trained model to predict the outcome variable in the telecom_test dataset and combine it with the true outcome values in the canceled_service column.</p>
+<pre class="r"><code># Predict outcome categories
+class_preds &lt;- predict(logistic_fit, new_data = telecom_test,
+                       type = &#39;class&#39;)
+
+# Obtain estimated probabilities for each outcome value
+prob_preds &lt;- predict(logistic_fit, new_data = telecom_test, 
+                      type = &#39;prob&#39;)
+
+# Combine test set results
+telecom_results &lt;- telecom_test %&gt;% 
+  select(canceled_service) %&gt;% 
+  bind_cols(class_preds, prob_preds)
+
+# View results tibble
+telecom_results</code></pre>
+<pre><code>## # A tibble: 244 x 4
+##    canceled_service .pred_class .pred_no .pred_yes
+##    &lt;chr&gt;            &lt;fct&gt;          &lt;dbl&gt;     &lt;dbl&gt;
+##  1 yes              no             0.855     0.145
+##  2 no               no             0.784     0.216
+##  3 no               no             0.516     0.484
+##  4 no               no             0.735     0.265
+##  5 no               no             0.854     0.146
+##  6 no               yes            0.463     0.537
+##  7 no               no             0.860     0.140
+##  8 yes              no             0.818     0.182
+##  9 no               yes            0.419     0.581
+## 10 yes              yes            0.431     0.569
+## # ... with 234 more rows</code></pre>
+</div>
+<div id="evaluating-performance-with-yardstick" class="section level2">
+<h2>2-7 Evaluating performance with yardstick</h2>
+<p>In the previous exercise, you calculated classification metrics from a sample confusion matrix. The yardstick package was designed to automate this process.</p>
+<p>For classification models, yardstick functions require a tibble of model results as the first argument. This should include the actual outcome values, predicted outcome values, and estimated probabilities for each value of the outcome variable.</p>
+<p>In this exercise, you will use the results from your logistic regression model, telecom_results, to calculate performance metrics.</p>
+<pre class="r"><code># Calculate the confusion matrix
+conf_mat(telecom_results, truth = canceled_service,
+    estimate = .pred_class)</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
+## was converted to a factor</code></pre>
+<pre><code>##           Truth
+## Prediction  no yes
+##        no  141  51
+##        yes  21  31</code></pre>
+<pre class="r"><code># Calculate the accuracy
+accuracy(telecom_results, truth = factor(canceled_service),
+    estimate = .pred_class)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   .metric  .estimator .estimate
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+## 1 accuracy binary         0.705</code></pre>
+<pre class="r"><code># Calculate the sensitivity
+sens(telecom_results, truth = factor(canceled_service),
+    estimate = .pred_class)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 sens    binary         0.870</code></pre>
+</div>
+<div id="creating-custom-metric-sets" class="section level2">
+<h2>2-8 Creating custom metric sets</h2>
+<p>The yardstick package also provides the ability to create custom sets of model metrics. In cases where the cost of obtaining false negative errors is different from the cost of false positive errors, it may be important to examine a specific set of performance metrics.</p>
+<p>Instead of calculating accuracy, sensitivity, and specificity separately, you can create your own metric function that calculates all three at the same time.</p>
+<p>In this exercise, you will use the results from your logistic regression model, telecom_results, to calculate a custom set of performance metrics. You will also use a confusion matrix to calculate all available binary classification metrics in tidymodelsall at once.</p>
+</div>
+<div id="plotting-the-confusion-matrix" class="section level2">
+<h2>2-10 Plotting the confusion matrix</h2>
+<p>Calculating performance metrics with the yardstick package provides insight into how well a classification model is performing on the test dataset. Most yardstick functions return a single number that summarizes classification performance.</p>
+<p>Many times, it is helpful to create visualizations of the confusion matrix to more easily communicate your results.</p>
+<p>In this exercise, you will make a heat map and mosaic plot of the confusion matrix from your logistic regression model on the telecom_df dataset.</p>
+<pre class="r"><code># Create a confusion matrix
+conf_mat(telecom_results,
+         truth = canceled_service ,
+         estimate = .pred_class) %&gt;% 
+  # Create a heat map
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
+## was converted to a factor</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-07-20-modeling-with-tidymodels-in-r/index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code># Create a confusion matrix
+conf_mat(telecom_results,
+         truth = canceled_service,
+         estimate = .pred_class) %&gt;% 
+  # Create a mosaic plot
+  autoplot(type = &#39;mosaic&#39;)</code></pre>
+<pre><code>## Warning in vec2table(truth = truth, estimate = estimate, dnn = dnn, ...): `truth`
+## was converted to a factor</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-07-20-modeling-with-tidymodels-in-r/index_files/figure-html/unnamed-chunk-14-2.png" width="672" /></p>
+</div>
+<div id="roc-curves-and-area-under-the-roc-curve" class="section level2">
+<h2>2-11 ROC curves and area under the ROC curve</h2>
+<p>ROC curves are used to visualize the performance of a classification model across a range of probability thresholds. An ROC curve with the majority of points near the upper left corner of the plot indicates that a classification model is able to correctly predict both the positive and negative outcomes correctly across a wide range of probability thresholds.</p>
+<p>The area under this curve provides a letter grade summary of model performance.</p>
+<p>In this exercise, you will create an ROC curve from your logistic regression model results and calculate the area under the ROC curve with yardstick.</p>
+<pre class="r"><code># Calculate metrics across thresholds
+threshold_df &lt;- telecom_results %&gt;% 
+  roc_curve(truth = factor(canceled_service) , .pred_yes)
+
+# View results
+threshold_df</code></pre>
+<pre><code>## # A tibble: 246 x 3
+##    .threshold specificity sensitivity
+##         &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;
+##  1  -Inf                0       1    
+##  2     0.0179           0       1    
+##  3     0.0274           0       0.994
+##  4     0.0302           0       0.988
+##  5     0.0305           0       0.981
+##  6     0.0389           0       0.975
+##  7     0.0402           0       0.969
+##  8     0.0495           0       0.963
+##  9     0.0531           0       0.957
+## 10     0.0590           0       0.951
+## # ... with 236 more rows</code></pre>
+<pre class="r"><code># Plot ROC curve
+threshold_df %&gt;% 
+  autoplot()</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-07-20-modeling-with-tidymodels-in-r/index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<pre class="r"><code># Calculate ROC AUC
+roc_auc(telecom_results,
+    truth = factor(canceled_service) , 
+    .pred_yes)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 roc_auc binary         0.277</code></pre>
+</div>
+<div id="streamlining-the-modeling-process" class="section level2">
+<h2>2-13 Streamlining the modeling process</h2>
+<p>The last_fit() function is designed to streamline the modeling workflow in tidymodels. Instead of training your model on the training data and building a results tibble using the test data, last_fit() accomplishes this with one function.</p>
+<p>In this exercise, you will train the same logistic regression model as you fit in the previous exercises, except with the last_fit() function.</p>
+<pre class="r"><code># Train model with last_fit()
+telecom_last_fit &lt;- logistic_model %&gt;% 
+  last_fit(factor(canceled_service) ~ avg_call_mins+avg_intl_mins+monthly_charges,
+           split = telecom_split)
+
+# View test set metrics
+telecom_last_fit %&gt;% 
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary         0.705 Preprocessor1_Model1
+## 2 roc_auc  binary         0.723 Preprocessor1_Model1</code></pre>
+</div>
+<div id="collecting-predictions-and-creating-custom-metrics" class="section level2">
+<h2>2-14 Collecting predictions and creating custom metrics</h2>
+<p>Using the last_fit() modeling workflow also saves time in collecting model predictions. Instead of manually creating a tibble of model results, there are helper functions that extract this information automatically.</p>
+<p>In this exercise, you will use your trained model, telecom_last_fit, to create a tibble of model results on the test dataset as well as calculate custom performance metrics.</p>
+<pre class="r"><code># Collect predictions
+last_fit_results &lt;- telecom_last_fit %&gt;% 
+  collect_predictions()
+
+# View results
+last_fit_results</code></pre>
+<pre><code>## # A tibble: 244 x 7
+##    id        .pred_no .pred_yes  .row .pred_class `factor(canceled_s~ .config   
+##    &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;               &lt;chr&gt;     
+##  1 train/te~    0.855     0.145     4 no          yes                 Preproces~
+##  2 train/te~    0.784     0.216     6 no          no                  Preproces~
+##  3 train/te~    0.516     0.484    16 no          no                  Preproces~
+##  4 train/te~    0.735     0.265    20 no          no                  Preproces~
+##  5 train/te~    0.854     0.146    21 no          no                  Preproces~
+##  6 train/te~    0.463     0.537    24 yes         no                  Preproces~
+##  7 train/te~    0.860     0.140    32 no          no                  Preproces~
+##  8 train/te~    0.818     0.182    38 no          yes                 Preproces~
+##  9 train/te~    0.419     0.581    43 yes         no                  Preproces~
+## 10 train/te~    0.431     0.569    53 yes         yes                 Preproces~
+## # ... with 234 more rows</code></pre>
+<pre class="r"><code># Custom metrics function
+#last_fit_metrics &lt;- metric_set(accuracy, sens, spec, roc_auc)
+
+# Calculate metrics
+#last_fit_metrics(last_fit_results, truth = canceled_service, estimate = .pred_class,.pred_yes)</code></pre>
+</div>
+<div id="complete-modeling-workflow" class="section level2">
+<h2>2-15 Complete modeling workflow</h2>
+<p>In this exercise, you will use the last_fit() function to train a logistic regression model and evaluate its performance on the test data by assessing the ROC curve and the area under the ROC curve.</p>
+<p>Similar to previous exercises, you will predict canceled_service in the telecom_df data, but with an additional predictor variable to see if you can improve model performance.</p>
+<p>The telecom_df tibble, telecom_split, and logistic_model objects from the previous exercises have been loaded into your workspace. The telecom_split object contains the instructions for randomly splitting the telecom_df tibble into training and test sets. The logistic_model object is a parsnip specification of a logistic regression model.</p>
+<pre class="r"><code># Train a logistic regression model
+logistic_fit &lt;- logistic_model %&gt;% 
+  last_fit(factor(canceled_service) ~ avg_call_mins + avg_intl_mins + monthly_charges + months_with_company, 
+           split = telecom_split)
+
+# Collect metrics
+logistic_fit %&gt;% 
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary         0.807 Preprocessor1_Model1
+## 2 roc_auc  binary         0.814 Preprocessor1_Model1</code></pre>
+<pre class="r"><code># Collect model predictions
+#logistic_fit %&gt;% 
+ # collect_predictions() %&gt;% 
+  # Plot ROC curve
+  #roc_curve(truth = canceled_service, .pred_yes) %&gt;% 
+  #autoplot()</code></pre>
+</div>
+<div id="exploring-recipe-objects" class="section level2">
+<h2>3-2 Exploring recipe objects</h2>
+<p>The first step in feature engineering is to specify a recipe object with the recipe() function and add data preprocessing steps with one or more step_*() functions. Storing all of this information in a single recipe object makes it easier to manage complex feature engineering pipelines and transform new data sources.</p>
+<p>How many numeric and nominal predictor variables are encoded in the telecom_rec object?</p>
+<pre class="r"><code>telecom_rec &lt;- recipe(canceled_service ~ .,
+                      data = telecom_df) %&gt;% 
+  step_log(avg_call_mins, base = 10)
+
+summary(telecom_rec)</code></pre>
+<pre><code>## # A tibble: 10 x 4
+##    variable            type    role      source  
+##    &lt;chr&gt;               &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;   
+##  1 X1                  numeric predictor original
+##  2 cellular_service    nominal predictor original
+##  3 avg_data_gb         numeric predictor original
+##  4 avg_call_mins       numeric predictor original
+##  5 avg_intl_mins       numeric predictor original
+##  6 internet_service    nominal predictor original
+##  7 contract            nominal predictor original
+##  8 months_with_company numeric predictor original
+##  9 monthly_charges     numeric predictor original
+## 10 canceled_service    nominal outcome   original</code></pre>
+</div>
+<div id="creating-recipe-objects" class="section level2">
+<h2>Creating recipe objects</h2>
+<pre class="r"><code># Specify feature engineering recipe
+telecom_log_rec &lt;- recipe(canceled_service ~ ., 
+                          data = telecom_training) %&gt;%
+  # Add log transformation step
+  step_log(avg_call_mins, avg_intl_mins, base = 10)
+
+# View variable roles and data types
+telecom_log_rec %&gt;%
+  summary()</code></pre>
+<pre><code>## # A tibble: 10 x 4
+##    variable            type    role      source  
+##    &lt;chr&gt;               &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;   
+##  1 X1                  numeric predictor original
+##  2 cellular_service    nominal predictor original
+##  3 avg_data_gb         numeric predictor original
+##  4 avg_call_mins       numeric predictor original
+##  5 avg_intl_mins       numeric predictor original
+##  6 internet_service    nominal predictor original
+##  7 contract            nominal predictor original
+##  8 months_with_company numeric predictor original
+##  9 monthly_charges     numeric predictor original
+## 10 canceled_service    nominal outcome   original</code></pre>
+</div>
+<div id="discovering-correlated-predictors" class="section level2">
+<h2>3-6 Discovering correlated predictors</h2>
+<p>Correlated predictor variables provide redundant information and can negatively impact the model fitting process. When two variables are highly correlated, their values change linearly with each other and hence provide the same information to your machine learning algorithms. This phenomenon is know as multicollinearity.</p>
+<p>Before beginning the model fitting process, it’s important to explore your dataset to uncover these relationships and remove them in your feature engineering steps.</p>
+<pre class="r"><code>telecom_training %&gt;% 
+  # Select numeric columns
+  select_if(is.numeric) %&gt;% 
+  # Calculate correlation matrix
+  cor()</code></pre>
+<pre><code>##                               X1 avg_data_gb avg_call_mins avg_intl_mins
+## X1                   1.000000000 -0.03120397  -0.026003680  -0.003673486
+## avg_data_gb         -0.031203966  1.00000000   0.162746317   0.149451616
+## avg_call_mins       -0.026003680  0.16274632   1.000000000   0.060246713
+## avg_intl_mins       -0.003673486  0.14945162   0.060246713   1.000000000
+## months_with_company -0.009110928  0.42778886   0.004486417   0.239783992
+## monthly_charges     -0.032597989  0.95709117   0.162098112   0.148429397
+##                     months_with_company monthly_charges
+## X1                         -0.009110928     -0.03259799
+## avg_data_gb                 0.427788864      0.95709117
+## avg_call_mins               0.004486417      0.16209811
+## avg_intl_mins               0.239783992      0.14842940
+## months_with_company         1.000000000      0.45853253
+## monthly_charges             0.458532529      1.00000000</code></pre>
+<pre class="r"><code># Plot correlated predictors
+ggplot(telecom_training, aes(x = avg_data_gb, y = monthly_charges)) + 
+  # Add points
+  geom_point()  + 
+  # Add title
+  labs(title = &quot;Monthly Charges vs. Average Data Usage&quot;,
+       y = &#39;Monthly Charges ($)&#39;, x = &#39;Average Data Usage (GB)&#39;) </code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-07-20-modeling-with-tidymodels-in-r/index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+</div>
+<div id="removing-correlated-predictors-with-recipes" class="section level2">
+<h2>3-7 Removing correlated predictors with recipes</h2>
+<p>Removing correlated predictor variables from your training and test datasets is an important feature engineering step to ensure your model fitting runs as smoothly as possible.</p>
+<p>Now that you have discovered that monthly_charges and avg_data_gb are highly correlated, you must add a correlation filter with step_corr() to your feature engineering pipeline for the telecommunications data.</p>
+<p>In this exercise, you will create a recipe object that removes correlated predictors from the telecommunications data.</p>
+</div>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Assignment A01: GGPLOT2 // Ramin Ala</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.83.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://ramin1ala.netlify.app/css/main.min.9dbf51e978afe3857b6cf4f89e41949fcd0410a29b2c2a5da404b58dfd6fc228.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Assignment A01: GGPLOT2"/>
+<meta name="twitter:description" content="Introduction:In this post, the solution for assignment 01 is provided. I selected “ChickWeight” dataset because it consists of both Numerical and Categorical data.
+This data frame has 578 rows and 4 columns from an experiment on the effect of diet on the early growth of chicks. This dataset has two numeric variables:
+weight: weight of specific chick at specific day (Time), and
+Time: Number of days since birth to measurement day,"/>
+
+    <meta property="og:title" content="Assignment A01: GGPLOT2" />
+<meta property="og:description" content="Introduction:In this post, the solution for assignment 01 is provided. I selected “ChickWeight” dataset because it consists of both Numerical and Categorical data.
+This data frame has 578 rows and 4 columns from an experiment on the effect of diet on the early growth of chicks. This dataset has two numeric variables:
+weight: weight of specific chick at specific day (Time), and
+Time: Number of days since birth to measurement day," />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ramin1ala.netlify.app/posts/assignment-a01-ggplot2/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-05-19T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-05-19T00:00:00&#43;00:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://ramin1ala.netlify.app/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>Ramin Ala</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/publications/">Publications</a>
+      </nav>
+      <p>An Electrical engineer with experience in RF and interest in data science.</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/raminala" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/ramin-ala-6645b3188/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://twitter.com/ala_ramin" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>Twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Assignment A01: GGPLOT2</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          May 19, 2021
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          2 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://ramin1ala.netlify.app/tags/r/">R</a>
+              <a class="tag" href="https://ramin1ala.netlify.app/tags/assignment/">Assignment</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+<script src="https://ramin1ala.netlify.app/posts/assignment-a01-ggplot2/index_files/header-attrs/header-attrs.js"></script>
+
+
+<ol style="list-style-type: decimal">
+<li>Introduction:</li>
+</ol>
+<p>In this post, the solution for assignment 01 is provided. I selected “ChickWeight” dataset because it consists of both Numerical and Categorical data.</p>
+<p>This data frame has 578 rows and 4 columns from an experiment on the effect of diet on the early growth of chicks. This dataset has two numeric variables:</p>
+<p>weight: weight of specific chick at specific day (Time), and</p>
+<p>Time: Number of days since birth to measurement day,</p>
+<p>as well as two ordered and categorical variables:</p>
+<p>Chick: identifier of chick. from 1 to 48, and</p>
+<p>Diet: 4 different applied diets.</p>
+<p>Lets take a look at data:</p>
+<pre><code>##   weight Time Chick Diet
+## 1     42    0     1    1
+## 2     51    2     1    1
+## 3     59    4     1    1
+## 4     64    6     1    1
+## 5     76    8     1    1
+## 6     93   10     1    1</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>plots</li>
+</ol>
+<div id="categorical" class="section level2">
+<h2>categorical</h2>
+<p>Plot mean of chicks weight at birthday and day 21 in terms of four different diet plans. These plots aresuitable for comparing diet plans.</p>
+<p><img src="https://ramin1ala.netlify.app/posts/assignment-a01-ggplot2/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><img src="https://ramin1ala.netlify.app/posts/assignment-a01-ggplot2/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="numerical" class="section level2">
+<h2>numerical</h2>
+<p>Plot weight of chicks over time (day 0 to day 21). These plots are categorized in four facets each for one diet. These plots represent the weight gain of every chicks and they provide good information to examine every chicks.</p>
+<pre class="r"><code># Plot  numerical variables.
+
+ggplot(ChickWeight, aes(Time, weight, color = Diet, group = Chick))+
+  geom_line() + # line plot
+  facet_wrap(~Diet)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/assignment-a01-ggplot2/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(ChickWeight, aes(Time, weight, shape = Diet))+
+  geom_point()+
+  labs(title=&quot;Weight in each day&quot;, x= &quot;Day&quot;, y= &quot;Weight&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/assignment-a01-ggplot2/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<ol start="3" style="list-style-type: decimal">
+<li>discussion</li>
+</ol>
+<p>From the bar chart, it seems diet 3 results in the heaviest chicks on average on day 21, followed by diet 4, diet 2, and diet 1.Besides, average weight at birthday prove that chicks have approximately the same weight at day 0. Numerical plots show consistent weight gain for all chicks and all diet plans, although some chicks gain little weight (especially one chick in diet plan 2).</p>
+<p>Categorizing and filtering data were the major issue in this assignment. For those who are new to using R, this would be a challenge.</p>
+</div>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

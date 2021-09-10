@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Supervised Learning in R: Classification // Ramin Ala</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.83.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://ramin1ala.netlify.app/css/main.min.9dbf51e978afe3857b6cf4f89e41949fcd0410a29b2c2a5da404b58dfd6fc228.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Supervised Learning in R: Classification"/>
+<meta name="twitter:description" content="library(tidyverse)## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --## v ggplot2 3.3.3 v purrr 0.3.4## v tibble 3.1.1 v dplyr 1.0.6## v tidyr 1.1.3 v stringr 1.4.0## v readr 1.4.0 v forcats 0.5.1## -- Conflicts ------------------------------------------ tidyverse_conflicts() --## x dplyr::filter() masks stats::filter()## x dplyr::lag() masks stats::lag()library(class) #knnlibrary(tidyverse)signs &lt;- read_csv(&quot;signs.csv&quot;) #%&gt;% na.omit()## ## -- Column specification --------------------------------------------------------## cols(## ."/>
+
+    <meta property="og:title" content="Supervised Learning in R: Classification" />
+<meta property="og:description" content="library(tidyverse)## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --## v ggplot2 3.3.3 v purrr 0.3.4## v tibble 3.1.1 v dplyr 1.0.6## v tidyr 1.1.3 v stringr 1.4.0## v readr 1.4.0 v forcats 0.5.1## -- Conflicts ------------------------------------------ tidyverse_conflicts() --## x dplyr::filter() masks stats::filter()## x dplyr::lag() masks stats::lag()library(class) #knnlibrary(tidyverse)signs &lt;- read_csv(&quot;signs.csv&quot;) #%&gt;% na.omit()## ## -- Column specification --------------------------------------------------------## cols(## ." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ramin1ala.netlify.app/posts/2021-08-09-supervised-learning-in-r-classification/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-08-09T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-08-09T00:00:00&#43;00:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://ramin1ala.netlify.app/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>Ramin Ala</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/publications/">Publications</a>
+      </nav>
+      <p>An Electrical engineer with experience in RF and interest in data science.</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/raminala" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/ramin-ala-6645b3188/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://twitter.com/ala_ramin" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>Twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Supervised Learning in R: Classification</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Aug 9, 2021
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          30 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://ramin1ala.netlify.app/tags/classification/">Classification</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+<script src="https://ramin1ala.netlify.app/posts/2021-08-09-supervised-learning-in-r-classification/index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
+## v tibble  3.1.1     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(class) #knn
+library(tidyverse)</code></pre>
+<pre class="r"><code>signs &lt;- read_csv(&quot;signs.csv&quot;) #%&gt;% na.omit()</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double(),
+##   sign_type = col_character()
+## )
+## i Use `spec()` for the full column specifications.</code></pre>
+<pre class="r"><code>next_sign &lt;- read_csv(&quot;next_sign.csv&quot;)</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_double()
+## )
+## i Use `spec()` for the full column specifications.</code></pre>
+<pre class="r"><code>#glimpse(signs)
+where9am &lt;- read_csv(&quot;where9am.csv&quot;)</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   X1 = col_double(),
+##   daytype = col_character(),
+##   location = col_character()
+## )</code></pre>
+<pre class="r"><code>donors &lt;- read_csv(&quot;donors.csv&quot;)</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   donated = col_double(),
+##   veteran = col_double(),
+##   bad_address = col_double(),
+##   age = col_double(),
+##   has_children = col_double(),
+##   wealth_rating = col_double(),
+##   interest_veterans = col_double(),
+##   interest_religion = col_double(),
+##   pet_owner = col_double(),
+##   catalog_shopper = col_double(),
+##   recency = col_character(),
+##   frequency = col_character(),
+##   money = col_character(),
+##   donation_prob = col_double()
+## )</code></pre>
+<div id="section" class="section level2">
+<h2>1-2</h2>
+<pre class="r"><code># Load the &#39;class&#39; package
+library(class)
+
+# Create a vector of labels
+sign_types &lt;- signs$sign_type
+
+# Classify the next sign observed
+ss&lt;-knn(train = signs[-1], test = next_sign, cl = sign_types)</code></pre>
+</div>
+<div id="section-1" class="section level2">
+<h2>1-4</h2>
+<pre class="r"><code># Examine the structure of the signs dataset
+
+str(signs)</code></pre>
+<pre><code>## spec_tbl_df [146 x 49] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+##  $ sign_type: chr [1:146] &quot;pedestrian&quot; &quot;pedestrian&quot; &quot;pedestrian&quot; &quot;pedestrian&quot; ...
+##  $ r1       : num [1:146] 155 142 57 22 169 75 136 149 13 123 ...
+##  $ g1       : num [1:146] 228 217 54 35 179 67 149 225 34 124 ...
+##  $ b1       : num [1:146] 251 242 50 41 170 60 157 241 28 107 ...
+##  $ r2       : num [1:146] 135 166 187 171 231 131 200 34 5 83 ...
+##  $ g2       : num [1:146] 188 204 201 178 254 89 203 45 21 61 ...
+##  $ b2       : num [1:146] 101 44 68 26 27 53 107 1 11 26 ...
+##  $ r3       : num [1:146] 156 142 51 19 97 214 150 155 123 116 ...
+##  $ g3       : num [1:146] 227 217 51 27 107 144 167 226 154 124 ...
+##  $ b3       : num [1:146] 245 242 45 29 99 75 134 238 140 115 ...
+##  $ r4       : num [1:146] 145 147 59 19 123 156 171 147 21 67 ...
+##  $ g4       : num [1:146] 211 219 62 27 147 169 218 222 46 67 ...
+##  $ b4       : num [1:146] 228 242 65 29 152 190 252 242 41 52 ...
+##  $ r5       : num [1:146] 166 164 156 42 221 67 171 170 36 70 ...
+##  $ g5       : num [1:146] 233 228 171 37 236 50 158 191 60 53 ...
+##  $ b5       : num [1:146] 245 229 50 3 117 36 108 113 26 26 ...
+##  $ r6       : num [1:146] 212 84 254 217 205 37 157 26 75 26 ...
+##  $ g6       : num [1:146] 254 116 255 228 225 36 186 37 108 26 ...
+##  $ b6       : num [1:146] 52 17 36 19 80 42 11 12 44 21 ...
+##  $ r7       : num [1:146] 212 217 211 221 235 44 26 34 13 52 ...
+##  $ g7       : num [1:146] 254 254 226 235 254 42 35 45 27 45 ...
+##  $ b7       : num [1:146] 11 26 70 20 60 44 10 19 25 27 ...
+##  $ r8       : num [1:146] 188 155 78 181 90 192 180 221 133 117 ...
+##  $ g8       : num [1:146] 229 203 73 183 110 131 211 249 163 109 ...
+##  $ b8       : num [1:146] 117 128 64 73 9 73 236 184 126 83 ...
+##  $ r9       : num [1:146] 170 213 220 237 216 123 129 226 83 110 ...
+##  $ g9       : num [1:146] 216 253 234 234 236 74 109 246 125 74 ...
+##  $ b9       : num [1:146] 120 51 59 44 66 22 73 59 19 12 ...
+##  $ r10      : num [1:146] 211 217 254 251 229 36 161 30 13 98 ...
+##  $ g10      : num [1:146] 254 255 255 254 255 34 190 40 27 70 ...
+##  $ b10      : num [1:146] 3 21 51 2 12 37 10 34 25 26 ...
+##  $ r11      : num [1:146] 212 217 253 235 235 44 161 34 9 20 ...
+##  $ g11      : num [1:146] 254 255 255 243 254 42 190 44 23 21 ...
+##  $ b11      : num [1:146] 19 21 44 12 60 44 6 35 18 20 ...
+##  $ r12      : num [1:146] 172 158 66 19 163 197 187 241 85 113 ...
+##  $ g12      : num [1:146] 235 225 68 27 168 114 215 255 128 76 ...
+##  $ b12      : num [1:146] 244 237 68 29 152 21 236 54 21 14 ...
+##  $ r13      : num [1:146] 172 164 69 20 124 171 141 205 83 106 ...
+##  $ g13      : num [1:146] 235 227 65 29 117 102 142 229 125 69 ...
+##  $ b13      : num [1:146] 244 237 59 34 91 26 140 46 19 9 ...
+##  $ r14      : num [1:146] 172 182 76 64 188 197 189 226 85 102 ...
+##  $ g14      : num [1:146] 228 228 84 61 205 114 171 246 128 67 ...
+##  $ b14      : num [1:146] 235 143 22 4 78 21 140 59 21 6 ...
+##  $ r15      : num [1:146] 177 171 82 211 125 123 214 235 85 106 ...
+##  $ g15      : num [1:146] 235 228 93 222 147 74 221 252 128 69 ...
+##  $ b15      : num [1:146] 244 196 17 78 20 22 201 67 21 9 ...
+##  $ r16      : num [1:146] 22 164 58 19 160 180 188 237 83 43 ...
+##  $ g16      : num [1:146] 52 227 60 27 183 107 211 254 125 29 ...
+##  $ b16      : num [1:146] 53 237 60 29 187 26 227 53 19 11 ...
+##  - attr(*, &quot;spec&quot;)=
+##   .. cols(
+##   ..   sign_type = col_character(),
+##   ..   r1 = col_double(),
+##   ..   g1 = col_double(),
+##   ..   b1 = col_double(),
+##   ..   r2 = col_double(),
+##   ..   g2 = col_double(),
+##   ..   b2 = col_double(),
+##   ..   r3 = col_double(),
+##   ..   g3 = col_double(),
+##   ..   b3 = col_double(),
+##   ..   r4 = col_double(),
+##   ..   g4 = col_double(),
+##   ..   b4 = col_double(),
+##   ..   r5 = col_double(),
+##   ..   g5 = col_double(),
+##   ..   b5 = col_double(),
+##   ..   r6 = col_double(),
+##   ..   g6 = col_double(),
+##   ..   b6 = col_double(),
+##   ..   r7 = col_double(),
+##   ..   g7 = col_double(),
+##   ..   b7 = col_double(),
+##   ..   r8 = col_double(),
+##   ..   g8 = col_double(),
+##   ..   b8 = col_double(),
+##   ..   r9 = col_double(),
+##   ..   g9 = col_double(),
+##   ..   b9 = col_double(),
+##   ..   r10 = col_double(),
+##   ..   g10 = col_double(),
+##   ..   b10 = col_double(),
+##   ..   r11 = col_double(),
+##   ..   g11 = col_double(),
+##   ..   b11 = col_double(),
+##   ..   r12 = col_double(),
+##   ..   g12 = col_double(),
+##   ..   b12 = col_double(),
+##   ..   r13 = col_double(),
+##   ..   g13 = col_double(),
+##   ..   b13 = col_double(),
+##   ..   r14 = col_double(),
+##   ..   g14 = col_double(),
+##   ..   b14 = col_double(),
+##   ..   r15 = col_double(),
+##   ..   g15 = col_double(),
+##   ..   b15 = col_double(),
+##   ..   r16 = col_double(),
+##   ..   g16 = col_double(),
+##   ..   b16 = col_double()
+##   .. )</code></pre>
+<pre class="r"><code># Count the number of signs of each type
+table(signs$sign_type)</code></pre>
+<pre><code>## 
+## pedestrian      speed       stop 
+##         46         49         51</code></pre>
+<pre class="r"><code># Check r10&#39;s average red level by sign type
+aggregate(r10 ~ sign_type, data = signs, mean)</code></pre>
+<pre><code>##    sign_type       r10
+## 1 pedestrian 113.71739
+## 2      speed  80.63265
+## 3       stop 132.39216</code></pre>
+</div>
+<div id="testing-other-k-values" class="section level2">
+<h2>1-8 Testing other ‘k’ values</h2>
+<p>By default, the knn() function in the class package uses only the single nearest neighbor.</p>
+<p>Setting a k parameter allows the algorithm to consider additional nearby neighbors. This enlarges the collection of neighbors which will vote on the predicted class.</p>
+<p>Compare k values of 1, 7, and 15 to examine the impact on traffic sign classification accuracy.</p>
+<p>The class package is already loaded in your workspace along with the datasets signs, signs_test, and sign_types. The object signs_actual holds the true values of the signs.</p>
+</div>
+<div id="computing-probabilities" class="section level2">
+<h2>2-2- Computing probabilities</h2>
+<p>The where9am data frame contains 91 days (thirteen weeks) worth of data in which Brett recorded his location at 9am each day as well as whether the daytype was a weekend or weekday.</p>
+<p>Using the conditional probability formula below, you can compute the probability that Brett is working in the office, given that it is a weekday.</p>
+<pre class="r"><code># Compute P(A) 
+p_A &lt;- nrow(subset(where9am, location == &quot;office&quot;)) / nrow(where9am)
+
+# Compute P(B)
+p_B &lt;- nrow(subset(where9am, daytype == &quot;weekday&quot;)) / nrow(where9am)
+
+# Compute the observed P(A and B)
+p_AB &lt;- nrow(subset(where9am, location == &quot;office&quot; &amp; daytype == &quot;weekday&quot;)) / nrow(where9am)
+
+# Compute P(A | B) and print its value
+p_A_given_B &lt;- p_AB / p_B
+p_A_given_B</code></pre>
+<pre><code>## [1] 0.6</code></pre>
+</div>
+<div id="a-simple-naive-bayes-location-model" class="section level2">
+<h2>2-4- A simple Naive Bayes location model</h2>
+<p>The previous exercises showed that the probability that Brett is at work or at home at 9am is highly dependent on whether it is the weekend or a weekday.</p>
+<p>To see this finding in action, use the where9am data frame to build a Naive Bayes model on the same data.</p>
+<p>You can then use this model to predict the future: where does the model think that Brett will be at 9am on Thursday and at 9am on Saturday?</p>
+<p>The data frame where9am is available in your workspace. This dataset contains information about Brett’s location at 9am on different days.</p>
+<pre class="r"><code>thursday9am &lt;- data.frame(daytype=c(&quot;weekday&quot;))
+saturday9am &lt;- data.frame(daytype=c(&quot;weekend&quot;))
+# Load the naivebayes package
+library(naivebayes)</code></pre>
+<pre><code>## naivebayes 0.9.7 loaded</code></pre>
+<pre class="r"><code># Build the location prediction model
+locmodel &lt;- naive_bayes(location ~ daytype, data = where9am)</code></pre>
+<pre><code>## Warning: naive_bayes(): Feature daytype - zero probabilities are present.
+## Consider Laplace smoothing.</code></pre>
+<pre class="r"><code># Predict Thursday&#39;s 9am location
+predict(locmodel, thursday9am)</code></pre>
+<pre><code>## [1] office
+## Levels: appointment campus home office</code></pre>
+<pre class="r"><code># Predict Saturdays&#39;s 9am location
+predict(locmodel, saturday9am)</code></pre>
+<pre><code>## [1] home
+## Levels: appointment campus home office</code></pre>
+</div>
+<div id="examining-raw-probabilities" class="section level2">
+<h2>2-5- Examining “raw” probabilities</h2>
+<p>The naivebayes package offers several ways to peek inside a Naive Bayes model.</p>
+<p>Typing the name of the model object provides the a priori (overall) and conditional probabilities of each of the model’s predictors. If one were so inclined, you might use these for calculating posterior (predicted) probabilities by hand.</p>
+<p>Alternatively, R will compute the posterior probabilities for you if the type = “prob” parameter is supplied to the predict() function.</p>
+<p>Using these methods, examine how the model’s predicted 9am location probability varies from day-to-day. The model locmodel that you fit in the previous exercise is in your workspace.</p>
+<pre class="r"><code># The &#39;naivebayes&#39; package is loaded into the workspace
+# and the Naive Bayes &#39;locmodel&#39; has been built
+
+# Examine the location prediction model
+locmodel</code></pre>
+<pre><code>## 
+## ================================== Naive Bayes ================================== 
+##  
+##  Call: 
+## naive_bayes.formula(formula = location ~ daytype, data = where9am)
+## 
+## --------------------------------------------------------------------------------- 
+##  
+## Laplace smoothing: 0
+## 
+## --------------------------------------------------------------------------------- 
+##  
+##  A priori probabilities: 
+## 
+## appointment      campus        home      office 
+##  0.01098901  0.10989011  0.45054945  0.42857143 
+## 
+## --------------------------------------------------------------------------------- 
+##  
+##  Tables: 
+## 
+## --------------------------------------------------------------------------------- 
+##  ::: daytype (Bernoulli) 
+## --------------------------------------------------------------------------------- 
+##          
+## daytype   appointment    campus      home    office
+##   weekday   1.0000000 1.0000000 0.3658537 1.0000000
+##   weekend   0.0000000 0.0000000 0.6341463 0.0000000
+## 
+## ---------------------------------------------------------------------------------</code></pre>
+<pre class="r"><code># Obtain the predicted probabilities for Thursday at 9am
+predict(locmodel, thursday9am , type = &quot;prob&quot;)</code></pre>
+<pre><code>##      appointment    campus      home office
+## [1,]  0.01538462 0.1538462 0.2307692    0.6</code></pre>
+<pre class="r"><code># Obtain the predicted probabilities for Saturday at 9am
+predict(locmodel, saturday9am , type = &quot;prob&quot;)</code></pre>
+<pre><code>##       appointment       campus      home      office
+## [1,] 3.838772e-05 0.0003838772 0.9980806 0.001497121</code></pre>
+</div>
+<div id="a-more-sophisticated-location-model" class="section level2">
+<h2>2-9- A more sophisticated location model</h2>
+<p>The locations dataset records Brett’s location every hour for 13 weeks. Each hour, the tracking information includes the daytype (weekend or weekday) as well as the hourtype (morning, afternoon, evening, or night).</p>
+<p>Using this data, build a more sophisticated model to see how Brett’s predicted location not only varies by the day of week but also by the time of day. The dataset locations is already loaded in your workspace.</p>
+<p>You can specify additional independent variables in your formula using the + sign (e.g. y ~ x + b).</p>
+<pre class="r"><code># The &#39;naivebayes&#39; package is loaded into the workspace already
+
+# Build a NB model of location
+#locmodel &lt;- naive_bayes(location  ~ daytype + hourtype, locations)
+
+# Predict Brett&#39;s location on a weekday afternoon
+#predict(locmodel, weekday_afternoon)
+
+# Predict Brett&#39;s location on a weekday evening
+#predict(locmodel, weekday_evening)</code></pre>
+<p>##2-10-Preparing for unforeseen circumstances</p>
+<p>While Brett was tracking his location over 13 weeks, he never went into the office during the weekend. Consequently, the joint probability of P(office and weekend) = 0.</p>
+<p>Explore how this impacts the predicted probability that Brett may go to work on the weekend in the future. Additionally, you can see how using the Laplace correction will allow a small chance for these types of unforeseen circumstances.</p>
+<p>The model locmodel is already in your workspace, along with the dataframe weekend_afternoon.</p>
+</div>
+<div id="the-naivebayes-package-is-loaded-into-the-workspace-already" class="section level1">
+<h1>The ‘naivebayes’ package is loaded into the workspace already</h1>
+</div>
+<div id="the-naive-bayes-location-model-locmodel-has-already-been-built" class="section level1">
+<h1>The Naive Bayes location model (locmodel) has already been built</h1>
+</div>
+<div id="observe-the-predicted-probabilities-for-a-weekend-afternoon" class="section level1">
+<h1>Observe the predicted probabilities for a weekend afternoon</h1>
+<p>predict(locmodel, weekend_afternoon, type=“prob” )</p>
+</div>
+<div id="build-a-new-model-using-the-laplace-correction" class="section level1">
+<h1>Build a new model using the Laplace correction</h1>
+<p>locmodel2 &lt;- naive_bayes(location ~ daytype + hourtype, locations,laplace=1)</p>
+</div>
+<div id="observe-the-new-predicted-probabilities-for-a-weekend-afternoon" class="section level1">
+<h1>Observe the new predicted probabilities for a weekend afternoon</h1>
+<p>predict(locmodel2, weekend_afternoon, type=“prob” )</p>
+<div id="building-simple-logistic-regression-models" class="section level2">
+<h2>3-2 Building simple logistic regression models</h2>
+<p>The donors dataset contains 93,462 examples of people mailed in a fundraising solicitation for paralyzed military veterans. The donated column is 1 if the person made a donation in response to the mailing and 0 otherwise. This binary outcome will be the dependent variable for the logistic regression model.</p>
+<p>The remaining columns are features of the prospective donors that may influence their donation behavior. These are the model’s independent variables.</p>
+<p>When building a regression model, it is often helpful to form a hypothesis about which independent variables will be predictive of the dependent variable. The bad_address column, which is set to 1 for an invalid mailing address and 0 otherwise, seems like it might reduce the chances of a donation. Similarly, one might suspect that religious interest (interest_religion) and interest in veterans affairs (interest_veterans) would be associated with greater charitable giving.</p>
+<p>In this exercise, you will use these three factors to create a simple model of donation behavior. The dataset donors is available in your workspace.</p>
+<pre class="r"><code># Examine the dataset to identify potential independent variables
+str(donors)</code></pre>
+<pre><code>## spec_tbl_df [93,462 x 14] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+##  $ donated          : num [1:93462] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ veteran          : num [1:93462] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ bad_address      : num [1:93462] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ age              : num [1:93462] 60 46 NA 70 78 NA 38 NA NA 65 ...
+##  $ has_children     : num [1:93462] 0 1 0 0 1 0 1 0 0 0 ...
+##  $ wealth_rating    : num [1:93462] 0 3 1 2 1 0 2 3 1 0 ...
+##  $ interest_veterans: num [1:93462] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ interest_religion: num [1:93462] 0 0 0 0 1 0 0 0 0 0 ...
+##  $ pet_owner        : num [1:93462] 0 0 0 0 0 0 1 0 0 0 ...
+##  $ catalog_shopper  : num [1:93462] 0 0 0 0 1 0 0 0 0 0 ...
+##  $ recency          : chr [1:93462] &quot;CURRENT&quot; &quot;CURRENT&quot; &quot;CURRENT&quot; &quot;CURRENT&quot; ...
+##  $ frequency        : chr [1:93462] &quot;FREQUENT&quot; &quot;FREQUENT&quot; &quot;FREQUENT&quot; &quot;FREQUENT&quot; ...
+##  $ money            : chr [1:93462] &quot;MEDIUM&quot; &quot;HIGH&quot; &quot;MEDIUM&quot; &quot;MEDIUM&quot; ...
+##  $ donation_prob    : num [1:93462] 0.0497 0.0497 0.0497 0.0497 0.0529 ...
+##  - attr(*, &quot;spec&quot;)=
+##   .. cols(
+##   ..   donated = col_double(),
+##   ..   veteran = col_double(),
+##   ..   bad_address = col_double(),
+##   ..   age = col_double(),
+##   ..   has_children = col_double(),
+##   ..   wealth_rating = col_double(),
+##   ..   interest_veterans = col_double(),
+##   ..   interest_religion = col_double(),
+##   ..   pet_owner = col_double(),
+##   ..   catalog_shopper = col_double(),
+##   ..   recency = col_character(),
+##   ..   frequency = col_character(),
+##   ..   money = col_character(),
+##   ..   donation_prob = col_double()
+##   .. )</code></pre>
+<pre class="r"><code># Explore the dependent variable
+
+table(donors$donated)</code></pre>
+<pre><code>## 
+##     0     1 
+## 88751  4711</code></pre>
+<pre class="r"><code># Build the donation model
+donation_model &lt;- glm(donated~bad_address+interest_religion+interest_veterans, data = donors, family = &quot;binomial&quot;)
+
+# Summarize the model results
+summary(donation_model)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = donated ~ bad_address + interest_religion + interest_veterans, 
+##     family = &quot;binomial&quot;, data = donors)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.3480  -0.3192  -0.3192  -0.3192   2.5678  
+## 
+## Coefficients:
+##                   Estimate Std. Error  z value Pr(&gt;|z|)    
+## (Intercept)       -2.95139    0.01652 -178.664   &lt;2e-16 ***
+## bad_address       -0.30780    0.14348   -2.145   0.0319 *  
+## interest_religion  0.06724    0.05069    1.327   0.1847    
+## interest_veterans  0.11009    0.04676    2.354   0.0186 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 37330  on 93461  degrees of freedom
+## Residual deviance: 37316  on 93458  degrees of freedom
+## AIC: 37324
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+<div id="making-a-binary-prediction" class="section level2">
+<h2>3-3 Making a binary prediction</h2>
+<p>In the previous exercise, you used the glm() function to build a logistic regression model of donor behavior. As with many of R’s machine learning methods, you can apply the predict() function to the model object to forecast future behavior. By default, predict() outputs predictions in terms of log odds unless type = “response” is specified. This converts the log odds to probabilities.</p>
+<p>Because a logistic regression model estimates the probability of the outcome, it is up to you to determine the threshold at which the probability implies action. One must balance the extremes of being too cautious versus being too aggressive. For example, if you were to solicit only the people with a 99% or greater donation probability, you may miss out on many people with lower estimated probabilities that still choose to donate. This balance is particularly important to consider for severely imbalanced outcomes, such as in this dataset where donations are relatively rare.</p>
+<p>The dataset donors and the model donation_model are already loaded in your workspace.</p>
+<pre class="r"><code># Estimate the donation probability
+donors$donation_prob &lt;- predict(donation_model, type = &quot;response&quot;)
+
+# Find the donation probability of the average prospect
+mean(donors$donated)</code></pre>
+<pre><code>## [1] 0.05040551</code></pre>
+<pre class="r"><code># Predict a donation if probability of donation is greater than average (0.0504)
+donors$donation_pred &lt;- ifelse(donors$donation_prob &gt; 0.0504, 1, 0)
+
+# Calculate the model&#39;s accuracy
+mean(donors$donation_pred == donors$donated)</code></pre>
+<pre><code>## [1] 0.794815</code></pre>
+</div>
+<div id="calculating-roc-curves-and-auc" class="section level2">
+<h2>3-6 Calculating ROC Curves and AUC</h2>
+<p>The previous exercises have demonstrated that accuracy is a very misleading measure of model performance on imbalanced datasets. Graphing the model’s performance better illustrates the tradeoff between a model that is overly agressive and one that is overly passive.</p>
+<p>In this exercise you will create a ROC curve and compute the area under the curve (AUC) to evaluate the logistic regression model of donations you built earlier.</p>
+<p>The dataset donors with the column of predicted probabilities, donation_prob ,is already loaded in your workspace.</p>
+<pre class="r"><code># Load the pROC package
+library(pROC)</code></pre>
+<pre><code>## Type &#39;citation(&quot;pROC&quot;)&#39; for a citation.</code></pre>
+<pre><code>## 
+## Attaching package: &#39;pROC&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     cov, smooth, var</code></pre>
+<pre class="r"><code># Create a ROC curve
+ROC &lt;- roc(donors$donated, donors$donation_prob)</code></pre>
+<pre><code>## Setting levels: control = 0, case = 1</code></pre>
+<pre><code>## Setting direction: controls &lt; cases</code></pre>
+<pre class="r"><code># Plot the ROC curve
+plot(ROC, col = &quot;blue&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-09-supervised-learning-in-r-classification/index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code># Calculate the area under the curve (AUC)
+auc(ROC)</code></pre>
+<pre><code>## Area under the curve: 0.5102</code></pre>
+</div>
+<div id="coding-categorical-features" class="section level2">
+<h2>3-9 Coding categorical features</h2>
+<p>Sometimes a dataset contains numeric values that represent a categorical feature.</p>
+<p>In the donors dataset, wealth_rating uses numbers to indicate the donor’s wealth level:</p>
+<p>0 = Unknown
+1 = Low
+2 = Medium
+3 = High
+This exercise illustrates how to prepare this type of categorical feature and examines its impact on a logistic regression model. The dataframe donors is loaded in your workspace.</p>
+<pre class="r"><code># Convert the wealth rating to a factor
+donors$wealth_levels &lt;- factor(donors$wealth_rating, levels = c(0, 1, 2, 3),
+labels = c(&quot;Unknown&quot;, &quot;Low&quot;, &quot;Medium&quot;, &quot;High&quot;))
+
+# Use relevel() to change reference category
+donors$wealth_levels &lt;- relevel(donors$wealth_levels, ref = &quot;Medium&quot;)
+
+# See how our factor coding impacts the model
+summary(glm(donated~wealth_levels, data = donors, family = &quot;binomial&quot;))</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = donated ~ wealth_levels, family = &quot;binomial&quot;, data = donors)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.3320  -0.3243  -0.3175  -0.3175   2.4582  
+## 
+## Coefficients:
+##                      Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)          -2.91894    0.03614 -80.772   &lt;2e-16 ***
+## wealth_levelsUnknown -0.04373    0.04243  -1.031    0.303    
+## wealth_levelsLow     -0.05245    0.05332  -0.984    0.325    
+## wealth_levelsHigh     0.04804    0.04768   1.008    0.314    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 37330  on 93461  degrees of freedom
+## Residual deviance: 37323  on 93458  degrees of freedom
+## AIC: 37331
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+<div id="handling-missing-data" class="section level2">
+<h2>3-10 Handling missing data</h2>
+<p>Some of the prospective donors have missing age data. Unfortunately, R will exclude any cases with NA values when building a regression model.</p>
+<p>One workaround is to replace, or impute, the missing values with an estimated value. After doing so, you may also create a missing data indicator to model the possibility that cases with missing data are different in some way from those without.</p>
+<p>The dataframe donors is loaded in your workspace.</p>
+<pre class="r"><code># Find the average age among non-missing values
+summary(donors$age)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##    1.00   48.00   62.00   61.65   75.00   98.00   22546</code></pre>
+<pre class="r"><code># Impute missing age values with the mean age
+donors$imputed_age &lt;- ifelse(is.na(donors$age), round(mean(donors$age, na.rm = TRUE), 2), donors$age)
+
+# Create missing value indicator for age
+donors$missing_age &lt;- ifelse(is.na(donors$age), 1, 0)</code></pre>
+</div>
+<div id="building-a-more-sophisticated-model" class="section level2">
+<h2>3-12 Building a more sophisticated model</h2>
+<p>One of the best predictors of future giving is a history of recent, frequent, and large gifts. In marketing terms, this is known as R/F/M:</p>
+<p>Recency
+Frequency
+Money
+Donors that haven’t given both recently and frequently may be especially likely to give again; in other words, the combined impact of recency and frequency may be greater than the sum of the separate effects.</p>
+<p>Because these predictors together have a greater impact on the dependent variable, their joint effect must be modeled as an interaction. The donors dataset has been loaded for you.</p>
+<pre class="r"><code># Build a recency, frequency, and money (RFM) model
+rfm_model &lt;- glm(donated~money + recency * frequency, donors, family = &quot;binomial&quot;)
+
+# Summarize the RFM model to see how the parameters were coded
+summary(rfm_model)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = donated ~ money + recency * frequency, family = &quot;binomial&quot;, 
+##     data = donors)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.3696  -0.3696  -0.2895  -0.2895   2.7924  
+## 
+## Coefficients:
+##                                   Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                       -3.01142    0.04279 -70.375   &lt;2e-16 ***
+## moneyMEDIUM                        0.36186    0.04300   8.415   &lt;2e-16 ***
+## recencyLAPSED                     -0.86677    0.41434  -2.092   0.0364 *  
+## frequencyINFREQUENT               -0.50148    0.03107 -16.143   &lt;2e-16 ***
+## recencyLAPSED:frequencyINFREQUENT  1.01787    0.51713   1.968   0.0490 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 37330  on 93461  degrees of freedom
+## Residual deviance: 36938  on 93457  degrees of freedom
+## AIC: 36948
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<pre class="r"><code># Compute predicted probabilities for the RFM model
+rfm_prob &lt;- predict(rfm_model, , type=&quot;response&quot;)
+
+# Plot the ROC curve and find AUC for the new model
+library(pROC)
+ROC &lt;- roc(donors$donated, rfm_prob)</code></pre>
+<pre><code>## Setting levels: control = 0, case = 1</code></pre>
+<pre><code>## Setting direction: controls &lt; cases</code></pre>
+<pre class="r"><code>plot(ROC, col = &quot;red&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-09-supervised-learning-in-r-classification/index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>auc(ROC)</code></pre>
+<pre><code>## Area under the curve: 0.5785</code></pre>
+</div>
+<div id="building-a-stepwise-regression-model" class="section level2">
+<h2>3-15 Building a stepwise regression model</h2>
+<p>In the absence of subject-matter expertise, stepwise regression can assist with the search for the most important predictors of the outcome of interest.</p>
+<p>In this exercise, you will use a forward stepwise approach to add predictors to the model one-by-one until no additional benefit is seen. The donors dataset has been loaded for you.</p>
+<pre class="r"><code># Specify a null model with no predictors
+null_model &lt;- glm(donated~1, data = donors, family = &quot;binomial&quot;)
+
+# Specify the full model using all of the potential predictors
+full_model &lt;- glm(donated~., data = donors, family = &quot;binomial&quot;)
+
+# Use a forward stepwise algorithm to build a parsimonious model
+step_model &lt;- step(null_model, scope = list(lower = null_model, upper = full_model), direction = &quot;forward&quot;)</code></pre>
+<pre><code>## Start:  AIC=37332.13
+## donated ~ 1</code></pre>
+<pre><code>## Warning in add1.glm(fit, scope$add, scale = scale, trace = trace, k = k, : using
+## the 70916/93462 rows from a combined fit</code></pre>
+<pre><code>##                     Df Deviance   AIC
+## + frequency          1    28502 37122
+## + money              1    28621 37241
+## + wealth_rating      1    28705 37326
+## + has_children       1    28705 37326
+## + age                1    28707 37328
+## + imputed_age        1    28707 37328
+## + wealth_levels      3    28704 37328
+## + interest_veterans  1    28709 37330
+## + donation_prob      1    28710 37330
+## + donation_pred      1    28710 37330
+## + catalog_shopper    1    28710 37330
+## + pet_owner          1    28711 37331
+## &lt;none&gt;                    28714 37332
+## + interest_religion  1    28712 37333
+## + recency            1    28713 37333
+## + bad_address        1    28714 37334
+## + veteran            1    28714 37334
+## 
+## Step:  AIC=37024.77
+## donated ~ frequency</code></pre>
+<pre><code>## Warning in add1.glm(fit, scope$add, scale = scale, trace = trace, k = k, : using
+## the 70916/93462 rows from a combined fit</code></pre>
+<pre><code>##                     Df Deviance   AIC
+## + money              1    28441 36966
+## + wealth_rating      1    28493 37018
+## + wealth_levels      3    28490 37019
+## + has_children       1    28494 37019
+## + donation_prob      1    28498 37023
+## + interest_veterans  1    28498 37023
+## + catalog_shopper    1    28499 37024
+## + donation_pred      1    28499 37024
+## + age                1    28499 37024
+## + imputed_age        1    28499 37024
+## + pet_owner          1    28499 37024
+## &lt;none&gt;                    28502 37025
+## + interest_religion  1    28501 37026
+## + recency            1    28501 37026
+## + bad_address        1    28502 37026
+## + veteran            1    28502 37027
+## 
+## Step:  AIC=36949.71
+## donated ~ frequency + money</code></pre>
+<pre><code>## Warning in add1.glm(fit, scope$add, scale = scale, trace = trace, k = k, : using
+## the 70916/93462 rows from a combined fit</code></pre>
+<pre><code>##                     Df Deviance   AIC
+## + wealth_levels      3    28427 36942
+## + wealth_rating      1    28431 36942
+## + has_children       1    28432 36943
+## + interest_veterans  1    28438 36948
+## + donation_prob      1    28438 36949
+## + catalog_shopper    1    28438 36949
+## + donation_pred      1    28439 36949
+## + age                1    28439 36949
+## + imputed_age        1    28439 36949
+## + pet_owner          1    28439 36949
+## &lt;none&gt;                    28441 36950
+## + interest_religion  1    28440 36951
+## + recency            1    28441 36951
+## + bad_address        1    28441 36951
+## + veteran            1    28441 36952
+## 
+## Step:  AIC=36945.48
+## donated ~ frequency + money + wealth_levels</code></pre>
+<pre><code>## Warning in add1.glm(fit, scope$add, scale = scale, trace = trace, k = k, : using
+## the 70916/93462 rows from a combined fit</code></pre>
+<pre><code>##                     Df Deviance   AIC
+## + has_children       1    28416 36937
+## + age                1    28424 36944
+## + imputed_age        1    28424 36944
+## + interest_veterans  1    28424 36945
+## + donation_prob      1    28424 36945
+## + catalog_shopper    1    28425 36945
+## + donation_pred      1    28425 36945
+## &lt;none&gt;                    28427 36945
+## + pet_owner          1    28425 36946
+## + interest_religion  1    28426 36947
+## + recency            1    28427 36947
+## + bad_address        1    28427 36947
+## + veteran            1    28427 36947
+## 
+## Step:  AIC=36938.4
+## donated ~ frequency + money + wealth_levels + has_children</code></pre>
+<pre><code>## Warning in add1.glm(fit, scope$add, scale = scale, trace = trace, k = k, : using
+## the 70916/93462 rows from a combined fit</code></pre>
+<pre><code>##                     Df Deviance   AIC
+## + pet_owner          1    28413 36937
+## + donation_prob      1    28413 36937
+## + catalog_shopper    1    28413 36937
+## + interest_veterans  1    28413 36937
+## + donation_pred      1    28414 36938
+## &lt;none&gt;                    28416 36938
+## + interest_religion  1    28415 36939
+## + age                1    28416 36940
+## + imputed_age        1    28416 36940
+## + recency            1    28416 36940
+## + bad_address        1    28416 36940
+## + veteran            1    28416 36940
+## 
+## Step:  AIC=36932.25
+## donated ~ frequency + money + wealth_levels + has_children + 
+##     pet_owner</code></pre>
+<pre><code>## Warning in add1.glm(fit, scope$add, scale = scale, trace = trace, k = k, : using
+## the 70916/93462 rows from a combined fit</code></pre>
+<pre><code>##                     Df Deviance   AIC
+## &lt;none&gt;                    28413 36932
+## + donation_prob      1    28411 36932
+## + interest_veterans  1    28411 36932
+## + catalog_shopper    1    28412 36933
+## + donation_pred      1    28412 36933
+## + age                1    28412 36933
+## + imputed_age        1    28412 36933
+## + recency            1    28413 36934
+## + interest_religion  1    28413 36934
+## + bad_address        1    28413 36934
+## + veteran            1    28413 36934</code></pre>
+<pre class="r"><code># Estimate the stepwise donation probability
+step_prob &lt;- predict(step_model,  type=&quot;response&quot;)
+
+# Plot the ROC of the stepwise model
+library(pROC)
+ROC &lt;- roc(donors$donated, step_prob)</code></pre>
+<pre><code>## Setting levels: control = 0, case = 1</code></pre>
+<pre><code>## Setting direction: controls &lt; cases</code></pre>
+<pre class="r"><code>plot(ROC, col = &quot;red&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-09-supervised-learning-in-r-classification/index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<pre class="r"><code>auc(ROC)</code></pre>
+<pre><code>## Area under the curve: 0.5849</code></pre>
+<p>##4-2 Building a simple decision tree</p>
+<p>The loans dataset contains 11,312 randomly-selected people who applied for and later received loans from Lending Club, a US-based peer-to-peer lending company.</p>
+<p>You will use a decision tree to try to learn patterns in the outcome of these loans (either repaid or default) based on the requested loan amount and credit score at the time of application.</p>
+<p>Then, see how the tree’s predictions differ for an applicant with good credit versus one with bad credit.</p>
+<p>The dataset loans is already in your workspace.</p>
+<pre class="r"><code>loans &lt;- read.csv(&quot;loans.csv&quot;)
+good_credit &lt;- read.csv(&quot;good_credit.csv&quot;)
+bad_credit &lt;- read.csv(&quot;bad_credit.csv&quot;)</code></pre>
+<pre class="r"><code># Load the rpart package
+library(rpart)
+
+# Build a lending model predicting loan outcome versus loan amount and credit score
+loan_model &lt;- rpart(outcome ~ loan_amount + credit_score, data = loans, method = &quot;class&quot;, control = rpart.control(cp = 0))
+
+# Make a prediction for someone with good credit
+predict(loan_model, good_credit, type = &quot;class&quot;)</code></pre>
+<pre><code>##      1 
+## repaid 
+## Levels: default repaid</code></pre>
+<pre class="r"><code># Make a prediction for someone with bad credit
+predict(loan_model, bad_credit, type = &quot;class&quot;)</code></pre>
+<pre><code>##       1 
+## default 
+## Levels: default repaid</code></pre>
+<p>##4-3 Visualizing classification trees</p>
+<p>Due to government rules to prevent illegal discrimination, lenders are required to explain why a loan application was rejected.</p>
+<p>The structure of classification trees can be depicted visually, which helps to understand how the tree makes its decisions. The model loan_model that you fit in the last exercise is in your workspace.</p>
+<pre class="r"><code># Examine the loan_model object
+loan_model</code></pre>
+<pre><code>## n= 11312 
+## 
+## node), split, n, loss, yval, (yprob)
+##       * denotes terminal node
+## 
+##  1) root 11312 5654 repaid (0.4998232 0.5001768)  
+##    2) credit_score=AVERAGE,LOW 9490 4437 default (0.5324552 0.4675448)  
+##      4) credit_score=LOW 1667  631 default (0.6214757 0.3785243) *
+##      5) credit_score=AVERAGE 7823 3806 default (0.5134859 0.4865141)  
+##       10) loan_amount=HIGH 2472 1079 default (0.5635113 0.4364887) *
+##       11) loan_amount=LOW,MEDIUM 5351 2624 repaid (0.4903756 0.5096244)  
+##         22) loan_amount=LOW 1810  874 default (0.5171271 0.4828729) *
+##         23) loan_amount=MEDIUM 3541 1688 repaid (0.4767015 0.5232985) *
+##    3) credit_score=HIGH 1822  601 repaid (0.3298573 0.6701427) *</code></pre>
+<pre class="r"><code># Load the rpart.plot package
+library(rpart.plot)
+
+# Plot the loan_model with default settings
+rpart.plot(loan_model)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-09-supervised-learning-in-r-classification/index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<pre class="r"><code># Plot the loan_model with customized settings
+rpart.plot(loan_model, type = 3, box.palette = c(&quot;red&quot;, &quot;green&quot;), fallen.leaves = TRUE)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-09-supervised-learning-in-r-classification/index_files/figure-html/unnamed-chunk-18-2.png" width="672" /></p>
+</div>
+<div id="creating-random-test-datasets" class="section level2">
+<h2>4-7 Creating random test datasets</h2>
+<p>Before building a more sophisticated lending model, it is important to hold out a portion of the loan data to simulate how well it will predict the outcomes of future loan applicants.</p>
+<p>As depicted in the following image, you can use 75% of the observations for training and 25% for testing the model.</p>
+<p>The sample() function can be used to generate a random sample of rows to include in the training set. Simply supply it the total number of observations and the number needed for training.</p>
+<p>Use the resulting vector of row IDs to subset the loans into training and testing datasets. The dataset loans is loaded in your workspace.</p>
+<pre class="r"><code># Determine the number of rows for training
+nrow(loans)</code></pre>
+<pre><code>## [1] 11312</code></pre>
+<pre class="r"><code># Create a random sample of row IDs
+sample_rows &lt;- sample(nrow(loans), nrow(loans)*3/4)
+
+# Create the training dataset
+loans_train &lt;- loans[ sample_rows,]
+
+# Create the test dataset
+loans_test &lt;- loans[-sample_rows,]</code></pre>
+</div>
+<div id="building-and-evaluating-a-larger-tree" class="section level2">
+<h2>4-8 Building and evaluating a larger tree</h2>
+<p>Previously, you created a simple decision tree that used the applicant’s credit score and requested loan amount to predict the loan outcome.</p>
+<p>Lending Club has additional information about the applicants, such as home ownership status, length of employment, loan purpose, and past bankruptcies, that may be useful for making more accurate predictions.</p>
+<p>Using all of the available applicant data, build a more sophisticated lending model using the random training dataset created previously. Then, use this model to make predictions on the testing dataset to estimate the performance of the model on future loan applications.</p>
+<p>The rpart package is loaded into the workspace and the loans_train and loans_test datasets have been created.</p>
+<pre class="r"><code># Grow a tree using all of the available applicant data
+loan_model &lt;- rpart(outcome ~ ., data = loans_train, method = &quot;class&quot;, control = rpart.control(cp = 0))
+
+# Make predictions on the test dataset
+loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
+
+# Examine the confusion matrix
+table(loans_test$pred, loans_test$outcome)</code></pre>
+<pre><code>##          
+##           default repaid
+##   default     780    619
+##   repaid      620    809</code></pre>
+<pre class="r"><code># Compute the accuracy on the test dataset
+mean(loans_test$pred==loans_test$outcome)</code></pre>
+<pre><code>## [1] 0.5618812</code></pre>
+</div>
+<div id="preventing-overgrown-trees" class="section level2">
+<h2>4-11 Preventing overgrown trees</h2>
+<p>The tree grown on the full set of applicant data grew to be extremely large and extremely complex, with hundreds of splits and leaf nodes containing only a handful of applicants. This tree would be almost impossible for a loan officer to interpret.</p>
+<p>Using the pre-pruning methods for early stopping, you can prevent a tree from growing too large and complex. See how the rpart control options for maximum tree depth and minimum split count impact the resulting tree.</p>
+<pre class="r"><code># Grow a tree with maxdepth of 6
+loan_model &lt;- rpart(outcome ~ ., data = loans_train, method = &quot;class&quot;, control = rpart.control(cp = 0
+,maxdepth = 6))
+
+
+# Make a class prediction on the test set
+loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
+
+# Compute the accuracy of the simpler tree
+mean(loans_test$pred==loans_test$outcome)</code></pre>
+<pre><code>## [1] 0.5749646</code></pre>
+<pre class="r"><code># Swap maxdepth for a minimum split of 500 
+loan_model &lt;- rpart(outcome ~ ., data = loans_train, method = &quot;class&quot;, control = rpart.control(cp = 0, minsplit = 500))
+
+# Run this. How does the accuracy change?
+loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
+mean(loans_test$pred == loans_test$outcome)</code></pre>
+<pre><code>## [1] 0.5781471</code></pre>
+</div>
+<div id="creating-a-nicely-pruned-tree" class="section level2">
+<h2>4-12 Creating a nicely pruned tree</h2>
+<p>Stopping a tree from growing all the way can lead it to ignore some aspects of the data or miss important trends it may have discovered later.</p>
+<p>By using post-pruning, you can intentionally grow a large and complex tree then prune it to be smaller and more efficient later on.</p>
+<p>In this exercise, you will have the opportunity to construct a visualization of the tree’s performance versus complexity, and use this information to prune the tree to an appropriate level.</p>
+<p>The rpart package is loaded into the workspace, along with loans_test and loans_train.</p>
+<pre class="r"><code># Grow an overly complex tree
+loan_model &lt;- rpart(outcome ~ ., data = loans_train, method = &quot;class&quot;, control = rpart.control(cp = 0))
+
+# Examine the complexity plot
+plotcp(loan_model)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-09-supervised-learning-in-r-classification/index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<pre class="r"><code># Prune the tree
+loan_model_pruned &lt;- prune(loan_model, cp = 0.0014)
+
+# Compute the accuracy of the pruned tree
+loans_test$pred &lt;- predict(loan_model_pruned, loans_test, type = &quot;class&quot;)
+mean(loans_test$pred==loans_test$outcome)</code></pre>
+<pre><code>## [1] 0.5894625</code></pre>
+</div>
+<div id="building-a-random-forest-model" class="section level2">
+<h2>4-16 Building a random forest model</h2>
+<p>In spite of the fact that a forest can contain hundreds of trees, growing a decision tree forest is perhaps even easier than creating a single highly-tuned tree.</p>
+<p>Using the randomForest package, build a random forest and see how it compares to the single trees you built previously.</p>
+<p>Keep in mind that due to the random nature of the forest, the results may vary slightly each time you create the forest.</p>
+<pre class="r"><code># Load the randomForest package
+library(randomForest)</code></pre>
+<pre><code>## randomForest 4.6-14</code></pre>
+<pre><code>## Type rfNews() to see new features/changes/bug fixes.</code></pre>
+<pre><code>## 
+## Attaching package: &#39;randomForest&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     combine</code></pre>
+<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     margin</code></pre>
+<pre class="r"><code># Build a random forest model
+loan_model &lt;- randomForest(factor(outcome) ~ ., data = loans_train)
+
+# Compute the accuracy of the random forest
+loans_test$pred &lt;- predict(loan_model, loans_test)
+mean(loans_test$pred==loans_test$outcome)</code></pre>
+<pre><code>## [1] 0.5908769</code></pre>
+</div>
+</div>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

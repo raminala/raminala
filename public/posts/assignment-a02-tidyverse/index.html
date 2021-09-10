@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Assignment A02: TIDYVERSE // Ramin Ala</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.83.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://ramin1ala.netlify.app/css/main.min.9dbf51e978afe3857b6cf4f89e41949fcd0410a29b2c2a5da404b58dfd6fc228.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Assignment A02: TIDYVERSE"/>
+<meta name="twitter:description" content="Introduction:In this post, the solution for the assignment 02 is provided. I selected “Stroke Prediction Dataset” from https://www.kaggle.com/datasets because I have already had some basic studies on stroke, and I am eager to add more information while doing my assignment.
+This dataset contains 5110 rows (each row attributes to a patient), and 12 columns (11 variables and 1 column as identity number for each observation/patient).
+Lets take a look at data:"/>
+
+    <meta property="og:title" content="Assignment A02: TIDYVERSE" />
+<meta property="og:description" content="Introduction:In this post, the solution for the assignment 02 is provided. I selected “Stroke Prediction Dataset” from https://www.kaggle.com/datasets because I have already had some basic studies on stroke, and I am eager to add more information while doing my assignment.
+This dataset contains 5110 rows (each row attributes to a patient), and 12 columns (11 variables and 1 column as identity number for each observation/patient).
+Lets take a look at data:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ramin1ala.netlify.app/posts/assignment-a02-tidyverse/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-05-26T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-05-26T00:00:00&#43;00:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://ramin1ala.netlify.app/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>Ramin Ala</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/publications/">Publications</a>
+      </nav>
+      <p>An Electrical engineer with experience in RF and interest in data science.</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/raminala" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/ramin-ala-6645b3188/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://twitter.com/ala_ramin" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>Twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Assignment A02: TIDYVERSE</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          May 26, 2021
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          8 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://ramin1ala.netlify.app/tags/r/">R</a>
+              <a class="tag" href="https://ramin1ala.netlify.app/tags/data_wrangling/">data_wrangling</a>
+              <a class="tag" href="https://ramin1ala.netlify.app/tags/assignment/">Assignment</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+<script src="https://ramin1ala.netlify.app/posts/assignment-a02-tidyverse/index_files/header-attrs/header-attrs.js"></script>
+
+
+<ol style="list-style-type: decimal">
+<li>Introduction:</li>
+</ol>
+<p>In this post, the solution for the assignment 02 is provided. I selected “Stroke Prediction Dataset” from <a href="https://www.kaggle.com/datasets" class="uri">https://www.kaggle.com/datasets</a> because I have already had some basic studies on stroke, and I am eager to add more information while doing my assignment.</p>
+<p>This dataset contains 5110 rows (each row attributes to a patient), and 12 columns (11 variables and 1 column as identity number for each observation/patient).</p>
+<p>Lets take a look at data:</p>
+<pre><code>## # A tibble: 6 x 12
+##      id gender   age hypertension heart_disease ever_married work_type    
+##   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;        &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;        
+## 1  9046 Male      67            0             1 Yes          Private      
+## 2 51676 Female    61            0             0 Yes          Self-employed
+## 3 31112 Male      80            0             1 Yes          Private      
+## 4 60182 Female    49            0             0 Yes          Private      
+## 5  1665 Female    79            1             0 Yes          Self-employed
+## 6 56669 Male      81            0             0 Yes          Private      
+## # ... with 5 more variables: Residence_type &lt;chr&gt;, avg_glucose_level &lt;dbl&gt;,
+## #   bmi &lt;chr&gt;, smoking_status &lt;chr&gt;, stroke &lt;dbl&gt;</code></pre>
+<p>This dataset has 11 variables (columns), including:</p>
+<pre class="r"><code>names(stroke_predic)</code></pre>
+<pre><code>##  [1] &quot;id&quot;                &quot;gender&quot;            &quot;age&quot;              
+##  [4] &quot;hypertension&quot;      &quot;heart_disease&quot;     &quot;ever_married&quot;     
+##  [7] &quot;work_type&quot;         &quot;Residence_type&quot;    &quot;avg_glucose_level&quot;
+## [10] &quot;bmi&quot;               &quot;smoking_status&quot;    &quot;stroke&quot;</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>one table and two table verb Functions</li>
+</ol>
+<div id="one-table-verbs" class="section level2">
+<h2>One table verbs</h2>
+<p>filter(): Extract rows that satisfy specified conditions.</p>
+<p>Here, I want to create a new dataset (stroke_suffered) from those who experienced a stroke.</p>
+<pre class="r"><code>library(dplyr)
+
+stroke_suffered &lt;- stroke_predic %&gt;%
+  filter(stroke==1)
+
+ stroke_suffered</code></pre>
+<pre><code>## # A tibble: 249 x 12
+##       id gender   age hypertension heart_disease ever_married work_type    
+##    &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;        &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;        
+##  1  9046 Male      67            0             1 Yes          Private      
+##  2 51676 Female    61            0             0 Yes          Self-employed
+##  3 31112 Male      80            0             1 Yes          Private      
+##  4 60182 Female    49            0             0 Yes          Private      
+##  5  1665 Female    79            1             0 Yes          Self-employed
+##  6 56669 Male      81            0             0 Yes          Private      
+##  7 53882 Male      74            1             1 Yes          Private      
+##  8 10434 Female    69            0             0 No           Private      
+##  9 27419 Female    59            0             0 Yes          Private      
+## 10 60491 Female    78            0             0 Yes          Private      
+## # ... with 239 more rows, and 5 more variables: Residence_type &lt;chr&gt;,
+## #   avg_glucose_level &lt;dbl&gt;, bmi &lt;chr&gt;, smoking_status &lt;chr&gt;, stroke &lt;dbl&gt;</code></pre>
+<p>summarize(): Summarize each group to fewer rows.</p>
+<p>From previously generated dataset (stroke_suffered), I want to know the average age of those who stroked.</p>
+<pre class="r"><code>stroke_suffered %&gt;%
+  summarize(mean_age=mean(age))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   mean_age
+##      &lt;dbl&gt;
+## 1     67.7</code></pre>
+</div>
+<div id="two-table-verb" class="section level2">
+<h2>two table verb</h2>
+<p>bind_rows(): bind multiple data frames by row</p>
+<p>In order to use this function, I made a new dataframe (my own data that includes one row), and then bind that at the beginning of original dataset.</p>
+<pre class="r"><code>New_observation &lt;- data.frame (
+  id = 12345,
+  gender = &quot;Male&quot;,
+  age = 38,
+  hypertension = 0,
+  heart_disease = 0,
+  ever_married = &quot;Yes&quot;,
+  work_type=&quot;Private&quot;,
+  Residence_type=&quot;Urban&quot;,
+  avg_glucose_level=110,
+  bmi=&quot;20&quot;,
+  smoking_status=&quot;never smoked&quot;,
+  stroke=0
+  )
+
+New_observation</code></pre>
+<pre><code>##      id gender age hypertension heart_disease ever_married work_type
+## 1 12345   Male  38            0             0          Yes   Private
+##   Residence_type avg_glucose_level bmi smoking_status stroke
+## 1          Urban               110  20   never smoked      0</code></pre>
+<pre class="r"><code>head(bind_rows(New_observation, stroke_predic))</code></pre>
+<pre><code>##      id gender age hypertension heart_disease ever_married     work_type
+## 1 12345   Male  38            0             0          Yes       Private
+## 2  9046   Male  67            0             1          Yes       Private
+## 3 51676 Female  61            0             0          Yes Self-employed
+## 4 31112   Male  80            0             1          Yes       Private
+## 5 60182 Female  49            0             0          Yes       Private
+## 6  1665 Female  79            1             0          Yes Self-employed
+##   Residence_type avg_glucose_level  bmi  smoking_status stroke
+## 1          Urban            110.00   20    never smoked      0
+## 2          Urban            228.69 36.6 formerly smoked      1
+## 3          Rural            202.21  N/A    never smoked      1
+## 4          Rural            105.92 32.5    never smoked      1
+## 5          Urban            171.23 34.4          smokes      1
+## 6          Rural            174.12   24    never smoked      1</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Grouping and Vector functions</li>
+</ol>
+</div>
+<div id="grouping-function" class="section level2">
+<h2>Grouping function</h2>
+<p>group_by(): Group by one or more variables.</p>
+<p>In this exercise, I want to know the average age of those who have hypertension, heart_disease, and stroke. For this purpose, dataset must be grouped first.</p>
+<pre class="r"><code>stroke_predic %&gt;%
+  group_by(hypertension,heart_disease, stroke) %&gt;%
+  summarize(average_age=mean(age))</code></pre>
+<pre><code>## # A tibble: 8 x 4
+## # Groups:   hypertension, heart_disease [4]
+##   hypertension heart_disease stroke average_age
+##          &lt;dbl&gt;         &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;
+## 1            0             0      0        39.0
+## 2            0             0      1        65.8
+## 3            0             1      0        66.7
+## 4            0             1      1        71.4
+## 5            1             0      0        59.8
+## 6            1             0      1        69.6
+## 7            1             1      0        70.0
+## 8            1             1      1        72.8</code></pre>
+</div>
+<div id="vector-function" class="section level2">
+<h2>Vector function</h2>
+<p>between(): determine if values in a numeric vector fall in specified range.</p>
+<p>By using combination of between() and filter() function, I filtered those who have avg_glucose_level between 250 to 300.</p>
+<pre class="r"><code>stroke_predic %&gt;%
+  filter(between(avg_glucose_level,250,300))</code></pre>
+<pre><code>## # A tibble: 25 x 12
+##       id gender   age hypertension heart_disease ever_married work_type    
+##    &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;        &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;        
+##  1 54401 Male      80            0             1 Yes          Self-employed
+##  2 13491 Male      80            0             0 Yes          Private      
+##  3 71279 Female    71            0             0 Yes          Govt_job     
+##  4 69112 Male      68            1             1 Yes          Private      
+##  5 20463 Male      81            1             1 Yes          Private      
+##  6 63732 Male      70            1             0 Yes          Self-employed
+##  7 33585 Female    64            0             0 Yes          Private      
+##  8 17813 Female    69            0             1 Yes          Private      
+##  9 55862 Male      67            1             1 Yes          Private      
+## 10 38678 Female    66            0             0 Yes          Self-employed
+## # ... with 15 more rows, and 5 more variables: Residence_type &lt;chr&gt;,
+## #   avg_glucose_level &lt;dbl&gt;, bmi &lt;chr&gt;, smoking_status &lt;chr&gt;, stroke &lt;dbl&gt;</code></pre>
+<p>n(): return the current group size.</p>
+<p>here, I used this vector function to determine the number of observation who had stroke.</p>
+<pre class="r"><code>stroke_predic %&gt;%
+  filter(stroke==1) %&gt;%
+  summarise(n())</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `n()`
+##   &lt;int&gt;
+## 1   249</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Pivoting and Missing Values (tidyr)</li>
+</ol>
+</div>
+<div id="pivoting" class="section level2">
+<h2>Pivoting</h2>
+<p>pivot_wider(): “widens” data, increasing the number of columns and decreasing the number of rows.</p>
+<p>Here, I selected three columns and age group between to 50 before applying pivot function. Number of rows decrease from 1468 to 21</p>
+<pre class="r"><code>library(tidyr)
+
+ selected_data&lt;- stroke_predic %&gt;%
+ select(age, gender,stroke)  %&gt;%
+   filter(between(age,30,50))
+   
+   selected_data</code></pre>
+<pre><code>## # A tibble: 1,468 x 3
+##      age gender stroke
+##    &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;
+##  1    49 Female      1
+##  2    50 Female      1
+##  3    42 Male        1
+##  4    48 Male        1
+##  5    49 Female      1
+##  6    39 Female      1
+##  7    45 Female      1
+##  8    43 Male        1
+##  9    47 Male        1
+## 10    45 Male        1
+## # ... with 1,458 more rows</code></pre>
+<pre class="r"><code>  DS_pivot_wider &lt;- selected_data %&gt;%
+    pivot_wider(names_from = stroke, values_from = gender)
+ 
+
+
+DS_pivot_wider</code></pre>
+<pre><code>## # A tibble: 21 x 3
+##      age `1`       `0`       
+##    &lt;dbl&gt; &lt;list&gt;    &lt;list&gt;    
+##  1    49 &lt;chr [3]&gt; &lt;chr [76]&gt;
+##  2    50 &lt;chr [3]&gt; &lt;chr [80]&gt;
+##  3    42 &lt;chr [1]&gt; &lt;chr [70]&gt;
+##  4    48 &lt;chr [2]&gt; &lt;chr [64]&gt;
+##  5    39 &lt;chr [3]&gt; &lt;chr [68]&gt;
+##  6    45 &lt;chr [3]&gt; &lt;chr [82]&gt;
+##  7    43 &lt;chr [1]&gt; &lt;chr [69]&gt;
+##  8    47 &lt;chr [1]&gt; &lt;chr [74]&gt;
+##  9    38 &lt;chr [2]&gt; &lt;chr [70]&gt;
+## 10    46 &lt;chr [1]&gt; &lt;chr [61]&gt;
+## # ... with 11 more rows</code></pre>
+</div>
+<div id="missing-values-tidyr" class="section level2">
+<h2>Missing Values (tidyr)</h2>
+<p>drop_na(): drop the observations that contains N/A object.</p>
+<pre class="r"><code>#copy dataset to a new one.
+stroke_predic_with_NA &lt;- stroke_predic
+
+#generate a NA element in the new dataset.
+stroke_predic_with_NA[1,3] = NA
+
+#delete the row with a NA element.
+stroke_predic_drop_NA &lt;- stroke_predic_with_NA %&gt;%
+  drop_na(age)
+#compare number of rows to know if it drops one row
+  nrow(stroke_predic_with_NA)</code></pre>
+<pre><code>## [1] 5110</code></pre>
+<pre class="r"><code>  nrow(stroke_predic_drop_NA)</code></pre>
+<pre><code>## [1] 5109</code></pre>
+<p>fill(): Fill N/A objects with “up” or "down object.</p>
+<pre class="r"><code>hhh &lt;- stroke_predic_with_NA %&gt;%  
+  fill(age, .direction=c(&quot;up&quot;))  #fill with below value
+
+hhh</code></pre>
+<pre><code>## # A tibble: 5,110 x 12
+##       id gender   age hypertension heart_disease ever_married work_type    
+##    &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;        &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;        
+##  1  9046 Male      61            0             1 Yes          Private      
+##  2 51676 Female    61            0             0 Yes          Self-employed
+##  3 31112 Male      80            0             1 Yes          Private      
+##  4 60182 Female    49            0             0 Yes          Private      
+##  5  1665 Female    79            1             0 Yes          Self-employed
+##  6 56669 Male      81            0             0 Yes          Private      
+##  7 53882 Male      74            1             1 Yes          Private      
+##  8 10434 Female    69            0             0 No           Private      
+##  9 27419 Female    59            0             0 Yes          Private      
+## 10 60491 Female    78            0             0 Yes          Private      
+## # ... with 5,100 more rows, and 5 more variables: Residence_type &lt;chr&gt;,
+## #   avg_glucose_level &lt;dbl&gt;, bmi &lt;chr&gt;, smoking_status &lt;chr&gt;, stroke &lt;dbl&gt;</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>discussion</li>
+</ol>
+<p>In this assignment, the Stroke Prediction dataset became more understandable by employing the capabilities of two libraries: dplyr and tidyr. The result of this section could be used in visualization using ggplo2. The important skill gained in this assignment is using cheat sheet to apply new functions on a dataset.</p>
+<p>There were two challenges for me in this exercise:</p>
+<ul>
+<li><p>I used new machine when I tried to do this exercise (other than what I used always). It took some time for me to figure out how to pull repository from git and use that (because I always pushed to git and did not need to use pull!).</p></li>
+<li><p>In the selected dataset, bmi variable’s class was “character” instead of numeric, I do not know why a numeric variable defined so.</p></li>
+</ul>
+</div>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

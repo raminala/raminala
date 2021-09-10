@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Data IO // Ramin Ala</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.83.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://ramin1ala.netlify.app/css/main.min.9dbf51e978afe3857b6cf4f89e41949fcd0410a29b2c2a5da404b58dfd6fc228.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Data IO"/>
+<meta name="twitter:description" content="Import Nobel.csv file## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --## v ggplot2 3.3.3 v purrr 0.3.4## v tibble 3.1.2 v dplyr 1.0.6## v tidyr 1.1.3 v stringr 1.4.0## v readr 1.4.0 v forcats 0.5.1## -- Conflicts ------------------------------------------ tidyverse_conflicts() --## x dplyr::filter() masks stats::filter()## x dplyr::lag() masks stats::lag()## ## -- Column specification --------------------------------------------------------## cols(## .default = col_character(),## id = col_double(),## year = col_double(),## born_date = col_date(format = &quot;&quot;),## died_date = col_date(format = &quot;&quot;),## share = col_double()## )## i Use `spec()` for the full column specifications."/>
+
+    <meta property="og:title" content="Data IO" />
+<meta property="og:description" content="Import Nobel.csv file## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --## v ggplot2 3.3.3 v purrr 0.3.4## v tibble 3.1.2 v dplyr 1.0.6## v tidyr 1.1.3 v stringr 1.4.0## v readr 1.4.0 v forcats 0.5.1## -- Conflicts ------------------------------------------ tidyverse_conflicts() --## x dplyr::filter() masks stats::filter()## x dplyr::lag() masks stats::lag()## ## -- Column specification --------------------------------------------------------## cols(## .default = col_character(),## id = col_double(),## year = col_double(),## born_date = col_date(format = &quot;&quot;),## died_date = col_date(format = &quot;&quot;),## share = col_double()## )## i Use `spec()` for the full column specifications." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ramin1ala.netlify.app/posts/data-io/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-06-01T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-06-01T00:00:00&#43;00:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://ramin1ala.netlify.app/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>Ramin Ala</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/publications/">Publications</a>
+      </nav>
+      <p>An Electrical engineer with experience in RF and interest in data science.</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/raminala" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/ramin-ala-6645b3188/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://twitter.com/ala_ramin" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>Twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Data IO</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 1, 2021
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          5 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://ramin1ala.netlify.app/tags/r/">R</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+<script src="https://ramin1ala.netlify.app/posts/data-io/index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="import-nobel.csv-file" class="section level2">
+<h2>Import Nobel.csv file</h2>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
+## v tibble  3.1.2     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   .default = col_character(),
+##   id = col_double(),
+##   year = col_double(),
+##   born_date = col_date(format = &quot;&quot;),
+##   died_date = col_date(format = &quot;&quot;),
+##   share = col_double()
+## )
+## i Use `spec()` for the full column specifications.</code></pre>
+<pre><code>## # A tibble: 6 x 26
+##      id firstname  surname  year category affiliation   city  country born_date 
+##   &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt;   &lt;date&gt;    
+## 1     1 Wilhelm C~ Röntgen  1901 Physics  Munich Unive~ Muni~ Germany 1845-03-27
+## 2     2 Hendrik A. Lorentz  1902 Physics  Leiden Unive~ Leid~ Nether~ 1853-07-18
+## 3     3 Pieter     Zeeman   1902 Physics  Amsterdam Un~ Amst~ Nether~ 1865-05-25
+## 4     4 Henri      Becque~  1903 Physics  École Polyte~ Paris France  1852-12-15
+## 5     5 Pierre     Curie    1903 Physics  École munici~ Paris France  1859-05-15
+## 6     6 Marie      Curie    1903 Physics  &lt;NA&gt;          &lt;NA&gt;  &lt;NA&gt;    1867-11-07
+## # ... with 17 more variables: died_date &lt;date&gt;, gender &lt;chr&gt;, born_city &lt;chr&gt;,
+## #   born_country &lt;chr&gt;, born_country_code &lt;chr&gt;, died_city &lt;chr&gt;,
+## #   died_country &lt;chr&gt;, died_country_code &lt;chr&gt;, overall_motivation &lt;chr&gt;,
+## #   share &lt;dbl&gt;, motivation &lt;chr&gt;, born_country_original &lt;chr&gt;,
+## #   born_city_original &lt;chr&gt;, died_country_original &lt;chr&gt;,
+## #   died_city_original &lt;chr&gt;, city_original &lt;chr&gt;, country_original &lt;chr&gt;</code></pre>
+<p>##Write (generating) a csv file</p>
+<pre class="r"><code>df &lt;- tribble(
+  ~x, ~y,
+  1,  &quot;a&quot;,
+  2,  &quot;b&quot;,
+  3,  &quot;c&quot;
+)
+write_csv(df, &quot;df.csv&quot;)</code></pre>
+</div>
+<div id="dealing-with-bad-variable-names" class="section level2">
+<h2>Dealing with bad variable names</h2>
+<pre class="r"><code>edibnb_badnames &lt;- read_csv(&quot;edibnb-badnames.csv&quot;)</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   ID = col_double(),
+##   Price = col_double(),
+##   neighbourhood = col_character(),
+##   accommodates = col_double(),
+##   `Number of bathrooms` = col_double(),
+##   `Number of Bedrooms` = col_double(),
+##   `n beds` = col_double(),
+##   `Review Scores Rating` = col_double(),
+##   `Number of reviews` = col_double(),
+##   listing_url = col_character()
+## )</code></pre>
+<pre class="r"><code># to see variables names
+names(edibnb_badnames)</code></pre>
+<pre><code>##  [1] &quot;ID&quot;                   &quot;Price&quot;                &quot;neighbourhood&quot;       
+##  [4] &quot;accommodates&quot;         &quot;Number of bathrooms&quot;  &quot;Number of Bedrooms&quot;  
+##  [7] &quot;n beds&quot;               &quot;Review Scores Rating&quot; &quot;Number of reviews&quot;   
+## [10] &quot;listing_url&quot;</code></pre>
+<pre class="r"><code>edibnb_col_names &lt;- read_csv(&quot;edibnb-badnames.csv&quot;,
+                    col_names = c(&quot;id&quot;, &quot;price&quot;, 
+                    &quot;neighbourhood&quot;, &quot;accommodates&quot;,
+                    &quot;bathroom&quot;, &quot;bedroom&quot;, 
+                    &quot;bed&quot;, &quot;review_scores_rating&quot;, 
+                    &quot;n_reviews&quot;, &quot;url&quot;))</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   id = col_character(),
+##   price = col_character(),
+##   neighbourhood = col_character(),
+##   accommodates = col_character(),
+##   bathroom = col_character(),
+##   bedroom = col_character(),
+##   bed = col_character(),
+##   review_scores_rating = col_character(),
+##   n_reviews = col_character(),
+##   url = col_character()
+## )</code></pre>
+</div>
+<div id="importing-data-with-snake_case-variables" class="section level2">
+<h2>Importing data with snake_case variables</h2>
+<pre class="r"><code>library(janitor)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;janitor&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     chisq.test, fisher.test</code></pre>
+<pre class="r"><code>edibnb_clean_names &lt;- read_csv(&quot;edibnb-badnames.csv&quot;) %&gt;%
+  janitor::clean_names()</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   ID = col_double(),
+##   Price = col_double(),
+##   neighbourhood = col_character(),
+##   accommodates = col_double(),
+##   `Number of bathrooms` = col_double(),
+##   `Number of Bedrooms` = col_double(),
+##   `n beds` = col_double(),
+##   `Review Scores Rating` = col_double(),
+##   `Number of reviews` = col_double(),
+##   listing_url = col_character()
+## )</code></pre>
+<pre class="r"><code>names(edibnb_clean_names)</code></pre>
+<pre><code>##  [1] &quot;id&quot;                   &quot;price&quot;                &quot;neighbourhood&quot;       
+##  [4] &quot;accommodates&quot;         &quot;number_of_bathrooms&quot;  &quot;number_of_bedrooms&quot;  
+##  [7] &quot;n_beds&quot;               &quot;review_scores_rating&quot; &quot;number_of_reviews&quot;   
+## [10] &quot;listing_url&quot;</code></pre>
+</div>
+<div id="read-df-na.csv" class="section level2">
+<h2>Read df-na.csv</h2>
+<pre class="r"><code>read_csv(&quot;df-na.csv&quot;)</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   x = col_character(),
+##   y = col_character(),
+##   z = col_character()
+## )</code></pre>
+<pre><code>## # A tibble: 9 x 3
+##   x     y              z     
+##   &lt;chr&gt; &lt;chr&gt;          &lt;chr&gt; 
+## 1 1     a              hi    
+## 2 &lt;NA&gt;  b              hello 
+## 3 3     Not applicable 9999  
+## 4 4     d              ola   
+## 5 5     e              hola  
+## 6 .     f              whatup
+## 7 7     g              wassup
+## 8 8     h              sup   
+## 9 9     i              &lt;NA&gt;</code></pre>
+<pre class="r"><code>read_csv(&quot;df-na.csv&quot;, 
+         na = c(&quot;&quot;, &quot;NA&quot;, &quot;.&quot;, &quot;9999&quot;, &quot;Not applicable&quot;))</code></pre>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   x = col_double(),
+##   y = col_character(),
+##   z = col_character()
+## )</code></pre>
+<pre><code>## # A tibble: 9 x 3
+##       x y     z     
+##   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; 
+## 1     1 a     hi    
+## 2    NA b     hello 
+## 3     3 &lt;NA&gt;  &lt;NA&gt;  
+## 4     4 d     ola   
+## 5     5 e     hola  
+## 6    NA f     whatup
+## 7     7 g     wassup
+## 8     8 h     sup   
+## 9     9 i     &lt;NA&gt;</code></pre>
+</div>
+<div id="reading-an-xlsx-file" class="section level2">
+<h2>Reading an XLSX file</h2>
+<pre class="r"><code>library(readxl)
+fav_food &lt;- read_excel(&quot;favourite-food.xlsx&quot;,
+                       na = c(&quot;N/A&quot;, &quot;99999&quot;)) %&gt;% # handelling NAs here
+
+# instead of calling library(readxl), we could use:
+# readxl::read_excel(&quot;favourite-food.xlsx&quot;)
+
+  janitor::clean_names()
+
+# Make age numeric
+
+fav_food &lt;- fav_food %&gt;%
+  mutate(
+    age = if_else(age == &quot;five&quot;, &quot;5&quot;, age),
+    age = as.numeric(age)
+    )
+
+  
+fav_food</code></pre>
+<pre><code>## # A tibble: 5 x 6
+##   student_id full_name        favourite_food     meal_plan             age ses  
+##        &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;              &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;
+## 1          1 Sunil Huffmann   Strawberry yoghurt Lunch only              4 High 
+## 2          2 Barclay Lynn     French fries       Lunch only              5 Midd~
+## 3          3 Jayendra Lyne    &lt;NA&gt;               Breakfast and lunch     7 Low  
+## 4          4 Leon Rossini     Anchovies          Lunch only             NA Midd~
+## 5          5 Chidiegwu Dunkel Pizza              Breakfast and lunch     5 High</code></pre>
+</div>
+<div id="etl-of-ses-variable-etlextract-transform-load" class="section level2">
+<h2>ETL of SES variable (ETL:Extract, transform, load)</h2>
+<pre class="r"><code>fav_food %&gt;%
+  count(ses)</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   ses        n
+##   &lt;chr&gt;  &lt;int&gt;
+## 1 High       2
+## 2 Low        1
+## 3 Middle     2</code></pre>
+<pre class="r"><code>fav_food &lt;- fav_food %&gt;%
+  mutate(ses = fct_relevel(ses, &quot;Low&quot;, &quot;Middle&quot;, &quot;High&quot;))
+fav_food %&gt;%
+  count(ses)</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   ses        n
+##   &lt;fct&gt;  &lt;int&gt;
+## 1 Low        1
+## 2 Middle     2
+## 3 High       2</code></pre>
+</div>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

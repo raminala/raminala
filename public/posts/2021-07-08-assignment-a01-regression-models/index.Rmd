@@ -1,0 +1,519 @@
+---
+title: 'Assignment A01: Regression Models'
+author: Ramin Ala
+date: '2021-07-08'
+slug: []
+categories: []
+tags:
+  - Regression
+  - Resampling
+  - Assignment
+---
+***Ramin Ala***
+
+---
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(tidymodels)
+
+#diamonds_price <- read_excel("MBA6636_SM21_Professor_Proposes_Data.xlsx", col_names = TRUE, col_types = NULL, na = "", skip = 0)
+
+diamonds <- read_excel("MBA6636_SM21_Professor_Proposes_Data.xlsx") %>%
+  janitor::clean_names() %>%
+  subset(select = -wholesaler)
+
+#names(diamonds)
+
+```
+
+## Executive Summary
+
+This assignment is about deciding, or in a better term predicting, the price of a diamond based on available data. Since prediction would be done on a quantitative variable (price), it considers as a *regression problem*. Here, we will solve the problem using *linear fitting* to avoid over fitting. 
+
+There are a dizzying array of diamond characteristics, configurations, and pricing such as carat, color, Cut, clarity, Polish, Symmetry, and certification, and data collected from three different wholesaler websites. The first step would be understanding data via visualization and then going to making a linear model and prediction based on that.
+
+
+## Univariate Analysis
+
+Univariate analysis is perhaps the simplest form of statistical analysis. The key fact is that only one variable is involved. Like other forms of statistics, it can be inferential or descriptive. 
+
+Although univariate analysis can yield misleading results in cases in which multivariate analysis is more appropriate, it provides some insights.
+
+**Univariate Analysis on price**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+diamonds %>%
+  ggplot(aes(price))+
+  geom_histogram()+
+  labs(y="frequency")
+```
+
+Apparently, there are two distinct price ranges. below $500 and above $1800. With univariate analysis, we could not understand the reasons and decisive parameters for this gap in the price. However, one might decide to model these two sections separately for more exact model. This might be the most important finding by this analysis.
+
+Now it worth to take a more statistical look at price variable.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+afg <- summary(diamonds$price) %>%
+  tidy() 
+
+print(afg)
+
+diamonds %>%
+  ggplot(aes(price))+
+  geom_boxplot()+
+  geom_vline(xintercept = 3100, linetype="dotted", 
+                color = "red", size=1.5)
+  #abline(abline(v = 3000, col = "red", lwd = 2))
+
+```
+
+First point that a reader could get from these data is that maximum price ($3145) is very close to the offered price ($3100). It means that the professor might be offered the best diamond in the market. On the other hand, mean of price ($1716) is far from offered price (again, he might expect an exceptional item!).
+
+The box plot summarize these parameters in a visualization friendly manner, one look provides
+minimum, mode, median, max, first and third quarterlies. Note that the red dotted line is the offered price that laied at the very end of box plot.
+
+## Bivariate Analysis
+
+Bivariate analysis is a simple forms of quantitative (statistical) analysis, however more sophesticated than the univariable analysis which done in the previous part. It involves the analysis of two variables, for the purpose of determining the empirical relationship between them.
+
+**Metric Data: Price, Carat**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+diamonds %>%
+  ggplot(aes(carat, price))+
+  geom_point()+
+  geom_smooth(method="lm", se= FALSE)
+```
+
+Carat is the most important parameter in this dataset and it is a determining factor for the price. This claim can be proven from its coefficient in the multiple linear regression model. This figure shows price versus carat along with a regression line. This analysis adds this knowledge to our understanding that price, possibly, has a positive relation with the carat. The word "possibly" added intentionally here because in a multi-variable dataset with existence of correlation between variables, sometime another variable is the reason for increase in target variable. It will be more obvious when all variables considered together.
+
+## Non-Metric Data: Color, Cut, Certification, Polish, Symmetry, Clarity
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+diamonds %>%
+  group_by(colour) %>%
+  summarise(price_mean=mean(price)) %>%
+  ggplot(aes(colour,price_mean))+
+  geom_col(width = 0.5, fill="blue")+
+  labs(x="Colour", y= "Price mean ($)", title= "Price mean vs Colour")
+```
+
+This plot shows the mean of price for nine categories of colors. Although these prices might be the indirect cause of other parameters but gives some clues. It seems that color has not a profound impact on price. Two colour catagories could be recognized from this plot, one with average price of $2500 (D, G, K, and L) and another with the average price of $1300 (E, F, H, J). Professor should be more careful on this as his diamond looks in the lower price category in terms of color.
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+  diamonds %>%
+  group_by(clarity) %>%
+  summarise(price_mean=mean(price)) %>%
+  arrange(desc(price_mean)) %>%
+  ggplot(aes(clarity,price_mean))+
+  geom_col(width = 0.5, fill="yellow")+
+  labs(x="Clarity", y= "Price mean ($)", title= "Price mean vs Clarity")
+```
+
+Importance of clarity might be guesses from this plot. In contrast to color, there is big change in price average with selecting different clarity. I1, I2, Si1, and SI3 are expensive categories and professor selected his diamond from these categories.
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+diamonds %>%
+  group_by(cut) %>%
+  summarise(price_mean=mean(price)) %>%
+  ggplot(aes(cut,price_mean))+
+  geom_col(width = 0.3, fill="red")+
+  labs(x="Cut", y= "Price mean ($)", title= "Price mean vs Cut")
+```
+
+This plot mainly dirsct buyer to select from F category if he is looking for a perfect cut and from V if don't want to break the bank.
+
+Bar plot is a easy way to visualize categorical variable. The mean of price versus colour, clarity and cut is depicted here. 
+
+## Analysis of three variables: price considering both carat and clarity
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+diamonds %>%
+  ggplot(aes(carat, price, color= clarity))+
+  geom_point()
+```
+
+Clarity is the second important parameter. To get the impression about effect of these two parameters on price, price versus carat with the additional layer of color for clarity is useful. Apparently, there is a big gap versus high and low carat items and diamond with both every color is available at both ends of price (below $500 and more than $2000).
+
+## four variaables Analysis: price considering carat, colour, and clarity
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+diamonds %>%
+  ggplot(aes(carat, price, color= clarity, shape= colour))+
+  geom_point()+
+  xlim(0.8, 1.3)+ylim(1750, 3250)
+```
+
+Zoom in higher price section helps to add more layers without loosing readability. This plot shows price versus carat, colour, and clarity. Again, it emphasize the importance of clarity even for lower carat diamonds.
+
+## Correlation, Covariance
+
+These are measures of association between variables.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+cor_price_carat <- cor(diamonds$price, diamonds$carat)
+
+paste("Correlation between price-carat: ", cor_price_carat)
+
+
+  
+```
+
+This shows the expected outcome, higher carat mean higher price (, same trand for increase-decrease).
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+cov_price_carat <- cov(diamonds$price, diamonds$carat)
+
+paste("Covariance between price-carat: ", cov_price_carat)
+
+```
+
+As expected!
+
+---
+
+## Regression Model
+
+## Simple Linear Regression
+
+Here, a linear model is generated using **lm()** function to attribute price with carat. Coefficients are as below table.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+SLR <- lm(price~ carat, data=diamonds)
+summary(SLR)  %>%
+  tidy()
+print(SLR)
+
+```
+
+## Simple Linear Regression- prediction, carat= 0.9
+
+The goal is predicting the price based only on carat. To this end, generated model in the previous section is employed to predict price using **predict()** function. Expected price (with only consideration of carat=0.9) is as below:
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+explanatory_data= data.frame(carat= 0.9,
+                             colour= "J",
+                             clarity= "SI2",
+                             cut= "V",
+                             certification= "GIA",
+                             polish= "G",
+                             symmetry= "V")
+
+
+
+predict(SLR, explanatory_data)
+```
+
+
+## Multiple Linear Regression
+
+A linear model is generated using **lm()** function. Seven variables passes to the model and intercept defined as zero (for simplicity). As result, coefficients calculated as below table.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+MLR <- lm(price~ .+0, data=diamonds)
+summary(MLR)  %>%
+  tidy()
+
+```
+
+
+
+## Multiple Linear Regression- prediction
+
+Prediction is done here base on below parameters:
+
+ carat= 0.9, colour= "J", clarity= "SI2", cut= "V", certification= "GIA", polish= "G", symmetry= "V"
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+explanatory_data= data.frame(carat= 0.9,
+                             colour= "J",
+                             clarity= "SI2",
+                             cut= "V",
+                             certification= "GIA",
+                             polish= "G",
+                             symmetry= "V")
+  
+
+predict(MLR, explanatory_data)
+```
+
+
+## Summary of findings
+
+- From the exploratory data analysis and linear regression performed in this report, it seems that the offered price ($3100) is 10% higer than the predicted price ($2800).
+
+- With the offered price, he could buy the same diamond with the clarity of VS1 (few inclusions at 30X) instead of SI2 (very few inclusions at 10X).
+
+- From seven explanatory variables, carat is the first determinant followed by clarity and colour. On the other hand, cut has the least effect on the final price.
+
+- A single variable regression (price versus carat) shows the offered price is very high for selected carat. However, the clarity of the selected diamond compensate part of its expensive price (although not all of that).  
+
+- The important trend in the dataset could be found with a glance at price-carat plot. That is carat has two ranges: 0.1-.03 and 0.8- 1.6. There are a substantial gap between price of these two catagories, the latter is four times more costly.
+
+- Dataset was very clean dataset with nearly no need for cleaning. For example there were not any NA and outlier data in the dataset.
+
+---
+
+## Resampling
+
+```{r, warning=FALSE, message=FALSE}
+library(caret)
+
+library(yardstick)
+
+library(tictoc)
+
+```
+
+
+**Data sampling versus resampling:** Data sampling refers to statistical methods for selecting observations from the domain with the objective of estimating a population parameter. Whereas data resampling refers to methods for economically using a collected dataset to improve the estimate of the population parameter and help to quantify the uncertainty of the estimate. In this part we are studying resampling. Two methods are considereing in the following paragraphs: cross validation (two sub-categories, LOOCV, K-fold) and bootstraping.
+
+for each category resampling is conducted using ***caret*** package and their performance is evaluated and compared using appropriate methods.
+
+In the following paragraphs three models will calculate using resampling: LOOCV, K-fold, and Bootstrap. subsequently, we will compare performance of these three models.
+
+## Resampling methods
+
+## ***Cross-Validation methods***
+
+## LOOCV (Leave one out cross validation) 
+
+The LOOCV method is using all data points (excludes only one observation each time). There are advantages and disadvantages for this method:
+
+**Advantage:** Because of using *n-1* observations in each iteration, it reduces the bias (because it will not  bias to selected portion).
+
+**Disadvantages:** The execution time could be so long if n (number of observation) is large. Fortunately, we have 450 observations in *diamond* dataset and my machine with 16GB of RAM easily executed this. Besides, we know that low bias means high variance and the method is more prone to overfitting.
+
+Another disadvantage of this method is that tests the model performance against *one data point* at each iteration.This might result to higher variation in the prediction error, especially if some data points are outliers.
+
+Divide the dataset to two sections (train and test) could show the overfitting, however, Here, we will not practice that.
+
+
+
+We are using tictoc library to measure the running time for each code chunk to evaluate performance of these methods in terms of running time.
+
+Below is code for performing LOOCV using caret library.
+
+---
+
+
+
+```{r, warning=FALSE}
+
+start_time_LOOCV1 <- Sys.time()
+# Define training control
+train.control_LOOCV <- trainControl(method = "LOOCV")
+
+# Train the model
+model_LOOCV <- train(price ~., data = diamonds, method = "lm",
+               trControl = train.control_LOOCV)
+# Summarize the results
+print(model_LOOCV)
+
+end_time_LOOCV1 <- Sys.time()
+
+LOOCV_run_time1= end_time_LOOCV1 - start_time_LOOCV1
+
+#Print run time
+print(LOOCV_run_time1)
+```
+
+As expected, sample sizes are 439 (440-1) and process repeated 440 times (n). Three important parameters are provided to evaluate performance.
+
+RMSE (Root Mean Squared Error), which measures the average prediction errors made by the model in predicting the outcome for an observation. We expect low value for RMSE. Note that an outlier observation could drastically increase this error. The achieved value in this part will be compared by this values in other methods to compare these methods.
+
+To tackale the problem of outlier in RMSE, MAE (Mean Absolute Error) is introduced. MAE is an alternative to the RMSE that is less sensitive to outliers. It corresponds to the average absolute difference between observed and predicted outcomes. again, the lower the MAE, the better the model. We compare this number for different models in following parts.
+
+Rsquared or R2 is familiar parameter of squared correlation between the observed outcome values and the predicted values by the model. The closer to 1 the adjusted R2, the better the model. here we achieved 0.9673791.
+
+This chunk of code took about 4.2 seconds to complete.
+
+## K-fold cross-validation
+
+K-fold evaluates the model performance on different subset (there are k subsets) of the training data and then calculate the average prediction error rate.The obvious advantage of k-fold over LOOCV is K-fold is faster (needs less computation). A less obvious but potentially more important advantage of k-fold cross validation method is that it often gives more accurate estimates of the test error rate than does LOOCV.
+
+There is a trade-off in selecting k (number of subsets):
+
+***small K:*** is more biased (undesirable).
+
+***large K:*** large variance (undesirable).
+
+Here, we consider *k=5* for 440 observations to build a 5-fold model.
+
+```{r, warning=FALSE}
+# Define pseudorandom seed number
+set.seed(190) 
+start_time_K_fold1 <- Sys.time()
+
+train.control_K_fold <- trainControl(method = "repeatedcv", number = 5, repeats = 20)
+
+# Train the model
+model_K_fold <- train(price ~., data = diamonds, method = "lm",
+               trControl = train.control_K_fold)
+# Summarize the results
+print(model_K_fold)
+
+end_time_K_fold1 <- Sys.time()
+
+K_fold_run_time1= end_time_K_fold1 - start_time_K_fold1
+
+#Print run time
+print(K_fold_run_time1)
+```
+
+In this method, subsets are selected in a pseudorandom process. So we could reproduce them by setting seed number. We repeated the process 20 times for a better estimation (by setting repeat argument).
+
+As it can be seen from parameters, RMSE, Rsquared, and MAE are very close to those of LOOCV model. However, calculation performed faster.
+
+It takes 1.6 seconds to complete running of K-fold cross-validation method.
+
+## Bootstrap method 
+
+Bootstrap resampling consists of repeatedly selecting (***with Replacement***) a sample of n observations from the original data set (dataset consists of n observations), and to evaluate the model on each copy. An average standard error is then calculated and the results provide an indication of the overall variance of the model performance.
+
+Here, we consider *number =100*. It means that process of selecting (n=440) samplaes with replacement repeated 100 times.
+
+```{r, warning=FALSE}
+
+start_time_bootstrap1 <- Sys.time()
+# Define training control
+train.control_Bootstrap <- trainControl(method = "boot", number =100)
+
+# Train the model
+model_Bootstrap <- train(price ~., data = diamonds, method = "lm",
+               trControl = train.control_Bootstrap)
+# Summarize the results
+print(model_Bootstrap)
+
+end_time_bootstrap1 <- Sys.time()
+
+bootstrap_run_time1= end_time_bootstrap1 - start_time_bootstrap1
+
+#Print run time
+print(bootstrap_run_time1)
+```
+
+Again, model parameters (RMSE, Rsquared, and MAE) are close to previous methods.
+
+It takes 1.5 seconds to complete running of K-fold cross-validation method.
+
+## Table of comparison of these three models
+
+First, a short revies of model parameters:
+RMSE (Root Mean Squared Error) and MAE(Mean Absolute Error) are metric of error.
+
+The R-squared represents the proportion of variation in the outcome explained by the predictor variables included in the model
+The higher the R-squared, the better the model (Maximum Rsquared is 1).
+The lower the RMSE and the MAE, the better the model.
+
+    ----------
+  Method        |    LOOCV      |  K-fold       |   Bootstrap
+-------------   | ------------- | ------------- | -------------
+   RMSE         |   212.2       |   214.6       |     229.2
+   R^2          |    0.967      |   0.967       |     0.962
+   MAE          |   150.5       |  152.2        |    159.8
+run time(sec)   |     4.2       |  1.4          |    1.5
+    ----------
+
+Values are very close to each other. I tweaked values in models like number and repeats in k-fold method and number in bootstrap method to see their effect. As result, it seems that small changes would not make big change in these parameters, at least for this specific dataset.
+
+About timing it worth mentioning that short times (like 1 seconds) is not fix in multiple simulations and we cannot say fro these results that whether K-fold or Bootstrap is faster, however it is obvious that LOOCV has the least speed.
+
+## Comparing Models using R squared plot
+
+In this section, predicted values of diamonds (based on five models in hand from previous section) versus actual price of diamonds from dataset are plotted.This called R squared plot, and it is extremely important because it will uncover potential problems with your model, such as non-linear patterns or regions where your model is either over or under-predicting the outcome variable.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+price_predictions_SLR <- predict(SLR, new_data = diamonds)
+price_predictions_MLR <- predict(MLR, new_data = diamonds)
+price_predictions_model_LOOCV <- predict(model_LOOCV$finalModel, new_data = diamonds)
+price_predictions_model_K_fold <- predict(model_K_fold$finalModel, new_data = diamonds)
+price_predictions_model_Bootstrap <- predict(model_Bootstrap$finalModel, new_data = diamonds)
+
+test_results_SLR <- diamonds %>%
+  bind_cols(Price_pred=price_predictions_SLR)
+
+test_results_MLR <- diamonds %>%
+  bind_cols(Price_pred=price_predictions_MLR)
+
+test_results_model_LOOCV <- diamonds %>%
+  bind_cols(Price_pred=price_predictions_model_LOOCV)
+
+test_results_model_K_fold <- diamonds %>%
+  bind_cols(Price_pred=price_predictions_model_K_fold)
+
+test_results_model_Bootstrap <- diamonds %>%
+  bind_cols(Price_pred=price_predictions_model_Bootstrap)
+
+
+ggplot(test_results_SLR, aes(price ,Price_pred))+
+  geom_point(alpha = 0.5) + 
+  geom_abline(color = 'blue', linetype = 2) +
+  coord_obs_pred() +
+  labs(title="Single linear regression", x = 'Actual diamond Price', y = 'Prediction by SLR')+
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.8564319',  size = 5, color="red")+
+  xlim(0, 4000)+ylim(0, 4000)
+
+SLR %>% glance() %>%  pull(r.squared)
+#--------------------------------------------------------------------------------------------------
+ggplot(test_results_MLR, aes(price ,Price_pred))+
+  geom_point(alpha = 0.5) + 
+  geom_abline(color = 'blue', linetype = 2) +
+  coord_obs_pred() +
+  labs(title="Multiple linear regression", x = 'Actual diamond Price', y = 'Prediction by MLR')+
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.991704',  size = 5, color="red")+
+  xlim(0, 4000)+ylim(0, 4000)
+
+MLR %>% glance() %>%  pull(r.squared)
+#--------------------------------------------------------------------------------------------------
+ggplot(test_results_model_LOOCV, aes(price ,Price_pred))+
+  geom_point(alpha = 0.5) + 
+  geom_abline(color = 'blue', linetype = 2) +
+  coord_obs_pred() +
+  labs(title="Cross-Validation, LOOCV ", x = 'Actual diamond Price', y = 'Prediction by LOOCV')+
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.9673791',  size = 5, color="red")+
+  xlim(0, 4000)+ylim(0, 4000)
+
+model_LOOCV$results %>%  pull(Rsquared)
+#--------------------------------------------------------------------------------------------------
+ggplot(test_results_model_K_fold, aes(price ,Price_pred))+
+  geom_point(alpha = 0.5) + 
+  geom_abline(color = 'blue', linetype = 2) +
+  coord_obs_pred() +
+  labs(title="Cross-Validation, K_fold", x = 'Actual diamond Price', y = 'Prediction by K-fold')+
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.9670286',  size = 5, color="red")+
+  xlim(0, 4000)+ylim(0, 4000)
+
+
+model_K_fold$results %>%  pull(Rsquared)
+#--------------------------------------------------------------------------------------------------
+
+ggplot(test_results_model_Bootstrap, aes(price ,Price_pred))+
+  geom_point(alpha = 0.5) + 
+  geom_abline(color = 'blue', linetype = 2) +
+  coord_obs_pred() +
+  labs(title="Bootstrap", x = 'Actual diamond Price', y = 'Prediction by Bootstrap')+
+  annotate('text', x = 800, y = 4000, label = 'R^2=0.9626821',  size = 5, color="red")+
+  xlim(0, 4000)+ylim(0, 4000)
+
+
+model_Bootstrap$results %>%  pull(Rsquared)
+
+
+
+```
+
+
+Apart from Single regression model (which prediction only made based upon carat), all other models provided similar predictions. Same result deducted by comparing model parameters like error and R.squared. We could also calculate correlation between these predictions to determine their similarities.
+

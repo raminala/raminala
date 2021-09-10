@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Assignment A04: Tree based Method:Random Forest // Ramin Ala</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.83.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://ramin1ala.netlify.app/css/main.min.9dbf51e978afe3857b6cf4f89e41949fcd0410a29b2c2a5da404b58dfd6fc228.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Assignment A04: Tree based Method:Random Forest"/>
+<meta name="twitter:description" content="Ramin Ala
+IntroductionRandom Forests grows many classification trees. To classify a new object from an input vector, put the input vector down each of the trees in the forest. Each tree gives a classification (tree “vote”), for that class. The forest chooses the classification having the most votes (over all the trees in the forest). Random decision forests correct for decision trees’ habit of overfitting to their training set."/>
+
+    <meta property="og:title" content="Assignment A04: Tree based Method:Random Forest" />
+<meta property="og:description" content="Ramin Ala
+IntroductionRandom Forests grows many classification trees. To classify a new object from an input vector, put the input vector down each of the trees in the forest. Each tree gives a classification (tree “vote”), for that class. The forest chooses the classification having the most votes (over all the trees in the forest). Random decision forests correct for decision trees’ habit of overfitting to their training set." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ramin1ala.netlify.app/posts/2021-07-30-assignment-a04-tree-based-method-random-forest/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-07-30T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-07-30T00:00:00&#43;00:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://ramin1ala.netlify.app/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>Ramin Ala</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/publications/">Publications</a>
+      </nav>
+      <p>An Electrical engineer with experience in RF and interest in data science.</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/raminala" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/ramin-ala-6645b3188/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://twitter.com/ala_ramin" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>Twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Assignment A04: Tree based Method:Random Forest</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jul 30, 2021
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          7 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://ramin1ala.netlify.app/tags/assignment/">Assignment</a>
+              <a class="tag" href="https://ramin1ala.netlify.app/tags/classification/">Classification</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+<script src="https://ramin1ala.netlify.app/posts/2021-07-30-assignment-a04-tree-based-method-random-forest/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p><strong><em>Ramin Ala</em></strong></p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Random Forests grows many classification trees. To classify a new object from an input vector, put the input vector down each of the trees in the forest. Each tree gives a classification (tree “vote”), for that class. The forest chooses the classification having the most votes (over all the trees in the forest). Random decision forests correct for decision trees’ habit of overfitting to their training set.</p>
+<p>the random forest provides a strong improvement, which consists of applying bagging to the data and bootstrap sampling to the predictor variables at each split. This means that at each splitting step of the tree algorithm, a random sample of n predictors is chosen as split candidates from the full set of the predictors.</p>
+<p>In this exercise, a random forest classification applies on the bank dataset to predict whether an unknown new customer will subscribe to an account or not. We are using “caret” package for modeling random forest. Dataset divided to 80-20 percents to train with 80% and test the acquired model with remaining 20% test data.</p>
+<p>Variable importance analysis is also applied on this dataset to determine importance of variables and sort them in terms of importance.</p>
+<p>This dataset consists of an imbalanced number of outputs, so that 90 percent of outcomes are “no” and 10 percent are “yes”. This leads to severe bias of generated model towards “no”. In fact, all inputs of test set resulted in “no”. Although model’s accuracy is good, it has a terrible specificity. To tackle this problem, a balanced model is built for this dataset using “ROSE” package. This results in slightly decrease in accuracy but big improvement is terms of specificity.</p>
+</div>
+<div id="libraries" class="section level2">
+<h2>libraries</h2>
+<pre class="r"><code>library(tidyverse)
+library(tidymodels)
+library(caret)
+library(randomForest)</code></pre>
+</div>
+<div id="splitting-data" class="section level2">
+<h2>Splitting data</h2>
+<p>Dataset divided to train-test parts, 80% for training and 20% for testing the generated model.</p>
+<pre class="r"><code>set.seed(20)
+
+# Split 80% of data as training set
+training_bank &lt;- bank$y %&gt;% 
+  createDataPartition(p = 0.8, list = FALSE)
+
+bank_train  &lt;- bank[training_bank, ]
+bank_test &lt;- bank[-training_bank, ]</code></pre>
+</div>
+<div id="computing-random-forest-model" class="section level2">
+<h2>Computing random forest model</h2>
+<p>Carat package is used to generate random forest model.</p>
+<pre class="r"><code>set.seed(20)
+
+# Fit the model on the training set
+model &lt;- train(
+  y ~., data = bank_train, method = &quot;rf&quot;,
+  trControl = trainControl(&quot;cv&quot;, number = 3),
+  importance = TRUE
+  )
+
+# Best tuning parameter
+model$bestTune</code></pre>
+<pre><code>##   mtry
+## 1    2</code></pre>
+<hr />
+<pre class="r"><code># Final model
+model$finalModel</code></pre>
+<pre><code>## 
+## Call:
+##  randomForest(x = x, y = y, mtry = min(param$mtry, ncol(x)), importance = TRUE) 
+##                Type of random forest: classification
+##                      Number of trees: 500
+## No. of variables tried at each split: 2
+## 
+##         OOB estimate of  error rate: 11.53%
+## Confusion matrix:
+##       no yes class.error
+## no  3200   0           0
+## yes  417   0           1</code></pre>
+</div>
+<div id="make-predictions-on-the-test-data" class="section level2">
+<h2>Make predictions on the test data</h2>
+<p>Here, test set is predicted using model that was generated by using training data.</p>
+<pre class="r"><code>predicted.classes &lt;- model %&gt;% predict(bank_test)</code></pre>
+</div>
+<div id="binding-predictions-and-truth" class="section level2">
+<h2>binding predictions and truth</h2>
+<p>In order to generate confusion matrix, prediction vector is added to test dataset as a new column. Confusion matrix shows main drawback of this model: it cannot predict “yes” outcome because of its severe bias towards “no” output.</p>
+<p>While accuracy is 88.5% and Sensitivity is perfect (100%), Specificity is 0%. Its means that this model could not detect any “yes” outcome. In other words, this model is not suitable for detecting rare outcome, we will use oversampling/undersampling to balance dataset before making a new model.</p>
+<pre class="r"><code>bank_bind &lt;- bank_test %&gt;%
+   bind_cols(.pred=predicted.classes)
+
+
+test_pred_mat &lt;- bank_bind %&gt;% conf_mat(truth = y, estimate = .pred)
+summary(test_pred_mat)</code></pre>
+<pre><code>## # A tibble: 13 x 3
+##    .metric              .estimator .estimate
+##    &lt;chr&gt;                &lt;chr&gt;          &lt;dbl&gt;
+##  1 accuracy             binary         0.885
+##  2 kap                  binary         0    
+##  3 sens                 binary         1    
+##  4 spec                 binary         0    
+##  5 ppv                  binary         0.885
+##  6 npv                  binary       NaN    
+##  7 mcc                  binary        NA    
+##  8 j_index              binary         0    
+##  9 bal_accuracy         binary         0.5  
+## 10 detection_prevalence binary         1    
+## 11 precision            binary         0.885
+## 12 recall               binary         1    
+## 13 f_meas               binary         0.939</code></pre>
+<pre class="r"><code>autoplot(test_pred_mat, type = &#39;heatmap&#39;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-07-30-assignment-a04-tree-based-method-random-forest/index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="variable-importance" class="section level2">
+<h2>Variable importance</h2>
+<p>In this section, importance of variables ae ranked using “caret” package.</p>
+<pre class="r"><code>importance(model$finalModel)</code></pre>
+<pre><code>##                            no        yes MeanDecreaseAccuracy MeanDecreaseGini
+## age                 8.4153642  7.4180405          11.69687461       22.8356872
+## jobblue-collar      2.8847131  2.4836213           3.87898042        2.8803708
+## jobentrepreneur     2.6304393 -2.2411580           1.54544883        1.1872712
+## jobhousemaid       -0.8212681 -0.7072955          -1.06143558        1.3717751
+## jobmanagement       4.0224764 -1.0486284           4.19691298        1.5571955
+## jobretired          2.6225767  0.9829453           4.39976552        3.6838437
+## jobself-employed   -2.5383420 -1.8945317          -3.16846014        1.1897875
+## jobservices         3.4068470 -2.7661859           2.65044742        1.2058057
+## jobstudent         -4.2486142  2.1823473          -3.89460469        1.1854107
+## jobtechnician       2.8719788 -0.9910160           2.39469234        1.6720720
+## jobunemployed      -0.7229227  1.8852340          -0.09628516        0.8025047
+## jobunknown          4.4756569 -1.7232319           4.22397658        1.4089918
+## maritalmarried      8.4673906 -2.5447151           7.87233098        3.1610415
+## maritalsingle       7.7193098 -4.7866469           7.32128381        2.2396345
+## educationsecondary  5.9846482 -3.3835465           5.66087363        2.0483593
+## educationtertiary   7.1697719 -6.8501425           6.14873540        2.4072047
+## educationunknown    4.3862899 -1.9276462           3.62608026        1.2457435
+## defaultyes          4.6802991 -3.0952156           4.03327125        1.4271119
+## balance             3.2825289  4.3461612           4.77923212       21.3537650
+## housingyes          1.6872296  0.1202470           1.83391730        5.6255633
+## loanyes            -3.3086774  3.2340984          -2.09696698        3.5048515</code></pre>
+<p>MeanDecreaseAccuracy: A measure of the extent to which a variable improves the accuracy of the forest in predicting the classification. Higher values mean that the variable improves prediction.</p>
+<p>(MeanDecreaseGini): Provides a more nuanced measure of importance, which factors in both the contribution that variable makes to accuracy, and the degree of misclassification (e.g., if a variable improves the probability of an observation being classified to a segment from 55% to 90%, this will show up in the Importance (MeanDecreaseGini), but not in MeanDecreaseAccuracy). As with MeanDecreaseAccuracy, high numbers indicate that a variable is more important as a predictor.</p>
+<pre class="r"><code># Plot MeanDecreaseAccuracy
+varImpPlot(model$finalModel, type = 1)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-07-30-assignment-a04-tree-based-method-random-forest/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code># Plot MeanDecreaseGini
+varImpPlot(model$finalModel, type = 2)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-07-30-assignment-a04-tree-based-method-random-forest/index_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
+<p>The results show that across all of the trees considered in the random forest, age variable is the most important variable, followed by balance.</p>
+<pre class="r"><code># the importance of variables in percentage
+
+varImp(model)</code></pre>
+<pre><code>## rf variable importance
+## 
+##   only 20 most important variables shown (out of 21)
+## 
+##                    Importance
+## age                    100.00
+## balance                 59.52
+## maritalmarried          51.10
+## jobblue-collar          48.36
+## jobretired              39.66
+## jobmanagement           36.55
+## maritalsingle           36.34
+## jobunknown              35.45
+## educationsecondary      34.71
+## educationunknown        34.00
+## jobtechnician           31.15
+## housingyes              30.79
+## defaultyes              29.69
+## jobunemployed           27.61
+## jobservices             25.03
+## jobentrepreneur         23.79
+## educationtertiary       23.45
+## loanyes                 21.51
+## jobhousemaid            14.33
+## jobstudent              11.68</code></pre>
+</div>
+<div id="imbalanced-dataset-to-balanced-one" class="section level2">
+<h2>imbalanced dataset to balanced one</h2>
+<p>This dataset consists of an imbalanced number of outputs, so that 90 percent of outcomes are “no” and 10 percent are “yes”. This leads to severe bias of generated model towards “no”. In fact, all inputs of test set resulted in “no”. Although model’s accuracy is good, it has a terrible specificity. To tackle this problem, a balanced model is built for this dataset using “ROSE” package. This results in slightly decrease in accuracy but big improvement is terms of specificity. This function is using oversampling/undersampling to balance dataset before making a new model.</p>
+<pre class="r"><code>library(ROSE)
+
+bank_train_balanced &lt;- ovun.sample(y ~ ., data = bank_train, method = &quot;over&quot;,N = 6500)$data
+
+bank_train_balanced %&gt;%
+  group_by(y) %&gt;%
+  count()</code></pre>
+<pre><code>## # A tibble: 2 x 2
+## # Groups:   y [2]
+##   y         n
+##   &lt;chr&gt; &lt;int&gt;
+## 1 no     3200
+## 2 yes    3300</code></pre>
+</div>
+<div id="computing-random-forest-classifier-for-balanced-dataset" class="section level2">
+<h2>Computing random forest classifier for balanced dataset</h2>
+<pre class="r"><code>set.seed(20)
+
+# Fit the model on the training set
+model2 &lt;- train(
+  y ~., data = bank_train_balanced, method = &quot;rf&quot;,
+  trControl = trainControl(&quot;cv&quot;, number = 3),
+  importance = TRUE
+  )
+
+# Best tuning parameter
+model2$bestTune</code></pre>
+<pre><code>##   mtry
+## 2   11</code></pre>
+</div>
+<div id="make-predictions-on-the-test-data-using-new-model" class="section level2">
+<h2>Make predictions on the test data using new model</h2>
+<pre class="r"><code>predicted.classes2 &lt;- model2 %&gt;% predict(bank_test)</code></pre>
+</div>
+<div id="binding-predictions-and-truth-for-new-data" class="section level2">
+<h2>binding predictions and truth for new data</h2>
+<pre class="r"><code>bank_bind2 &lt;- bank_test %&gt;%
+   bind_cols(.pred=predicted.classes2)
+
+
+test_pred_mat2 &lt;- bank_bind2 %&gt;% conf_mat(truth = y, estimate = .pred)
+summary(test_pred_mat2)</code></pre>
+<pre><code>## # A tibble: 13 x 3
+##    .metric              .estimator .estimate
+##    &lt;chr&gt;                &lt;chr&gt;          &lt;dbl&gt;
+##  1 accuracy             binary         0.840
+##  2 kap                  binary         0.128
+##  3 sens                 binary         0.924
+##  4 spec                 binary         0.192
+##  5 ppv                  binary         0.898
+##  6 npv                  binary         0.247
+##  7 mcc                  binary         0.130
+##  8 j_index              binary         0.116
+##  9 bal_accuracy         binary         0.558
+## 10 detection_prevalence binary         0.910
+## 11 precision            binary         0.898
+## 12 recall               binary         0.924
+## 13 f_meas               binary         0.911</code></pre>
+<pre class="r"><code>autoplot(test_pred_mat2, type = &#39;heatmap&#39;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-07-30-assignment-a04-tree-based-method-random-forest/index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>This shows that accuracy droped to 83.7% and Sensitivity droped to (92%), however, specificity increased to 20%. This model is more suitable for detecting rare outcomes.</p>
+</div>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Unsupervised Learning in R // Ramin Ala</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.83.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://ramin1ala.netlify.app/css/main.min.9dbf51e978afe3857b6cf4f89e41949fcd0410a29b2c2a5da404b58dfd6fc228.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Unsupervised Learning in R"/>
+<meta name="twitter:description" content="library(tidyverse)## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --## v ggplot2 3.3.3 v purrr 0.3.4## v tibble 3.1.2 v dplyr 1.0.6## v tidyr 1.1.3 v stringr 1.4.0## v readr 1.4.0 v forcats 0.5.1## -- Conflicts ------------------------------------------ tidyverse_conflicts() --## x dplyr::filter() masks stats::filter()## x dplyr::lag() masks stats::lag()x &lt;- read.csv(&quot;x.csv&quot;) %&gt;%select(c(V1,V2))pokemon&lt;-read.csv(&quot;pokemon.csv&quot;)%&gt;%select(-c(X))x2 &lt;- read.csv(&quot;x2.csv&quot;)x %&gt;% ggplot(aes(V1,V2))&#43;geom_point(alpha=0.9, shape=&quot;x&quot;, size=2)1-4 k-means clusteringWe have created some two-dimensional data and stored it in a variable called x in your workspace."/>
+
+    <meta property="og:title" content="Unsupervised Learning in R" />
+<meta property="og:description" content="library(tidyverse)## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --## v ggplot2 3.3.3 v purrr 0.3.4## v tibble 3.1.2 v dplyr 1.0.6## v tidyr 1.1.3 v stringr 1.4.0## v readr 1.4.0 v forcats 0.5.1## -- Conflicts ------------------------------------------ tidyverse_conflicts() --## x dplyr::filter() masks stats::filter()## x dplyr::lag() masks stats::lag()x &lt;- read.csv(&quot;x.csv&quot;) %&gt;%select(c(V1,V2))pokemon&lt;-read.csv(&quot;pokemon.csv&quot;)%&gt;%select(-c(X))x2 &lt;- read.csv(&quot;x2.csv&quot;)x %&gt;% ggplot(aes(V1,V2))&#43;geom_point(alpha=0.9, shape=&quot;x&quot;, size=2)1-4 k-means clusteringWe have created some two-dimensional data and stored it in a variable called x in your workspace." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-08-26T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-08-26T00:00:00&#43;00:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://ramin1ala.netlify.app/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>Ramin Ala</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/publications/">Publications</a>
+      </nav>
+      <p>An Electrical engineer with experience in RF and interest in data science.</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/raminala" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/ramin-ala-6645b3188/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://twitter.com/ala_ramin" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>Twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Unsupervised Learning in R</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Aug 26, 2021
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          29 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+<script src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
+## v tibble  3.1.2     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>x &lt;- read.csv(&quot;x.csv&quot;) %&gt;%select(c(V1,V2))
+pokemon&lt;-read.csv(&quot;pokemon.csv&quot;)%&gt;%select(-c(X))
+x2 &lt;- read.csv(&quot;x2.csv&quot;)
+
+x %&gt;% ggplot(aes(V1,V2))+geom_point(alpha=0.9, shape=&quot;x&quot;, size=2)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<div id="k-means-clustering" class="section level2">
+<h2>1-4 k-means clustering</h2>
+<p>We have created some two-dimensional data and stored it in a variable called x in your workspace. Above scatter plot is a visual representation of the data.</p>
+<p>In this exercise, your task is to create a k-means model of the x data using 3 clusters, then to look at the structure of the resulting model using the summary() function.</p>
+<pre class="r"><code># Create the k-means model: km.out
+km.out &lt;- kmeans(x, centers = 3, nstart = 200)
+
+# Inspect the result
+summary(km.out)</code></pre>
+<pre><code>##              Length Class  Mode   
+## cluster      300    -none- numeric
+## centers        6    -none- numeric
+## totss          1    -none- numeric
+## withinss       3    -none- numeric
+## tot.withinss   1    -none- numeric
+## betweenss      1    -none- numeric
+## size           3    -none- numeric
+## iter           1    -none- numeric
+## ifault         1    -none- numeric</code></pre>
+</div>
+<div id="results-of-kmeans" class="section level2">
+<h2>1-5 Results of kmeans()</h2>
+<p>The kmeans() function produces several outputs. In the video, we discussed one output of modeling, the cluster membership.</p>
+<p>In this exercise, you will access the cluster component directly. This is useful anytime you need the cluster membership for each observation of the data used to build the clustering model. A future exercise will show an example of how this cluster membership might be used to help communicate the results of k-means modeling.</p>
+<p>k-means models also have a print method to give a human friendly output of basic modeling results. This is available by using print() or simply typing the name of the model.</p>
+<pre class="r"><code># Print the cluster membership component of the model
+
+print(km.out$cluster)</code></pre>
+<pre><code>##   [1] 3 3 3 3 3 3 3 3 3 3 3 3 1 3 3 3 3 1 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1
+##  [38] 1 1 3 3 3 3 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1
+##  [75] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 2 2
+## [112] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+## [149] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+## [186] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+## [223] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 3 1 1 1 1
+## [260] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 1 1 3 1 1 1 1 1 1 3 1 1 1 1 1 1 3 1 1
+## [297] 1 3 1 1</code></pre>
+<pre class="r"><code># Print the km.out object
+print(km.out)</code></pre>
+<pre><code>## K-means clustering with 3 clusters of sizes 52, 150, 98
+## 
+## Cluster means:
+##           V1          V2
+## 1  0.6642455 -0.09132968
+## 2 -5.0556758  1.96991743
+## 3  2.2171113  2.05110690
+## 
+## Clustering vector:
+##   [1] 3 3 3 3 3 3 3 3 3 3 3 3 1 3 3 3 3 1 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1
+##  [38] 1 1 3 3 3 3 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1
+##  [75] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 2 2
+## [112] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+## [149] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+## [186] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+## [223] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 3 1 1 1 1
+## [260] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 1 1 3 1 1 1 1 1 1 3 1 1 1 1 1 1 3 1 1
+## [297] 1 3 1 1
+## 
+## Within cluster sum of squares by cluster:
+## [1]  95.50625 295.16925 148.64781
+##  (between_SS / total_SS =  87.2 %)
+## 
+## Available components:
+## 
+## [1] &quot;cluster&quot;      &quot;centers&quot;      &quot;totss&quot;        &quot;withinss&quot;     &quot;tot.withinss&quot;
+## [6] &quot;betweenss&quot;    &quot;size&quot;         &quot;iter&quot;         &quot;ifault&quot;</code></pre>
+</div>
+<div id="visualizing-and-interpreting-results-of-kmeans" class="section level2">
+<h2>1-6 Visualizing and interpreting results of kmeans()</h2>
+<p>One of the more intuitive ways to interpret the results of k-means models is by plotting the data as a scatter plot and using color to label the samples’ cluster membership. In this exercise, you will use the standard plot() function to accomplish this.</p>
+<p>To create a scatter plot, you can pass data with two features (i.e. columns) to plot() with an extra argument col = km.out$cluster, which sets the color of each point in the scatter plot according to its cluster membership.</p>
+<pre class="r"><code># Scatter plot of x
+x %&gt;%
+  ggplot(aes(V1,V2))+geom_point(color=km.out$cluster)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="handling-random-algorithms" class="section level2">
+<h2>1-8 Handling random algorithms</h2>
+<p>In the video, you saw how kmeans() randomly initializes the centers of clusters. This random initialization can result in assigning observations to different cluster labels. Also, the random initialization can result in finding different local minima for the k-means algorithm. This exercise will demonstrate both results.</p>
+<p>At the top of each plot, the measure of model quality—total within cluster sum of squares error—will be plotted. Look for the model(s) with the lowest error to find models with the better model results.</p>
+<p>Because kmeans() initializes observations to random clusters, it is important to set the random number generator seed for reproducibility.</p>
+<pre class="r"><code># Set up 2 x 3 plotting grid
+par(mfrow = c(2, 3))
+
+# Set seed
+set.seed(1)
+
+for(i in 1:6) {
+  # Run kmeans() on x with three clusters and one start
+  km.out &lt;- kmeans(x, centers = 3, nstart = 1)
+  
+  # Plot clusters
+  plot(x, col = km.out$cluster, 
+       main = km.out$tot.withinss)
+}</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code># Set up 2 x 3 plotting grid
+par(mfrow = c(2, 3))
+
+# Set seed
+set.seed(1)
+
+for(i in 1:6) {
+  # Run kmeans() on x with three clusters and one start
+  km.out &lt;- kmeans(x, centers = 3, nstart = 1)
+  
+  # Plot clusters
+  plot(x, col = km.out$cluster, 
+       main = km.out$tot.withinss)
+}</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="selecting-number-of-clusters" class="section level2">
+<h2>1-9 Selecting number of clusters</h2>
+<p>The k-means algorithm assumes the number of clusters as part of the input. If you know the number of clusters in advance (e.g. due to certain business constraints) this makes setting the number of clusters easy. However, as you saw in the video, if you do not know the number of clusters and need to determine it, you will need to run the algorithm multiple times, each time with a different number of clusters. From this, you can observe how a measure of model quality changes with the number of clusters.</p>
+<p>In this exercise, you will run kmeans() multiple times to see how model quality changes as the number of clusters changes. Plots displaying this information help to determine the number of clusters and are often referred to as scree plots.</p>
+<p>The ideal plot will have an elbow where the quality measure improves more slowly as the number of clusters increases. This indicates that the quality of the model is no longer improving substantially as the model complexity (i.e. number of clusters) increases. In other words, the elbow indicates the number of clusters inherent in the data.</p>
+<pre class="r"><code># Initialize total within sum of squares error: wss
+wss &lt;- 0
+
+# For 1 to 15 cluster centers
+for (i in 1:15) {
+  km.out &lt;- kmeans(x, centers = i, nstart = 20)
+  # Save total within sum of squares to wss variable
+  wss[i] &lt;- km.out$tot.withinss
+}
+
+# Plot total within sum of squares vs. number of clusters
+plot(1:15, wss, type = &quot;b&quot;, 
+     xlab = &quot;Number of Clusters&quot;, 
+     ylab = &quot;Within groups sum of squares&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code># Set k equal to the number of clusters corresponding to the elbow location
+k &lt;- 2  # 3 is probably OK, too</code></pre>
+</div>
+<div id="practical-matters-working-with-real-data" class="section level2">
+<h2>1-11 Practical matters: working with real data</h2>
+<p>Dealing with real data is often more challenging than dealing with synthetic data. Synthetic data helps with learning new concepts and techniques, but the next few exercises will deal with data that is closer to the type of real data you might find in your professional or academic pursuits.</p>
+<p>The first challenge with the Pokemon data is that there is no pre-determined number of clusters. You will determine the appropriate number of clusters, keeping in mind that in real data the elbow in the scree plot might be less of a sharp elbow than in synthetic data. Use your judgement on making the determination of the number of clusters.</p>
+<p>The second part of this exercise includes plotting the outcomes of the clustering on two dimensions, or features, of the data. These features were chosen somewhat arbitrarily for this exercise. Think about how you would use plotting and clustering to communicate interesting groups of Pokemon to other people.</p>
+<p>An additional note: this exercise utilizes the iter.max argument to kmeans(). As you’ve seen, kmeans() is an iterative algorithm, repeating over and over until some stopping criterion is reached. The default number of iterations for kmeans() is 10, which is not enough for the algorithm to converge and reach its stopping criterion, so we’ll set the number of iterations to 50 to overcome this issue. To see what happens when kmeans() does not converge, try running the example with a lower number of iterations (e.g. 3). This is another example of what might happen when you encounter real data and use real cases.</p>
+<pre class="r"><code># Initialize total within sum of squares error: wss
+wss &lt;- 0
+
+# Look over 1 to 15 possible clusters
+for (i in 1:15) {
+  # Fit the model: km.out
+  km.out &lt;- kmeans(pokemon, centers = i, nstart = 20, iter.max = 50)
+  # Save the within cluster sum of squares
+  wss[i] &lt;- km.out$tot.withinss
+}
+
+# Produce a scree plot
+plot(1:15, wss, type = &quot;b&quot;, 
+     xlab = &quot;Number of Clusters&quot;, 
+     ylab = &quot;Within groups sum of squares&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code># Select number of clusters
+k &lt;- 3
+
+# Build model with k clusters: km.out
+km.out &lt;- kmeans(pokemon, centers = k, nstart = 20, iter.max = 50)
+
+# View the resulting model
+km.out</code></pre>
+<pre><code>## K-means clustering with 3 clusters of sizes 270, 355, 175
+## 
+## Cluster means:
+##   HitPoints   Attack   Defense SpecialAttack SpecialDefense    Speed
+## 1  81.90370 96.15926  77.65556     104.12222       86.87778 94.71111
+## 2  54.68732 56.93239  53.64507      52.02254       53.04789 53.58873
+## 3  79.30857 97.29714 108.93143      66.71429       87.04571 57.29143
+## 
+## Clustering vector:
+##   [1] 2 2 1 1 2 2 1 1 1 2 2 3 1 2 2 2 2 2 2 1 2 2 1 1 2 2 2 1 2 1 2 1 2 3 2 2 3
+##  [38] 2 2 1 2 1 2 1 2 2 2 1 2 2 1 2 3 2 1 2 2 2 1 2 1 2 1 2 1 2 2 3 2 1 1 1 2 3
+##  [75] 3 2 2 1 2 1 2 3 3 2 1 2 3 3 2 1 2 2 1 2 3 2 3 2 3 2 1 1 1 3 2 3 2 3 2 1 2
+## [112] 1 2 3 3 3 2 2 3 2 3 2 3 3 3 2 1 2 3 2 1 1 1 1 1 1 3 3 3 2 3 3 3 2 2 1 1 1
+## [149] 2 2 3 2 3 1 1 3 1 1 1 2 2 1 1 1 1 1 2 2 3 2 2 1 2 2 3 2 2 2 1 2 2 2 2 1 2
+## [186] 1 2 2 2 2 2 2 1 2 2 1 1 3 2 2 3 1 2 2 1 2 2 2 2 2 3 1 3 2 3 1 2 2 1 2 3 2
+## [223] 3 3 3 2 3 2 3 3 3 3 3 2 2 3 2 3 2 3 2 2 1 2 1 3 2 1 1 1 2 3 1 1 2 2 3 2 2
+## [260] 2 3 1 1 1 3 2 2 3 3 1 1 1 2 2 1 1 2 2 1 1 2 2 3 3 2 2 2 2 2 2 2 2 2 2 2 1
+## [297] 2 2 1 2 2 2 3 2 2 1 1 2 2 2 3 2 2 1 2 1 2 2 2 1 2 3 2 3 2 2 2 3 2 3 2 3 3
+## [334] 3 2 2 1 2 1 1 2 2 2 2 2 2 3 2 1 1 2 1 2 1 3 3 2 1 2 2 2 1 2 1 2 3 1 1 1 1
+## [371] 3 2 3 2 3 2 3 2 3 2 3 2 1 2 3 2 1 1 2 3 3 2 1 1 2 2 1 1 2 2 1 2 3 3 3 2 2
+## [408] 3 1 1 2 3 3 1 3 3 3 1 1 1 1 1 1 3 1 1 1 1 1 1 3 1 2 3 3 2 2 1 2 2 1 2 2 1
+## [445] 2 2 2 2 2 2 1 2 1 2 3 2 3 2 3 3 3 1 2 3 2 2 1 2 1 2 3 1 2 1 2 1 1 1 1 2 1
+## [482] 2 2 1 2 3 2 2 2 2 3 2 2 1 1 2 2 1 1 2 3 2 3 2 1 3 2 1 2 2 1 3 1 1 3 3 3 1
+## [519] 1 1 1 3 1 3 1 1 1 1 3 3 1 1 1 1 1 1 1 3 1 1 1 1 1 1 1 1 3 1 1 1 1 1 1 1 2
+## [556] 2 1 2 2 1 2 2 1 2 2 2 2 3 2 1 2 1 2 1 2 1 2 3 2 2 1 2 1 2 3 3 2 1 2 1 3 3
+## [593] 2 3 3 2 2 1 3 3 2 2 1 2 2 1 2 1 2 1 1 2 2 1 2 3 1 1 2 3 2 3 1 2 3 2 3 2 1
+## [630] 2 3 2 1 2 1 2 2 3 2 2 1 2 1 2 2 1 2 1 1 2 3 2 3 2 1 3 2 1 2 3 2 3 3 2 2 1
+## [667] 2 1 2 2 1 2 3 3 2 3 1 2 1 3 2 1 3 2 3 2 3 3 2 3 2 3 1 3 2 2 1 2 1 1 1 1 1
+## [704] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 3 2 2 1 2 2 1 2 2 2 2 1 2 2 2 2 1 2 2 1
+## [741] 2 1 2 3 1 2 1 1 2 3 1 3 2 3 2 1 2 3 2 3 2 3 2 1 2 1 2 3 2 1 1 1 1 3 2 1 1
+## [778] 3 2 3 2 2 2 2 3 3 3 3 2 3 2 1 1 1 3 3 1 1 1 1
+## 
+## Within cluster sum of squares by cluster:
+## [1] 1018348.0  812079.9  709020.5
+##  (between_SS / total_SS =  40.8 %)
+## 
+## Available components:
+## 
+## [1] &quot;cluster&quot;      &quot;centers&quot;      &quot;totss&quot;        &quot;withinss&quot;     &quot;tot.withinss&quot;
+## [6] &quot;betweenss&quot;    &quot;size&quot;         &quot;iter&quot;         &quot;ifault&quot;</code></pre>
+<pre class="r"><code># Plot of Defense vs. Speed by cluster membership
+plot(pokemon[, c(&quot;Defense&quot;, &quot;Speed&quot;)],
+     col = km.out$cluster,
+     main = paste(&quot;k-means clustering of Pokemon with&quot;, k, &quot;clusters&quot;),
+     xlab = &quot;Defense&quot;, ylab = &quot;Speed&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
+</div>
+<div id="hierarchical-clustering-with-results" class="section level2">
+<h2>2-2 Hierarchical clustering with results</h2>
+<p>In this exercise, you will create your first hierarchical clustering model using the hclust() function.</p>
+<p>We have created some data that has two dimensions and placed it in a variable called x2. Your task is to create a hierarchical clustering model of x2. Remember from the video that the first step to hierarchical clustering is determining the similarity between observations, which you will do with the dist() function.</p>
+<p>You will look at the structure of the resulting model using the summary() function.</p>
+<pre class="r"><code># Create hierarchical clustering model: hclust.out
+hclust.out &lt;- hclust(d=dist(x2) )
+
+# Inspect the result
+summary(hclust.out)</code></pre>
+<pre><code>##             Length Class  Mode     
+## merge       98     -none- numeric  
+## height      49     -none- numeric  
+## order       50     -none- numeric  
+## labels       0     -none- NULL     
+## method       1     -none- character
+## call         2     -none- call     
+## dist.method  1     -none- character</code></pre>
+</div>
+<div id="cutting-the-tree" class="section level2">
+<h2>2-5 Cutting the tree</h2>
+<p>Remember from the video that cutree() is the R function that cuts a hierarchical model. The h and k arguments to cutree() allow you to cut the tree based on a certain height h or a certain number of clusters k.</p>
+<p>In this exercise, you will use cutree() to cut the hierarchical model you created earlier based on each of these two criteria.</p>
+<pre class="r"><code># Cut by height
+cutree(hclust.out, h = 7)</code></pre>
+<pre><code>##  [1] 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 3 3 3 3 3 3 3 2 2 2
+## [39] 2 2 2 2 2 2 2 2 2 2 2 2</code></pre>
+<pre class="r"><code># Cut by number of clusters
+cutree(hclust.out, k = 3)</code></pre>
+<pre><code>##  [1] 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 3 3 3 3 3 3 3 2 2 2
+## [39] 2 2 2 2 2 2 2 2 2 2 2 2</code></pre>
+</div>
+<div id="linkage-methods" class="section level2">
+<h2>2-7 Linkage methods</h2>
+<p>In this exercise, you will produce hierarchical clustering models using different linkages and plot the dendrogram for each, observing the overall structure of the trees.</p>
+<p>You’ll be asked to interpret the results in the next exercise.</p>
+<pre class="r"><code># Cluster using complete linkage: hclust.complete
+hclust.complete &lt;- hclust(dist(x2), method = &quot;complete&quot;)
+
+# Cluster using average linkage: hclust.average
+hclust.average &lt;- hclust(dist(x2), method = &quot;average&quot;)
+
+# Cluster using single linkage: hclust.single
+hclust.single &lt;- hclust(dist(x2), method = &quot;single&quot;)
+
+# Plot dendrogram of hclust.complete
+plot(hclust.complete, main = &quot;Complete&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code># Plot dendrogram of hclust.average
+plot(hclust.average, main = &quot;Average&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+<pre class="r"><code># Plot dendrogram of hclust.single
+plot(hclust.single, main = &quot;Single&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-11-3.png" width="672" /></p>
+</div>
+<div id="practical-matters-scaling" class="section level2">
+<h2>2-9 Practical matters: scaling</h2>
+<p>Recall from the video that clustering real data may require scaling the features if they have different distributions. So far in this chapter, you have been working with synthetic data that did not need scaling.</p>
+<p>In this exercise, you will go back to working with “real” data, the pokemon dataset introduced in the first chapter. You will observe the distribution (mean and standard deviation) of each feature, scale the data accordingly, then produce a hierarchical clustering model using the complete linkage method.</p>
+<pre class="r"><code># View column means
+colMeans(pokemon)</code></pre>
+<pre><code>##      HitPoints         Attack        Defense  SpecialAttack SpecialDefense 
+##       69.25875       79.00125       73.84250       72.82000       71.90250 
+##          Speed 
+##       68.27750</code></pre>
+<pre class="r"><code># View column standard deviations
+ apply(pokemon, 2, sd)</code></pre>
+<pre><code>##      HitPoints         Attack        Defense  SpecialAttack SpecialDefense 
+##       25.53467       32.45737       31.18350       32.72229       27.82892 
+##          Speed 
+##       29.06047</code></pre>
+<pre class="r"><code># Scale the data
+pokemon.scaled &lt;- scale(pokemon)
+
+# Create hierarchical clustering model: hclust.pokemon
+hclust.pokemon &lt;- hclust(dist(pokemon.scaled), method = &quot;complete&quot;)</code></pre>
+</div>
+<div id="comparing-kmeans-and-hclust" class="section level2">
+<h2>2-10 Comparing kmeans() and hclust()</h2>
+<p>Comparing k-means and hierarchical clustering, you’ll see the two methods produce different cluster memberships. This is because the two algorithms make different assumptions about how the data is generated. In a more advanced course, we could choose to use one model over another based on the quality of the models’ assumptions, but for now, it’s enough to observe that they are different.</p>
+<p>This exercise will have you compare results from the two models on the pokemon dataset to see how they differ.</p>
+<pre class="r"><code># Apply cutree() to hclust.pokemon: cut.pokemon
+cut.pokemon &lt;- cutree(hclust.pokemon, k = 3)
+
+# Compare methods
+table(km.out$cluster, cut.pokemon)</code></pre>
+<pre><code>##    cut.pokemon
+##       1   2   3
+##   1 267   3   0
+##   2 350   5   0
+##   3 171   3   1</code></pre>
+</div>
+<div id="pca-using-prcomp" class="section level2">
+<h2>3-2 PCA using prcomp()</h2>
+<p>In this exercise, you will create your first PCA model and observe the diagnostic results.</p>
+<p>We have loaded the Pokemon data from earlier, which has four dimensions, and placed it in a variable called pokemon. Your task is to create a PCA model of the data, then to inspect the resulting model using the summary() function.</p>
+<p>hint: (for unknown reason) do not consider SpecialAttack and SpecialDefence variables.</p>
+<pre class="r"><code># Perform scaled PCA: pr.out
+pr.out &lt;- prcomp(x = pokemon[-c(4,5)], scale = TRUE, center = TRUE) 
+
+pr.out</code></pre>
+<pre><code>## Standard deviations (1, .., p=4):
+## [1] 1.3721424 0.9932783 0.8526020 0.6353685
+## 
+## Rotation (n x k) = (4 x 4):
+##                 PC1         PC2        PC3        PC4
+## HitPoints 0.5009303 -0.06463396  0.8300858 -0.2363236
+## Attack    0.6301797  0.02703796 -0.1621455  0.7588487
+## Defense   0.4556878 -0.61865282 -0.4521283 -0.4529871
+## Speed     0.3798566  0.78253440 -0.2832778 -0.4038596</code></pre>
+<pre class="r"><code># Inspect model output
+summary(pr.out)</code></pre>
+<pre><code>## Importance of components:
+##                           PC1    PC2    PC3    PC4
+## Standard deviation     1.3721 0.9933 0.8526 0.6354
+## Proportion of Variance 0.4707 0.2467 0.1817 0.1009
+## Cumulative Proportion  0.4707 0.7173 0.8991 1.0000</code></pre>
+<pre class="r"><code>apply(pokemon[-c(4,5)],2,sd)</code></pre>
+<pre><code>## HitPoints    Attack   Defense     Speed 
+##  25.53467  32.45737  31.18350  29.06047</code></pre>
+<pre class="r"><code>print(&quot;----------------------------------&quot;)</code></pre>
+<pre><code>## [1] &quot;----------------------------------&quot;</code></pre>
+<pre class="r"><code>apply(pokemon[-c(4,5)],2,mean)</code></pre>
+<pre><code>## HitPoints    Attack   Defense     Speed 
+##  69.25875  79.00125  73.84250  68.27750</code></pre>
+<pre class="r"><code>print(&quot;----------------------------------&quot;)</code></pre>
+<pre><code>## [1] &quot;----------------------------------&quot;</code></pre>
+<pre class="r"><code>apply(scale(pokemon[-c(4,5)]),2,sd)</code></pre>
+<pre><code>## HitPoints    Attack   Defense     Speed 
+##         1         1         1         1</code></pre>
+<pre class="r"><code>apply(scale(pokemon[-c(4,5)]),2,mean)</code></pre>
+<pre><code>##     HitPoints        Attack       Defense         Speed 
+## -2.514484e-16  3.427136e-17 -3.949261e-17 -1.101395e-16</code></pre>
+<p>Q: What is the minimum number of principal components that are required to describe at least 75% of the cumulative variance in this dataset?</p>
+<pre class="r"><code>summary(pr.out)</code></pre>
+<pre><code>## Importance of components:
+##                           PC1    PC2    PC3    PC4
+## Standard deviation     1.3721 0.9933 0.8526 0.6354
+## Proportion of Variance 0.4707 0.2467 0.1817 0.1009
+## Cumulative Proportion  0.4707 0.7173 0.8991 1.0000</code></pre>
+<p>A: 2</p>
+</div>
+<div id="interpreting-biplots-1" class="section level2">
+<h2>3-7 Interpreting biplots (1)</h2>
+<p>As stated in the video, the biplot() function plots both the principal components loadings and the mapping of the observations to their first two principal component values. The next couple of exercises will check your interpretation of the biplot() visualization.</p>
+<p>Using the biplot() of the pr.out model, which two original variables have approximately the same loadings in the first two principal components?</p>
+<pre class="r"><code>biplot(pr.out)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>A: Attack and HitPoints</p>
+<p>Q: which two Pokemon are the least similar in terms of the second principal component?</p>
+<p>A: Kadabra and Torkoal</p>
+</div>
+<div id="variance-explained" class="section level2">
+<h2>3-8 Variance explained</h2>
+<p>The second common plot type for understanding PCA models is a scree plot. A scree plot shows the variance explained as the number of principal components increases. Sometimes the cumulative variance explained is plotted as well.</p>
+<p>In this and the next exercise, you will prepare data from the pr.out model you created at the beginning of the chapter for use in a scree plot. Preparing the data for plotting is required because there is not a built-in function in R to create this type of plot.</p>
+<pre class="r"><code># Variability of each principal component: pr.var
+pr.var &lt;- pr.out$sdev^2
+
+# Variance explained by each principal component: pve
+pve &lt;-  pr.var / sum(pr.var)</code></pre>
+</div>
+<div id="visualize-variance-explained" class="section level2">
+<h2>3-9 Visualize variance explained</h2>
+<p>Now you will create a scree plot showing the proportion of variance explained by each principal component, as well as the cumulative proportion of variance explained.</p>
+<p>Recall from the video that these plots can help to determine the number of principal components to retain. One way to determine the number of principal components to retain is by looking for an elbow in the scree plot showing that as the number of principal components increases, the rate at which variance is explained decreases substantially. In the absence of a clear elbow, you can use the scree plot as a guide for setting a threshold.</p>
+<pre class="r"><code># Plot variance explained for each principal component
+plot(pve, xlab = &quot;Principal Component&quot;,
+     ylab = &quot;Proportion of Variance Explained&quot;,
+     ylim = c(0, 1), type = &quot;b&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<pre class="r"><code># Plot cumulative proportion of variance explained
+plot(cumsum(pve), xlab = &quot;Principal Component&quot;,
+     ylab = &quot;Cumulative Proportion of Variance Explained&quot;,
+     ylim = c(0, 1), type = &quot;b&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-19-2.png" width="672" /></p>
+</div>
+<div id="practical-issues-scaling" class="section level2">
+<h2>3-11 Practical issues: scaling</h2>
+<p>You saw in the video that scaling your data before doing PCA changes the results of the PCA modeling. Here, you will perform PCA with and without scaling, then visualize the results using biplots.</p>
+<p>Sometimes scaling is appropriate when the variances of the variables are substantially different. This is commonly the case when variables have different units of measurement, for example, degrees Fahrenheit (temperature) and miles (distance). Making the decision to use scaling is an important step in performing a principal component analysis.</p>
+<pre class="r"><code># Mean of each variable
+colMeans(pokemon)</code></pre>
+<pre><code>##      HitPoints         Attack        Defense  SpecialAttack SpecialDefense 
+##       69.25875       79.00125       73.84250       72.82000       71.90250 
+##          Speed 
+##       68.27750</code></pre>
+<pre class="r"><code># Standard deviation of each variable
+apply(pokemon, 2, sd)</code></pre>
+<pre><code>##      HitPoints         Attack        Defense  SpecialAttack SpecialDefense 
+##       25.53467       32.45737       31.18350       32.72229       27.82892 
+##          Speed 
+##       29.06047</code></pre>
+<pre class="r"><code># PCA model with scaling: pr.with.scaling
+pr.with.scaling &lt;- prcomp(pokemon, scale = TRUE)
+
+# PCA model without scaling: pr.without.scaling
+pr.without.scaling &lt;- prcomp(pokemon, scale = FALSE)
+
+# Create biplots of both for comparison
+biplot(pr.with.scaling)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<pre class="r"><code>biplot(pr.without.scaling)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-20-2.png" width="672" /></p>
+</div>
+<div id="preparing-the-data" class="section level2">
+<h2>4-2 Preparing the data</h2>
+<p>Unlike prior chapters, where we prepared the data for you for unsupervised learning, the goal of this chapter is to step you through a more realistic and complete workflow.</p>
+<p>Recall from the video that the first step is to download and prepare the data.</p>
+<p>Use read.csv() function to download the CSV (comma-separated values) file containing the data from the URL provided. Assign the result to wisc.df.</p>
+<p>tip for last part: set a vector called diagnosis to be 1 if a diagnosis is malignant (“M”) and 0 otherwise. Note that R coerces TRUE to 1 and FALSE to 0.</p>
+<pre class="r"><code>url &lt;- &quot;http://s3.amazonaws.com/assets.datacamp.com/production/course_1903/datasets/WisconsinCancer.csv&quot;
+
+# Download the data: wisc.df
+wisc.df &lt;- read.csv(url)
+
+# Convert the features of the data: wisc.data
+wisc.data &lt;- as.matrix(wisc.df[3:32])
+
+# Set the row names of wisc.data
+row.names(wisc.data) &lt;- wisc.df$id
+
+# Create diagnosis vector
+diagnosis &lt;- as.numeric(wisc.df$diagnosis == &quot;M&quot;)</code></pre>
+</div>
+<div id="performing-pca" class="section level2">
+<h2>4-4 Performing PCA</h2>
+<p>The next step in your analysis is to perform PCA on wisc.data.</p>
+<p>You saw in the last chapter that it’s important to check if the data need to be scaled before performing PCA. Recall two common reasons for scaling data:</p>
+<p>The input variables use different units of measurement.
+The input variables have significantly different variances.</p>
+<pre class="r"><code># Check column means and standard deviations
+colMeans(wisc.data)</code></pre>
+<pre><code>##             radius_mean            texture_mean          perimeter_mean 
+##            1.412729e+01            1.928965e+01            9.196903e+01 
+##               area_mean         smoothness_mean        compactness_mean 
+##            6.548891e+02            9.636028e-02            1.043410e-01 
+##          concavity_mean     concave.points_mean           symmetry_mean 
+##            8.879932e-02            4.891915e-02            1.811619e-01 
+##  fractal_dimension_mean               radius_se              texture_se 
+##            6.279761e-02            4.051721e-01            1.216853e+00 
+##            perimeter_se                 area_se           smoothness_se 
+##            2.866059e+00            4.033708e+01            7.040979e-03 
+##          compactness_se            concavity_se       concave.points_se 
+##            2.547814e-02            3.189372e-02            1.179614e-02 
+##             symmetry_se    fractal_dimension_se            radius_worst 
+##            2.054230e-02            3.794904e-03            1.626919e+01 
+##           texture_worst         perimeter_worst              area_worst 
+##            2.567722e+01            1.072612e+02            8.805831e+02 
+##        smoothness_worst       compactness_worst         concavity_worst 
+##            1.323686e-01            2.542650e-01            2.721885e-01 
+##    concave.points_worst          symmetry_worst fractal_dimension_worst 
+##            1.146062e-01            2.900756e-01            8.394582e-02</code></pre>
+<pre class="r"><code>apply(wisc.data,2 , sd)</code></pre>
+<pre><code>##             radius_mean            texture_mean          perimeter_mean 
+##            3.524049e+00            4.301036e+00            2.429898e+01 
+##               area_mean         smoothness_mean        compactness_mean 
+##            3.519141e+02            1.406413e-02            5.281276e-02 
+##          concavity_mean     concave.points_mean           symmetry_mean 
+##            7.971981e-02            3.880284e-02            2.741428e-02 
+##  fractal_dimension_mean               radius_se              texture_se 
+##            7.060363e-03            2.773127e-01            5.516484e-01 
+##            perimeter_se                 area_se           smoothness_se 
+##            2.021855e+00            4.549101e+01            3.002518e-03 
+##          compactness_se            concavity_se       concave.points_se 
+##            1.790818e-02            3.018606e-02            6.170285e-03 
+##             symmetry_se    fractal_dimension_se            radius_worst 
+##            8.266372e-03            2.646071e-03            4.833242e+00 
+##           texture_worst         perimeter_worst              area_worst 
+##            6.146258e+00            3.360254e+01            5.693570e+02 
+##        smoothness_worst       compactness_worst         concavity_worst 
+##            2.283243e-02            1.573365e-01            2.086243e-01 
+##    concave.points_worst          symmetry_worst fractal_dimension_worst 
+##            6.573234e-02            6.186747e-02            1.806127e-02</code></pre>
+<pre class="r"><code># Execute PCA, scaling if appropriate: wisc.pr
+wisc.pr &lt;- prcomp(x = wisc.data, scale = TRUE, center = TRUE)
+
+# Look at summary of results
+summary(wisc.pr)</code></pre>
+<pre><code>## Importance of components:
+##                           PC1    PC2     PC3     PC4     PC5     PC6     PC7
+## Standard deviation     3.6444 2.3857 1.67867 1.40735 1.28403 1.09880 0.82172
+## Proportion of Variance 0.4427 0.1897 0.09393 0.06602 0.05496 0.04025 0.02251
+## Cumulative Proportion  0.4427 0.6324 0.72636 0.79239 0.84734 0.88759 0.91010
+##                            PC8    PC9    PC10   PC11    PC12    PC13    PC14
+## Standard deviation     0.69037 0.6457 0.59219 0.5421 0.51104 0.49128 0.39624
+## Proportion of Variance 0.01589 0.0139 0.01169 0.0098 0.00871 0.00805 0.00523
+## Cumulative Proportion  0.92598 0.9399 0.95157 0.9614 0.97007 0.97812 0.98335
+##                           PC15    PC16    PC17    PC18    PC19    PC20   PC21
+## Standard deviation     0.30681 0.28260 0.24372 0.22939 0.22244 0.17652 0.1731
+## Proportion of Variance 0.00314 0.00266 0.00198 0.00175 0.00165 0.00104 0.0010
+## Cumulative Proportion  0.98649 0.98915 0.99113 0.99288 0.99453 0.99557 0.9966
+##                           PC22    PC23   PC24    PC25    PC26    PC27    PC28
+## Standard deviation     0.16565 0.15602 0.1344 0.12442 0.09043 0.08307 0.03987
+## Proportion of Variance 0.00091 0.00081 0.0006 0.00052 0.00027 0.00023 0.00005
+## Cumulative Proportion  0.99749 0.99830 0.9989 0.99942 0.99969 0.99992 0.99997
+##                           PC29    PC30
+## Standard deviation     0.02736 0.01153
+## Proportion of Variance 0.00002 0.00000
+## Cumulative Proportion  1.00000 1.00000</code></pre>
+</div>
+<div id="interpreting-pca-results" class="section level2">
+<h2>4-5 Interpreting PCA results</h2>
+<p>Now you’ll use some visualizations to better understand your PCA model. You were introduced to one of these visualizations, the biplot, in an earlier chapter.</p>
+<p>You’ll run into some common challenges with using biplots on real-world data containing a non-trivial number of observations and variables, then you’ll look at some alternative visualizations. You are encouraged to experiment with additional visualizations before moving on to the next exercise.</p>
+<pre class="r"><code># Create a biplot of wisc.pr
+biplot(wisc.pr)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<pre class="r"><code># Scatter plot observations by components 1 and 2
+plot(wisc.pr$x[, c(1, 2)], col = (diagnosis + 1), 
+     xlab = &quot;PC1&quot;, ylab = &quot;PC2&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-23-2.png" width="672" /></p>
+<pre class="r"><code># Repeat for components 1 and 3
+plot(wisc.pr$x[, c(1, 3)], col = (diagnosis + 1), 
+     xlab = &quot;PC1&quot;, ylab = &quot;PC3&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-23-3.png" width="672" /></p>
+<pre class="r"><code># Do additional data exploration of your choosing below (optional)</code></pre>
+</div>
+<div id="variance-explained-1" class="section level2">
+<h2>4-6 Variance explained</h2>
+<p>In this exercise, you will produce scree plots showing the proportion of variance explained as the number of principal components increases. The data from PCA must be prepared for these plots, as there is not a built-in function in R to create them directly from the PCA model.</p>
+<p>As you look at these plots, ask yourself if there’s an elbow in the amount of variance explained that might lead you to pick a natural number of principal components. If an obvious elbow does not exist, as is typical in real-world datasets, consider how else you might determine the number of principal components to retain based on the scree plot.</p>
+<pre class="r"><code># Set up 1 x 2 plotting grid
+par(mfrow = c(1, 2))
+
+# Calculate variability of each component
+pr.var &lt;- wisc.pr$sdev^2
+
+# Variance explained by each principal component: pve
+pve &lt;- pr.var / sum(pr.var)
+
+# Plot variance explained for each principal component
+plot(pve, xlab = &quot;Principal Component&quot;, 
+     ylab = &quot;Proportion of Variance Explained&quot;, 
+     ylim = c(0, 1), type = &quot;b&quot;)
+
+# Plot cumulative proportion of variance explained
+plot(cumsum(pve), xlab = &quot;Principal Component&quot;, 
+     ylab = &quot;Cumulative Proportion of Variance Explained&quot;, 
+     ylim = c(0, 1), type = &quot;b&quot;)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+</div>
+<div id="hierarchical-clustering-of-case-data" class="section level2">
+<h2>4-9 Hierarchical clustering of case data</h2>
+<p>The goal of this exercise is to do hierarchical clustering of the observations. Recall from Chapter 2 that this type of clustering does not assume in advance the number of natural groups that exist in the data.</p>
+<p>As part of the preparation for hierarchical clustering, distance between all pairs of observations are computed. Furthermore, there are different ways to link clusters together, with single, complete, and average being the most common linkage methods.</p>
+<pre class="r"><code># Scale the wisc.data data: data.scaled
+data.scaled &lt;- scale(wisc.data)
+
+# Calculate the (Euclidean) distances: data.dist
+data.dist &lt;- dist(data.scaled)
+
+# Create a hierarchical clustering model: wisc.hclust
+wisc.hclust &lt;- hclust(data.dist, method = &quot;complete&quot;)</code></pre>
+</div>
+<div id="results-of-hierarchical-clustering" class="section level2">
+<h2>4-10 Results of hierarchical clustering</h2>
+<p>Let’s use the hierarchical clustering model you just created to determine a height (or distance between clusters) where a certain number of clusters exists. The variables you created before—wisc.data, diagnosis, wisc.pr, pve, and wisc.hclust—are all available in your workspace.</p>
+<p>Using the plot() function, what is the height at which the clustering model has 4 clusters?</p>
+<pre class="r"><code>plot(wisc.hclust)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/2021-08-26-unsupervised-learning-in-r/index_files/figure-html/unnamed-chunk-26-1.png" width="672" />
+A: 20</p>
+</div>
+<div id="selecting-number-of-clusters-1" class="section level2">
+<h2>4-11 Selecting number of clusters</h2>
+<p>In this exercise, you will compare the outputs from your hierarchical clustering model to the actual diagnoses. Normally when performing unsupervised learning like this, a target variable isn’t available. We do have it with this dataset, however, so it can be used to check the performance of the clustering model.</p>
+<p>When performing supervised learning—that is, when you’re trying to predict some target variable of interest and that target variable is available in the original data—using clustering to create new features may or may not improve the performance of the final model. This exercise will help you determine if, in this case, hierarchical clustering provides a promising new feature.</p>
+<pre class="r"><code># Cut tree so that it has 4 clusters: wisc.hclust.clusters
+wisc.hclust.clusters &lt;- cutree(wisc.hclust, k = 4)
+
+# Compare cluster membership to actual diagnoses
+table(wisc.hclust.clusters, diagnosis)</code></pre>
+<pre><code>##                     diagnosis
+## wisc.hclust.clusters   0   1
+##                    1  12 165
+##                    2   2   5
+##                    3 343  40
+##                    4   0   2</code></pre>
+</div>
+<div id="k-means-clustering-and-comparing-results" class="section level2">
+<h2>4-12 k-means clustering and comparing results</h2>
+<p>As you now know, there are two main types of clustering: hierarchical and k-means.</p>
+<p>In this exercise, you will create a k-means clustering model on the Wisconsin breast cancer data and compare the results to the actual diagnoses and the results of your hierarchical clustering model. Take some time to see how each clustering model performs in terms of separating the two diagnoses and how the clustering models compare to each other.</p>
+<pre class="r"><code># Create a k-means model on wisc.data: wisc.km
+wisc.km &lt;- kmeans(scale(wisc.data), centers = 2, nstart = 20)
+
+# Compare k-means to actual diagnoses
+table(wisc.km$cluster , diagnosis)</code></pre>
+<pre><code>##    diagnosis
+##       0   1
+##   1 343  37
+##   2  14 175</code></pre>
+<pre class="r"><code># Compare k-means to hierarchical clustering
+table(wisc.km$cluster, wisc.hclust.clusters)</code></pre>
+<pre><code>##    wisc.hclust.clusters
+##       1   2   3   4
+##   1  17   0 363   0
+##   2 160   7  20   2</code></pre>
+</div>
+<div id="clustering-on-pca-results" class="section level2">
+<h2>4-13 Clustering on PCA results</h2>
+<p>In this final exercise, you will put together several steps you used earlier and, in doing so, you will experience some of the creativity that is typical in unsupervised learning.</p>
+<p>Recall from earlier exercises that the PCA model required significantly fewer features to describe 80% and 95% of the variability of the data. In addition to normalizing data and potentially avoiding overfitting, PCA also uncorrelates the variables, sometimes improving the performance of other modeling techniques.</p>
+<p>Let’s see if PCA improves or degrades the performance of hierarchical clustering.</p>
+<pre class="r"><code># Create a hierarchical clustering model: wisc.pr.hclust
+wisc.pr.hclust &lt;- hclust(dist(wisc.pr$x[, 1:7]), method = &quot;complete&quot;)
+
+# Cut model into 4 clusters: wisc.pr.hclust.clusters
+wisc.pr.hclust.clusters &lt;- cutree(wisc.pr.hclust, k = 4)
+
+# Compare to actual diagnoses
+table(diagnosis, wisc.pr.hclust.clusters)</code></pre>
+<pre><code>##          wisc.pr.hclust.clusters
+## diagnosis   1   2   3   4
+##         0   5 350   2   0
+##         1 113  97   0   2</code></pre>
+<pre class="r"><code># Compare to k-means and hierarchical
+table(diagnosis, wisc.hclust.clusters)</code></pre>
+<pre><code>##          wisc.hclust.clusters
+## diagnosis   1   2   3   4
+##         0  12   2 343   0
+##         1 165   5  40   2</code></pre>
+<pre class="r"><code>table(diagnosis, wisc.km$cluster)</code></pre>
+<pre><code>##          
+## diagnosis   1   2
+##         0 343  14
+##         1  37 175</code></pre>
+</div>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

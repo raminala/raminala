@@ -1,0 +1,109 @@
+---
+title: Bagging and Random Forest Essentials
+author: ''
+date: '2021-07-30'
+slug: []
+categories: []
+tags:
+  - Classification
+  - Tree-Based Models
+  - Random Forest
+---
+
+## Loading required R packages
+
+```{r}
+library(tidyverse)
+library(caret)
+library(randomForest)
+```
+
+## Example of data set
+
+```{r}
+# Load the data and remove NAs
+data("PimaIndiansDiabetes2", package = "mlbench")
+PimaIndiansDiabetes2 <- na.omit(PimaIndiansDiabetes2)
+# Inspect the data
+sample_n(PimaIndiansDiabetes2, 3)
+
+# Split the data into training and test set
+set.seed(123)
+training.samples <- PimaIndiansDiabetes2$diabetes %>% 
+  createDataPartition(p = 0.8, list = FALSE)
+
+train.data  <- PimaIndiansDiabetes2[training.samples, ]
+test.data <- PimaIndiansDiabetes2[-training.samples, ]
+
+#PimaIndiansDiabetes2 %>% group_by(diabetes ) %>% count()
+```
+
+## Computing random forest classifier
+
+```{r}
+# Fit the model on the training set
+set.seed(123)
+model <- train(
+  diabetes ~., data = train.data, method = "rf",
+  trControl = trainControl("cv", number = 10),
+  importance = TRUE
+  )
+# Best tuning parameter
+model$bestTune
+```
+
+
+```{r}
+# Final model
+model$finalModel
+```
+
+## Make predictions on the test data
+
+```{r}
+# Make predictions on the test data
+predicted.classes <- model %>% predict(test.data)
+head(predicted.classes)
+```
+
+```{r}
+# Compute model accuracy rate
+mean(predicted.classes == test.data$diabetes)
+```
+
+## binding predictions and truth 
+
+```{r}
+test_pred <- test.data %>%
+  bind_cols(predicted.classes)
+
+test_pred_mat <- test_pred %>% conf_mat(truth = diabetes, estimate = 10)
+summary(test_pred_mat)
+autoplot(test_pred_mat, type = 'heatmap')
+```
+
+## Variable importance
+
+```{r}
+importance(model$finalModel)
+```
+
+MeanDecreaseAccuracy: A measure of the extent to which a variable improves the accuracy of the forest in predicting the classification. Higher values mean that the variable improves prediction.
+
+(MeanDecreaseGini): Provides a more nuanced measure of importance, which factors in both the contribution that variable makes to accuracy, and the degree of misclassification (e.g., if a variable improves the probability of an observation being classified to a segment from 55% to 90%, this will show up in the Importance (MeanDecreaseGini), but not in MeanDecreaseAccuracy). As with MeanDecreaseAccuracy, high numbers indicate that a variable is more important as a predictor.
+
+```{r}
+# Plot MeanDecreaseAccuracy
+varImpPlot(model$finalModel, type = 1)
+# Plot MeanDecreaseGini
+varImpPlot(model$finalModel, type = 2)
+```
+
+The results show that across all of the trees considered in the random forest, the glucose and age variables are the two most important variables.
+
+```{r}
+# the importance of variables in percentage
+
+varImp(model)
+```
+

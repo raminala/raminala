@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Assignment A03: Tidyverse // Ramin Ala</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.83.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://ramin1ala.netlify.app/css/main.min.9dbf51e978afe3857b6cf4f89e41949fcd0410a29b2c2a5da404b58dfd6fc228.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Assignment A03: Tidyverse"/>
+<meta name="twitter:description" content="Using lego_sales.csv file, complete the following tasks using tidyverse. Submit the RmD file and link to the post on your website.
+1- What are the three most common first names of customers?lego %&gt;%select(first_name) %&gt;%count(first_name) %&gt;%arrange(desc(n))## # A tibble: 211 x 2## first_name n## &lt;chr&gt; &lt;int&gt;## 1 Jackson 13## 2 Jacob 11## 3 Joseph 11## 4 Michael 10## 5 Audrey 8## 6 Connor 8## 7 Kaitlyn 8## 8 Lucas 8## 9 Amanda 7## 10 Joshua 7## # ."/>
+
+    <meta property="og:title" content="Assignment A03: Tidyverse" />
+<meta property="og:description" content="Using lego_sales.csv file, complete the following tasks using tidyverse. Submit the RmD file and link to the post on your website.
+1- What are the three most common first names of customers?lego %&gt;%select(first_name) %&gt;%count(first_name) %&gt;%arrange(desc(n))## # A tibble: 211 x 2## first_name n## &lt;chr&gt; &lt;int&gt;## 1 Jackson 13## 2 Jacob 11## 3 Joseph 11## 4 Michael 10## 5 Audrey 8## 6 Connor 8## 7 Kaitlyn 8## 8 Lucas 8## 9 Amanda 7## 10 Joshua 7## # ." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ramin1ala.netlify.app/posts/assignment-a03-tidyverse/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-06-02T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-06-02T00:00:00&#43;00:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://ramin1ala.netlify.app/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <h1>Ramin Ala</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+            ~
+          
+          <a class="app-header-menu-item" href="/publications/">Publications</a>
+      </nav>
+      <p>An Electrical engineer with experience in RF and interest in data science.</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/raminala" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/ramin-ala-6645b3188/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://twitter.com/ala_ramin" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>Twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Assignment A03: Tidyverse</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 2, 2021
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          7 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://ramin1ala.netlify.app/tags/r/">R</a>
+              <a class="tag" href="https://ramin1ala.netlify.app/tags/data_wrangling/">data_wrangling</a>
+              <a class="tag" href="https://ramin1ala.netlify.app/tags/assignment/">Assignment</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+<script src="https://ramin1ala.netlify.app/posts/assignment-a03-tidyverse/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>Using lego_sales.csv file, complete the following tasks using tidyverse. Submit the RmD file and link to the post on your website.</p>
+<div id="what-are-the-three-most-common-first-names-of-customers" class="section level2">
+<h2>1- What are the three most common first names of customers?</h2>
+<pre class="r"><code>lego %&gt;%
+    select(first_name) %&gt;%
+    count(first_name) %&gt;%
+    arrange(desc(n))</code></pre>
+<pre><code>## # A tibble: 211 x 2
+##    first_name     n
+##    &lt;chr&gt;      &lt;int&gt;
+##  1 Jackson       13
+##  2 Jacob         11
+##  3 Joseph        11
+##  4 Michael       10
+##  5 Audrey         8
+##  6 Connor         8
+##  7 Kaitlyn        8
+##  8 Lucas          8
+##  9 Amanda         7
+## 10 Joshua         7
+## # ... with 201 more rows</code></pre>
+<p>answer: 1-Jackson (13) 2,3- Jacob (11) , Joseph (11) are three most popular first names.</p>
+</div>
+<div id="what-are-the-three-most-common-themes-of-lego-sets-purchased" class="section level2">
+<h2>2- What are the three most common themes of lego sets purchased?</h2>
+<pre class="r"><code>lego %&gt;%
+    select(theme) %&gt;%
+    count(theme) %&gt;%
+    arrange(desc(n))</code></pre>
+<pre><code>## # A tibble: 25 x 2
+##    theme            n
+##    &lt;chr&gt;        &lt;int&gt;
+##  1 Star Wars       75
+##  2 Nexo Knights    64
+##  3 Gear            55
+##  4 Mixels          55
+##  5 City            45
+##  6 Friends         42
+##  7 Ninjago         38
+##  8 Duplo           35
+##  9 Bionicle        34
+## 10 Creator         25
+## # ... with 15 more rows</code></pre>
+<p>answer: 1-Star Wars (75) 2- Nexo Knights (64) 3- Gear &amp; Mixels (55-tie) are common themes of lego sets purchased.</p>
+</div>
+<div id="among-the-most-common-theme-of-lego-sets-purchased-what-is-the-most-common-subtheme" class="section level2">
+<h2>3- Among the most common theme of lego sets purchased, what is the most common subtheme?</h2>
+<pre class="r"><code>lego %&gt;%
+    select(theme, subtheme) %&gt;%
+    filter(theme==&quot;Star Wars&quot; |
+           theme==&quot;Nexo Knights&quot; |
+           theme==&quot;Gear&quot; |
+           theme==&quot;Mixels&quot;) %&gt;%
+    count(subtheme) %&gt;%
+    arrange(desc(n))</code></pre>
+<pre><code>## # A tibble: 30 x 2
+##    subtheme              n
+##    &lt;chr&gt;             &lt;int&gt;
+##  1 &lt;NA&gt;                 42
+##  2 Ultimate             22
+##  3 Series 9             21
+##  4 Series 7             18
+##  5 Series 8             16
+##  6 The Force Awakens    15
+##  7 Buildable Figures    11
+##  8 Episode V            10
+##  9 MicroFighters        10
+## 10 Battlefront           7
+## # ... with 20 more rows</code></pre>
+<p>answer: Ultimate is the most common subtheme (purchased 22 times).</p>
+</div>
+<div id="create-a-new-variable-called-age_group-and-group-the-ages-into-the-following-categories-18-and-under-19---25-26---35-36---50-51-and-over.-be-sure-to-save-the-updated-data-set-so-you-can-use-the-new-variable-in-other-questions." class="section level2">
+<h2>4- Create a new variable called age_group and group the ages into the following categories: “18 and under”, “19 - 25”, “26 - 35”, “36 - 50”, “51 and over”. Be sure to save the updated data set so you can use the new variable in other questions.</h2>
+<pre class="r"><code>lego_age_group &lt;- lego %&gt;%
+    mutate(age_group=case_when(
+        age &lt;= 18 ~ &quot;18 and under&quot; ,
+        between(age, 19, 25) ~ &quot;19 - 25&quot; ,
+        between(age, 26, 35) ~ &quot;26 - 35&quot; ,
+        between(age, 36, 50) ~ &quot;36 - 50&quot; ,
+        age &gt;= 51 ~ &quot;51 and over&quot; ,
+    ))
+
+# To represent result:
+lego_age_group %&gt;%
+    select(first_name, age ,age_group)</code></pre>
+<pre><code>## # A tibble: 620 x 3
+##    first_name   age age_group
+##    &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;    
+##  1 Kimberly      24 19 - 25  
+##  2 Neel          35 26 - 35  
+##  3 Neel          35 26 - 35  
+##  4 Chelsea       41 36 - 50  
+##  5 Chelsea       41 36 - 50  
+##  6 Chelsea       41 36 - 50  
+##  7 Bryanna       19 19 - 25  
+##  8 Bryanna       19 19 - 25  
+##  9 Caleb         37 36 - 50  
+## 10 Caleb         37 36 - 50  
+## # ... with 610 more rows</code></pre>
+</div>
+<div id="what-is-the-probability-a-randomly-selected-customer" class="section level2">
+<h2>5- What is the probability a randomly selected customer</h2>
+</div>
+<div id="is-in-the-19---25-age-group" class="section level2">
+<h2>is in the 19 - 25 age group?</h2>
+<pre class="r"><code>lego_age_group  %&gt;%
+    count(age_group) %&gt;%
+    mutate(probablity=n/sum(n))</code></pre>
+<pre><code>## # A tibble: 5 x 3
+##   age_group        n probablity
+##   &lt;chr&gt;        &lt;int&gt;      &lt;dbl&gt;
+## 1 18 and under    30     0.0484
+## 2 19 - 25        129     0.208 
+## 3 26 - 35        183     0.295 
+## 4 36 - 50        216     0.348 
+## 5 51 and over     62     0.1</code></pre>
+<p>The probablity is 0.2080645 or nearly 20.8%.</p>
+</div>
+<div id="is-in-the-19---25-age-group-and-purchased-a-duplo-theme-set" class="section level2">
+<h2>is in the 19 - 25 age group and purchased a Duplo theme set?</h2>
+<pre class="r"><code>lego_age_group  %&gt;%
+        mutate(target_group=case_when(
+        theme== &quot;Duplo&quot; &amp; between(age, 19, 25) ~ &quot;19-25 age group and purchased a Duplo&quot; ,
+        TRUE ~ &quot;Not that group!&quot; ,
+             )) %&gt;%
+
+# To represent result:
+
+    select(theme ,age_group, target_group) %&gt;%
+
+# To represent result:
+     count(target_group) %&gt;%
+    mutate(probablity=n/sum(n))</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   target_group                              n probablity
+##   &lt;chr&gt;                                 &lt;int&gt;      &lt;dbl&gt;
+## 1 19-25 age group and purchased a Duplo     9     0.0145
+## 2 Not that group!                         611     0.985</code></pre>
+<p>The probablity is 0.01451613 or nearly 1.45%.</p>
+</div>
+<div id="is-in-the-19---25-age-group-given-they-purchased-a-duplo-theme-set" class="section level2">
+<h2>is in the 19 - 25 age group given they purchased a Duplo theme set?</h2>
+<pre class="r"><code>lego_age_group  %&gt;%
+        filter(theme == &quot;Duplo&quot;)  %&gt;%
+        mutate(target_group=case_when(
+        between(age, 19, 25) ~ &quot;purchased a Duplo an 19-25 age group&quot; ,
+        TRUE ~ &quot;purchased a Duplo an NOT 19-25 age group&quot;
+             )) %&gt;%
+
+# To represent result:
+
+    select(theme ,age_group, target_group) %&gt;%
+
+# To represent result:
+     count(target_group) %&gt;%
+    mutate(probablity=n/sum(n))</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   target_group                                 n probablity
+##   &lt;chr&gt;                                    &lt;int&gt;      &lt;dbl&gt;
+## 1 purchased a Duplo an 19-25 age group         9      0.257
+## 2 purchased a Duplo an NOT 19-25 age group    26      0.743</code></pre>
+<p>The probablity is 0.2571429 or nearly 25.71%.</p>
+</div>
+<div id="which-age-group-has-purchased-the-largest-number-of-lego-sets-how-many-did-they-purchase" class="section level2">
+<h2>6- Which age group has purchased the largest number of lego sets? How many did they purchase?</h2>
+<pre class="r"><code>new &lt;- lego_age_group  %&gt;%
+    group_by(age_group)  %&gt;%
+    count(quantity)  %&gt;%
+    summarise(Number_of_Purchase=sum(n*quantity))
+
+new</code></pre>
+<pre><code>## # A tibble: 5 x 2
+##   age_group    Number_of_Purchase
+##   &lt;chr&gt;                     &lt;dbl&gt;
+## 1 18 and under                 45
+## 2 19 - 25                     174
+## 3 26 - 35                     267
+## 4 36 - 50                     313
+## 5 51 and over                  92</code></pre>
+<p>36 - 50 years. They purchased 313 sets.</p>
+</div>
+<div id="which-age-group-has-spent-the-most-money-on-legos-how-much-did-they-spend" class="section level2">
+<h2>7- Which age group has spent the most money on legos? How much did they spend?</h2>
+<pre class="r"><code>new1 &lt;- lego_age_group %&gt;%
+    select(age_group, us_price, quantity) %&gt;%
+    group_by(age_group)  %&gt;%
+    summarise(Total=sum(quantity*us_price))
+
+
+
+new1</code></pre>
+<pre><code>## # A tibble: 5 x 2
+##   age_group    Total
+##   &lt;chr&gt;        &lt;dbl&gt;
+## 1 18 and under  949.
+## 2 19 - 25      4939.
+## 3 26 - 35      7576.
+## 4 36 - 50      9533.
+## 5 51 and over  2475.</code></pre>
+<p>36 - 50 years. They spent 9532.87 USD in total.</p>
+</div>
+<div id="come-up-with-a-question-you-want-to-answer-using-this-data-and-write-it-down.-then-create-a-data-visualization-that-answers-the-question-and-briefly-explain-how-your-visualization-answers-the-question." class="section level2">
+<h2>8- Come up with a question you want to answer using this data, and write it down. Then, create a data visualization that answers the question, and briefly explain how your visualization answers the question.</h2>
+<p>I want to know the correlation between the “pieces” and “us_price”. For this purpose, categorize legos to four groups: “75 and under pieces”, “76 - 150 pieces”, “151 - 400 pieces”, “401 pieces and over”.
+first, show the number of each categories using bar and pie charts.
+In all plots:</p>
+<ul>
+<li><p>relevel x-axis parameter from fewest to largest number of pieces. (fct_relevel())</p></li>
+<li><p>delete NA elements from counting. (drop_na())</p></li>
+</ul>
+<pre class="r"><code>lego_piece_price &lt;- lego %&gt;%
+  select(pieces, us_price) %&gt;%
+    mutate(NumberOfPieces=case_when(
+        pieces &lt;= 75 ~ &quot;Under 75 pices&quot; ,
+        between(pieces, 76, 150) ~ &quot;76 to 150 pieces&quot; ,
+        between(pieces, 151, 400) ~ &quot;151 to 400 pieces&quot; ,
+        pieces &gt;= 401 ~ &quot;over 400 pieces&quot;)) %&gt;%
+  
+        mutate(NumberOfPieces=fct_relevel(NumberOfPieces, &quot;Under 75 pices&quot;,
+                                    &quot;76 to 150 pieces&quot; ,
+                                   &quot;151 to 400 pieces&quot; ,
+                                  &quot;over 400 pieces&quot; )) %&gt;%
+                                   drop_na()
+
+
+plot_ &lt;- lego_piece_price %&gt;%
+  group_by(NumberOfPieces) %&gt;%
+ count()
+
+ggplot(plot_, aes(NumberOfPieces, n))+
+  geom_col()</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/assignment-a03-tidyverse/index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code>labels=c(&quot;Under 75 pices&quot;,&quot;76 to 150 pieces&quot;,&quot;151 to 400 pieces&quot;,&quot;over 400 pieces&quot;)
+
+
+pie(plot_$n,labels)</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/assignment-a03-tidyverse/index_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+<p>Now, calculate average price of each categories.</p>
+<pre class="r"><code>pp &lt;- lego_piece_price %&gt;%
+  group_by(NumberOfPieces) %&gt;%
+  arrange(.by_group = TRUE) %&gt;%
+  summarise(average_price=mean(us_price))
+
+pp</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   NumberOfPieces    average_price
+##   &lt;fct&gt;                     &lt;dbl&gt;
+## 1 Under 75 pices             9.84
+## 2 76 to 150 pieces          14.5 
+## 3 151 to 400 pieces         26.8 
+## 4 over 400 pieces           77.5</code></pre>
+<pre class="r"><code>ggplot(pp, aes(NumberOfPieces, average_price))+
+  geom_col()</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/assignment-a03-tidyverse/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="add-one-element-to-the-plot-from-the-previous-exercise-to-change-the-look-of-the-plot-without-changing-the-underlying-data.-for-example-you-can-change-the-theme-background-color-add-annotations-etc.-state-the-change-youre-making-and-display-the-updated-visualization.-we-encourage-you-to-be-creative" class="section level2">
+<h2>9- Add one element to the plot from the previous exercise to change the look of the plot without changing the underlying data. For example, you can change the theme, background color, add annotations, etc. State the change you’re making and display the updated visualization. We encourage you to be creative!</h2>
+<p>The pie chart I made in the question 8 did not use ggplot2 library (but basic pie plot), so it looks basic. ggplot has not a dedicated geom_ for pie chat, however, it has indirect method for generating a pie plot and employing capabilities of ggplot2 on that. (coord_polar()).</p>
+<p>The question is to generate a pie chart using ggplot2 and add labels to that. Pie plot should look like previous basic pie chart but more professional.</p>
+<pre class="r"><code>ggplot(plot_, aes(x = &quot;&quot;,n, fill=NumberOfPieces))+
+  geom_bar(stat = &quot;identity&quot;, color = &quot;black&quot;)+
+  labs(title = &quot;the number of each categories&quot;) +
+  coord_polar(&quot;y&quot;) +
+  theme_void()</code></pre>
+<p><img src="https://ramin1ala.netlify.app/posts/assignment-a03-tidyverse/index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

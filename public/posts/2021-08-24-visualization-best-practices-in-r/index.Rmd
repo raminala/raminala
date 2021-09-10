@@ -1,0 +1,768 @@
+---
+title: Visualization Best Practices in R
+author: ''
+date: '2021-08-24'
+slug: []
+categories: []
+tags:
+  - data_visualization
+---
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(waffle)
+who_disease <- read_csv("who_disease.csv")
+md_speeding <- read_csv("md_speeding.csv")
+
+```
+
+## 1-2 Familiarizing with disease data
+
+The dataset containing disease cases from the World Health Organization (WHO) is loaded into your environment as the dataframe who_disease.
+
+In order to familiarize yourself with the data, let's start by printing it to the console.
+
+Once you've investigated it a bit, make a simple bar chart of the number of observations by region using the supplied code. You will need to fill in the aes()thetics function to map the x-axis to the proper column name.
+
+This course touches on a lot of concepts you may have forgotten, so if you ever need a quick refresher, download the Tidyverse Cheat Sheet and keep it handy!
+
+```{r}
+# print dataframe to inspect
+print(who_disease)
+
+# set x aesthetic to region column
+ggplot(who_disease, aes(region)) +
+  geom_bar()
+```
+
+## 1-3 Warming up data-wrangling
+
+Let's warm up your tidyverse data wrangling skills a bit and look at the number of cases reported by year for the American region ('AMR').
+
+To do this, we will first filter the dataset to our desired region, then make a simple scatter plot of the year by cases.
+
+In addition, set the opacity of the points to 50% (0.5) so we can get a sense of data overlap.
+
+```{r}
+# filter data to AMR region. 
+amr_region <- who_disease %>%
+    filter(region=="AMR")
+
+# map x to year and y to cases. 
+ggplot(amr_region, aes(year,cases)) + 
+	# lower alpha to 0.5 to see overlap.   
+  	geom_point(alpha=0.5)
+```
+
+## 1-5 The infamous P-I-E
+
+Intuitively, you can think about a pie chart as a stacked bar chart that has been 'wrapped' around some central axis. Conveniently, this intuition fits very well with how they are made in ggplot2.
+
+Supplied is code to summarize our who_disease data into a dataframe containing three diseases: measles, mumps, and,other, along with their total number of cases in the data.
+
+Your job is to turn the empty ggplot object into a stacked bar-chart, then into a pie-chart by using the transform coord_polar(theta = 'y').
+
+Notice how I have set x = 1 in the aesthetics. This is because we only want one bar chart here. We'll learn about multiple stacked bar charts in the next lesson!
+
+```{r}
+# Wrangle data into form we want. 
+disease_counts <- who_disease %>%
+	mutate(disease = ifelse(disease %in% c('measles', 'mumps'), disease, 'other')) %>%
+	group_by(disease) %>%
+	summarise(total_cases = sum(cases))
+
+ggplot(disease_counts, aes(x = 1, y = total_cases, fill = disease)) +
+	# Use a column geometry.
+	geom_col() +
+	# Change coordinate system to polar and set theta to 'y'.
+	coord_polar(theta="y")
+```
+
+
+## 1-6 Cleaning up the pie
+
+The pie chart you made in the last plot is good, but it's a little cluttered. Let's clean it up using the ggplot function theme_void() along with giving it a meaningful title with ggtitle(...).
+
+The disease_counts summarized dataframe from the last exercise is already loaded for you.
+
+```{r}
+ggplot(disease_counts, aes(x = 1, y = total_cases, fill = disease)) +
+	# Use a column geometry.
+	geom_col() +
+	# Change coordinate system to polar.
+	coord_polar(theta = "y") +
+	# Clean up the background with theme_void and give it a proper title with ggtitle.
+	theme_void() +
+	ggtitle("Proportion of diseases")
+```
+
+
+## 1-7 How about a waffle?
+
+What if we are interested in the details of the 'other' class?
+
+Let's make the switch to a waffle chart, as they are capable of dealing with more classes. We'll use the same data-manipulation pipeline from the last exercise, but this time with all the diseases left in.
+
+We will use the library waffle which contains the function waffle(). This function produces a waffle chart for you when supplied with a named vector of counts.
+
+It will draw one square for each unit supplied in the vector, so we need to manipulate our disease counts to rounded percents (note the mutate() call in the supplied data wrangling code).
+
+```{r}
+disease_counts <- who_disease %>%
+	group_by(disease) %>%
+	summarise(total_cases = sum(cases)) %>% 
+	mutate(percent = round(total_cases/sum(total_cases)*100))
+
+# Create an array of rounded percentages for diseases.
+case_counts <- disease_counts$percent
+# Name the percentage array
+names(case_counts) <- disease_counts$disease
+
+# Pass case_counts vector to the waffle function to plot
+waffle(case_counts)
+```
+
+
+## 1-9 Basic stacked bars
+
+When we made the pie and waffle charts in the last exercises, we looked at all years in the data combined together.
+
+Now, we're interested in looking at these patterns over time. To do this we will make a stacked bar chart with the x-axis being the year of observation. Like we did with the pie chart before, we will simplify the data to just be measles, mumps, and other.
+
+Do you notice anything funky in the data after visualizing it this way?
+
+```{r message=FALSE}
+disease_counts <- who_disease %>%
+	mutate(disease = ifelse(disease %in% c('measles', 'mumps'), disease, 'other')) %>%
+	group_by(disease, year) %>% # note the addition of year to the grouping.
+	summarise(total_cases = sum(cases))
+
+# add the mapping of year to the x axis. 
+ggplot(disease_counts, aes(year, y = total_cases, fill = disease)) +
+	# Change the position argument to make bars full height
+	geom_col(position="fill")
+```
+
+
+## 1-10 Ordering stack for readability
+
+In the last plot since we grouped all diseases that are not measles and mumps into their own category, it's fair to assume that we care less about the 'other' category's trajectory than those of measles and mumps.
+
+Because of this, the plot we made has a problem. The way that the bars are stacked, with measles on top, mumps in the middle, and other on the bottom, makes it hard to get a good intuition for the behavior of mumps over time because its baseline is non-constant due to changing values in measles proportions.
+
+Ggplot orders the bars and legend based upon the order it sees the variables in the dataset. To override this, turn the disease column into a factor with the levels in the order we want our plot to use.
+
+```{r}
+disease_counts <- who_disease %>%
+	mutate(
+		disease = ifelse(disease %in% c('measles', 'mumps'), disease, 'other') %>% 
+		factor(levels = c('measles', 'other', 'mumps')) # change factor levels to desired ordering
+	) %>%
+	group_by(disease, year) %>%
+	summarise(total_cases = sum(cases)) 
+
+# plot
+ggplot(disease_counts, aes(x = year, y = total_cases, fill = disease)) +
+	geom_col(position = 'fill')
+```
+
+
+## 1-11 Categorical x-axis
+
+In the previous charts, we saw that mumps didn't start getting reported until 1999, making comparisons before then meaningless.
+
+Let's filter the data to be only the cases reported on or after 1999 and then make a stacked bar chart looking at the proportion of different diseases by region.
+
+Modify the data-manipulation pipeline to get the data into the form you want, then build your stacked bar chart and plot! Don't worry about ordering the bars here as we did in the last exercise. See any surprising patterns?
+
+```{r message=FALSE}
+disease_counts <- who_disease %>%
+	# Filter to on or later than 1999
+	filter(year >= 1999) %>% 
+	mutate(disease = ifelse(disease %in% c('measles', 'mumps'), disease, 'other')) %>%
+	group_by(disease, region) %>%    # Add region to grouping
+	summarise(total_cases = sum(cases))
+
+# Set aesthetics so disease is the stacking variable, region is the x-axis and counts are the y
+ggplot(disease_counts, aes(x = region, y = total_cases, fill = disease)) +
+	# Add a column geometry with the proper position value. 
+	geom_col(position = 'fill')
+```
+
+## 2-3 Working with geom_col
+
+In ggplot, there are two different ways to make bar plots: geom_col() and geom_bar().
+
+If your data is in the form where the height of the bar is encoded in a column that you want to map to the y-axis, like counts of diseases are in our data, you want to use the geom_col() option.
+
+Let's make a barplot of the number of cases recorded by disease for India in 1980 using geom_col().
+
+```{r}
+who_disease %>% 
+	# filter to india in 1980
+	filter(country=="India", year == 1980) %>% 
+	# map x aesthetic to disease and y to cases
+	ggplot(aes(disease, cases)) +
+	# use geom_col to draw
+	geom_col()
+```
+
+## 2-4 Wrangling geom_bar
+
+Whereas geom_col() expects you to pass it a y-axis mapping column, geom_bar() doesn't take a y-axis call (at least by default).
+
+Instead, geom_bar() takes your x-axis mapping and counts every single observation (or row of the passed dataframe) for each class and then draws bars of corresponding heights
+
+These two code chunks will give you the same plot:
+
+# geom_col()
+data %>%
+  groupby(xAxisCol) %>%
+  summarize(value = n()) %>%
+  ggplot(aes(x = xAxisCol, y = value) + 
+  geom_col()
+
+# geom_bar()
+data %>%
+  ggplot(aes(x = xAxisCol)) +
+  geom_bar()
+Let's use geom_bar() to make a look at observations with a large number of cases by region our WHO data.
+
+```{r}
+who_disease %>%
+	# filter data to observations of greater than 1,000 cases
+	filter(cases > 1000) %>%
+	# map the x-axis to the region column
+	ggplot(aes(region)) +
+	# add a geom_bar call
+	geom_bar()
+```
+
+## 2-6 Ordered point chart
+
+Let's start by improving the point plot we saw in the slides.
+
+First, change the data manipulation pipeline to filter to the years 1992 and 2002 instead of the default 2006-2016. Note that the array interestingCountries has been loaded and is the same as in the slides.
+
+Now modify the plotting code to plot the new data, but this time, let's reorder the y-axis in descending order of cases for 1992.
+
+```{r}
+interestingCountries <- c("NGA", "SDN", "FRA", "NPL", "MYS", "TZA", "YEM", "UKR", "BGD", "VNM")
+
+who_subset <- who_disease %>% 
+	filter(
+		countryCode %in% interestingCountries,
+		disease == 'measles',
+		year %in% c(1992, 2002) # Modify years to 1992 and 2002
+	) %>% 
+	mutate(year = paste0('cases_', year)) %>% 
+	spread(year, cases)
+ 
+# Reorder y axis and change the cases year to 1992
+ggplot(who_subset, aes(x = log10(cases_1992), y = reorder(country, cases_1992))) +
+	geom_point()
+
+```
+
+## 2-7 Adding visual anchors
+
+A nice property of the log fold change is it is symmetric: a value of 1 means two times 'bigger', and -1 means two times 'smaller.' Due to this, the position of 0 on the x-axis marks the switch point between count declines and increases over years. When your data has a natural break-point like this, it is good if the chart shows it as a focal-point as well.
+
+The code provided will make a basic point chart of the log fold change for the dates. To improve it, we will do two things. First, reorder the dots in descending order like in the previous exercise. Second, add a guideline at x = 0 to show the neutral point by adding geom_vline() (for verticalline) to your plot object with the argument xintercept set to 0.
+
+```{r}
+who_subset %>% 
+	# calculate the log fold change between 2002 and 1992
+	mutate(logFoldChange = log2(cases_2002/cases_1992)) %>% 
+	# set y axis as country ordered with respect to logFoldChange
+	ggplot(aes(x = logFoldChange, y = reorder(country, logFoldChange))) +
+	geom_point() +
+	# add a visual anchor at x = 0
+	geom_vline( xintercept = 0)
+```
+
+## 2-8 Faceting to show structure.
+
+Taking the code from the last exercise, let's modify it to group the countries by their region by faceting.
+
+This will help inject a bit more structure into the presentation while not overly complicating the chart.
+
+We want to use facet_grid() here and keep all the plots in the same column, enabling easy comparisons outside of a region while still maintaining the region-level grouping.
+
+You will also need to adjust the scale argument in facet_grid() in order to avoid repeating the entire y-axis structure for every facet.
+
+```{r}
+who_subset %>% 
+	mutate(logFoldChange = log2(cases_2002/cases_1992)) %>% 
+	ggplot(aes(x = logFoldChange, y = reorder(country, logFoldChange))) +
+	geom_point() +
+	geom_vline(xintercept = 0) +
+	xlim(-6,6) +
+	# add facet_grid arranged in the column direction by region and free_y scales
+	facet_grid(region~., scales = 'free_y')
+```
+
+## 2-10 Let's flip some axes
+
+First, we can practice rotating a plot. Provided is code that makes a bar plot of the number of cases of pertussis in the Americas region (AMR) in 1980. You will notice it's almost unreadable.
+
+First, to help see patterns that may be in the data, reorder() the columns in descending order of cases.
+
+Next, let's coord_flip() the axes to make it possible to read the country names.
+
+
+```{r}
+amr_pertussis <- who_disease %>% 
+	filter(   # filter data to our desired subset
+		region == 'AMR', 
+		year == 1980, 
+		disease == 'pertussis'
+	)
+# Set x axis as country ordered with respect to cases. 
+ggplot(amr_pertussis, aes(x =country , y = cases)) +
+	geom_col() +
+	# flip axes
+	coord_flip()
+
+```
+
+
+```{r}
+amr_pertussis <- who_disease %>% 
+	filter(   # filter data to our desired subset
+		region == 'AMR', 
+		year == 1980, 
+		disease == 'pertussis'
+	)
+# Set x axis as country ordered with respect to cases. 
+ggplot(amr_pertussis, aes(x =reorder(country,cases) , y = cases)) +
+	geom_col() +
+	# flip axes
+	coord_flip()
+
+```
+
+## 2-11 Cleaning up the bars
+
+The changes we made to the last plot are great and improved it immensely, but we can go further!
+
+We seem to have a few countries that have zero counts for the cases. Let's get rid of these to free up even more space for the country names to breath.
+
+In addition, let's get rid of the unnecessary horizontal lines that are cluttering up the background.
+
+The dataframe amr_pertussis that we made in the last exercise is already loaded for you.
+
+```{r}
+amr_pertussis %>% 
+	# filter to countries that had > 0 cases. 
+	filter(cases>0) %>%
+	ggplot(aes(x = reorder(country, cases), y = cases)) +
+	geom_col() +
+	coord_flip() +
+	theme(
+	# get rid of the 'major' y grid lines
+	panel.grid.major.y=element_blank()
+	)
+```
+
+## 2-12 Converting to point chart
+
+Our plot in the last exercise looked good, but what if we care about the values of the lower-end of the cases? It's hard for us to get a sense of their values because Brazil and Argentina are forcing the axis' upper range so high.
+
+This is a good situation to switch to a log scale. However, remember that when on a log scale our stacking concept fails, so we should switch to a point chart! Note the additional filter added to the pipeline. What happens if you run the code without it?
+
+This time, instead of modifying the data before sending to ggplot(), we will add scale_y_log10() to our plot and ggplot will take care of it for us.
+
+To polish, use theme_minimal() to lighten the chart up and increase the size of the points from the default to 2.
+
+```{r}
+amr_pertussis %>% filter(cases > 0) %>% 
+	ggplot(aes(x = reorder(country, cases), y = cases)) + 
+	# switch geometry to points and set point size = 2
+	geom_point(size = 2) + 
+	# change y-axis to log10. 
+	scale_y_log10() +
+	# add theme_minimal()
+	theme_minimal() +
+	coord_flip()
+```
+
+## 3-2 Orienting with the data
+
+Let's take our first look at the new speeding dataset.
+
+First, print the dataframe to your screen and try and get a sense of it. You can use filter()s, group_by()s or any of your tidyverse functions to do this.
+
+The supplied code is what we used to make the histogram of blue car speeds in the slides. Modify this code to look at how many miles-per-hour red cars were going over the speed limit (speed_over). Give the plot a title while you're at it to let people know what they're looking at.
+
+```{r}
+# Print data to console
+print(md_speeding)
+
+# Change filter to red cars
+md_speeding %>% 
+	filter(vehicle_color == 'RED') %>% 
+	# switch x mapping to speed_over column
+	ggplot(aes(x = speed_over)) +
+	geom_histogram() +
+	# give plot a title
+	ggtitle("MPH over speed limit | Red cars")
+```
+
+## 3-3 Looking at all data
+
+Looking at the speed for a given car color is a little contrived so let's change the example we saw in the slides to include all of the data.
+
+Your job is to fill in the code to make a histogram of the speed_over column of the data.
+
+In addition, to allow the reader to more easily anchor themselves with respect to the axes, lower the alpha of the histogram to allow the grid lines to show through. Pair this with the addition of theme_minimal() to darken the grid lines and lighten the background to compensate for the lighter bars.
+
+```{r}
+ggplot(md_speeding) + 
+	# Add the histogram geometry 
+	geom_histogram(
+        # Map speed_over to x
+		aes(speed_over),
+		# Lower alpha to 0.7
+		alpha=0.7, bins = 30
+	) +
+	# Add minimal theme
+	theme_minimal()
+```
+
+## 3-4 Changing y-axis to density
+
+By default, you will notice that the y-axis is the 'count' of points that fell within a given bin. This is nice and interpretable, but what if we wanted to interpret the plot as a true density curve like it's trying to estimate? I.e. all the (bar widths) * (bar heights) sum to 1?
+
+To do this we simply add y = stat(density) to the aesthetic mappings, this will re-scale the y-axis from counts to an empirical probability estimate. Note this won't change the shape of the plot at all, but will simply give you a different interpretation of the y-axis.
+
+Let's try it out on the hour of the day that a speeder was pulled over (hour_of_day). In addition, lower the opacity of the bars a bit so the grid lines show through to allow easier comparisons.
+
+```{r}
+ggplot(md_speeding) +
+	geom_histogram(
+		# set x and y aesthetics to hour_of_day and stat(density) respectively.
+		aes(hour_of_day, y = stat(density)),
+		# make points see-through by setting alpha to 0.8
+		alpha = 0.8, bins = 30
+	)
+```
+
+## 3-6 Adjusting the bin numbers
+
+Let's take our first steps away from the default number of bins with our histograms. We'll start by building a histogram of the percentage of the speed a driver is traveling over the limit for each citation. This is calculated as ((speed - speed_limit) / speed_limit)*100.
+
+Plot percentage over the speed limit as a histogram with the number of bins set to 40. While you're at it, set the alpha to 0.8. You're entirely on your own with this one, no scaffolding.
+
+```{r}
+# Load md_speeding into ggplot
+ggplot(md_speeding) +
+  # add a geom_histogram with x mapped to percentage_over_limit
+    geom_histogram(aes(percentage_over_limit),
+                bins=40,     # set bin number to 40
+        alpha = 0.8)    # reduce alpha to 0.8
+```
+
+## 3-7 More bars
+
+With the last plot, 40 bins make it roughly look like we have a skewed but unimodal distribution. Remember the rule-of-thumb from the slides: if you have more than 150 data points you should usually shoot straight up to 100 bins. Let's do that here.
+
+Edit the plot to have 100 bins instead of 40 and also change the color of the bars to 'steelblue' just because it's a good color and sometimes that's important.
+
+Do you notice anything about the range around 30% now? If you want to get a little more of an idea of what could be happening, try filtering the data to the percentage over the speed limit of 30.
+
+```{r}
+ggplot(md_speeding) +
+    geom_histogram(
+        aes(x = percentage_over_limit),
+        bins = 100 ,         # switch to 100 bins
+        fill ='steelblue' ,                # set the fill of the bars to 'steelblue'
+        alpha = 0.8 )
+```
+
+## 3-8 Bin width by context
+
+The supplied code looks at the distribution of citations by hour of the day. Notice how the bars don't fall nicely on a given hour; making the interpretation of the bar heights a bit ungainly. When your data has natural breakpoints like this, you should exploit them. In this case, we can set our breaks to fall on the hour boundaries.
+
+Modify geom_histogram() to set the binwidth to 1 hour. This argument, however, doesn't tell ggplot where to start its bins, which by default is determined by the extent of the data. To fix this, set the center argument to 0.5. This says you want one of the bars to be centered at 30 mins past midnight, ggplot then arranges the rest of the bars accordingly. (You could set this to be any hour + 0.5 such as 2.5, 3.5 etc..)
+
+```{r}
+ggplot(md_speeding,aes(x = hour_of_day)) +
+    geom_histogram(
+        binwidth=1 , # set binwidth to 1
+        center=0.5  # Center bins at the half (0.5) hour
+    ) +
+    scale_x_continuous(breaks = 0:24)
+```
+
+## 3-10 Histogram to KDE
+
+For these exercises, we will be looking at a subset of our data of citations handed out to "Heavy Duty Truck"s. We may be a data-savvy truck driver and want to know when the most dangerous time to be out on the road is. Note that the sample size here is only 32 observations.
+
+Below is code to make a default histogram with ggplot. Unsurprisingly, it's not great. There's not really enough data to fill out even 30 bins, making it rather hard to read or get a grasp of the data. Switch the geometry to a KDE using geom_density(). Lastly, in an effort to maintain the most transparency with your visualization, add a subtitle to the plot telling the viewer the bin-width used for your KDE.
+
+```{r}
+# filter data to just heavy duty trucks
+truck_speeding <- md_speeding %>% 
+    filter(vehicle_type == "Heavy Duty Truck")
+ 
+ggplot(truck_speeding, aes(x = hour_of_day)) +
+    # switch to density with bin width of 1.5, keep fill 
+    geom_density(fill = 'steelblue',bw=1.5) +
+    # add a subtitle stating binwidth
+    labs(title = 'Citations by hour',subtitle="Gaussian kernel SD = 1.5")
+```
+
+## 3-11 Putting a rug down
+
+The plot we just made looks pretty good, but we can see a small hint of bi-modality between the hours of 10 and 15. Given we just are looking the blob of a density estimate it's hard to know how confident we are in that shape.
+
+Let's alleviate this by doing a couple things.
+
+First, lower the alpha on the density plot so we can more accurately locate these peaks using the background grid.
+
+Next, add a rug-plot beneath the density plot using geom_rug(). To show any overlap that may occur in the rug plot set its alpha to 0.5.
+
+The dataframe you made in the last exercise: truck_speeding has already been loaded for you.
+
+```{r}
+ggplot(truck_speeding, aes(x = hour_of_day)) +
+    # Adjust opacity to see gridlines with alpha = 0.7
+    geom_density(bw = 1.5, fill = 'steelblue', alpha = 0.7) +
+    # add a rug plot using geom_rug to see individual data points, set alpha to 0.5.
+    geom_rug(alpha = 0.5) +
+    labs(title = 'Citations by hour', subtitle = "Gaussian kernel SD = 1.5")
+```
+
+## 3-12 KDE with lots of data
+
+The code supplied will make a basic KDE of the percentage_over_limit for all citations. At first glance, the settings makes sense. We have a lot of data so we set our bin width nice and narrow: just one percent. Also, the rug plot, which has been thoughtfully added, has a lowered alpha of 0.7.
+
+Running this code, you will immediately see it's not a great plot. The density estimate looks like a porcupine and the rug plot is essentially a thick black bar due to massive overlap.
+
+Fix it by upping the bin width a bit to 2.5 and lowering the alpha of the rug plot to 0.05 to try and get some sense of the point overlap. Don't forget to change the subtitle to reflect the change in the kernel width!
+
+```{r}
+ggplot(md_speeding, aes(x = percentage_over_limit)) +
+    # Increase bin width to 2.5
+    geom_density(fill = 'steelblue', bw = 2.5,  alpha = 0.7) + 
+    # lower rugplot alpha to 0.05
+    geom_rug(alpha = 0.05) + 
+    labs(
+        title = 'Distribution of % over speed limit', 
+        # modify subtitle to reflect change in kernel width
+        subtitle = "Gaussian kernel SD = 2.5"
+    )
+```
+
+## 4-2 A simple boxplot
+
+Let's get started by simply making a boxplot similar to the ones we made in the slides.
+
+Modify the filter() to look at 'RED' cars instead of blue and then map the x-axis to gender and the y-axis to driver speed. Add your boxplot geometry and give it a title.
+
+```{r}
+md_speeding %>% 
+    filter(vehicle_color == 'RED') %>%
+    # Map x and y to gender and speed columns respectively
+    ggplot(aes(gender, speed)) + 
+    # add a boxplot geometry
+    geom_boxplot() +
+    # give plot supplied title
+    labs(title = 'Speed of red cars by gender of driver')
+```
+
+
+## 4-3 Adding some jitter
+
+We can improve the previous plot by adding jittered points behind the boxplot. Make the jittered points a nice 'steelblue' color and set their alpha to 0.3 in order to visualize any overlap that may happen by chance.
+
+You will also need to make the boxplot transparent in order to see the points that fall under the 'box' of the box plot.
+
+```{r}
+md_speeding %>% 
+    filter(vehicle_color == 'RED') %>%
+    ggplot(aes(x = gender, y = speed)) + 
+    # add jittered points with alpha of 0.3 and color 'steelblue'
+    geom_jitter(color="steelblue", alpha = 0.3) +
+    # make boxplot transparent with alpha = 0
+    geom_boxplot(alpha = 0) +
+    labs(title = 'Speed of red cars by gender of driver')
+```
+
+
+## 4-4 Faceting to show all colors
+
+As we may expect, there doesn't appear to be too big of a difference in genders for red cars. What happens if we instead facet to look at this comparison across all the colors?
+
+It's not uncommon when comparing distributions to want to look at a large number of conditions. When doing this faceting, we're looking at all 10k points.
+
+```{r}
+# remove color filter
+md_speeding %>% 
+    ggplot(aes(x = gender, y = speed)) + 
+    geom_jitter(alpha = 0.3, color = 'steelblue') +
+    geom_boxplot(alpha = 0) +
+    # add a facet_wrap by vehicle_color
+    facet_wrap(~vehicle_color) +
+    # change title to reflect new faceting
+    labs(title = 'Speed of different car colors, separated by gender of driver')
+```
+
+
+## 4-6 Your first beeswarm
+
+The following code makes a simple beeswarm plot for you of the gender speeding data, similar to what we saw in the last lesson.
+
+You will notice that it doesn't look fantastic due to the stacking of the points causing overlap between the two genders' spreads.
+
+Fix up this plot by reducing the size of the points using the cex argument to 0.5 and setting an opacity value for the points as to make the plots a little less harsh and emphasize the individual points.
+
+In addition, add a transparent boxplot over the points to provide basic summary statistics as well.
+
+```{r}
+# Load library for making beeswarm plots
+library(ggbeeswarm)
+
+md_speeding %>% 
+    filter(vehicle_color == 'RED') %>%
+    ggplot(aes(x = gender, y = speed)) + 
+    # change point size to 0.5 and alpha to 0.8
+    geom_beeswarm(cex =0.5 , alpha = 0.8) +
+    # add a transparent boxplot on top of points
+    geom_boxplot(alpha = 0)
+```
+
+
+## 4-7 Fiddling with a violin plot
+
+The supplied code makes a simple violin plot of the same comparison we've been looking at.
+
+Much like with geom_density(), ggplot has given us an unfilled (or at least white) shape. To make this more aesthetically pleasing, set the fill to 'steelblue'. Set the kernel SD to an intuitively reasonable value and make sure to state this kernel width in the subtitle of the plot.
+
+In addition, let's attempt to replicate the rain-cloud plots from the density lesson and add (non-jittered) points back to the plot over the violins to attempt to see where interpolation is happening. Do this by simply adding a geom_point() geometry and setting the color to 'white', the alpha to 0.3 to show overlap, and the size to 0.5 to keep the points as unobtrusive as possible.
+
+```{r}
+md_speeding %>% 
+    filter(vehicle_color == 'RED') %>%
+    ggplot(aes(x = gender, y = speed)) + 
+    # Replace beeswarm geometry with a violin geometry with kernel width of 2.5
+    geom_violin(bw = 2.5, alpha = 0.7) +
+    # add individual points on top of violins
+    geom_point(alpha = 0.3, size = 0.5)
+```
+
+
+## 4-8 Violins with boxplots
+
+If we still want the handy summary statistics that a boxplot provides while not sacrificing the benefits of a violin plot, we can simply add a geom_boxplot() on top of the violin geometry in our plot object.
+
+One issue we run into when doing this, however, is that the boxplots are awkwardly wide. We only need to see where the horizontal lines are and not much more. Luckily, geom_boxplot() has the argument width, which scales the width of the boxplot (e.g. 0.5 = half-width).
+
+Modify the plot we just made to have a boxplot between the violin and point geometries. In addition, change the points to have shape = 95 which is a horizontal tick mark. Lastly, we forgot to tell the user our kernel width, let's do that now.
+
+```{r}
+md_speeding %>% 
+    filter(vehicle_color == 'RED') %>%
+    ggplot(aes(x = gender, y = speed)) + 
+    geom_violin(bw = 2.5) +
+    # add a transparent boxplot and shrink its width to 0.3
+    geom_boxplot(alpha = 0, width = 0.3) +
+    # Reset point size to default and set point shape to 95
+    geom_point(alpha = 0.3, shape  = 95) +
+    # Supply a subtitle detailing the kernel width
+    labs(subtitle = 'Gaussian kernel SD = 2.5')
+```
+
+
+## 4-9 Comparing lots of distributions
+
+Let's revisit the faceted plot we made before, but now with our handy new techniques. Can we get a better handle on the relationships with our new plot types?
+
+The supplied code makes the same visualization you did in the last lesson. Change the code to use violin plots to display the density instead of jitter plots to draw the individual data. Like in the last exercise, shrink the boxplot width so they mostly sit within the violin plots. Last, don't forget to add a subtitle to the plot telling the viewer the width of your violin plot kernels!
+
+```{r}
+md_speeding %>% 
+    ggplot(aes(x = gender, y = speed)) + 
+    # replace with violin plot with kernel width of 2.5, change color argument to fill 
+    geom_violin(bw = 2.5, fill = 'steelblue') +
+    # reduce width to 0.3
+    geom_boxplot(alpha = 0, width=0.3) +
+    facet_wrap(~vehicle_color) +
+    labs(subtitle="Gaussian kernel width: 2.5",
+        title = 'Speed of different car colors, separated by gender of driver'
+        # add a subtitle w/ kernel width
+
+    )
+```
+
+
+## 4-11 A basic ridgeline plot
+
+Supplied is code to make a ridgeline plot looking at the percentage over the limit drivers were pulled over going by day of the week.
+
+Modify the code to set the kernel width (bandwidth) to a specified value, change the x-axis limits to get rid of the long tails, and also add a subtitle letting the reader know the bandwidth you are using.
+
+```{r}
+library(ggridges)
+
+md_speeding %>% 
+    mutate(day_of_week = factor(day_of_week, levels = c("Mon","Tues","Wed","Thu","Fri","Sat","Sun") )) %>% 
+    ggplot(aes( x = percentage_over_limit, y = day_of_week)) + 
+    # Set bandwidth to 3.5
+    geom_density_ridges(bandwidth=3.5) +
+    # add limits of 0 to 150 to x-scale
+    scale_x_continuous(limits=c(0, 150)) +
+    # provide subtitle with bandwidth
+    labs(subtitle ='Gaussian kernel SD = 3.5')
+```
+
+
+## 4-12 Cleaning up your ridgelines
+
+Let's modify the plot from the last exercise, even more, to make it prettier and easier to read.
+
+To do this, make the densities a bit transparent to help avoid overlapping issues by modifying the alpha value in the ridgeline geometry. Next, get rid of the extra space that ggplot puts around the extremes of the data to avoid the awkward empty strip on the right and left where the densities don't interpolate. Finally, use the theme() function to remove the y-axis ticks because the density lines already serve the purpose to point to the y-axis labels.
+
+```{r}
+md_speeding %>% 
+    mutate(day_of_week = factor(day_of_week, levels = c("Mon","Tues","Wed","Thu","Fri","Sat","Sun") )) %>% 
+    ggplot(aes( x = percentage_over_limit, y = day_of_week)) + 
+    # make ridgeline densities a bit see-through with alpha = 0.7
+    geom_density_ridges(bandwidth = 3.5, alpha=0.7) +
+    # set expand values to c(0,0)
+    scale_x_continuous(limits = c(0,150), expand = c(0,0)) +
+    labs(subtitle = 'Guassian kernel SD = 3.5') +
+    # remove y axis ticks
+    theme(axis.ticks.y=element_blank())
+```
+
+
+## 4-13 Making it rain (data points)
+
+The increased bi-modality we see early in the week could be compelling, but we should draw individual points below the densities in order to get a sense of what the KDE is doing in terms of interpolation before calling it a day.
+
+Added to the previous exercises' code is a point geometry to do just this. You will notice it doesn't look very good. To make it better we will do a few things…
+
+First, lower the point alphas slightly to visualize overlap. Second, switch the point shape to the geom_rug() style vertical lines ('|').
+
+At this stage, if you run the code you will see the points awkwardly clip the density shapes. We need to 'nudge' the tick marks down the y-axis a tiny bit. To do this we can use the position argument and the helper function position_nudge().
+
+```{r}
+md_speeding %>% 
+    mutate(day_of_week = factor(day_of_week, levels = c("Mon","Tues","Wed","Thu","Fri","Sat","Sun") )) %>% 
+    ggplot(aes( x = percentage_over_limit, y = day_of_week)) + 
+    geom_point(
+        # make semi-transparent with 
+        alpha = 0.2,
+        # turn points to vertical lines with shape = '|'
+        shape = '|',
+        # nudge the points downward by 0.05
+        position = position_nudge(y = -0.05)
+    ) +
+    geom_density_ridges(bandwidth = 3.5, alpha = 0.7) +
+    scale_x_continuous(limits = c(0,150), expand  = c(0,0)) +
+    labs(subtitle = 'Guassian kernel SD = 3.5') +
+    theme( axis.ticks.y = element_blank() )
+```
+

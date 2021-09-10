@@ -1,0 +1,567 @@
+---
+title: Machine Learning with Tree-Based Models in R
+author: ''
+date: '2021-07-26'
+slug: []
+categories: []
+tags:
+  - Tree-Based Models
+  - Machine Learning
+---
+
+```{r}
+library(tidymodels)
+```
+
+```{r}
+# Load the package
+library(tidymodels)
+library(tidyverse)
+diabetes <- read_csv("diabetes.csv")
+```
+
+
+## 1-3 Specify that tree
+
+In order to build models and use them to solve real-world problems, you first need to lay the foundations of your model by creating a model specification. This is the very first step in every machine learning pipeline that you will ever build.
+
+You are going to load the relevant packages and design the specification for your classification tree in just a few steps.
+
+```{r}
+# Pick a model class
+tree_spec <- decision_tree() %>% 
+  # Set the engine
+  set_engine("rpart") %>% 
+  # Set the mode
+  set_mode("classification")
+
+# Print the result
+tree_spec
+```
+
+## 1-4 Train that model
+
+A model specification is a good start, just like the canvas for a painter. But just as a painter needs color, the specification needs data. Only the final model is able to make predictions:
+
+Model specification + data = model
+
+In this exercise, you will train a decision tree that models the risk of diabetes using health variables as predictors. The response variable, outcome, indicates whether the patient has diabetes or not, which means this is a binary classification problem (there are just two classes). The dataset also contains health variables of patients like blood_pressure, age, and bmi.
+
+```{r}
+# Train the model
+tree_model_bmi <- tree_spec %>% 
+  fit(formula = factor(outcome) ~ bmi,
+data = diabetes)
+
+# Print the model
+tree_model_bmi
+```
+
+## 1-6 Train/test split
+
+In order to test your models, you need to build and test the model on two different parts of the data - otherwise, it's like cheating on an exam (as you already know the answers).
+
+The data split is an integral part of the modeling process. You will dive into this by splitting the diabetes data and confirming the split proportions.
+
+```{r}
+# Create the split
+diabetes_split <- initial_split(diabetes, prop = 0.8)
+
+# Extract the training and test set
+diabetes_train <- training(diabetes_split)
+diabetes_test  <- testing(diabetes_split)
+
+# Verify the proportions of both sets
+round(nrow(diabetes_train) / nrow(diabetes), 2) == 0.80
+round(nrow(diabetes_test) / nrow(diabetes), 2) == 0.20
+```
+
+## 1-7 Avoiding class imbalances
+
+Some data contains very imbalanced outcomes - like a rare disease dataset. When splitting randomly, you might end up with a very unfortunate split. Imagine all the rare observations are in the test and none in the training set. That would ruin your whole training process!
+
+Fortunately, the initial_split() function provides a remedy. You are going to observe and solve these so-called class imbalances in this exercise.
+
+There's already a split object diabetes_split available with a 75% training and 25% test split.
+
+```{r}
+# Proportion of 'yes' outcomes in the training data
+counts_train <- table(training(diabetes_split)$outcome)
+prop_yes_train <- counts_train["yes"] / sum(counts_train)
+
+# Proportion of 'yes' outcomes in the test data
+counts_test <- table(testing(diabetes_split)$outcome)
+prop_yes_test <- counts_test["yes"] / sum(counts_test)
+
+paste("Proportion of positive outcomes in training set:", round(prop_yes_train, 2))
+paste("Proportion of positive outcomes in test set:", round(prop_yes_test, 2))
+
+```
+
+```{r}
+# Create a split with a constant outcome distribution
+diabetes_split <- initial_split(diabetes,
+prop = 0.75,
+strata = outcome)
+
+# Proportion of 'yes' outcomes in the training data
+counts_train <- table(training(diabetes_split)$outcome)
+prop_yes_train <- counts_train["yes"] / sum(counts_train)
+
+# Proportion of 'yes' outcomes in the test data
+counts_test <- table(testing(diabetes_split)$outcome)
+prop_yes_test <- counts_test["yes"] / sum(counts_test)
+
+paste("Proportion of positive outcomes in training set:", round(prop_yes_train, 2))
+paste("Proportion of positive outcomes in test set:", round(prop_yes_test, 2))
+```
+
+## 1-8 From zero to hero
+
+You mastered the skills of creating a model specification and splitting the data into training and test sets. You also know how to avoid class imbalances in the split. It's now time to combine what you learned in the preceding lesson and build your model using only the training set!
+
+You are going to build a proper machine learning pipeline. This is comprised of creating a model specification, splitting your data into training and test sets, and last but not least, fitting the training data to a model. Enjoy!
+
+```{r}
+# Create the balanced data split
+diabetes_split <- initial_split(diabetes,
+prop = 0.75,
+strata = outcome)
+
+# Build the specification of the model
+tree_spec <- decision_tree() %>% 
+  set_engine("rpart") %>% 
+  set_mode("classification")
+
+# Train the model
+model_trained <- tree_spec %>% 
+  fit(formula = factor(outcome) ~ bmi+skin_thickness, 
+      data = training(diabetes_split))
+
+model_trained
+```
+
+## 1-10 Make predictions
+
+Making predictions with data is one of the fundamental goals of machine learning. Now that you know how to split the data and fit a model, it's time to make predictions about unseen samples with your models.
+
+You are going to make predictions about your test set using a model obtained by fitting the training data to a tree specification.
+
+```{r}
+model <- tree_spec %>% 
+  fit(formula = factor(outcome) ~ ., 
+      data = diabetes_train)
+
+# Generate predictions
+predictions <- predict(model,
+                   diabetes_test, type = "class")
+
+# Add the true outcomes
+predictions_combined <- predictions %>% 
+  mutate(true_class = diabetes_test$outcome)
+
+
+# Print the first lines of the result
+head(predictions_combined)
+```
+
+## 1-11 Crack the matrix
+
+Visual representations are a great and intuitive way to assess results. One way to visualize and assess the performance of your model is by using a confusion matrix. In this exercise, you will create the confusion matrix of your predicted values to see in which cases it performs well and in which cases it doesn't.
+
+```{r}
+# The confusion matrix
+diabetes_matrix <- conf_mat(data = predictions_combined,
+estimate = .pred_class,
+truth = true_class)
+
+# Print the matrix
+print(diabetes_matrix)
+```
+
+## 1-12 Are you predicting correctly?
+
+Your model should be as good as possible, right? One way you can assess this is by counting how often it predicted the correct classes compared to the total number of predictions it made. As discussed in the video, we call this performance measure accuracy. You can either calculate this manually or by using a handy shortcut. Both obtain the same result.
+
+```{r}
+
+# The accuracy calculated by a function
+acc_auto <- accuracy(predictions_combined, estimate = .pred_class, truth = factor(true_class))
+
+acc_auto$estimate
+
+
+```
+
+
+## 2-2 Train a regression tree
+
+As you know already, decision trees are a useful tool for classification problems. Moreover, you can also use them to model regression problems. The structural difference is that there will be numeric values (instead of classes) on the leaf nodes.
+
+In this exercise, you will use the chocolate dataset to fit a regression tree. This is very similar to what you already did in Chapter 1 with the diabetes dataset.
+
+```{r}
+
+chocolate_train <- read_csv("chocolate_train.csv")
+# Build the specification
+model_spec <- decision_tree() %>%
+  set_mode("regression") %>%
+  set_engine("rpart")
+
+# Fit to the data
+model_fit <- model_spec %>%
+  fit(formula = final_grade ~ cocoa_percent+review_date,
+      data = chocolate_train)
+
+model_fit
+```
+
+## 2-3 Predict new values
+
+A predictive model is one that predicts the outcomes of new, unseen data. Besides the numeric predictors, there are other useful columns in the dataset. The goal of this exercise is to predict the final rating grades of a chocolate tasting based on all other predictor variables that are available.
+
+```{r}
+chocolate_test <- read_csv("chocolate_test.csv")
+
+# Train the model
+chocolate_model <- model_spec %>%
+  fit(formula = final_grade ~ . , 
+      data = chocolate_train)
+
+# Predict new data
+#predictions <- predict(chocolate_model,new_data = chocolate_test) %>%
+  # Add the test set
+ # bind_cols(chocolate_test)
+
+#predictions
+```
+
+## 2-6 In-sample performance
+
+It's very important to know whether your regression model is useful or not. A useful model can be one that captures the structure of your training set well. One way to assess this in-sample performance is to predict on training data and calculate the mean absolute error of all predicted data points.
+
+In this exercise, you will evaluate your in-sample predictions using MAE (mean absolute error). MAE tells you approximately how far away the predictions are from the true values.
+
+## 2-7 Out-of-sample performance
+
+In-sample performance provides insights about how well a model captures the data it is modeling. For predictive models, it's also important to check model performance on new, unseen data, the out-of-sample performance.
+
+In this exercise, you will check the test set predictions of your model using MAE (mean absolute error).
+
+```{r}
+
+```
+
+## 2-10 Create the folds
+
+Splitting data only once into training and test sets has statistical insecurities - there is a small chance that your test set contains only high-rated beans, while all the low-rated beans are in your training set. It also means that you can only measure the performance of your model once.
+
+Cross-validation gives you a more robust estimate of your out-of-sample performance without the statistical pitfalls - it assesses your model more profoundly.
+
+```{r}
+# Set seed for reproducibility
+set.seed(20)
+
+# Build 10 folds
+chocolate_folds <- vfold_cv(chocolate_train, v = 10)
+
+chocolate_folds
+```
+
+## 2-11 Fit the folds
+
+Now that you split your data into folds, it's time to use them for model training and calculating the out-of-sample error of every single model. This way, you gain a balanced estimation of the performance of your model specification because you evaluated it out-of-sample several times.
+
+```{r}
+# Create a specification
+tree_spec <- decision_tree() %>%
+    set_engine("rpart") %>%
+    set_mode("regression")
+
+# Fit all folds to the specification
+fits_cv <- fit_resamples(tree_spec,
+               final_grade ~ .,
+               resamples = chocolate_folds,
+               metrics = metric_set(mae, rmse))
+
+fits_cv
+```
+
+## 2-12 Evaluate the folds
+
+Now that you fit 10 models using all 10 of your folds and calculated the MAE and RMSE of each of these models, it's time to visualize how large the errors are. This way, you build an intuition of the out-of-sample error distribution, which is helpful in assessing your model quality.
+
+You will plot all these errors as a histogram and display the summary statistics across all folds.
+
+```{r}
+
+library(ggplot2)
+
+# Collect the errors
+#all_errors <- collect_metrics(fits_cv, summarize = FALSE)
+#all_errors
+# Plot an error histogram
+#ggplot(all_errors, aes(.estimate, fill=.metric)) +
+ #       geom_histogram()
+
+# Collect and print error statistics
+#collect_metrics(fits_cv, summarize = TRUE)
+```
+
+## 2-15 Adjust model complexity
+
+To make good predictions, you need to adjust the complexity of your model. Simple models can only represent simple data structures, while complex models can represent fine-grained data structures.
+
+In this exercise, you are going to create trees of different complexities by altering the hyperparameters of a regression tree.
+
+```{r}
+# Create a model having only one split
+chocolate_model <- decision_tree(tree_depth = 1) %>% 
+		set_mode("regression") %>%
+		set_engine("rpart") %>% 
+		fit(final_grade ~ ., data = chocolate_train)
+chocolate_model
+```
+
+```{r}
+# Create a model with high cost for complexity
+chocolate_model <- decision_tree(cost_complexity = 0.1) %>% 
+		set_mode("regression") %>%
+		set_engine("rpart") %>% 
+		fit(final_grade ~ ., data = chocolate_train)
+chocolate_model
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# Create a model that can grow arbitrarily complex
+chocolate_model <- decision_tree(min_n = 2,
+			  					 cost_complexity = 0) %>%
+		set_mode("regression") %>%
+		set_engine("rpart") %>% 
+		fit(final_grade ~ ., data = chocolate_train)
+
+#chocolate_model
+```
+
+## 2-16 n-sample and out-of-sample performance
+
+Does a more sophisticated model always perform better? As we discussed in the video, that's only half the truth.
+
+Overfitted models understand the structure of their training set perfectly but cannot generalize to new data. That's a bummer! At the end of the day, the main purpose of a predictive model is to perform well on new data, right? Go investigate!
+
+```{r}
+# Predict on and combine with training data and calculate the error
+#predict(complex_model, new_data = chocolate_train) %>%
+#	bind_cols(chocolate_train) %>% 
+#	mae(estimate = .pred,
+#truth = final_grade)
+```
+
+
+## 3-2 Generate a tuning grid
+
+The standard hyperparameters of most models provide a good fit for most datasets. Yet, they need optimization for the best performance. Otherwise, it's like driving a car with an activated hand brake. Release the brake and tune your models!
+
+In this exercise, you'll create two objects that serve as a starting point: a tuning grid (a set of hyperparameter combinations) and a model specification that you later train with every value of the grid.
+
+```{r}
+# Create a specification with tuning placeholders
+tune_spec <- decision_tree(tree_depth = tune(),
+                           cost_complexity = tune()) %>% 
+  # Specify mode
+  set_mode("classification") %>%
+  # Specify engine
+  set_engine("rpart") 
+
+tune_spec
+
+# Create a regular grid
+tree_grid <- grid_regular(parameters(tune_spec),
+                 levels = 2)
+
+tree_grid
+```
+
+
+## 3-3 Tune along the grid
+
+After creating the tuning grid and a dummy specification, you need to fit a model on every grid point and evaluate the resulting model. This is very easy in the tidymodels framework using the tune_grid() function, as introduced in the slides.
+
+In the remaining exercises, you will use the credit card customers dataset, which has the following columns:
+
+still_customer: flag (yes or no) that indicates if a customer is still an active customer
+
+total_trans_amt: total sum of transactions in USD
+
+customer_age: age of the customer
+
+income_category: labels like $60K - $80K or Less than $40K to indicate the category of yearly income
+… and 16 more columns.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+customers <- read_csv("customers.csv")
+
+
+```
+
+```{r}
+set.seed(275)
+
+# Create CV folds of the customers tibble
+folds <- vfold_cv(customers, v = 3)
+
+# Tune along the grid
+tune_results <- tune_grid(tune_spec, 
+                          factor(still_customer) ~ .,
+                          resamples = folds,
+                          grid = tree_grid,
+                          metrics = metric_set(accuracy))
+
+# Plot the tuning results
+autoplot(tune_results)
+```
+
+
+
+## 3-4 Pick the winner
+
+Once tuning has been performed, it's time to pick the optimal hyperparameters from the results and build the final model. Two helpers from tidymodels come in handy:
+
+The function select_best() extracts the optimal hyperparameters from a tuning results tibble, and finalize_model() plugs these results into the specification, replacing the placeholders.
+
+```{r}
+# Select the parameters that perform best
+final_params <- select_best(tune_results)
+
+final_params
+
+# Finalize the specification
+best_spec <- finalize_model(tune_spec, final_params)
+
+best_spec
+
+# Build the final model
+final_model <- fit(best_spec,
+                   factor(still_customer) ~ .,
+                   customers)
+
+final_model
+```
+
+
+## 3-6 Calculate specificity
+
+Using different measures for model performance allows you to more accurately assess it. There are several metrics for different use cases. Specificity measures the proportion of true negative outcomes correctly identified:
+
+ 
+
+This formula implies that with specificity approaching 100%, the number of false positives (FP) approaches 0.
+
+In this exercise, you are going to investigate the out-of-sample specificity of your model with cross-validation.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# Create the split
+customers_split <- initial_split(customers, prop = 0.8)
+
+# Extract the training and test set
+customers_train <- training(customers_split)
+#------------------------------------------------------
+# Create CV folds of the training data
+folds <- vfold_cv(customers_train, v = 3)
+
+tree_spec <- decision_tree() %>% 
+                set_engine("rpart") %>%
+                set_mode("classification")
+
+#------------------------------------------------------
+
+# Calculate CV specificity
+specificities <- fit_resamples(tree_spec, 
+                     still_customer ~ .,
+                     resamples = folds,
+                     metrics = metric_set(specificity))
+
+# Collect the metrics
+#collect_metrics(specificities)
+```
+
+
+## 3-7 Draw the ROC curve
+
+Visualizing model performance with a ROC curve allows you to gather the performance across all possible thresholds into a single plot. It shows the sensitivity and specificity for every threshold. The more "up and left" a ROC curve is, the better the model.
+
+You are going to predict class probabilities of credit card customers having churned and plot the results as a ROC curve.
+
+
+# Extract the training and test set
+customers_test <- testing(customers_split)
+
+
+# Predict probabilities on test set
+predictions <- predict(model, customers_test, type = "prob") %>% 
+  # Add test set
+  bind_cols(customers_test)
+
+# Calculate the ROC curve for all thresholds
+roc <- roc_curve(predictions,
+           estimate = .pred_yes, 
+           truth = still_customer)
+
+# Plot the ROC curve
+autoplot(roc)
+
+
+
+## 3-8 Area under the ROC curve
+
+The area under the ROC curve boils down many other performance estimates to one single number and allows you to assess a model's performance very quickly. For this reason, it is a very common performance measure for classification models.
+
+# Calculate area under the curve
+auc_result <- roc_auc(predictions, 
+                  estimate = .pred_yes, 
+                  truth = still_customer)
+
+print(paste("The area under the ROC curve is", round(auc_result$.estimate, 3)))
+
+
+
+
+# 3-10 Create bagged trees
+
+Ensemble models like bagged trees are more powerful than single decision trees. Each tree in the ensemble gives a vote, and the average or majority vote is your prediction. This ensures you use swarm intelligence instead of relying on a single tree. For bagged trees, the bootstrap method ensures that in every ensemble tree, only a bootstrapped sample (sampled with replacement) of the original dataset is used to train the tree and create the prediction.
+
+# Create the specification
+spec_bagged <- baguette::bag_tree() %>%
+  set_mode("classification") %>%
+  set_engine("rpart", times = 20)
+
+# Fit to the training data
+model_bagged <- fit(spec_bagged,
+                    formula = still_customer ~ total_trans_amt+customer_age+education_level, 
+                    data = customers_train)
+
+# Print the model
+model_bagged
+
+
+# 3-11 
+
+
+# 3-12 Check for overfitting
+
+A very high in-sample AUC like  can be an indicator of overfitting. It is also possible that your dataset is just very well structured, or your model might just be terrific!
+
+To check which of these is true, you need to produce out-of-sample estimates of your AUC, and because you don't want to touch your test set yet, you can produce these using cross-validation on your training set.
+
+
+# 3-15 n-sample and out-of-sample performance
+
+Does a
+
+```{r}
+
+```
+
+
+

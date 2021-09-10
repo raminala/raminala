@@ -1,0 +1,399 @@
+---
+title: 'Assignment A02: Classification Models-revision'
+author: ''
+date: '2021-07-25'
+slug: []
+categories: []
+tags: []
+---
+
+***Ramin Ala***
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(tidymodels)
+library(knitr)
+library(markdown)
+bank <- read_csv("bank.csv") %>%
+  select(c(age, job, marital, education, default, balance, housing, loan, y)) %>%
+  mutate(subscription_status=ifelse(y == 'yes', 1, 0))
+ 
+
+```
+
+## Executive Summary
+
+The data is related to direct marketing campaigns (based on phone calls) of a Portuguese banking institution. This is a **supervised question** because it has an outcome (y), which is defined as if the product (bank term deposit) would be (or not) subscribed, "yes" means subscribed, and "no" means did not subscribe. This dataset consists of **`r nrow(bank)` observations**..
+
+In addition to the outcome classification variable, there are 16 variables. Eight variables are related to statistical information about current and previous campaigns, and they seem irrelevant to a dependent variable. So, there are eight determinant variables Including:
+
+Customer's ***age*** and ***balance*** (numerical variables),
+
+Customer's ***job***, ***marital*** status, ***education***  (categorical variables)
+ 
+***housing loan***, ***personal loan***, and ***default status*** (binary variables)  
+
+Information regarding the reference of the dataset is available at:
+
+http://www3.dsi.uminho.pt/pcortez/bib/2011-esm-1.txt
+
+## Univariate Analysis of numerical variables
+
+## *age*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bank %>%
+  ggplot(aes(age)) +
+  geom_density(fill = "green", alpha = 0.4, size=0.01) +
+   scale_x_continuous(breaks = seq(15, 90, by = 5))
+
+summary(bank$age) %>%
+  tidy() 
+```
+
+This plot and table give an impression of the age of examined group. The minimum, maximum and average ages are 19, 87, and 41 years respectively. The majority of observations are concentrated at the age of between 30 to 35 years. This information would not provide any insight into the possible outcome.
+
+
+## *balance*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bank %>%
+  filter(between(balance,-4000,10000)) %>%
+  ggplot(aes(balance)) +
+  geom_histogram(fill = "red", alpha = 0.4, size=1) +
+   scale_x_continuous(breaks = seq(-4000, 10000, by = 1000))
+
+summary(bank$balance) %>%
+  tidy()
+```
+
+Balance is generally between 0 to $500, however, amounts as high as $71000 is available in data. In the above plot, Only range from $-4000 to $10000 is shown for a better depiction. In this case, mean (1422) is higher than median (444) and plor looks right-skewed.
+
+## Univariate Analysis of some catagorical variables
+
+## *subscription status*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bank %>%
+  group_by(y) %>%
+  count() %>%
+  mutate(percentage=n/nrow(bank)*100)
+```
+
+
+This univariate analysis could give a clue about probability of subscription in customers. from the above table, it is obvious that majority of customers did not subscribe (88.476%) comparing slightly more than ten percent of customers who finally choose to subscribe (11.524%). The good point about dataset is it provided valid outcomes for all customers (whether subscribed or not).
+
+
+
+## Bivariate Analysis
+
+In this part, two variables are considering and their relationship is examined. A dummy variable has been defined for outcomes so that
+
+0=No (did not subscribe), and
+
+1=yes (subscribed).
+
+
+## correlation between age and balance
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+cor_age_balance <- cor(bank$age, bank$balance)
+
+paste("correlation between age and balance: ", cor_age_balance)
+
+```
+
+It shows a small positive correlation between age and balance. Generally, older clients tend to have a higher balance but the correlation is more like a random relation  because it is more close to zero (random case) than 1 (strong correlation). It shows that these two parameters cannot be assessed from each other. On the other hand, highly correlated variables are not good predictors together because they follow the same trend.
+
+
+
+## *subscription status~job*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bank0 <- bank %>%
+  group_by(job, subscription_status) %>%
+  count() 
+
+bank0 %>%
+  
+  ggplot(aes(n, job,fill=as.factor(subscription_status)))+
+  geom_col(stat = "identity")+
+  
+  geom_label(aes(label = n),
+               position = position_stack(vjust = 0.5),
+               size = 3.75,
+               colour = 'black')
+
+```
+
+There are twelve categories of jobs. Managements, blue-collars, and technicians are the most frequent jobs among respondents. As shown in the plot, among these jobs, managements are more likely to subscribe. However, relative number of subscriptions is very high among students, unknown and unemployed people. These groups are more likely to subscribe. 
+
+## *subscription status~marital*
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bank0 <- bank %>%
+  group_by(subscription_status, marital) %>%
+  count()  %>% 
+mutate(percent = n)
+  
+
+
+bank0 %>%
+  
+  ggplot(aes(marital, n,fill=as.factor(subscription_status)))+
+  geom_col(stat = "identity")+
+  
+  geom_label(aes(label = n),
+               position = position_stack(vjust = 0.5),
+               size = 3.75,
+               colour = 'black')
+
+```
+
+Similar to previous analysis could be done for marital status. This plot shows a majority of respondents are married. However, divorced group are more likely to subscribe when numbers are compared in each group.
+
+
+
+
+## *subscription status~balance*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+bank %>%
+  filter(between(balance,-4000,30000)) %>%
+  ggplot(aes(balance, subscription_status, color=y))+
+  geom_point()
+
+```
+
+In this plot, subscription status versus balance is depicted. Very high balances (higher than $30000) are considered as outlier data and they have been omitted from plotting. Considering this plot alone is not very informative for me. I barely could decide if a higher balance increase/decrease the chance of subscription by looking at this plot. For this reason, a Generalized linear line was added to the plot for better information.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bank %>%
+  filter(between(balance,-4000,30000)) %>%
+  ggplot(aes(balance, subscription_status))+
+  geom_point()+
+  geom_smooth(method = "glm", se=FALSE)
+```
+
+The added layer to this plot, comparing the previous plot, shows that those who have a higher balance are more likely to subscribe to a term deposit. But how strong is this relationship? In other word, is balance very determinant parameter? Let's perform a generalized analysis and see the parameters.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+mdl_bank_S <- glm(subscription_status ~ balance , data=bank, family = binomial)
+
+mdl_bank_S %>%
+  summary()
+
+```
+
+
+
+## *subscription status~age*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+bank %>%
+  ggplot(aes(age, subscription_status))+
+  geom_point()+
+  geom_smooth(method = "glm", se=FALSE)
+
+```
+
+Again it looks difficult to get information from this plot as they have not strong relation. However, blue line that is the generalized regression line, shows that higher age people tends to subscribe more. An important subject to remember is in a multi-variable problem, considering one parameter alone could be misleading because of correlation of variables.
+
+## *subscription status~default*
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+ss <- bank %>%
+  group_by(default) %>%
+  count(subscription_status) 
+
+
+ ss$default_result <-paste(ss$default,ss$subscription_status)
+
+ss %>%
+  ggplot(aes(default_result, n))+
+  geom_col(fill="blue")
+
+
+```
+
+
+In this plot combination of two categorical variables are counted. One is default and the other is the dependent variable (result). We have four categories here (four possible combinations for two binary variables). It seems that default clients (default=yes) is very unlikely to subscribe.
+
+## Box plot for subscription status versus age
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+bank %>%
+  group_by(y) %>%
+ggplot(aes(factor(y), age))+
+  geom_boxplot(color="red", fill="green", size=.5)+
+  labs(x="subscribed")+ scale_fill_grey() + theme_classic()
+
+```
+
+In this plot, we take a look at the distribution of subscription_status by age of clients. Plots show age has a relatively low effect on the chance of subscription of a client. This will be proved later by multiple linear regression and looking at the coefficient of age and its p-value. Older clients have a slightly higher chance of subscription. This can be seen by comparing mean and third quartile lines.
+
+## Box plot for subscription status versus balance
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+bank %>%
+  group_by(y) %>%
+  filter(between(balance,-4000,15000)) %>%
+ggplot(aes(factor(y), balance))+
+  geom_boxplot(color="red", fill="yellow", size=.8)+
+  labs(x="subscribed")+ scale_fill_grey() + theme_classic()
+
+```
+
+As it can be seen from this box plot, there are lots of outliers in the balance and variance of balance is high. Generally, it seems that higher balance increase chanse of subscription.
+
+## Analysis of three variables: result versus age and balance
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bank %>%
+  filter(between(balance,-4000,30000)) %>%
+  ggplot(aes(age, balance, color=y))+
+  geom_point()
+```
+This plot consists of two numerical variables (age and balance) that both are explanatory variables and the response variable which is depicted by color (pink colors did not subscribe and blue colors subscribed). 
+
+
+## *Analysis of four variables:subscription status~age and marital and loan*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+bank %>%
+  ggplot(aes(age, subscription_status, color=marital, shape=loan))+
+  geom_point()
+
+```
+
+This plot probably gives not more information than a two-variable analysis because points are very closed hard to distinguish. So it is time to examine all parameters using glm function.
+
+
+
+## Generalized Linear Model
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+mdl_bank_M <- glm(subscription_status ~ age+job+marital+education+default+balance+housing+loan , data=bank, family = binomial)
+
+mdl_bank_M %>%
+  summary()
+```
+
+Pr(>|z|) value for  balance is close to 1 and this makes us believe it is not a determinant parameter, but this parameter is negligible for housing with relatively high value for its coefficient. This is the reason for importance of housing status. A similar circumstance is for loan status.
+
+In addition, Coefficients of above analysis are all small because the number of respondents with subscribed status is very lower than not subscribed clients.
+
+Finally, some parameters that seemed to be determinant in univariate analysis are not important in fact. This is because of correlation between non-determinant and determinant 
+variables.
+
+## *subscription status~education*
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+bank_e <- bank %>%
+  group_by(subscription_status, education) %>%
+  count()  %>% 
+mutate(percent = n)
+  
+
+
+bank_e %>%
+  
+  ggplot(aes(education, n,fill=as.factor(subscription_status)))+
+  geom_bar(stat="identity", position="dodge")+
+  
+  geom_label(aes(label = n),
+               position = position_stack(vjust = 0.1),
+               size = 3,
+               colour = 'black')
+
+```
+
+From generalized linear model coefficient, it appears that education is a determinant factor, therefore an analysis of education and subscription status is performed here. This plot shows that most clients have secondary education, followed by tertiary, primary, and unknown education levels. Comparing the ratio of people who subscribed to those who did not subscribe in each category shows that people with tertiary education are more likely to finally subscribe.
+
+## Evaluating performance with confusion matrix
+
+It is important to assess accuracy of model. Although model should be assessed with test data (not previously seen data or data that is not used for building the model). In this part we will use model train data for assessment. We pass data to both single and multiple Logistic regression Models in order to classify whether clients associated with the given information in the train data set will subscribe to a term deposit. besides, we will evaluate the performance of the model by confusion matrix and heatmap plot.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+status_predictions_SLR <- predict(mdl_bank_S, new_data = bank, type = "response")
+
+status_predictions_MLR <- predict(mdl_bank_M, new_data = bank, type = "response")
+
+
+test_results_SLR <- bank %>%
+  bind_cols(status_pred=status_predictions_SLR)
+
+test_results_MLR <- bank %>%
+  bind_cols(status_pred=status_predictions_MLR)
+
+
+```
+
+
+First, start with evaluating the performance of a single logistic regression Model using heatmap matrix.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# SLR
+
+p4 <- test_results_SLR %>% select(subscription_status,status_pred) %>% 
+   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
+   mutate(estimate=ifelse(status_pred > 0.2 , 'yes', 'no'))
+
+# Calculate the confusion matrix
+conf_mat(p4, truth = truth,
+    estimate = estimate)%>% 
+  # Create a heat map
+  autoplot(type = 'heatmap')
+
+```
+
+Here, We set the threshold to 0.2. After passing the data to SLR model, it shows 88.5% of predictions are accurate. There are 521 false-negative and 2 false-positive predictions.
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+#  MLR
+
+p4 <- test_results_MLR %>% select(subscription_status,status_pred) %>% 
+   mutate(truth=ifelse(subscription_status == '1' , 'yes', 'no')) %>% 
+   mutate(estimate=ifelse(status_pred > 0.35 , 'yes', 'no'))
+
+# Calculate the confusion matrix 
+conf_mat(p4, truth = truth,
+    estimate = estimate)%>% 
+  # Create a heat map
+  autoplot(type = 'heatmap')
+
+```
+
+We set threshold to 0.35 here. After passing the data SLR model, it shows 88.5% of predictions are accurate. There are 514 false-negative and 4 false-positive predictions.
+
+
+
+## Summary of findings
+
+- Most respondents in this campaign were 30 to 35 years old with near zero balance. Besides, nearly 90% of respondents did not subscribe finally.
+
+- Univariate analysis shows a positive slope for both age and balance (higher age/balance means a higher chance of subscription). However, generalized linear Modeling with consideration of all variables shows balance has not an impact on chance of subscription.
+
+- Univariate analysis of jobs shows that a big portion of students, unemployed, and those with unknown jobs subscribed, but respondents with blue-color jobs and technicians did not subscribe so often.
+
+- Divorced respondents were more likely to subscribe than married and single ones.
+
+- Generalized Linear Model shows that balance is not a determinant factor but housing and loan status are both determinants.
+
+- Coefficients of glm analysis are all small because the number of respondents with subscribed status is very lower than not subscribed clients.
