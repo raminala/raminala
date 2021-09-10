@@ -247,9 +247,10 @@ worst_augmented <- worst_fit %>%
 Let's explore your four best and worst fitting models by comparing the fitted lines with the actual values.
 
 ```{r}
+country_list <- c("Algeria", "Argentina", "Austria", "Belgium", "Bangladesh", "Brazil", "Chile", "Colombia")
 # Compare the predicted values with the actual values of life expectancy 
 # for the top 4 best fitting models
-best_augmented %>% 
+best_augmented %>% filter(country %in% country_list)%>%
   ggplot(aes(x = year)) +
   geom_point(aes(y = life_expectancy)) + 
   geom_line(aes(y = .fitted), color = "red") +
@@ -259,7 +260,7 @@ best_augmented %>%
 ```{r}
 # Compare the predicted values with the actual values of life expectancy 
 # for the top 4 worst fitting models
-worst_augmented %>% 
+worst_augmented %>% filter(country %in% country_list)%>% 
   ggplot(aes(x = year)) +
   geom_point(aes(y = life_expectancy)) + 
   geom_line(aes(y = .fitted), color = "red") +
