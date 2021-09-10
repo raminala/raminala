@@ -1,11 +1,13 @@
 ---
-title: Communicating with Data in the Tidyverse
+title: "Communicating with Data in the Tidyverse"
 author: ''
 date: '2021-09-09'
-slug: []
+output:
+  html_document:
+    df_print: paged
 categories: []
-tags:
-  - Markdown
+tags: Markdown
+slug: []
 ---
 
 ```{r results='hide'}
