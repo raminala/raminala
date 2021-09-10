@@ -570,3 +570,9 @@ bind_shadow(oceanbuoys) %>%
   facet_grid(humidity_NA~year)
 ```
 
+## 4-2 
+
+```{r}
+
+```
+
