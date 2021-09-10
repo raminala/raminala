@@ -3,6 +3,7 @@ title: "Communicating with Data in the Tidyverse"
 author: ''
 date: '2021-09-09'
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 categories: []
