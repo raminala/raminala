@@ -792,11 +792,11 @@ loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
 table(loans_test$pred, loans_test$outcome)</code></pre>
 <pre><code>##          
 ##           default repaid
-##   default     781    625
-##   repaid      622    800</code></pre>
+##   default     745    567
+##   repaid      679    837</code></pre>
 <pre class="r"><code># Compute the accuracy on the test dataset
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5590523</code></pre>
+<pre><code>## [1] 0.5594059</code></pre>
 </div>
 <div id="preventing-overgrown-trees" class="section level2">
 <h2>4-11 Preventing overgrown trees</h2>
@@ -812,14 +812,14 @@ loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
 
 # Compute the accuracy of the simpler tree
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5756719</code></pre>
+<pre><code>## [1] 0.5862801</code></pre>
 <pre class="r"><code># Swap maxdepth for a minimum split of 500 
 loan_model &lt;- rpart(outcome ~ ., data = loans_train, method = &quot;class&quot;, control = rpart.control(cp = 0, minsplit = 500))
 
 # Run this. How does the accuracy change?
 loans_test$pred &lt;- predict(loan_model, loans_test, type = &quot;class&quot;)
 mean(loans_test$pred == loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5788543</code></pre>
+<pre><code>## [1] 0.5912306</code></pre>
 </div>
 <div id="creating-a-nicely-pruned-tree" class="section level2">
 <h2>4-12 Creating a nicely pruned tree</h2>
@@ -839,7 +839,7 @@ loan_model_pruned &lt;- prune(loan_model, cp = 0.0014)
 # Compute the accuracy of the pruned tree
 loans_test$pred &lt;- predict(loan_model_pruned, loans_test, type = &quot;class&quot;)
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5894625</code></pre>
+<pre><code>## [1] 0.5908769</code></pre>
 </div>
 <div id="building-a-random-forest-model" class="section level2">
 <h2>4-16 Building a random forest model</h2>
@@ -864,6 +864,6 @@ loan_model &lt;- randomForest(factor(outcome) ~ ., data = loans_train)
 # Compute the accuracy of the random forest
 loans_test$pred &lt;- predict(loan_model, loans_test)
 mean(loans_test$pred==loans_test$outcome)</code></pre>
-<pre><code>## [1] 0.5724894</code></pre>
+<pre><code>## [1] 0.5915842</code></pre>
 </div>
 </div>
