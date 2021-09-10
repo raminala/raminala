@@ -1,0 +1,178 @@
+---
+title: "Communicating with Data in the Tidyverse"
+author: ''
+date: '2021-09-09'
+output:
+  word_document: default
+tags: Markdown
+---
+
+```{r results='hide'}
+library(tidyverse)
+
+ilo_hourly_compensation <- read.csv("ilo_hourly_compensation.csv")
+ilo_working_hours <- read.csv("ilo_working_hours.csv")
+```
+
+## 1-2 Join the two data sets together
+
+In the video, you have learned that the inner_join() function of dplyr needs to be given a "key" on which two data frames are joined. Actually, multiple keys that need to match can be specified. In this first exercise, you are going to join two data sets by two keys. The data frames ilo_hourly_compensation and ilo_working_hours are already loaded for you and are available in your workspace.
+
+This course touches on a lot of concepts you may have forgotten, so if you ever need a quick refresher, download the tidyverse Cheat Sheet and keep it handy!
+
+
+```{r results='hide'}
+# Join both data frames
+ilo_data <- ilo_hourly_compensation %>%
+  inner_join(ilo_working_hours, by = c("country", "year"))
+
+# Count the resulting rows
+ilo_data  %>% 
+    count()
+
+# Examine ilo_data
+ilo_data
+```
+
+## 1-3 Change variable types
+
+For displaying data in ggplot2 graphics, it is often helpful to convert all the variables to the right data type. Usually, categorical variables like country in this example should be converted to factors before plotting them. You can do so using as.factor(). In your data set, two columns are still of type "character" – use mutate() to turn them into factors.
+
+```{r}
+# Turn year and country into a factor
+ilo_data_corrected <- ilo_data %>%
+  mutate(year = as.factor(as.numeric(year)),
+        country = as.factor(country))
+
+# See the results
+ilo_data_corrected
+```
+
+## 1-5 Filter the data for plotting
+
+Use the filter() function of dplyr to remove non-European countries. A vector called european_countries has been created that contains all European countries which should remain in the data set. Here, the %in% operator introduced in the video might come in handy. Note that only a subset of European countries for which enough data exist is retained. For instance, Poland is missing.
+
+```{r}
+european_countries <- c("Finland", "France", "Italy", "Norway", "Spain", "Sweden", "Switzerland", "United Kingdom", "Belgium", "Ireland", "Luxembourg", "Portugal", "Netherlands", "Germany", "Hungary", "Austria", "Czech Rep.")
+
+# Examine the European countries vector
+european_countries
+
+# Only retain European countries
+ilo_data <- ilo_data %>%
+  filter(country %in% european_countries)
+```
+
+## 1-6 Some summary statistics
+
+Use dplyrs group_by() and summarize() to compute summary statistics for both years.
+
+```{r}
+# Examine the structure of ilo_data
+str(ilo_data)
+
+# Group and summarize the data
+ilo_data %>%
+  group_by(year) %>%
+  summarize(mean_hourly_compensation = mean(hourly_compensation),
+            mean_working_hours = mean(working_hours))
+```
+
+## 1-7 A basic scatter plot
+
+In this exercise, you will create a very basic scatter plot with ggplot2. This is mostly a repetition of stuff you've learnt in the prerequisites for this course, so it should be easy for you.
+
+```{r}
+# Filter for 2006
+plot_data <- ilo_data %>%
+  filter(year==2006)
+  
+# Create the scatter plot
+ggplot(plot_data) +
+  geom_point(aes(x = working_hours, y = hourly_compensation))
+```
+
+## 1-8 Add labels to the plot
+
+As mentioned in the video, you're going to enhance the plot from the previous exercise by adding a title, a subtitle, and a caption to the plot as well as giving the axes meaningful names. You're going to use the labs() function to do this – try using ?labs in the console to see the available options.
+
+```{r}
+# Create the plot
+ggplot(plot_data) +
+  geom_point(aes(x = working_hours, y = hourly_compensation)) +
+  # Add labels
+  labs(
+    x = "Working hours per week",
+    y = "Hourly compensation",
+    title = "The more people work, the less compensation they seem to receive",
+    subtitle = "Working hours and hourly compensation in European countries, 2006",
+    caption = "Data source: ILO, 2017"
+  )
+```
+
+## 1-10 Apply a default theme
+
+As you've learnt in the videos, ggplot2 comes with a set of predefined themes. Try out some of them!
+
+```{r}
+# Save your current plot into a variable: ilo_plot
+ilo_plot <- ggplot(plot_data) +
+  geom_point(aes(x = working_hours, y = hourly_compensation)) +
+  labs(
+    x = "Working hours per week",
+    y = "Hourly compensation",
+    title = "The more people work, the less compensation they seem to receive",
+    subtitle = "Working hours and hourly compensation in European countries, 2006",
+    caption = "Data source: ILO, 2017"
+  )
+
+ilo_plot
+```
+
+```{r}
+ilo_plot +
+  theme_minimal()
+```
+
+```{r}
+ilo_plot +
+  theme_classic()
+```
+
+
+## 1-11 Change the appearance of titles
+
+Besides applying defined theme presets, you can tweak your plot even more by altering different style attributes of it. Hint: You can reuse and overwrite the ilo_plot variable generated in the previous exercise – the current plot is already shown in the window on the right.
+
+```{r, warning=FALSE}
+ilo_plot <- ilo_plot +
+  theme_minimal() +
+  # Customize the "minimal" theme with another custom "theme" call
+  theme(
+    text = element_text(family = "Bookman"),
+    title = element_text(color = "gray25"),
+    plot.caption = element_text(color = "gray30"),
+    plot.subtitle = element_text(size = 12)
+  )
+  
+# Render the plot object
+ilo_plot
+```
+
+## 1-12 Alter background color and add margins
+
+Further customize the look of your plot with more arguments to the theme function call. You can continue working on your ilo_plot object created in the last exercise.
+
+Add margins to the plot: 5mm top and bottom, 10mm to the left and the right.
+
+The margins need to be specified in the following order: top, right, bottom, and left.
+
+```{r, warning=FALSE}
+ilo_plot +
+  # "theme" calls can be stacked upon each other, so this is already the third call of "theme"
+  theme(
+    plot.background = element_rect(fill = "gray95"),
+    plot.margin = unit(c(5, 10, 5, 10), units = "mm")
+  )
+```
+

@@ -1,0 +1,514 @@
+---
+title: Machine Learning with caret in R
+author: ''
+date: '2021-09-01'
+slug: []
+categories: []
+tags:
+  - Machine Learning
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(tidyverse)
+library(caret)
+library(caTools)
+Boston &lt;- read_csv(&quot;Boston.csv&quot;)
+Sonar &lt;- read_csv(&quot;Sonar.csv&quot;) %&gt;% mutate(Class=as.factor(Class))
+#%&gt;% mutate(V1=as.numeric(V1))
+
+class(Sonar$Class)</code></pre>
+<pre><code>## [1] &quot;factor&quot;</code></pre>
+<pre class="r"><code>class(Sonar$V1)</code></pre>
+<pre><code>## [1] &quot;numeric&quot;</code></pre>
+<pre class="r"><code>class(Sonar$V20)</code></pre>
+<pre><code>## [1] &quot;numeric&quot;</code></pre>
+<div id="in-sample-rmse-for-linear-regression-on-diamonds" class="section level2">
+<h2>1-3 In-sample RMSE for linear regression on diamonds</h2>
+<p>As you saw in the video, included in the course is the diamonds dataset, which is a classic dataset from the ggplot2 package. The dataset contains physical attributes of diamonds as well as the price they sold for. One interesting modeling challenge is predicting diamond price based on their attributes using something like a linear regression.</p>
+<p>Recall that to fit a linear regression, you use the lm() function in the following format:</p>
+<p>mod &lt;- lm(y ~ x, my_data)
+To make predictions using mod on the original data, you call the predict() function:</p>
+<p>pred &lt;- predict(mod, my_data)</p>
+<pre class="r"><code># Fit lm model: model
+model &lt;- lm(price~., diamonds)
+
+# Predict on full data: p
+p &lt;- predict(model, diamonds)
+
+# Compute errors: error
+error &lt;- p-diamonds$price
+
+# Calculate RMSE
+sqrt(mean(error ^ 2))</code></pre>
+<pre><code>## [1] 1129.843</code></pre>
+<pre class="r"><code>#rmse(model,diamonds)</code></pre>
+</div>
+<div id="randomly-order-the-data-frame" class="section level2">
+<h2>1-6 Randomly order the data frame</h2>
+<p>One way you can take a train/test split of a dataset is to order the dataset randomly, then divide it into the two sets. This ensures that the training set and test set are both random samples and that any biases in the ordering of the dataset (e.g. if it had originally been ordered by price or size) are not retained in the samples we take for training and testing your models. You can think of this like shuffling a brand new deck of playing cards before dealing hands.</p>
+<p>First, you set a random seed so that your work is reproducible and you get the same random split each time you run your script:</p>
+<p>set.seed(42)</p>
+<p>Next, you use the sample() function to shuffle the row indices of the diamonds dataset. You can later use these indices to reorder the dataset.</p>
+<p>rows &lt;- sample(nrow(diamonds))</p>
+<p>Finally, you can use this random vector to reorder the diamonds dataset:</p>
+<p>diamonds &lt;- diamonds[rows, ]</p>
+<pre class="r"><code># Set seed
+set.seed(42)
+
+# Shuffle row indices: rows
+rows &lt;- sample(nrow(diamonds))
+
+# Randomly order data
+shuffled_diamonds &lt;- diamonds &lt;- diamonds[rows, ]</code></pre>
+</div>
+<div id="try-an-8020-split" class="section level2">
+<h2>1-7 Try an 80/20 split</h2>
+<p>Now that your dataset is randomly ordered, you can split the first 80% of it into a training set, and the last 20% into a test set. You can do this by choosing a split point approximately 80% of the way through your data:</p>
+<p>split &lt;- round(nrow(mydata) * 0.80)</p>
+<p>You can then use this point to break off the first 80% of the dataset as a training set:</p>
+<p>mydata[1:split, ]</p>
+<p>And then you can use that same point to determine the test set:</p>
+<p>mydata[(split + 1):nrow(mydata), ]</p>
+<pre class="r"><code># Determine row to split on: split
+split &lt;- round(nrow(diamonds) * 0.80)
+
+# Create train
+train &lt;- diamonds[1:split, ]
+
+# Create test
+test &lt;- diamonds[(split + 1):nrow(diamonds), ]</code></pre>
+</div>
+<div id="predict-on-test-set" class="section level2">
+<h2>1-8 Predict on test set</h2>
+<p>Now that you have a randomly split training set and test set, you can use the lm() function as you did in the first exercise to fit a model to your training set, rather than the entire dataset. Recall that you can use the formula interface to the linear regression function to fit a model with a specified target variable using all other variables in the dataset as predictors:</p>
+<p>mod &lt;- lm(y ~ ., training_data)
+You can use the predict() function to make predictions from that model on new data. The new dataset must have all of the columns from the training data, but they can be in a different order with different values. Here, rather than re-predicting on the training set, you can predict on the test set, which you did not use for training the model. This will allow you to determine the out-of-sample error for the model in the next exercise:</p>
+<p>p &lt;- predict(model, new_data)</p>
+<pre class="r"><code># Fit lm model on train: model
+model &lt;- lm(price~., train)
+
+# Predict on test: p
+p &lt;- predict(model, test)</code></pre>
+</div>
+<div id="calculate-test-set-rmse-by-hand" class="section level2">
+<h2>1-9 Calculate test set RMSE by hand</h2>
+<p>Now that you have predictions on the test set, you can use these predictions to calculate an error metric (in this case RMSE) on the test set and see how the model performs out-of-sample, rather than in-sample as you did in the first exercise. You first do this by calculating the errors between the predicted diamond prices and the actual diamond prices by subtracting the predictions from the actual values.</p>
+<p>Once you have an error vector, calculating RMSE is as simple as squaring it, taking the mean, then taking the square root:</p>
+<p>sqrt(mean(error^2))</p>
+<pre class="r"><code># Compute errors: error
+error &lt;- p-test$price
+
+# Calculate RMSE
+sqrt(mean(error^2))</code></pre>
+<pre><code>## [1] 1137.466</code></pre>
+</div>
+<div id="fold-cross-validation" class="section level2">
+<h2>1-13 10-fold cross-validation</h2>
+<p>As you saw in the video, a better approach to validating models is to use multiple systematic test sets, rather than a single random train/test split. Fortunately, the caret package makes this very easy to do:</p>
+<p>model &lt;- train(y ~ ., my_data)</p>
+<p>caret supports many types of cross-validation, and you can specify which type of cross-validation and the number of cross-validation folds with the trainControl() function, which you pass to the trControl argument in train():</p>
+<p>model &lt;- train(
+y ~ .,
+my_data,
+method = “lm”,
+trControl = trainControl(
+method = “cv”,
+number = 10,
+verboseIter = TRUE
+)
+)</p>
+<p>It’s important to note that you pass the method for modeling to the main train() function and the method for cross-validation to the trainControl() function.</p>
+<pre class="r"><code># Fit lm model using 10-fold CV: model
+model &lt;- train(
+  price~., 
+  diamonds,
+  method = &quot;lm&quot;,
+  trControl = trainControl(
+    method = &quot;cv&quot;, 
+    number = 10,
+    verboseIter = TRUE
+  )
+)</code></pre>
+<pre><code>## + Fold01: intercept=TRUE 
+## - Fold01: intercept=TRUE 
+## + Fold02: intercept=TRUE 
+## - Fold02: intercept=TRUE 
+## + Fold03: intercept=TRUE 
+## - Fold03: intercept=TRUE 
+## + Fold04: intercept=TRUE 
+## - Fold04: intercept=TRUE 
+## + Fold05: intercept=TRUE 
+## - Fold05: intercept=TRUE 
+## + Fold06: intercept=TRUE 
+## - Fold06: intercept=TRUE 
+## + Fold07: intercept=TRUE 
+## - Fold07: intercept=TRUE 
+## + Fold08: intercept=TRUE 
+## - Fold08: intercept=TRUE 
+## + Fold09: intercept=TRUE 
+## - Fold09: intercept=TRUE 
+## + Fold10: intercept=TRUE 
+## - Fold10: intercept=TRUE 
+## Aggregating results
+## Fitting final model on full training set</code></pre>
+<pre class="r"><code># Print model to console
+model</code></pre>
+<pre><code>## Linear Regression 
+## 
+## 53940 samples
+##     9 predictor
+## 
+## No pre-processing
+## Resampling: Cross-Validated (10 fold) 
+## Summary of sample sizes: 48547, 48546, 48546, 48547, 48545, 48547, ... 
+## Resampling results:
+## 
+##   RMSE      Rsquared   MAE     
+##   1130.633  0.9197711  740.5017
+## 
+## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+</div>
+<div id="fold-cross-validation-1" class="section level2">
+<h2>1-14 5-fold cross-validation</h2>
+<p>In this course, you will use a wide variety of datasets to explore the full flexibility of the caret package. Here, you will use the famous Boston housing dataset, where the goal is to predict median home values in various Boston suburbs.</p>
+<p>You can use exactly the same code as in the previous exercise, but change the dataset used by the model:</p>
+<p>model &lt;- train(
+medv ~ .,
+Boston, # &lt;- new!
+method = “lm”,
+trControl = trainControl(
+method = “cv”,
+number = 10,
+verboseIter = TRUE
+)
+)</p>
+<p>Next, you can reduce the number of cross-validation folds from 10 to 5 using the number argument to the trainControl() argument:</p>
+<p>trControl = trainControl(
+method = “cv”,
+number = 5,
+verboseIter = TRUE
+)</p>
+<pre class="r"><code># Fit lm model using 5-fold CV: model
+model &lt;- train(
+  medv ~ ., 
+  Boston,
+  method = &quot;lm&quot;,
+  trControl = trainControl(
+    method = &quot;cv&quot;, 
+    number = 5,
+    verboseIter = TRUE
+  )
+)</code></pre>
+<pre><code>## + Fold1: intercept=TRUE 
+## - Fold1: intercept=TRUE 
+## + Fold2: intercept=TRUE 
+## - Fold2: intercept=TRUE 
+## + Fold3: intercept=TRUE 
+## - Fold3: intercept=TRUE 
+## + Fold4: intercept=TRUE 
+## - Fold4: intercept=TRUE 
+## + Fold5: intercept=TRUE 
+## - Fold5: intercept=TRUE 
+## Aggregating results
+## Fitting final model on full training set</code></pre>
+<pre class="r"><code># Print model to console
+print(model)</code></pre>
+<pre><code>## Linear Regression 
+## 
+## 506 samples
+##  14 predictor
+## 
+## No pre-processing
+## Resampling: Cross-Validated (5 fold) 
+## Summary of sample sizes: 405, 405, 406, 403, 405 
+## Resampling results:
+## 
+##   RMSE      Rsquared   MAE     
+##   4.864695  0.7206197  3.396854
+## 
+## Tuning parameter &#39;intercept&#39; was held constant at a value of TRUE</code></pre>
+</div>
+<div id="x-5-fold-cross-validation" class="section level2">
+<h2>1-15 5 x 5-fold cross-validation</h2>
+<p>You can do more than just one iteration of cross-validation. Repeated cross-validation gives you a better estimate of the test-set error. You can also repeat the entire cross-validation procedure. This takes longer, but gives you many more out-of-sample datasets to look at and much more precise assessments of how well the model performs.</p>
+<p>One of the awesome things about the train() function in caret is how easy it is to run very different models or methods of cross-validation just by tweaking a few simple arguments to the function call. For example, you could repeat your entire cross-validation procedure 5 times for greater confidence in your estimates of the model’s out-of-sample accuracy, e.g.:</p>
+<p>trControl = trainControl(
+method = “repeatedcv”,
+number = 5,
+repeats = 5,
+verboseIter = TRUE
+)</p>
+<pre class="r"><code># Fit lm model using 5 x 5-fold CV: model
+model &lt;- train(
+  medv ~ ., 
+  Boston,
+  method = &quot;lm&quot;,
+  trControl = trainControl(
+    method = &quot;repeatedcv&quot;, 
+    number = 5,
+    repeats = 5, 
+    verboseIter = TRUE
+  )
+)
+
+# Print model to console
+print(model)</code></pre>
+</div>
+<div id="making-predictions-on-new-data" class="section level2">
+<h2>1-16 Making predictions on new data</h2>
+<p>Finally, the model you fit with the train() function has the exact same predict() interface as the linear regression models you fit earlier in this chapter.</p>
+<p>After fitting a model with train(), you can simply call predict() with new data, e.g:</p>
+<p>predict(my_model, new_data)</p>
+<pre class="r"><code># Predict on full Boston dataset
+predict(model, Boston)</code></pre>
+</div>
+<div id="try-a-6040-split" class="section level2">
+<h2>2-3 Try a 60/40 split</h2>
+<p>As you saw in the video, you’ll be working with the Sonar dataset in this chapter, using a 60% training set and a 40% test set. We’ll practice making a train/test split one more time, just to be sure you have the hang of it. Recall that you can use the sample() function to get a random permutation of the row indices in a dataset, to use when making train/test splits, e.g.:</p>
+<p>n_obs &lt;- nrow(my_data)
+permuted_rows &lt;- sample(n_obs)
+And then use those row indices to randomly reorder the dataset, e.g.:</p>
+<p>my_data &lt;- my_data[permuted_rows, ]
+Once your dataset is randomly ordered, you can split off the first 60% as a training set and the last 40% as a test set.</p>
+<pre class="r"><code># Get the number of observations
+n_obs &lt;- nrow(Sonar)
+
+# Shuffle row indices: permuted_rows
+permuted_rows &lt;- sample(n_obs)
+
+# Randomly order data: Sonar
+Sonar_shuffled &lt;- Sonar[permuted_rows, ]
+
+# Identify row to split on: split
+split &lt;- round(n_obs * 0.6)
+
+# Create train
+train &lt;- Sonar_shuffled[1:split, ]
+
+# Create test
+test &lt;- Sonar_shuffled[(split + 1):n_obs, ]</code></pre>
+</div>
+<div id="fit-a-logistic-regression-model" class="section level2">
+<h2>2-4 Fit a logistic regression model</h2>
+<p>Once you have your random training and test sets you can fit a logistic regression model to your training set using the glm() function. glm() is a more advanced version of lm() that allows for more varied types of regression models, aside from plain vanilla ordinary least squares regression.</p>
+<p>Be sure to pass the argument family = “binomial” to glm() to specify that you want to do logistic (rather than linear) regression. For example:</p>
+<p>glm(Target ~ ., family = “binomial”, dataset)</p>
+<p>Don’t worry about warnings like</p>
+<p>glm.fit: algorithm did not converge or glm.fit: fitted probabilities numerically 0 or 1 occurred.</p>
+<p>These are common on smaller datasets and usually don’t cause any issues. They typically mean your dataset is perfectly separable, which can cause problems for the math behind the model, but R’s glm() function is almost always robust enough to handle this case with no problems.</p>
+<p>Once you have a glm() model fit to your dataset, you can predict the outcome (e.g. rock or mine) on the test set using the predict() function with the argument type = “response”:</p>
+<p>predict(my_model, test, type = “response”)</p>
+<pre class="r"><code># Fit glm model: model
+model &lt;- glm(Class ~ ., family = &quot;binomial&quot;, train)</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<pre><code>## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
+<pre class="r"><code># Predict on test: p
+p &lt;- predict(model, test, type = &quot;response&quot;)</code></pre>
+</div>
+<div id="calculate-a-confusion-matrix" class="section level2">
+<h2>2-7 Calculate a confusion matrix</h2>
+<p>As you saw in the video, a confusion matrix is a very useful tool for calibrating the output of a model and examining all possible outcomes of your predictions (true positive, true negative, false positive, false negative).</p>
+<p>Before you make your confusion matrix, you need to “cut” your predicted probabilities at a given threshold to turn probabilities into a factor of class predictions. Combine ifelse() with factor() as follows:</p>
+<p>pos_or_neg &lt;- ifelse(probability_prediction &gt; threshold, positive_class, negative_class)
+p_class &lt;- factor(pos_or_neg, levels = levels(test_values))</p>
+<p>confusionMatrix() in caret improves on table() from base R by adding lots of useful ancillary statistics in addition to the base rates in the table. You can calculate the confusion matrix (and the associated statistics) using the predicted outcomes as well as the actual outcomes, e.g.:</p>
+<p>confusionMatrix(p_class, test_values)</p>
+<pre class="r"><code># If p exceeds threshold of 0.5, M else R: m_or_r
+m_or_r &lt;- ifelse(p &gt; 0.5, &quot;M&quot;, &quot;R&quot;)
+
+# Convert to factor: p_class
+p_class &lt;- factor(m_or_r, levels = levels(test[[&quot;Class&quot;]]))
+
+# Create confusion matrix
+confusionMatrix(p_class, test[[&quot;Class&quot;]])</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction  M  R
+##          M  7 31
+##          R 32 13
+##                                           
+##                Accuracy : 0.241           
+##                  95% CI : (0.1538, 0.3473)
+##     No Information Rate : 0.5301          
+##     P-Value [Acc &gt; NIR] : 1               
+##                                           
+##                   Kappa : -0.5258         
+##                                           
+##  Mcnemar&#39;s Test P-Value : 1               
+##                                           
+##             Sensitivity : 0.17949         
+##             Specificity : 0.29545         
+##          Pos Pred Value : 0.18421         
+##          Neg Pred Value : 0.28889         
+##              Prevalence : 0.46988         
+##          Detection Rate : 0.08434         
+##    Detection Prevalence : 0.45783         
+##       Balanced Accuracy : 0.23747         
+##                                           
+##        &#39;Positive&#39; Class : M               
+## </code></pre>
+</div>
+<div id="try-another-threshold" class="section level2">
+<h2>2-13 Try another threshold</h2>
+<p>In the previous exercises, you used a threshold of 0.50 to cut your predicted probabilities to make class predictions (rock vs mine). However, this classification threshold does not always align with the goals for a given modeling problem.</p>
+<p>For example, pretend you want to identify the objects you are really certain are mines. In this case, you might want to use a probability threshold of 0.90 to get fewer predicted mines, but with greater confidence in each prediction.</p>
+<p>The code pattern for cutting probabilities into predicted classes, then calculating a confusion matrix, was shown in Exercise 7 of this chapter.</p>
+<pre class="r"><code># If p exceeds threshold of 0.9, M else R: m_or_r
+m_or_r &lt;- ifelse(p &gt; 0.9, &quot;M&quot;, &quot;R&quot;)
+
+# Convert to factor: p_class
+p_class &lt;- factor(m_or_r, levels = levels(test[[&quot;Class&quot;]]))
+
+# Create confusion matrix
+confusionMatrix(p_class, test[[&quot;Class&quot;]])</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction  M  R
+##          M  7 31
+##          R 32 13
+##                                           
+##                Accuracy : 0.241           
+##                  95% CI : (0.1538, 0.3473)
+##     No Information Rate : 0.5301          
+##     P-Value [Acc &gt; NIR] : 1               
+##                                           
+##                   Kappa : -0.5258         
+##                                           
+##  Mcnemar&#39;s Test P-Value : 1               
+##                                           
+##             Sensitivity : 0.17949         
+##             Specificity : 0.29545         
+##          Pos Pred Value : 0.18421         
+##          Neg Pred Value : 0.28889         
+##              Prevalence : 0.46988         
+##          Detection Rate : 0.08434         
+##    Detection Prevalence : 0.45783         
+##       Balanced Accuracy : 0.23747         
+##                                           
+##        &#39;Positive&#39; Class : M               
+## </code></pre>
+</div>
+<div id="from-probabilites-to-confusion-matrix" class="section level2">
+<h2>2-14 From probabilites to confusion matrix</h2>
+<p>Conversely, say you want to be really certain that your model correctly identifies all the mines as mines. In this case, you might use a prediction threshold of 0.10, instead of 0.90.</p>
+<p>The code pattern for cutting probabilities into predicted classes, then calculating a confusion matrix, was shown in Exercise 7 of this chapter.</p>
+<pre class="r"><code># If p exceeds threshold of 0.1, M else R: m_or_r
+m_or_r &lt;- ifelse(p &gt; 0.1, &quot;M&quot;, &quot;R&quot;)
+
+# Convert to factor: p_class
+p_class &lt;- factor(m_or_r, levels = levels(test[[&quot;Class&quot;]]))
+
+# Create confusion matrix
+confusionMatrix(p_class, test[[&quot;Class&quot;]])</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction  M  R
+##          M  7 31
+##          R 32 13
+##                                           
+##                Accuracy : 0.241           
+##                  95% CI : (0.1538, 0.3473)
+##     No Information Rate : 0.5301          
+##     P-Value [Acc &gt; NIR] : 1               
+##                                           
+##                   Kappa : -0.5258         
+##                                           
+##  Mcnemar&#39;s Test P-Value : 1               
+##                                           
+##             Sensitivity : 0.17949         
+##             Specificity : 0.29545         
+##          Pos Pred Value : 0.18421         
+##          Neg Pred Value : 0.28889         
+##              Prevalence : 0.46988         
+##          Detection Rate : 0.08434         
+##    Detection Prevalence : 0.45783         
+##       Balanced Accuracy : 0.23747         
+##                                           
+##        &#39;Positive&#39; Class : M               
+## </code></pre>
+</div>
+<div id="plot-an-roc-curve" class="section level2">
+<h2>2-17 Plot an ROC curve</h2>
+<p>As you saw in the video, an ROC curve is a really useful shortcut for summarizing the performance of a classifier over all possible thresholds. This saves you a lot of tedious work computing class predictions for many different thresholds and examining the confusion matrix for each.</p>
+<p>My favorite package for computing ROC curves is caTools, which contains a function called colAUC(). This function is very user-friendly and can actually calculate ROC curves for multiple predictors at once. In this case, you only need to calculate the ROC curve for one predictor, e.g.:</p>
+<p>colAUC(predicted_probabilities, actual, plotROC = TRUE)</p>
+<p>The function will return a score called AUC (more on that later) and the plotROC = TRUE argument will return the plot of the ROC curve for visual inspection.</p>
+<pre class="r"><code># Predict on test: p
+p &lt;- predict(model, test, type = &quot;response&quot;)
+
+# Make ROC curve
+colAUC(p, test[[&quot;Class&quot;]], plotROC = TRUE)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<pre><code>##              [,1]
+## M vs. R 0.8161422</code></pre>
+</div>
+<div id="customizing-traincontrol" class="section level2">
+<h2>2-20 Customizing trainControl</h2>
+<p>As you saw in the video, area under the ROC curve is a very useful, single-number summary of a model’s ability to discriminate the positive from the negative class (e.g. mines from rocks). An AUC of 0.5 is no better than random guessing, an AUC of 1.0 is a perfectly predictive model, and an AUC of 0.0 is perfectly anti-predictive (which rarely happens).</p>
+<p>This is often a much more useful metric than simply ranking models by their accuracy at a set threshold, as different models might require different calibration steps (looking at a confusion matrix at each step) to find the optimal classification threshold for that model.</p>
+<p>You can use the trainControl() function in caret to use AUC (instead of acccuracy), to tune the parameters of your models. The twoClassSummary() convenience function allows you to do this easily.</p>
+<p>When using twoClassSummary(), be sure to always include the argument classProbs = TRUE or your model will throw an error! (You cannot calculate AUC with just class predictions. You need to have class probabilities as well.)</p>
+<pre class="r"><code># Create trainControl object: myControl
+myControl &lt;- trainControl(
+  method = &quot;cv&quot;,
+  number = 10,
+  summaryFunction = twoClassSummary,
+  classProbs = TRUE, # IMPORTANT!
+  verboseIter = TRUE
+)</code></pre>
+</div>
+<div id="using-custom-traincontrol" class="section level2">
+<h2>2-21 Using custom trainControl</h2>
+<p>Now that you have a custom trainControl object, it’s easy to fit caret models that use AUC rather than accuracy to tune and evaluate the model. You can just pass your custom trainControl object to the train() function via the trControl argument, e.g.:</p>
+<p>train(<standard arguments here>, trControl = myControl)</p>
+<p>This syntax gives you a convenient way to store a lot of custom modeling parameters and then use them across multiple different calls to train(). You will make extensive use of this trick in Chapter 5.</p>
+<pre class="r"><code># Train glm with custom trainControl: model
+model &lt;- train(
+  Class ~ ., 
+  Sonar, 
+  method = &quot;glm&quot;,
+  trControl = myControl
+)</code></pre>
+<pre><code>## + Fold01: parameter=none 
+## - Fold01: parameter=none 
+## + Fold02: parameter=none 
+## - Fold02: parameter=none 
+## + Fold03: parameter=none 
+## - Fold03: parameter=none 
+## + Fold04: parameter=none 
+## - Fold04: parameter=none 
+## + Fold05: parameter=none 
+## - Fold05: parameter=none 
+## + Fold06: parameter=none 
+## - Fold06: parameter=none 
+## + Fold07: parameter=none 
+## - Fold07: parameter=none 
+## + Fold08: parameter=none 
+## - Fold08: parameter=none 
+## + Fold09: parameter=none 
+## - Fold09: parameter=none 
+## + Fold10: parameter=none 
+## - Fold10: parameter=none 
+## Aggregating results
+## Fitting final model on full training set</code></pre>
+<pre class="r"><code># Print model to console
+model</code></pre>
+<pre><code>## Generalized Linear Model 
+## 
+## 208 samples
+##  60 predictor
+##   2 classes: &#39;M&#39;, &#39;R&#39; 
+## 
+## No pre-processing
+## Resampling: Cross-Validated (10 fold) 
+## Summary of sample sizes: 187, 187, 188, 187, 188, 188, ... 
+## Resampling results:
+## 
+##   ROC        Sens   Spec
+##   0.7255051  0.775  0.66</code></pre>
+</div>

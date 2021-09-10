@@ -1,0 +1,912 @@
+---
+title: "Dealing With Missing Data in R"
+author: ''
+date: '2021-09-06'
+
+categories: []
+tags: data_wrangling
+slug: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(naniar)
+library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
+## v tibble  3.1.2     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>dat_hw &lt;- read.csv(&quot;dat_hw.csv&quot;)
+airquality &lt;- read.csv(&quot;airquality.csv&quot;)
+pacman &lt;- read.csv(&quot;pacman.csv&quot;)
+frogger &lt;- read.csv(&quot;frogger.csv&quot;)
+frogger2 &lt;- read.csv(&quot;frogger2.csv&quot;)</code></pre>
+<div id="using-and-finding-missing-values" class="section level2">
+<h2>1-2 Using and finding missing values</h2>
+<p>When working with missing data, there are a couple of commands that you should be familiar with - firstly, you should be able to identify if there are any missing values, and where these are.</p>
+<p>Using the any_na() and are_na() tools, identify which values are missing.</p>
+<pre class="r"><code># Create x, a vector, with values NA, NaN, Inf, &quot;.&quot;, and &quot;missing&quot;
+x &lt;- c(NA, NaN, Inf, &quot;.&quot;, &quot;missing&quot;)
+
+# Use any_na() and are_na() on to explore the missings
+any_na(x)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>are_na(x)</code></pre>
+<pre><code>## [1]  TRUE FALSE FALSE FALSE FALSE</code></pre>
+</div>
+<div id="how-many-missing-values-are-there" class="section level2">
+<h2>1-3 How many missing values are there?</h2>
+<p>One of the first things that you will want to check with a new dataset is if there are any missing missing values, and how many there are.</p>
+<p>You could use are_na() to and count up the missing values, but the most efficient way to count missings is to use the n_miss() function. This will tell you the total number of missing values in the data.</p>
+<p>You can then find the percent of missing values in the data with the pct_miss function. This will tell you the percentage of missing values in the data.</p>
+<p>You can also find the complement to these - how many complete values there are - using n_complete and pct_complete.</p>
+<pre class="r"><code># Use n_miss() to count the total number of missing values in dat_hw
+n_miss(dat_hw)</code></pre>
+<pre><code>## [1] 30</code></pre>
+<pre class="r"><code># Use n_miss() on dat_hw$weight to count the total number of missing values
+n_miss(dat_hw$weight)</code></pre>
+<pre><code>## [1] 15</code></pre>
+<pre class="r"><code># Use n_complete() on dat_hw to count the total number of complete values
+n_complete(dat_hw)</code></pre>
+<pre><code>## [1] 170</code></pre>
+<pre class="r"><code># Use n_complete() on dat_hw$weight to count the total number of complete values
+n_complete(dat_hw$weight)</code></pre>
+<pre><code>## [1] 85</code></pre>
+<pre class="r"><code># Use prop_miss() and prop_complete() on dat_hw to count the total number of missing values in each of the variables
+prop_miss(dat_hw)</code></pre>
+<pre><code>## [1] 0.15</code></pre>
+<pre class="r"><code>prop_complete(dat_hw)</code></pre>
+<pre><code>## [1] 0.85</code></pre>
+</div>
+<div id="summarizing-missingness" class="section level2">
+<h2>1-6 Summarizing missingness</h2>
+<p>Now that you understand the behavior of missing values in R, and how to count them, let’s scale up our summaries for cases (rows) and variables, using miss_var_summary() and miss_case_summary(), and also explore how they can be applied for groups in a dataframe, using the group_by function from dplyr.</p>
+<pre class="r"><code># Summarize missingness in each variable of the `airquality` dataset
+miss_var_summary(airquality)</code></pre>
+<pre><code>## # A tibble: 6 x 3
+##   variable n_miss pct_miss
+##   &lt;chr&gt;     &lt;int&gt;    &lt;dbl&gt;
+## 1 Ozone        37    24.2 
+## 2 Solar.R       7     4.58
+## 3 Wind          0     0   
+## 4 Temp          0     0   
+## 5 Month         0     0   
+## 6 Day           0     0</code></pre>
+<pre class="r"><code># Summarize missingness in each case of the `airquality` dataset
+miss_case_summary(airquality)</code></pre>
+<pre><code>## # A tibble: 153 x 3
+##     case n_miss pct_miss
+##    &lt;int&gt;  &lt;int&gt;    &lt;dbl&gt;
+##  1     5      2     33.3
+##  2    27      2     33.3
+##  3     6      1     16.7
+##  4    10      1     16.7
+##  5    11      1     16.7
+##  6    25      1     16.7
+##  7    26      1     16.7
+##  8    32      1     16.7
+##  9    33      1     16.7
+## 10    34      1     16.7
+## # ... with 143 more rows</code></pre>
+<pre class="r"><code># Return the summary of missingness in each variable, 
+# grouped by Month, in the `airquality` dataset
+airquality %&gt;% group_by(Month) %&gt;% miss_var_summary()</code></pre>
+<pre><code>## # A tibble: 25 x 4
+## # Groups:   Month [5]
+##    Month variable n_miss pct_miss
+##    &lt;int&gt; &lt;chr&gt;     &lt;int&gt;    &lt;dbl&gt;
+##  1     5 Ozone         5     16.1
+##  2     5 Solar.R       4     12.9
+##  3     5 Wind          0      0  
+##  4     5 Temp          0      0  
+##  5     5 Day           0      0  
+##  6     6 Ozone        21     70  
+##  7     6 Solar.R       0      0  
+##  8     6 Wind          0      0  
+##  9     6 Temp          0      0  
+## 10     6 Day           0      0  
+## # ... with 15 more rows</code></pre>
+<pre class="r"><code># Return the summary of missingness in each case, 
+# grouped by Month, in the `airquality` dataset
+airquality %&gt;% group_by(Month) %&gt;% miss_case_summary()</code></pre>
+<pre><code>## # A tibble: 153 x 4
+## # Groups:   Month [5]
+##    Month  case n_miss pct_miss
+##    &lt;int&gt; &lt;int&gt;  &lt;int&gt;    &lt;dbl&gt;
+##  1     5     5      2       40
+##  2     5    27      2       40
+##  3     5     6      1       20
+##  4     5    10      1       20
+##  5     5    11      1       20
+##  6     5    25      1       20
+##  7     5    26      1       20
+##  8     5     1      0        0
+##  9     5     2      0        0
+## 10     5     3      0        0
+## # ... with 143 more rows</code></pre>
+</div>
+<div id="tabulating-missingness" class="section level2">
+<h2>1-7 Tabulating Missingness</h2>
+<p>The summaries of missingness we just calculated give us the number and percentage of missing observations for the cases and variables.</p>
+<p>Another way to summarize missingness is by tabulating the number of times that there are 0, 1, 2, 3, missings in a variable, or in a case.</p>
+<p>In this exercise we are going to tabulate the number of missings in each case and variable using miss_var_table() and miss_case_table(), and also combine these summaries with the the group_by operator from dplyr. to explore the summaries over a grouping variable in the dataset.</p>
+<pre class="r"><code># Tabulate missingness in each variable and case of the `airquality` dataset
+miss_var_table(airquality)</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   n_miss_in_var n_vars pct_vars
+##           &lt;int&gt;  &lt;int&gt;    &lt;dbl&gt;
+## 1             0      4     66.7
+## 2             7      1     16.7
+## 3            37      1     16.7</code></pre>
+<pre class="r"><code>miss_case_table(airquality)</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   n_miss_in_case n_cases pct_cases
+##            &lt;int&gt;   &lt;int&gt;     &lt;dbl&gt;
+## 1              0     111     72.5 
+## 2              1      40     26.1 
+## 3              2       2      1.31</code></pre>
+<pre class="r"><code># Tabulate the missingness in each variable, grouped by Month, in the `airquality` dataset
+airquality %&gt;% group_by(Month) %&gt;% miss_var_table()</code></pre>
+<pre><code>## # A tibble: 12 x 4
+## # Groups:   Month [5]
+##    Month n_miss_in_var n_vars pct_vars
+##    &lt;int&gt;         &lt;int&gt;  &lt;int&gt;    &lt;dbl&gt;
+##  1     5             0      3       60
+##  2     5             4      1       20
+##  3     5             5      1       20
+##  4     6             0      4       80
+##  5     6            21      1       20
+##  6     7             0      4       80
+##  7     7             5      1       20
+##  8     8             0      3       60
+##  9     8             3      1       20
+## 10     8             5      1       20
+## 11     9             0      4       80
+## 12     9             1      1       20</code></pre>
+<pre class="r"><code># Tabulate of missingness in each case, grouped by Month, in the `airquality` dataset
+airquality %&gt;% group_by(Month) %&gt;% miss_case_table()</code></pre>
+<pre><code>## # A tibble: 11 x 4
+## # Groups:   Month [5]
+##    Month n_miss_in_case n_cases pct_cases
+##    &lt;int&gt;          &lt;int&gt;   &lt;int&gt;     &lt;dbl&gt;
+##  1     5              0      24     77.4 
+##  2     5              1       5     16.1 
+##  3     5              2       2      6.45
+##  4     6              0       9     30   
+##  5     6              1      21     70   
+##  6     7              0      26     83.9 
+##  7     7              1       5     16.1 
+##  8     8              0      23     74.2 
+##  9     8              1       8     25.8 
+## 10     9              0      29     96.7 
+## 11     9              1       1      3.33</code></pre>
+</div>
+<div id="other-summaries-of-missingness" class="section level2">
+<h2>1-8 Other summaries of missingness</h2>
+<p>Some summaries of missingness are particularly useful for different types of data. For example, miss_var_span() and miss_var_run().</p>
+<p>miss_var_span() calculates the number of missing values in a specified variable for a repeating span. This is really useful in time series data, to look for weekly (7 day) patterns of missingness.</p>
+<p>miss_var_run() calculates the number of “runs” or “streaks” of missingness. This is useful to find unusual patterns of missingness, for example, you might find a repeating pattern of 5 complete and 5 missings.</p>
+<p>Both miss_var_span() and miss_var_run() work with the group_by operator from dplyr.</p>
+<pre class="r"><code>#pedestrian
+# Calculate the summaries for each run of missingness for the variable, hourly_counts
+miss_var_run(pedestrian, var = hourly_counts)</code></pre>
+<pre><code>## # A tibble: 35 x 2
+##    run_length is_na   
+##         &lt;int&gt; &lt;chr&gt;   
+##  1       6628 complete
+##  2          1 missing 
+##  3       5250 complete
+##  4        624 missing 
+##  5       3652 complete
+##  6          1 missing 
+##  7       1290 complete
+##  8        744 missing 
+##  9       7420 complete
+## 10          1 missing 
+## # ... with 25 more rows</code></pre>
+<pre class="r"><code># Calculate the summaries for each span of missingness, 
+# for a span of 4000, for the variable hourly_counts
+miss_var_span(pedestrian, var = hourly_counts, span_every = 4000)</code></pre>
+<pre><code>## # A tibble: 10 x 6
+##    span_counter n_miss n_complete prop_miss prop_complete n_in_span
+##           &lt;int&gt;  &lt;int&gt;      &lt;int&gt;     &lt;dbl&gt;         &lt;dbl&gt;     &lt;int&gt;
+##  1            1      0       4000   0               1          4000
+##  2            2      1       3999   0.00025         1.00       4000
+##  3            3    121       3879   0.0302          0.970      4000
+##  4            4    503       3497   0.126           0.874      4000
+##  5            5    745       3255   0.186           0.814      4000
+##  6            6      0       4000   0               1          4000
+##  7            7      1       3999   0.00025         1.00       4000
+##  8            8      0       4000   0               1          4000
+##  9            9    745       3255   0.186           0.814      4000
+## 10           10    432       1268   0.254           0.746      1700</code></pre>
+<pre class="r"><code># For each `month` variable, calculate the run of missingness for hourly_counts
+pedestrian %&gt;% group_by(month) %&gt;% miss_var_run(var = hourly_counts)</code></pre>
+<pre><code>## # A tibble: 51 x 3
+## # Groups:   month [12]
+##    month    run_length is_na   
+##    &lt;ord&gt;         &lt;int&gt; &lt;chr&gt;   
+##  1 January        2976 complete
+##  2 February       2784 complete
+##  3 March          2976 complete
+##  4 April           888 complete
+##  5 April           552 missing 
+##  6 April          1440 complete
+##  7 May             744 complete
+##  8 May              72 missing 
+##  9 May            2160 complete
+## 10 June           2880 complete
+## # ... with 41 more rows</code></pre>
+<pre class="r"><code># For each `month` variable, calculate the span of missingness 
+# of a span of 2000, for the variable hourly_counts
+pedestrian %&gt;% group_by(month) %&gt;% miss_var_span(var = hourly_counts, span_every = 2000)</code></pre>
+<pre><code>## # A tibble: 25 x 7
+## # Groups:   month [12]
+##    month    span_counter n_miss n_complete prop_miss prop_complete n_in_span
+##    &lt;ord&gt;           &lt;int&gt;  &lt;int&gt;      &lt;int&gt;     &lt;dbl&gt;         &lt;dbl&gt;     &lt;int&gt;
+##  1 January             1      0       2000     0             1          2000
+##  2 January             2      0        976     0             1           976
+##  3 February            1      0       2000     0             1          2000
+##  4 February            2      0        784     0             1           784
+##  5 March               1      0       2000     0             1          2000
+##  6 March               2      0        976     0             1           976
+##  7 April               1    552       1448     0.276         0.724      2000
+##  8 April               2      0        880     0             1           880
+##  9 May                 1     72       1928     0.036         0.964      2000
+## 10 May                 2      0        976     0             1           976
+## # ... with 15 more rows</code></pre>
+</div>
+<div id="your-first-missing-data-visualizations" class="section level2">
+<h2>1-10 Your first missing data visualizations</h2>
+<p>It can be difficult to get a handle on where the missing values are in your data, and here is where visualization can really help.</p>
+<p>The function vis_miss() creates an overview visualization of the missingness in the data. It also has options to cluster rows based on missingness, using cluster = TRUE; as well as options for sorting the columns, from most missing to least missing (sort_miss = TRUE).</p>
+<pre class="r"><code># Visualize all of the missingness in the `riskfactors`  dataset
+vis_miss(riskfactors)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code># Visualize and cluster all of the missingness in the `riskfactors` dataset
+vis_miss(riskfactors, cluster  = TRUE)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<pre class="r"><code># visualize and sort the columns by missingness in the `riskfactors` dataset
+vis_miss(riskfactors, sort_miss = TRUE)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-3.png" width="672" /></p>
+</div>
+<div id="visualizing-missing-cases-and-variables" class="section level2">
+<h2>1-11 Visualizing missing cases and variables</h2>
+<p>To get a clear picture of the missingness across variables and cases, use gg_miss_var() and gg_miss_case(). These are the visual counterpart to miss_var_summary() and miss_case_summary().</p>
+<p>These can be split up into multiple plots with one for each category by choosing a variable to facet by.</p>
+<pre class="r"><code># Visualize the number of missings in cases using `gg_miss_case()`
+gg_miss_case(riskfactors)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code># Explore the number of missings in cases using `gg_miss_case()` 
+# and facet by the variable `education`
+gg_miss_case(riskfactors, facet = education)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
+<pre class="r"><code># Visualize the number of missings in variables using `gg_miss_var()`
+gg_miss_var(riskfactors)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-3.png" width="672" /></p>
+<pre class="r"><code># Explore the number of missings in variables using `gg_miss_var()` 
+# and facet by the variable `education`
+gg_miss_var(riskfactors, facet = education)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-4.png" width="672" /></p>
+</div>
+<div id="visualizing-missingness-patterns" class="section level2">
+<h2>1-12 Visualizing missingness patterns</h2>
+<p>Let’s practice a few different ways to visualize patterns of missingness using:</p>
+<p>gg_miss_upset() to give an overall pattern of missingness.
+gg_miss_fct() for a dataset that has a factor of interest: marriage.
+and gg_miss_span() to explore the missingness in a time series dataset.
+What do you notice with the missingness and the faceting in the data?</p>
+<pre class="r"><code>riskfactors</code></pre>
+<pre><code>## # A tibble: 245 x 34
+##    state sex      age weight_lbs height_inch   bmi marital     pregnant children
+##    &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;      &lt;int&gt;       &lt;int&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;       &lt;int&gt;
+##  1 26    Female    49        190          64  32.7 Married     &lt;NA&gt;            0
+##  2 40    Female    48        170          68  25.9 Divorced    &lt;NA&gt;            0
+##  3 72    Female    55        163          64  28.0 Married     &lt;NA&gt;            0
+##  4 42    Male      42        230          74  29.6 Married     &lt;NA&gt;            1
+##  5 32    Female    66        135          62  24.7 Widowed     &lt;NA&gt;            0
+##  6 19    Male      66        165          70  23.7 Married     &lt;NA&gt;            0
+##  7 45    Male      37        150          68  22.9 Married     &lt;NA&gt;            3
+##  8 56    Female    62        170          70  24.4 NeverMarri~ &lt;NA&gt;            0
+##  9 18    Male      38        146          70  21.0 Married     &lt;NA&gt;            2
+## 10 8     Female    42        260          73  34.4 Separated   No              3
+## # ... with 235 more rows, and 25 more variables: education &lt;fct&gt;,
+## #   employment &lt;fct&gt;, income &lt;fct&gt;, veteran &lt;fct&gt;, hispanic &lt;fct&gt;,
+## #   health_general &lt;fct&gt;, health_physical &lt;int&gt;, health_mental &lt;int&gt;,
+## #   health_poor &lt;int&gt;, health_cover &lt;fct&gt;, provide_care &lt;fct&gt;,
+## #   activity_limited &lt;fct&gt;, drink_any &lt;fct&gt;, drink_days &lt;int&gt;,
+## #   drink_average &lt;int&gt;, smoke_100 &lt;fct&gt;, smoke_days &lt;fct&gt;, smoke_stop &lt;fct&gt;,
+## #   smoke_last &lt;fct&gt;, diet_fruit &lt;int&gt;, diet_salad &lt;int&gt;, diet_potato &lt;int&gt;,
+## #   diet_carrot &lt;int&gt;, diet_vegetable &lt;int&gt;, diet_juice &lt;int&gt;</code></pre>
+<pre class="r"><code># Using the airquality dataset, explore the missingness pattern using gg_miss_upset()
+gg_miss_upset(airquality)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code># With the riskfactors dataset, explore how the missingness changes across the marital variable using gg_miss_fct()
+gg_miss_fct(x = riskfactors, fct = marital)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
+<pre class="r"><code># Using the pedestrian dataset, explore how the missingness of hourly_counts changes over a span of 3000 
+gg_miss_span(pedestrian, var = hourly_counts, span_every = 3000)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-3.png" width="672" /></p>
+<pre class="r"><code># Using the pedestrian dataset, explore the impact of month by faceting by month
+# and explore how missingness changes for a span of 1000
+gg_miss_span(pedestrian, var = hourly_counts, span_every = 1000, facet = month)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-4.png" width="672" /></p>
+</div>
+<div id="using-miss_scan_count" class="section level2">
+<h2>2-2 Using miss_scan_count</h2>
+<p>You have a dataset with missing values coded as “N/A”, “missing”, and “na”. But before we go ahead and start replacing these with NA, we should get an idea of how big the problem is.</p>
+<p>Use miss_scan_count to count the possible missings in the dataset, pacman, a dataset of pacman scores, containing three columns:</p>
+<p>year: the year that person made that score.
+initial: the initials of the person.
+score: the scores of that person.</p>
+<pre class="r"><code># Explore the strange missing values &quot;N/A&quot;
+miss_scan_count(data = pacman, search = list(&quot;N/A&quot;))</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   Variable     n
+##   &lt;chr&gt;    &lt;int&gt;
+## 1 year         0
+## 2 month        0
+## 3 day          0
+## 4 initial      0
+## 5 score      100
+## 6 country      0</code></pre>
+<pre class="r"><code># Explore the strange missing values &quot;missing&quot;
+miss_scan_count(data = pacman, search = list(&quot;missing&quot;))</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   Variable     n
+##   &lt;chr&gt;    &lt;int&gt;
+## 1 year        93
+## 2 month       93
+## 3 day         93
+## 4 initial      0
+## 5 score        0
+## 6 country      0</code></pre>
+<pre class="r"><code># Explore the strange missing values &quot;na&quot;
+miss_scan_count(data = pacman, search = list(&quot;na&quot;))</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   Variable     n
+##   &lt;chr&gt;    &lt;int&gt;
+## 1 year       100
+## 2 month      100
+## 3 day        100
+## 4 initial      0
+## 5 score        0
+## 6 country      0</code></pre>
+<pre class="r"><code># Explore the strange missing values &quot; &quot; (a single space)
+miss_scan_count(data = pacman, search = list(&quot; &quot;))</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   Variable     n
+##   &lt;chr&gt;    &lt;int&gt;
+## 1 year         0
+## 2 month        0
+## 3 day          0
+## 4 initial      0
+## 5 score        0
+## 6 country    100</code></pre>
+<pre class="r"><code># Explore all of the strange missing values, &quot;N/A&quot;, &quot;missing&quot;, &quot;na&quot;, &quot; &quot;
+miss_scan_count(data = pacman, search = list(&quot;N/A&quot;, &quot;missing&quot;,&quot;na&quot;, &quot; &quot;))</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   Variable     n
+##   &lt;chr&gt;    &lt;int&gt;
+## 1 year       193
+## 2 month      193
+## 3 day        193
+## 4 initial      0
+## 5 score      100
+## 6 country    100</code></pre>
+</div>
+<div id="using-replace_with_na" class="section level2">
+<h2>2-3 Using replace_with_na</h2>
+<p>Following on from the previous dataset, we now know that we have a few strange missing values.</p>
+<p>Now, we are going to do something about it, and replace these values with missings (e.g. NA) using the function replace_with_na().</p>
+<pre class="r"><code># Print the top of the pacman data using `head()`
+head(pacman)</code></pre>
+<pre><code>##   year month day initial   score country
+## 1 2007    10  27     LEX 2065812      CA
+## 2 1995     8  23     PNY 1163465      JP
+## 3 1980     2   8     MBJ  175380        
+## 4 1982     5   9     QRC 2025632      ES
+## 5   na    na  na     YPZ  925357      NZ
+## 6 2013    11  15     RVJ  319733      AU</code></pre>
+<pre class="r"><code># Replace the strange missing values &quot;N/A&quot;, &quot;na&quot;, and  
+# &quot;missing&quot; with `NA` for the variables, year, and score
+pacman_clean &lt;- replace_with_na(pacman, replace = list(year = c(&quot;N/A&quot;, &quot;na&quot;, &quot;missing&quot;),
+                                score = c(&quot;N/A&quot;, &quot;na&quot;, &quot;missing&quot;)))
+                                        
+# Test if `pacman_clean` still has these values in it?
+miss_scan_count(pacman_clean, search = list(&quot;N/A&quot;, &quot;na&quot;, &quot;missing&quot;))</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   Variable     n
+##   &lt;chr&gt;    &lt;int&gt;
+## 1 year         0
+## 2 month      193
+## 3 day        193
+## 4 initial      0
+## 5 score        0
+## 6 country      0</code></pre>
+</div>
+<div id="using-replace_with_na-scoped-variants" class="section level2">
+<h2>2-4 Using replace_with_na scoped variants</h2>
+<p>To reduce code repetition when replacing values with NA, use the “scoped variants” of replace_with_na():</p>
+<p>replace_with_na_at()
+replace_with_na_if()
+replace_with_na_all()
+The syntax of replacement looks like this:</p>
+<p>~.x == “N/A”
+This replaces all cases that are equal to “N/A”.</p>
+<p>~.x %in% c(“N/A”, “missing”, “na”, " “)
+Replaces all cases that have”N/A“,”missing“,”na“, or” ".</p>
+<pre class="r"><code># Use `replace_with_na_at()` to replace with NA
+replace_with_na_at(pacman,
+                   .vars = c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), 
+                   ~.x %in% c(&quot;N/A&quot;, &quot;missing&quot;, &quot;na&quot;, &quot; &quot;))
+
+# Use `replace_with_na_if()` to replace with NA the character values using `is.character`
+replace_with_na_if(pacman,
+                   .predicate = is.character, 
+                   ~.x %in% c(&quot;N/A&quot;, &quot;missing&quot;, &quot;na&quot;, &quot; &quot;))
+
+# Use `replace_with_na_all()` to replace with NA
+replace_with_na_all(pacman, ~.x %in% c(&quot;N/A&quot;, &quot;missing&quot;, &quot;na&quot;, &quot; &quot;))</code></pre>
+</div>
+<div id="fix-implicit-missings-using-complete" class="section level2">
+<h2>2-6 Fix implicit missings using complete()</h2>
+<p>We are going to explore a new dataset, frogger.</p>
+<p>This dataset contains 4 scores per player recorded at different times: morning, afternoon, evening, and late_night.</p>
+<p>Every player should have played 4 games, one at each of these times, but it looks like not every player completed all of these games.</p>
+<p>Use the complete() function to make these implicit missing values explicit.</p>
+<pre class="r"><code># Print the frogger data to have a look at it
+print(frogger)</code></pre>
+<pre><code>##     name       time  value
+## 1  jesse    morning   6678
+## 2  jesse  afternoon 800060
+## 3  jesse    evening 475528
+## 4  jesse late_night 143533
+## 5   andy    morning 425115
+## 6   andy  afternoon 587468
+## 7   andy late_night 111000
+## 8    nic  afternoon 588532
+## 9    nic late_night 915533
+## 10   dan    morning 388148
+## 11   dan    evening 180912
+## 12  alex    morning 552670
+## 13  alex  afternoon  98355
+## 14  alex    evening 266055
+## 15  alex late_night 121056</code></pre>
+<pre class="r"><code># Use `complete()` on the `time` and `name` variables to  
+# make implicit missing values explicit
+frogger_tidy &lt;- frogger %&gt;% complete(time, name)
+frogger_tidy</code></pre>
+<pre><code>## # A tibble: 20 x 3
+##    time       name   value
+##    &lt;chr&gt;      &lt;chr&gt;  &lt;int&gt;
+##  1 afternoon  alex   98355
+##  2 afternoon  andy  587468
+##  3 afternoon  dan       NA
+##  4 afternoon  jesse 800060
+##  5 afternoon  nic   588532
+##  6 evening    alex  266055
+##  7 evening    andy      NA
+##  8 evening    dan   180912
+##  9 evening    jesse 475528
+## 10 evening    nic       NA
+## 11 late_night alex  121056
+## 12 late_night andy  111000
+## 13 late_night dan       NA
+## 14 late_night jesse 143533
+## 15 late_night nic   915533
+## 16 morning    alex  552670
+## 17 morning    andy  425115
+## 18 morning    dan   388148
+## 19 morning    jesse   6678
+## 20 morning    nic       NA</code></pre>
+</div>
+<div id="fix-explicit-missings-using-fill" class="section level2">
+<h2>2-7 Fix explicit missings using fill()</h2>
+<p>One type of missing value that can be obvious to deal with is where the first entry of a group is given, but subsequent entries are marked NA.</p>
+<p>These missing values often result from empty values in spreadsheets to avoid entering multiple names multiple times; as well as for “human readability”.</p>
+<p>This type of problem can be solved by using the fill() function from the tidyr package.</p>
+<pre class="r"><code># Print the frogger2 data to have a look at it
+
+frogger2</code></pre>
+<pre><code>##     X  name       time  value year
+## 1   1 jesse    morning   6678 1981
+## 2   2  &lt;NA&gt;  afternoon 800060   NA
+## 3   3  &lt;NA&gt;    evening 475528   NA
+## 4   4  &lt;NA&gt; late_night 143533   NA
+## 5   5  andy    morning 425115   NA
+## 6   6  &lt;NA&gt;  afternoon 587468   NA
+## 7   7  &lt;NA&gt; late_night 111000   NA
+## 8   8   nic  afternoon 588532   NA
+## 9   9  &lt;NA&gt; late_night 915533   NA
+## 10 10   dan    morning 388148 1988
+## 11 11  &lt;NA&gt;    evening 180912   NA
+## 12 12  alex    morning 552670   NA
+## 13 13  &lt;NA&gt;  afternoon  98355   NA
+## 14 14  &lt;NA&gt;    evening 266055   NA
+## 15 15  &lt;NA&gt; late_night 121056   NA</code></pre>
+<pre class="r"><code># Use `fill()` to fill down the name variable in the frogger2 dataset
+frogger2 %&gt;% fill(name)</code></pre>
+<pre><code>##     X  name       time  value year
+## 1   1 jesse    morning   6678 1981
+## 2   2 jesse  afternoon 800060   NA
+## 3   3 jesse    evening 475528   NA
+## 4   4 jesse late_night 143533   NA
+## 5   5  andy    morning 425115   NA
+## 6   6  andy  afternoon 587468   NA
+## 7   7  andy late_night 111000   NA
+## 8   8   nic  afternoon 588532   NA
+## 9   9   nic late_night 915533   NA
+## 10 10   dan    morning 388148 1988
+## 11 11   dan    evening 180912   NA
+## 12 12  alex    morning 552670   NA
+## 13 13  alex  afternoon  98355   NA
+## 14 14  alex    evening 266055   NA
+## 15 15  alex late_night 121056   NA</code></pre>
+</div>
+<div id="using-complete-and-fill-together" class="section level2">
+<h2>2-8 Using complete() and fill() together</h2>
+<p>Now let’s put it together!</p>
+<p>Use complete() and fill() together to fix explicit and implicitly missing values in the frogger dataset.</p>
+<pre class="r"><code># Print the frogger data to have a look at it
+frogger2</code></pre>
+<pre><code>##     X  name       time  value year
+## 1   1 jesse    morning   6678 1981
+## 2   2  &lt;NA&gt;  afternoon 800060   NA
+## 3   3  &lt;NA&gt;    evening 475528   NA
+## 4   4  &lt;NA&gt; late_night 143533   NA
+## 5   5  andy    morning 425115   NA
+## 6   6  &lt;NA&gt;  afternoon 587468   NA
+## 7   7  &lt;NA&gt; late_night 111000   NA
+## 8   8   nic  afternoon 588532   NA
+## 9   9  &lt;NA&gt; late_night 915533   NA
+## 10 10   dan    morning 388148 1988
+## 11 11  &lt;NA&gt;    evening 180912   NA
+## 12 12  alex    morning 552670   NA
+## 13 13  &lt;NA&gt;  afternoon  98355   NA
+## 14 14  &lt;NA&gt;    evening 266055   NA
+## 15 15  &lt;NA&gt; late_night 121056   NA</code></pre>
+<pre class="r"><code># Correctly fill() and complete() missing values so that our dataset becomes sensible
+frogger2 %&gt;%
+  fill(name) %&gt;%
+  complete(name, time)</code></pre>
+<pre><code>## # A tibble: 20 x 5
+##    name  time           X  value  year
+##    &lt;chr&gt; &lt;chr&gt;      &lt;int&gt;  &lt;int&gt; &lt;int&gt;
+##  1 alex  afternoon     13  98355    NA
+##  2 alex  evening       14 266055    NA
+##  3 alex  late_night    15 121056    NA
+##  4 alex  morning       12 552670    NA
+##  5 andy  afternoon      6 587468    NA
+##  6 andy  evening       NA     NA    NA
+##  7 andy  late_night     7 111000    NA
+##  8 andy  morning        5 425115    NA
+##  9 dan   afternoon     NA     NA    NA
+## 10 dan   evening       11 180912    NA
+## 11 dan   late_night    NA     NA    NA
+## 12 dan   morning       10 388148  1988
+## 13 jesse afternoon      2 800060    NA
+## 14 jesse evening        3 475528    NA
+## 15 jesse late_night     4 143533    NA
+## 16 jesse morning        1   6678  1981
+## 17 nic   afternoon      8 588532    NA
+## 18 nic   evening       NA     NA    NA
+## 19 nic   late_night     9 915533    NA
+## 20 nic   morning       NA     NA    NA</code></pre>
+</div>
+<div id="exploring-missingness-dependence" class="section level2">
+<h2>2-11 Exploring missingness dependence</h2>
+<p>To learn about the structure of the missingness in data, you can explore how sorting changes how missingness is presented.</p>
+<p>For the oceanbuoys dataset, explore the missingness with vis_miss(), and then arrange by a few different variables</p>
+<p>This is not a definitive process, but it will get you started to ask the right questions of your data. We explore more powerful techniques in the next chapter.</p>
+<pre class="r"><code># Arrange by year
+oceanbuoys %&gt;% arrange(year) %&gt;% vis_miss()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<pre class="r"><code># Arrange by latitude
+oceanbuoys %&gt;% arrange(latitude) %&gt;% vis_miss()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-2.png" width="672" /></p>
+<pre class="r"><code># Arrange by wind_ew (wind east west)
+oceanbuoys %&gt;% arrange(wind_ew) %&gt;% vis_miss()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-3.png" width="672" /></p>
+</div>
+<div id="creating-shadow-matrix-data" class="section level2">
+<h2>3-2 Creating shadow matrix data</h2>
+<p>Missing data can be tricky to think about, as they don’t usually proclaim themselves for you, and instead hide amongst the weeds of the data.</p>
+<p>One way to help expose missing values is to change the way we think about the data - by thinking about every single data value being missing or not missing.</p>
+<p>The as_shadow() function in R transforms a dataframe into a shadow matrix, a special data format where the values are either missing (NA), or Not Missing (!NA).</p>
+<p>The column names of a shadow matrix are the same as the data, but have a suffix added _NA.</p>
+<p>To keep track of and compare data values to their missingness state, use the bind_shadow() function. Having data in this format, with the shadow matrix column bound to the regular data is called nabular data.</p>
+<pre class="r"><code># Create shadow matrix data with `as_shadow()`
+as_shadow(oceanbuoys)</code></pre>
+<pre><code>## # A tibble: 736 x 8
+##    year_NA latitude_NA longitude_NA sea_temp_c_NA air_temp_c_NA humidity_NA
+##    &lt;fct&gt;   &lt;fct&gt;       &lt;fct&gt;        &lt;fct&gt;         &lt;fct&gt;         &lt;fct&gt;      
+##  1 !NA     !NA         !NA          !NA           !NA           !NA        
+##  2 !NA     !NA         !NA          !NA           !NA           !NA        
+##  3 !NA     !NA         !NA          !NA           !NA           !NA        
+##  4 !NA     !NA         !NA          !NA           !NA           !NA        
+##  5 !NA     !NA         !NA          !NA           !NA           !NA        
+##  6 !NA     !NA         !NA          !NA           !NA           !NA        
+##  7 !NA     !NA         !NA          !NA           !NA           !NA        
+##  8 !NA     !NA         !NA          !NA           !NA           !NA        
+##  9 !NA     !NA         !NA          !NA           !NA           !NA        
+## 10 !NA     !NA         !NA          !NA           !NA           !NA        
+## # ... with 726 more rows, and 2 more variables: wind_ew_NA &lt;fct&gt;,
+## #   wind_ns_NA &lt;fct&gt;</code></pre>
+<pre class="r"><code># Create nabular data by binding the shadow to the data with `bind_shadow()`
+bind_shadow(oceanbuoys)</code></pre>
+<pre><code>## # A tibble: 736 x 16
+##     year latitude longitude sea_temp_c air_temp_c humidity wind_ew wind_ns
+##    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1  1997        0      -110       27.6       27.1     79.6   -6.40    5.40
+##  2  1997        0      -110       27.5       27.0     75.8   -5.30    5.30
+##  3  1997        0      -110       27.6       27       76.5   -5.10    4.5 
+##  4  1997        0      -110       27.6       26.9     76.2   -4.90    2.5 
+##  5  1997        0      -110       27.6       26.8     76.4   -3.5     4.10
+##  6  1997        0      -110       27.8       26.9     76.7   -4.40    1.60
+##  7  1997        0      -110       28.0       27.0     76.5   -2       3.5 
+##  8  1997        0      -110       28.0       27.1     78.3   -3.70    4.5 
+##  9  1997        0      -110       28.0       27.2     78.6   -4.20    5   
+## 10  1997        0      -110       28.0       27.2     76.9   -3.60    3.5 
+## # ... with 726 more rows, and 8 more variables: year_NA &lt;fct&gt;,
+## #   latitude_NA &lt;fct&gt;, longitude_NA &lt;fct&gt;, sea_temp_c_NA &lt;fct&gt;,
+## #   air_temp_c_NA &lt;fct&gt;, humidity_NA &lt;fct&gt;, wind_ew_NA &lt;fct&gt;, wind_ns_NA &lt;fct&gt;</code></pre>
+<pre class="r"><code># Bind only the variables with missing values by using bind_shadow(only_miss = TRUE)
+bind_shadow(oceanbuoys, only_miss = TRUE)</code></pre>
+<pre><code>## # A tibble: 736 x 11
+##     year latitude longitude sea_temp_c air_temp_c humidity wind_ew wind_ns
+##    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1  1997        0      -110       27.6       27.1     79.6   -6.40    5.40
+##  2  1997        0      -110       27.5       27.0     75.8   -5.30    5.30
+##  3  1997        0      -110       27.6       27       76.5   -5.10    4.5 
+##  4  1997        0      -110       27.6       26.9     76.2   -4.90    2.5 
+##  5  1997        0      -110       27.6       26.8     76.4   -3.5     4.10
+##  6  1997        0      -110       27.8       26.9     76.7   -4.40    1.60
+##  7  1997        0      -110       28.0       27.0     76.5   -2       3.5 
+##  8  1997        0      -110       28.0       27.1     78.3   -3.70    4.5 
+##  9  1997        0      -110       28.0       27.2     78.6   -4.20    5   
+## 10  1997        0      -110       28.0       27.2     76.9   -3.60    3.5 
+## # ... with 726 more rows, and 3 more variables: sea_temp_c_NA &lt;fct&gt;,
+## #   air_temp_c_NA &lt;fct&gt;, humidity_NA &lt;fct&gt;</code></pre>
+</div>
+<div id="performing-grouped-summaries-of-missingness" class="section level2">
+<h2>3-3 Performing grouped summaries of missingness</h2>
+<p>Now that you can create nabular data, let’s use it to explore the data. Let’s calculate summary statistics based on the missingness of another variable.</p>
+<p>To do this we are going to use the following steps:</p>
+<p>First, bind_shadow() turns the data into nabular data.</p>
+<p>Next, perform some summaries on the data using group_by() and summarize() to calculate the mean and standard deviation, using the mean() and sd() functions.</p>
+<pre class="r"><code># `bind_shadow()` and `group_by()` humidity missingness (`humidity_NA`)
+oceanbuoys %&gt;%
+  bind_shadow() %&gt;%
+  group_by(humidity_NA) %&gt;% 
+  summarize(wind_ew_mean = mean(wind_ew), # calculate mean of wind_ew
+            wind_ew_sd = sd(wind_ew)) # calculate standard deviation of wind_ew</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   humidity_NA wind_ew_mean wind_ew_sd
+##   &lt;fct&gt;              &lt;dbl&gt;      &lt;dbl&gt;
+## 1 !NA                -3.78       1.90
+## 2 NA                 -3.30       2.31</code></pre>
+<pre class="r"><code># Repeat this, but calculating summaries for wind north south (`wind_ns`).
+oceanbuoys %&gt;%
+  bind_shadow() %&gt;%
+  group_by(humidity_NA) %&gt;%
+  summarize(wind_ew_mean = mean(wind_ns), # calculate mean of wind_ew
+            wind_ew_sd = sd(wind_ns))</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   humidity_NA wind_ew_mean wind_ew_sd
+##   &lt;fct&gt;              &lt;dbl&gt;      &lt;dbl&gt;
+## 1 !NA                 2.78       2.06
+## 2 NA                  1.66       2.23</code></pre>
+</div>
+<div id="further-exploring-more-combinations-of-missingness" class="section level2">
+<h2>3-4 Further exploring more combinations of missingness</h2>
+<p>It can be useful to get a bit of extra information about the number of cases in each missing condition.</p>
+<p>In this exercise, we are going to add information about the number of observed cases using n() inside the summarize() function.</p>
+<p>We will then add an additional level of grouping by looking at the combination of humidity being missing (humidity_NA) and air temperature being missing (air_temp_c_NA).</p>
+<pre class="r"><code># Summarize wind_ew by the missingness of `air_temp_c_NA`
+oceanbuoys %&gt;% 
+  bind_shadow() %&gt;%
+  group_by(air_temp_c_NA) %&gt;%
+  summarize(wind_ew_mean = mean(wind_ew),
+            wind_ew_sd = sd(wind_ew),
+            n_obs = n())</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   air_temp_c_NA wind_ew_mean wind_ew_sd n_obs
+##   &lt;fct&gt;                &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt;
+## 1 !NA                  -3.91       1.85   655
+## 2 NA                   -2.17       2.14    81</code></pre>
+<pre class="r"><code># Summarize wind_ew by missingness of `air_temp_c_NA` and `humidity_NA`
+oceanbuoys %&gt;% 
+  bind_shadow() %&gt;%
+  group_by(air_temp_c_NA, humidity_NA) %&gt;%
+  summarize(wind_ew_mean = mean(wind_ew),
+            wind_ew_sd = sd(wind_ew),
+            n_obs = n())</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;air_temp_c_NA&#39;. You can override using the `.groups` argument.</code></pre>
+<pre><code>## # A tibble: 4 x 5
+## # Groups:   air_temp_c_NA [2]
+##   air_temp_c_NA humidity_NA wind_ew_mean wind_ew_sd n_obs
+##   &lt;fct&gt;         &lt;fct&gt;              &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt;
+## 1 !NA           !NA                -4.01       1.74   565
+## 2 !NA           NA                 -3.24       2.31    90
+## 3 NA            !NA                -2.06       2.08    78
+## 4 NA            NA                 -4.97       1.74     3</code></pre>
+</div>
+<div id="nabular-data-and-filling-by-missingness" class="section level2">
+<h2>3-6 Nabular data and filling by missingness</h2>
+<p>Summary statistics are useful to calculate, but as they say, a picture tells you a thousand words.</p>
+<p>In this exercise, we are going to explore how you can use nabular data to explore the variation in a variable by the missingness of another.</p>
+<p>We are going to use the oceanbuoys dataset from naniar.</p>
+<pre class="r"><code># First explore the missingness structure of `oceanbuoys` using `vis_miss()`
+vis_miss(oceanbuoys)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<pre class="r"><code># Explore the distribution of `wind_ew` for the missingness  
+# of `air_temp_c_NA` using  `geom_density()`
+bind_shadow(oceanbuoys) %&gt;%
+  ggplot(aes(x = wind_ew, 
+             color = air_temp_c_NA)) + 
+  geom_density()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-2.png" width="672" /></p>
+<pre class="r"><code># Explore the distribution of sea temperature for the  
+# missingness of humidity (humidity_NA) using  `geom_density()`
+  bind_shadow(oceanbuoys) %&gt;%
+  ggplot(aes(x = sea_temp_c,
+             color = humidity_NA)) + 
+  geom_density()</code></pre>
+<pre><code>## Warning: Removed 3 rows containing non-finite values (stat_density).</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-3.png" width="672" /></p>
+</div>
+<div id="nabular-data-and-summarising-by-missingness" class="section level2">
+<h2>3-7 Nabular data and summarising by missingness</h2>
+<p>In this exercise, we are going to explore how to use nabular data to explore the variation in a variable by the missingness of another.</p>
+<p>We are going to use the oceanbuoys dataset from naniar, and then create multiple plots of the data using facets.</p>
+<p>This allows you to explore different layers of missingness.</p>
+<pre class="r"><code># Explore the distribution of wind east west (wind_ew) for the missingness of air temperature 
+# using geom_density() and faceting by the missingness of air temperature (air_temp_c_NA).
+oceanbuoys %&gt;%
+  bind_shadow() %&gt;%
+  ggplot(aes(x = wind_ew)) + 
+  geom_density() + 
+  facet_wrap(~air_temp_c_NA)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<pre class="r"><code># Build upon this visualization by filling by the missingness of humidity (humidity_NA).
+oceanbuoys %&gt;%
+  bind_shadow() %&gt;%
+  ggplot(aes(x = wind_ew,
+             color = humidity_NA)) + 
+  geom_density() + 
+  facet_wrap(~air_temp_c_NA)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-21-2.png" width="672" /></p>
+</div>
+<div id="explore-variation-by-missingness-box-plots" class="section level2">
+<h2>3-8 Explore variation by missingness: box plots</h2>
+<p>Previous exercises use nabular data along with density plots to explore the variation in a variable by the missingness of another.</p>
+<p>We are going to use the oceanbuoys dataset from naniar, using box plots instead of facets or others to explore different layers of missingness.</p>
+<pre class="r"><code># Explore the distribution of wind east west (`wind_ew`) for  
+# the missingness of air temperature using  `geom_boxplot()`
+oceanbuoys %&gt;%
+  bind_shadow() %&gt;%
+  ggplot(aes(x = air_temp_c_NA,
+             y = wind_ew)) + 
+  geom_boxplot()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<pre class="r"><code># Build upon this visualization by faceting by the missingness of humidity (`humidity_NA`).
+oceanbuoys %&gt;%
+  bind_shadow() %&gt;%
+  ggplot(aes(x = air_temp_c_NA,
+             y = wind_ew)) + 
+  geom_boxplot() + 
+  facet_wrap(~humidity_NA) </code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-22-2.png" width="672" /></p>
+</div>
+<div id="exploring-missing-data-with-scatter-plots" class="section level2">
+<h2>3-10 Exploring missing data with scatter plots</h2>
+<p>Missing values in a scatter plot in ggplot2 are removed by default, with a warning.</p>
+<p>We can display missing values in a scatter plot, using geom_miss_point() - a special ggplot2 geom that shifts the missing values into the plot, displaying them 10% below the minimum of the variable.</p>
+<p>Let’s practice using this visualization with the oceanbuoys dataset.</p>
+<pre class="r"><code># Explore the missingness in wind and air temperature, and  
+# display the missingness using `geom_miss_point()`
+ggplot(oceanbuoys,
+       aes(x = wind_ew,
+           y = air_temp_c)) + 
+  geom_miss_point()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<pre class="r"><code># Explore the missingness in humidity and air temperature,  
+# and display the missingness using `geom_miss_point()`
+ggplot(oceanbuoys,
+       aes(x = humidity,
+           y = air_temp_c)) + 
+  geom_miss_point()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-2.png" width="672" /></p>
+<pre class="r"><code>  str(oceanbuoys)</code></pre>
+<pre><code>## tibble [736 x 8] (S3: tbl_df/tbl/data.frame)
+##  $ year      : num [1:736] 1997 1997 1997 1997 1997 ...
+##  $ latitude  : num [1:736] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ longitude : num [1:736] -110 -110 -110 -110 -110 -110 -110 -110 -110 -110 ...
+##  $ sea_temp_c: num [1:736] 27.6 27.5 27.6 27.6 27.6 ...
+##  $ air_temp_c: num [1:736] 27.1 27 27 26.9 26.8 ...
+##  $ humidity  : num [1:736] 79.6 75.8 76.5 76.2 76.4 ...
+##  $ wind_ew   : num [1:736] -6.4 -5.3 -5.1 -4.9 -3.5 ...
+##  $ wind_ns   : num [1:736] 5.4 5.3 4.5 2.5 4.1 ...</code></pre>
+</div>
+<div id="using-facets-to-explore-missingness" class="section level2">
+<h2>3-11 Using facets to explore missingness</h2>
+<p>Because geom_miss_point() is a ggplot geom, you can use it with ggplot2 features like faceting.</p>
+<p>This means we can rapidly explore the missingness and stay within the familiar bounds of ggplot2.</p>
+<pre class="r"><code># Explore the missingness in wind and air temperature, and display the 
+# missingness using `geom_miss_point()`. Facet by year to explore this further.
+ggplot(oceanbuoys,
+       aes(x = wind_ew,
+           y = air_temp_c)) + 
+  geom_miss_point() + 
+  facet_wrap(~year)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<pre class="r"><code># Explore the missingness in humidity and air temperature, and display the 
+# missingness using `geom_miss_point()` Facet by year to explore this further.
+ggplot(oceanbuoys,
+       aes(humidity,
+           y = air_temp_c)) + 
+  geom_miss_point() + 
+  facet_wrap(~year)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-24-2.png" width="672" /></p>
+</div>
+<div id="faceting-to-explore-missingness-multiple-plots" class="section level2">
+<h2>3-12 Faceting to explore missingness (multiple plots)</h2>
+<p>Another useful technique with geommisspoint() is to explore the missingness by creating multiple plots.</p>
+<p>Just as we have done in the previous exercises, we can use the nabular data to help us create additional faceted plots.</p>
+<p>We can even create multiple faceted plots according to values in the data, such as year, and features of the data, such as missingness.</p>
+<pre class="r"><code># Use geom_miss_point() and facet_wrap to explore how the missingness  
+# in wind_ew and air_temp_c is different for missingness of humidity
+bind_shadow(oceanbuoys) %&gt;%
+  ggplot(aes(x = wind_ew,
+           y = air_temp_c)) + 
+  geom_miss_point() + 
+  facet_wrap(~humidity_NA)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<pre class="r"><code># Use geom_miss_point() and facet_grid to explore how the missingness in wind_ew and air_temp_c 
+# is different for missingness of humidity AND by year - by using `facet_grid(humidity_NA ~ year)`
+bind_shadow(oceanbuoys) %&gt;%
+  ggplot(aes(x = wind_ew,
+             y = air_temp_c)) + 
+  geom_miss_point() + 
+  facet_grid(humidity_NA~year)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-25-2.png" width="672" /></p>
+</div>
+<div id="section" class="section level2">
+<h2>4-2</h2>
+</div>
+<div id="section-1" class="section level2">
+<h2>4-3</h2>
+</div>
+<div id="section-2" class="section level2">
+<h2>4-4</h2>
+</div>
+<div id="section-3" class="section level2">
+<h2>4-6</h2>
+</div>
+<div id="section-4" class="section level2">
+<h2>4-7</h2>
+</div>
+<div id="section-5" class="section level2">
+<h2>4-8</h2>
+</div>
+<div id="section-6" class="section level2">
+<h2>4-10</h2>
+</div>
+<div id="section-7" class="section level2">
+<h2>4-11</h2>
+</div>
+<div id="section-8" class="section level2">
+<h2>4-12</h2>
+</div>
+<div id="section-9" class="section level2">
+<h2>4-14</h2>
+</div>
+<div id="section-10" class="section level2">
+<h2>4-15</h2>
+</div>
