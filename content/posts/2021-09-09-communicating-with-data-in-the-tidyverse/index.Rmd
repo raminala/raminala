@@ -116,22 +116,64 @@ ggplot(plot_data) +
 As you've learnt in the videos, ggplot2 comes with a set of predefined themes. Try out some of them!
 
 ```{r}
+# Save your current plot into a variable: ilo_plot
+ilo_plot <- ggplot(plot_data) +
+  geom_point(aes(x = working_hours, y = hourly_compensation)) +
+  labs(
+    x = "Working hours per week",
+    y = "Hourly compensation",
+    title = "The more people work, the less compensation they seem to receive",
+    subtitle = "Working hours and hourly compensation in European countries, 2006",
+    caption = "Data source: ILO, 2017"
+  )
 
+ilo_plot
 ```
+
+```{r}
+ilo_plot +
+  theme_minimal()
+```
+
+```{r}
+ilo_plot +
+  theme_classic()
+```
+
 
 ## 1-11 Change the appearance of titles
 
 Besides applying defined theme presets, you can tweak your plot even more by altering different style attributes of it. Hint: You can reuse and overwrite the ilo_plot variable generated in the previous exercise – the current plot is already shown in the window on the right.
 
-```{r}
-
+```{r, warning=FALSE}
+ilo_plot <- ilo_plot +
+  theme_minimal() +
+  # Customize the "minimal" theme with another custom "theme" call
+  theme(
+    text = element_text(family = "Bookman"),
+    title = element_text(color = "gray25"),
+    plot.caption = element_text(color = "gray30"),
+    plot.subtitle = element_text(size = 12)
+  )
+  
+# Render the plot object
+ilo_plot
 ```
 
 ## 1-12 Alter background color and add margins
 
 Further customize the look of your plot with more arguments to the theme function call. You can continue working on your ilo_plot object created in the last exercise.
 
-```{r}
+Add margins to the plot: 5mm top and bottom, 10mm to the left and the right.
 
+The margins need to be specified in the following order: top, right, bottom, and left.
+
+```{r, warning=FALSE}
+ilo_plot +
+  # "theme" calls can be stacked upon each other, so this is already the third call of "theme"
+  theme(
+    plot.background = element_rect(fill = "gray95"),
+    plot.margin = unit(c(5, 10, 5, 10), units = "mm")
+  )
 ```
 
