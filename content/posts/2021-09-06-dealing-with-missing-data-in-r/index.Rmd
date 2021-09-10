@@ -453,7 +453,21 @@ We are going to use the oceanbuoys dataset from naniar, and then create multiple
 This allows you to explore different layers of missingness.
 
 ```{r}
+# Explore the distribution of wind east west (wind_ew) for the missingness of air temperature 
+# using geom_density() and faceting by the missingness of air temperature (air_temp_c_NA).
+oceanbuoys %>%
+  bind_shadow() %>%
+  ggplot(aes(x = wind_ew)) + 
+  geom_density() + 
+  facet_wrap(~air_temp_c_NA)
 
+# Build upon this visualization by filling by the missingness of humidity (humidity_NA).
+oceanbuoys %>%
+  bind_shadow() %>%
+  ggplot(aes(x = wind_ew,
+             color = humidity_NA)) + 
+  geom_density() + 
+  facet_wrap(~air_temp_c_NA)
 ```
 
 ## 3-8 Explore variation by missingness: box plots
@@ -463,7 +477,21 @@ Previous exercises use nabular data along with density plots to explore the vari
 We are going to use the oceanbuoys dataset from naniar, using box plots instead of facets or others to explore different layers of missingness.
 
 ```{r}
+# Explore the distribution of wind east west (`wind_ew`) for  
+# the missingness of air temperature using  `geom_boxplot()`
+oceanbuoys %>%
+  bind_shadow() %>%
+  ggplot(aes(x = air_temp_c_NA,
+             y = wind_ew)) + 
+  geom_boxplot()
 
+# Build upon this visualization by faceting by the missingness of humidity (`humidity_NA`).
+oceanbuoys %>%
+  bind_shadow() %>%
+  ggplot(aes(x = air_temp_c_NA,
+             y = wind_ew)) + 
+  geom_boxplot() + 
+  facet_wrap(~humidity_NA) 
 ```
 
 ## 3-10 Exploring missing data with scatter plots
@@ -475,7 +503,21 @@ We can display missing values in a scatter plot, using geom_miss_point() - a spe
 Let's practice using this visualization with the oceanbuoys dataset.
 
 ```{r}
+# Explore the missingness in wind and air temperature, and  
+# display the missingness using `geom_miss_point()`
+ggplot(oceanbuoys,
+       aes(x = wind_ew,
+           y = air_temp_c)) + 
+  geom_miss_point()
 
+# Explore the missingness in humidity and air temperature,  
+# and display the missingness using `geom_miss_point()`
+ggplot(oceanbuoys,
+       aes(x = humidity,
+           y = air_temp_c)) + 
+  geom_miss_point()
+
+  str(oceanbuoys)
 ```
 
 ## 3-11 Using facets to explore missingness
@@ -485,7 +527,21 @@ Because geom_miss_point() is a ggplot geom, you can use it with ggplot2 features
 This means we can rapidly explore the missingness and stay within the familiar bounds of ggplot2.
 
 ```{r}
+# Explore the missingness in wind and air temperature, and display the 
+# missingness using `geom_miss_point()`. Facet by year to explore this further.
+ggplot(oceanbuoys,
+       aes(x = wind_ew,
+           y = air_temp_c)) + 
+  geom_miss_point() + 
+  facet_wrap(~year)
 
+# Explore the missingness in humidity and air temperature, and display the 
+# missingness using `geom_miss_point()` Facet by year to explore this further.
+ggplot(oceanbuoys,
+       aes(humidity,
+           y = air_temp_c)) + 
+  geom_miss_point() + 
+  facet_wrap(~year)
 ```
 
 ## 3-12 Faceting to explore missingness (multiple plots)
@@ -497,6 +553,20 @@ Just as we have done in the previous exercises, we can use the nabular data to h
 We can even create multiple faceted plots according to values in the data, such as year, and features of the data, such as missingness.
 
 ```{r}
+# Use geom_miss_point() and facet_wrap to explore how the missingness  
+# in wind_ew and air_temp_c is different for missingness of humidity
+bind_shadow(oceanbuoys) %>%
+  ggplot(aes(x = wind_ew,
+           y = air_temp_c)) + 
+  geom_miss_point() + 
+  facet_wrap(~humidity_NA)
 
+# Use geom_miss_point() and facet_grid to explore how the missingness in wind_ew and air_temp_c 
+# is different for missingness of humidity AND by year - by using `facet_grid(humidity_NA ~ year)`
+bind_shadow(oceanbuoys) %>%
+  ggplot(aes(x = wind_ew,
+             y = air_temp_c)) + 
+  geom_miss_point() + 
+  facet_grid(humidity_NA~year)
 ```
 
