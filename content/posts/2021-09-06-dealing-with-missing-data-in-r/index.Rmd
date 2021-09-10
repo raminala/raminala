@@ -570,16 +570,56 @@ bind_shadow(oceanbuoys) %>%
   facet_grid(humidity_NA~year)
 ```
 
-## 4-2 
+## 4-2 Impute data below range with nabular data
+
+We want to keep track of values we imputed. If we don't, it is very difficult to assess how good the imputed values are.
+
+We are going to practice imputing data and recreate visualizations in the previous set of exercises by imputing values below the range of the data.
+
+This is a very useful way to help further explore missingness, and also provides the framework for imputing missing values.
+
+First, we are going to impute the data below the range using impute_below_all(), and then visualize the data. We notice that although we can see where the missing values are in this instance, we need some way to track them. The track missing data programming pattern can help with this.
 
 ```{r}
+# Impute the oceanbuoys data below the range using `impute_below`.
+ocean_imp <- impute_below_all(oceanbuoys)
 
+# Visualize the new missing values
+ggplot(ocean_imp, 
+       aes(x = wind_ew, y = air_temp_c)) +  
+  geom_point()
+
+# Impute and track data with `bind_shadow`, `impute_below_all`, and `add_label_shadow`
+ocean_imp_track <- bind_shadow(oceanbuoys) %>% 
+  add_label_shadow() %>% 
+  impute_below_all()
+
+# Look at the imputed values
+ocean_imp_track
 ```
 
-## 4-3 
+## 4-3 Visualize imputed values in a scatter plot
+
+Now, let's recreate one of the previous plots we saw in chapter three that used geom_miss_point().
+
+To do this, we need to impute the data below the range of the data. This is a special kind of imputation to explore the data. This imputation will illustrate what we need to practice: how to track missing values. To impute the data below the range of the data, we use the function impute_below_all().
 
 ```{r}
+# Impute and track the missing values
+ocean_imp_track <- bind_shadow(oceanbuoys) %>% 
+  impute_below_all() %>% 
+  add_label_shadow()
 
+# Visualize the missingness in wind and air temperature,  
+# coloring missing air temp values with air_temp_c_NA
+ggplot(ocean_imp_track, 
+       aes(x = wind_ew, y = air_temp_c, color =  air_temp_c_NA)) + 
+  geom_point()
+
+# Visualize humidity and air temp, coloring any missing cases using the variable any_missing
+ggplot(ocean_imp_track, 
+       aes(x = humidity, y = air_temp_c,color = any_missing)) +  
+  geom_point()
 ```
 
 ## 4-4 
