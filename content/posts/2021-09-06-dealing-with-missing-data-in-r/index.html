@@ -877,36 +877,106 @@ bind_shadow(oceanbuoys) %&gt;%
   facet_grid(humidity_NA~year)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-25-2.png" width="672" /></p>
 </div>
+<div id="impute-data-below-range-with-nabular-data" class="section level2">
+<h2>4-2 Impute data below range with nabular data</h2>
+<p>We want to keep track of values we imputed. If we don’t, it is very difficult to assess how good the imputed values are.</p>
+<p>We are going to practice imputing data and recreate visualizations in the previous set of exercises by imputing values below the range of the data.</p>
+<p>This is a very useful way to help further explore missingness, and also provides the framework for imputing missing values.</p>
+<p>First, we are going to impute the data below the range using impute_below_all(), and then visualize the data. We notice that although we can see where the missing values are in this instance, we need some way to track them. The track missing data programming pattern can help with this.</p>
+<pre class="r"><code># Impute the oceanbuoys data below the range using `impute_below`.
+ocean_imp &lt;- impute_below_all(oceanbuoys)
+
+# Visualize the new missing values
+ggplot(ocean_imp, 
+       aes(x = wind_ew, y = air_temp_c)) +  
+  geom_point()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<pre class="r"><code># Impute and track data with `bind_shadow`, `impute_below_all`, and `add_label_shadow`
+ocean_imp_track &lt;- bind_shadow(oceanbuoys) %&gt;% 
+  add_label_shadow() %&gt;% 
+  impute_below_all()
+
+# Look at the imputed values
+ocean_imp_track</code></pre>
+<pre><code>## # A tibble: 736 x 17
+##     year latitude longitude sea_temp_c air_temp_c humidity wind_ew wind_ns
+##    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1  1997        0      -110       27.6       27.1     79.6   -6.40    5.40
+##  2  1997        0      -110       27.5       27.0     75.8   -5.30    5.30
+##  3  1997        0      -110       27.6       27       76.5   -5.10    4.5 
+##  4  1997        0      -110       27.6       26.9     76.2   -4.90    2.5 
+##  5  1997        0      -110       27.6       26.8     76.4   -3.5     4.10
+##  6  1997        0      -110       27.8       26.9     76.7   -4.40    1.60
+##  7  1997        0      -110       28.0       27.0     76.5   -2       3.5 
+##  8  1997        0      -110       28.0       27.1     78.3   -3.70    4.5 
+##  9  1997        0      -110       28.0       27.2     78.6   -4.20    5   
+## 10  1997        0      -110       28.0       27.2     76.9   -3.60    3.5 
+## # ... with 726 more rows, and 9 more variables: year_NA &lt;fct&gt;,
+## #   latitude_NA &lt;fct&gt;, longitude_NA &lt;fct&gt;, sea_temp_c_NA &lt;fct&gt;,
+## #   air_temp_c_NA &lt;fct&gt;, humidity_NA &lt;fct&gt;, wind_ew_NA &lt;fct&gt;, wind_ns_NA &lt;fct&gt;,
+## #   any_missing &lt;chr&gt;</code></pre>
+</div>
+<div id="visualize-imputed-values-in-a-scatter-plot" class="section level2">
+<h2>4-3 Visualize imputed values in a scatter plot</h2>
+<p>Now, let’s recreate one of the previous plots we saw in chapter three that used geom_miss_point().</p>
+<p>To do this, we need to impute the data below the range of the data. This is a special kind of imputation to explore the data. This imputation will illustrate what we need to practice: how to track missing values. To impute the data below the range of the data, we use the function impute_below_all().</p>
+<pre class="r"><code># Impute and track the missing values
+ocean_imp_track &lt;- bind_shadow(oceanbuoys) %&gt;% 
+  impute_below_all() %&gt;% 
+  add_label_shadow()
+
+# Visualize the missingness in wind and air temperature,  
+# coloring missing air temp values with air_temp_c_NA
+ggplot(ocean_imp_track, 
+       aes(x = wind_ew, y = air_temp_c, color =  air_temp_c_NA)) + 
+  geom_point()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<pre class="r"><code># Visualize humidity and air temp, coloring any missing cases using the variable any_missing
+ggplot(ocean_imp_track, 
+       aes(x = humidity, y = air_temp_c,color = any_missing)) +  
+  geom_point()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-27-2.png" width="672" /></p>
+</div>
+<div id="create-histogram-of-imputed-data" class="section level2">
+<h2>4-4 Create histogram of imputed data</h2>
+<p>Now that we can recreate the first visualization of geom_miss_point(), let’s explore how we can apply this to other exploratory tasks.</p>
+<p>One useful task is to evaluate the number of missings in a given variable using a histogram. We can do this using the ocean_imp_track dataset we created in the last exercise, which is loaded into this session.</p>
+<pre class="r"><code># Explore the values of air_temp_c, visualizing the amount of missings with `air_temp_c_NA`.
+p &lt;- ggplot(ocean_imp_track, aes(x = air_temp_c, fill = air_temp_c_NA)) + geom_histogram()
+
+# Expore the missings in humidity using humidity_NA
+p2 &lt;- ggplot(ocean_imp_track, aes(x = humidity, fill = humidity_NA)) + geom_histogram()
+
+# Explore the missings in air_temp_c according to year, using `facet_wrap(~year)`.
+p + facet_wrap(~year)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<pre class="r"><code># Explore the missings in humidity according to year, using `facet_wrap(~year)`.
+p2 + facet_wrap(~year)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-28-2.png" width="672" /></p>
+</div>
 <div id="section" class="section level2">
-<h2>4-2</h2>
-</div>
-<div id="section-1" class="section level2">
-<h2>4-3</h2>
-</div>
-<div id="section-2" class="section level2">
-<h2>4-4</h2>
-</div>
-<div id="section-3" class="section level2">
 <h2>4-6</h2>
 </div>
-<div id="section-4" class="section level2">
+<div id="section-1" class="section level2">
 <h2>4-7</h2>
 </div>
-<div id="section-5" class="section level2">
+<div id="section-2" class="section level2">
 <h2>4-8</h2>
 </div>
-<div id="section-6" class="section level2">
+<div id="section-3" class="section level2">
 <h2>4-10</h2>
 </div>
-<div id="section-7" class="section level2">
+<div id="section-4" class="section level2">
 <h2>4-11</h2>
 </div>
-<div id="section-8" class="section level2">
+<div id="section-5" class="section level2">
 <h2>4-12</h2>
 </div>
-<div id="section-9" class="section level2">
+<div id="section-6" class="section level2">
 <h2>4-14</h2>
 </div>
-<div id="section-10" class="section level2">
+<div id="section-7" class="section level2">
 <h2>4-15</h2>
 </div>

@@ -622,10 +622,24 @@ ggplot(ocean_imp_track,
   geom_point()
 ```
 
-## 4-4 
+## 4-4 Create histogram of imputed data
+
+Now that we can recreate the first visualization of geom_miss_point(), let's explore how we can apply this to other exploratory tasks.
+
+One useful task is to evaluate the number of missings in a given variable using a histogram. We can do this using the ocean_imp_track dataset we created in the last exercise, which is loaded into this session.
 
 ```{r}
+# Explore the values of air_temp_c, visualizing the amount of missings with `air_temp_c_NA`.
+p <- ggplot(ocean_imp_track, aes(x = air_temp_c, fill = air_temp_c_NA)) + geom_histogram()
 
+# Expore the missings in humidity using humidity_NA
+p2 <- ggplot(ocean_imp_track, aes(x = humidity, fill = humidity_NA)) + geom_histogram()
+
+# Explore the missings in air_temp_c according to year, using `facet_wrap(~year)`.
+p + facet_wrap(~year)
+
+# Explore the missings in humidity according to year, using `facet_wrap(~year)`.
+p2 + facet_wrap(~year)
 ```
 
 
