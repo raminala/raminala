@@ -398,9 +398,10 @@ worst_augmented &lt;- worst_fit %&gt;%
 <div id="explore-your-best-and-worst-fitting-models" class="section level2">
 <h2>2-9 Explore your best and worst fitting models</h2>
 <p>Let’s explore your four best and worst fitting models by comparing the fitted lines with the actual values.</p>
-<pre class="r"><code># Compare the predicted values with the actual values of life expectancy 
+<pre class="r"><code>country_list &lt;- c(&quot;Algeria&quot;, &quot;Argentina&quot;, &quot;Austria&quot;, &quot;Belgium&quot;, &quot;Bangladesh&quot;, &quot;Brazil&quot;, &quot;Chile&quot;, &quot;Colombia&quot;)
+# Compare the predicted values with the actual values of life expectancy 
 # for the top 4 best fitting models
-best_augmented %&gt;% 
+best_augmented %&gt;% filter(country %in% country_list)%&gt;%
   ggplot(aes(x = year)) +
   geom_point(aes(y = life_expectancy)) + 
   geom_line(aes(y = .fitted), color = &quot;red&quot;) +
@@ -408,7 +409,7 @@ best_augmented %&gt;%
 <p><img src="https://ramin1ala.netlify.app/posts/2021-06-30-machine-learning-in-the-tidyverse/index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <pre class="r"><code># Compare the predicted values with the actual values of life expectancy 
 # for the top 4 worst fitting models
-worst_augmented %&gt;% 
+worst_augmented %&gt;% filter(country %in% country_list)%&gt;% 
   ggplot(aes(x = year)) +
   geom_point(aes(y = life_expectancy)) + 
   geom_line(aes(y = .fitted), color = &quot;red&quot;) +
@@ -674,7 +675,6 @@ mtry = 4, num.trees = 100, seed = 42)</p>
 <p>In this exercise, you will leverage the tools that you have learned thus far to build a classification model to predict employee attrition.</p>
 <p>You will work with the attrition dataset, which contains 30 features about employees which you will use to predict if they have left the company.</p>
 <p>You will first prepare the training &amp; testing data sets, then you will further split the training data using cross-validation so that you can search for the best performing model for this task.</p>
-<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
 <pre class="r"><code>set.seed(42)
 
 # Prepare the initial split object
@@ -734,14 +734,14 @@ recall: portion of actual TRUE values that the model correctly recovered.</p>
 table(validate_actual, validate_predicted)</code></pre>
 <pre><code>##                validate_predicted
 ## validate_actual FALSE TRUE
-##           FALSE   184    8
+##           FALSE   187    5
 ##           TRUE     14   15</code></pre>
 <pre class="r"><code># Calculate the accuracy
 accuracy(validate_actual, validate_predicted)</code></pre>
-<pre><code>## [1] 0.9004525</code></pre>
+<pre><code>## [1] 0.9140271</code></pre>
 <pre class="r"><code># Calculate the precision
 precision(validate_actual, validate_predicted)</code></pre>
-<pre><code>## [1] 0.6521739</code></pre>
+<pre><code>## [1] 0.75</code></pre>
 <pre class="r"><code># Calculate the recall
 recall(validate_actual, validate_predicted)</code></pre>
 <pre><code>## [1] 0.5172414</code></pre>
@@ -768,10 +768,10 @@ cv_perf_recall &lt;- cv_prep_lr %&gt;%
 
 # Print the validate_recall column
 cv_perf_recall$validate_recall</code></pre>
-<pre><code>## [1] 0.5172414 0.3823529 0.4545455 0.4444444 0.4222222</code></pre>
+<pre><code>## [1] 0.5172414 0.4705882 0.4242424 0.4722222 0.4222222</code></pre>
 <pre class="r"><code># Calculate the average of the validate_recall column
 mean(cv_perf_recall$validate_recall)</code></pre>
-<pre><code>## [1] 0.4441613</code></pre>
+<pre><code>## [1] 0.4613033</code></pre>
 </div>
 <div id="tune-random-forest-models" class="section level2">
 <h2>4-10 Tune random forest models</h2>

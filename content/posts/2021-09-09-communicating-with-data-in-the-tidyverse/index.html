@@ -787,3 +787,40 @@ ilo_plot</code></pre>
   )</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
+<div id="prepare-the-data-set-for-the-faceted-plot" class="section level2">
+<h2>2-2 Prepare the data set for the faceted plot</h2>
+<p>You’re now going to prepare your data set for producing the faceted scatter plot in the next exercise, as mentioned in the video.
+For this, the data set needs to contain only the years 1996 and 2006, because your plot will only have two facets. ilo_data has been pre-loaded for you.</p>
+<pre class="r"><code># Filter ilo_data to retain the years 1996 and 2006
+ilo_data &lt;- ilo_data %&gt;%
+  #filter(year %in% c(1996 , 2006))
+   filter(year == &quot;1996&quot; | year == &quot;2006&quot;)</code></pre>
+</div>
+<div id="add-facets-to-the-plot" class="section level2">
+<h2>2-3 Add facets to the plot</h2>
+<p>Here, you’ll leverage facet_grid() to add horizontal facets for 1996 and 2006 each, as detailed in the video.</p>
+<p>When using facet_grid(), it is good practice to specify the facet formula with a named argument: facets = …. This helps to avoid confusion since the facet_grid() function takes many other arguments.</p>
+<pre class="r"><code># Again, you save the plot object into a variable so you can save typing later on
+ilo_plot &lt;- ggplot(ilo_data, aes(x = working_hours, y = hourly_compensation)) +
+  geom_point() +
+   labs(
+    x = &quot;Working hours per week&quot;,
+    y = &quot;Hourly compensation&quot;,
+    title = &quot;The more people work, the less compensation they seem to receive&quot;,
+    subtitle = &quot;Working hours and hourly compensation in European countries, 2006&quot;,
+    caption = &quot;Data source: ILO, 2017&quot;
+  ) +
+  # Add facets here
+  facet_grid(.~year)
+ 
+ilo_plot</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+<div id="define-your-own-theme-function" class="section level2">
+<h2>2-4 Define your own theme function</h2>
+<p>In the video you saw how a lot of typing can be saved by replacing code chunks with function calls. You saw how a function is usually defined, now you will apply this knowledge in order to make your previous two theme() calls reusable.</p>
+</div>
+<div id="apply-the-new-theme-function-to-the-plot" class="section level2">
+<h2>2-5 Apply the new theme function to the plot</h2>
+<p>Once you have created your own theme_ilo() function, it is time to apply it to a plot object. In the video you saw that theme() calls can be chained. You’re going to make use of this and add another theme() call to adjust some peculiarities of the faceted plot.</p>
+</div>

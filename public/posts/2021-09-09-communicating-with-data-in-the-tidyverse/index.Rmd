@@ -1,10 +1,10 @@
 ---
-title: Communicating with Data in the Tidyverse
+title: "Communicating with Data in the Tidyverse"
 author: ''
 date: '2021-09-09'
-tags:
-  - Markdown
-output: html_document
+output:
+  word_document: default
+tags: Markdown
 ---
 
 ```{r results='hide'}
@@ -174,5 +174,56 @@ ilo_plot +
     plot.background = element_rect(fill = "gray95"),
     plot.margin = unit(c(5, 10, 5, 10), units = "mm")
   )
+```
+
+## 2-2 Prepare the data set for the faceted plot
+
+You're now going to prepare your data set for producing the faceted scatter plot in the next exercise, as mentioned in the video.
+For this, the data set needs to contain only the years 1996 and 2006, because your plot will only have two facets. ilo_data has been pre-loaded for you.
+
+```{r}
+# Filter ilo_data to retain the years 1996 and 2006
+ilo_data <- ilo_data %>%
+  #filter(year %in% c(1996 , 2006))
+   filter(year == "1996" | year == "2006")
+```
+
+## 2-3 Add facets to the plot
+
+Here, you'll leverage facet_grid() to add horizontal facets for 1996 and 2006 each, as detailed in the video.
+
+When using facet_grid(), it is good practice to specify the facet formula with a named argument: facets = .... This helps to avoid confusion since the facet_grid() function takes many other arguments.
+
+```{r}
+# Again, you save the plot object into a variable so you can save typing later on
+ilo_plot <- ggplot(ilo_data, aes(x = working_hours, y = hourly_compensation)) +
+  geom_point() +
+   labs(
+    x = "Working hours per week",
+    y = "Hourly compensation",
+    title = "The more people work, the less compensation they seem to receive",
+    subtitle = "Working hours and hourly compensation in European countries, 2006",
+    caption = "Data source: ILO, 2017"
+  ) +
+  # Add facets here
+  facet_grid(.~year)
+ 
+ilo_plot
+```
+
+## 2-4 Define your own theme function
+
+In the video you saw how a lot of typing can be saved by replacing code chunks with function calls. You saw how a function is usually defined, now you will apply this knowledge in order to make your previous two theme() calls reusable.
+
+```{r}
+
+```
+
+## 2-5 Apply the new theme function to the plot
+
+Once you have created your own theme_ilo() function, it is time to apply it to a plot object. In the video you saw that theme() calls can be chained. You're going to make use of this and add another theme() call to adjust some peculiarities of the faceted plot.
+
+```{r}
+
 ```
 
