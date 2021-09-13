@@ -956,27 +956,85 @@ p2 + facet_wrap(~year)</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-28-2.png" width="672" /></p>
 </div>
+<div id="evaluating-bad-imputations" class="section level2">
+<h2>4-6 Evaluating bad imputations</h2>
+<p>In order to evaluate imputations, it helps to know what something bad looks like. To explore this, let’s look at a typically bad imputation method: imputing using the mean value.</p>
+<p>In this exercise we are going to explore how the mean imputation method works using a box plot, using the oceanbuoys dataset.</p>
+<pre class="r"><code># Impute the mean value and track the imputations 
+ocean_imp_mean &lt;- bind_shadow(oceanbuoys) %&gt;% 
+  impute_mean_all() %&gt;% 
+  add_label_shadow()
+
+# Explore the mean values in humidity in the imputed dataset
+ggplot(ocean_imp_mean, 
+       aes(x = humidity_NA, y = humidity)) + 
+  geom_boxplot()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<pre class="r"><code># Explore the values in air temperature in the imputed dataset
+ggplot(ocean_imp_mean, 
+       aes(x = air_temp_c_NA, y = air_temp_c)) + 
+  geom_boxplot()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-29-2.png" width="672" /></p>
+</div>
+<div id="evaluating-imputations-the-scale" class="section level2">
+<h2>4-7 Evaluating imputations: The scale</h2>
+<p>While the mean imputation might not look so bad when we compare it using a box plot, it is important to get a sense of the variation in the data. This is why it is important to explore how the scale and spread of imputed values changes compared to the data.</p>
+<p>One way to evaluate the appropriateness of the scale of the imputations is to use a scatter plot to explore whether or not the values are appropriate.</p>
+<pre class="r"><code># Explore imputations in air temperature and humidity,  
+# coloring by the variable, any_missing
+ggplot(ocean_imp_mean, 
+       aes(x = air_temp_c, y = humidity, color = any_missing)) + 
+  geom_point()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<pre class="r"><code># Explore imputations in air temperature and humidity,  
+# coloring by the variable, any_missing, and faceting by year
+ggplot(ocean_imp_mean, 
+       aes(x = air_temp_c, y = humidity, color = any_missing)) +
+  geom_point() + 
+  facet_wrap(~year)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-30-2.png" width="672" /></p>
+</div>
+<div id="evaluating-imputations-across-many-variables" class="section level2">
+<h2>4-8 Evaluating imputations: Across many variables</h2>
+<p>So far, we have covered ways to look at individual variables or pairs of variables and their imputed values. However, sometimes you want to look at imputations for many variables. To do this, you need to perform some data munging and re-arranging. This lesson covers how to perform this data wrangling, which can get a little bit hairy when considering its usage in nabular data. The function, shadow_long() gets the data into the right shape for these kinds of visualizations.</p>
+<pre class="r"><code># Gather the imputed data 
+ocean_imp_mean_gather &lt;- shadow_long(ocean_imp_mean,
+                                     humidity,
+                                     air_temp_c)
+# Inspect the data
+ocean_imp_mean_gather</code></pre>
+<pre><code>## # A tibble: 1,472 x 4
+##    variable   value       variable_NA   value_NA
+##    &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;   
+##  1 air_temp_c 27.14999962 air_temp_c_NA !NA     
+##  2 air_temp_c 27.02000046 air_temp_c_NA !NA     
+##  3 air_temp_c 27          air_temp_c_NA !NA     
+##  4 air_temp_c 26.93000031 air_temp_c_NA !NA     
+##  5 air_temp_c 26.84000015 air_temp_c_NA !NA     
+##  6 air_temp_c 26.94000053 air_temp_c_NA !NA     
+##  7 air_temp_c 27.04000092 air_temp_c_NA !NA     
+##  8 air_temp_c 27.11000061 air_temp_c_NA !NA     
+##  9 air_temp_c 27.20999908 air_temp_c_NA !NA     
+## 10 air_temp_c 27.25       air_temp_c_NA !NA     
+## # ... with 1,462 more rows</code></pre>
+<pre class="r"><code># Explore the imputations in a histogram 
+#ggplot(ocean_imp_mean_gather, 
+ #      aes(x = value, fill = value_NA)) + 
+ # geom_histogram() + 
+  #facet_wrap(~variable)</code></pre>
+</div>
 <div id="section" class="section level2">
-<h2>4-6</h2>
-</div>
-<div id="section-1" class="section level2">
-<h2>4-7</h2>
-</div>
-<div id="section-2" class="section level2">
-<h2>4-8</h2>
-</div>
-<div id="section-3" class="section level2">
 <h2>4-10</h2>
 </div>
-<div id="section-4" class="section level2">
+<div id="section-1" class="section level2">
 <h2>4-11</h2>
 </div>
-<div id="section-5" class="section level2">
+<div id="section-2" class="section level2">
 <h2>4-12</h2>
 </div>
-<div id="section-6" class="section level2">
+<div id="section-3" class="section level2">
 <h2>4-14</h2>
 </div>
-<div id="section-7" class="section level2">
+<div id="section-4" class="section level2">
 <h2>4-15</h2>
 </div>
