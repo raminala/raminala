@@ -18,6 +18,8 @@ airquality <- read.csv("airquality.csv")
 pacman <- read.csv("pacman.csv")
 frogger <- read.csv("frogger.csv")
 frogger2 <- read.csv("frogger2.csv")
+ocean_cc <- read.csv("ocean_cc.csv") %>% mutate(year_NA=as.factor(year_NA))%>% mutate(latitude_NA=as.factor(latitude_NA))%>% mutate(longitude_NA =as.factor(longitude_NA ))%>% mutate(sea_temp_c_NA=as.factor(sea_temp_c_NA))%>% mutate(air_temp_c_NA=as.factor(air_temp_c_NA))%>% mutate(humidity_NA  =as.factor(humidity_NA))%>% mutate(wind_ew_NA  =as.factor(wind_ew_NA))%>% mutate(wind_ns_NA  =as.factor(wind_ns_NA))%>% mutate(any_missing  =as.factor(any_missing))
+str(ocean_cc)
 ```
 
 ## 1-2 Using and finding missing values
@@ -757,7 +759,21 @@ When you build up an imputation model, it's a good idea to compare it to another
 In this lesson, we are going to get you to add a final imputation model that contains an extra useful piece of information that helps explain some of the variation in the data. You are then going to compare the values, as previously done in the last lesson.
 
 ```{r}
+# Build a model adding year to the outcome
+ocean_imp_lm_wind_year <- bind_shadow(oceanbuoys) %>%
+  impute_lm(air_temp_c ~ wind_ew + wind_ns + year) %>%
+  impute_lm(humidity ~ wind_ew + wind_ns + year) %>%
+  add_label_shadow()
 
+# Bind the mean, lm_wind, and lm_wind_year models together
+bound_models <- bind_rows(mean = ocean_imp_mean,
+                          lm_wind = ocean_imp_lm_wind,
+                          lm_wind_year = ocean_imp_lm_wind_year,
+                          .id = "imp_model")
+
+# Explore air_temp and humidity, coloring by any missings, and faceting by imputation model
+ggplot(bound_models, aes(x = air_temp_c, y = humidity, color = any_missing)) +
+  geom_point() + facet_wrap(~imp_model)
 ```
 
 ## 4-14 Combining and comparing many imputation models
@@ -771,7 +787,21 @@ You will create the third imputed dataset, ocean_imp_lm_all, using a linear mode
 You will then bind all of the datasets together (ocean_cc, ocean_imp_lm_wind, and ocean_imp_lm_all), calling it bound_models.
 
 ```{r}
+# Create an imputed dataset using a linear models
+ocean_imp_lm_all <- bind_shadow(oceanbuoys) %>%
+  add_label_shadow() %>%
+  impute_lm(sea_temp_c ~ wind_ew + wind_ns + year + latitude + longitude) %>%
+  impute_lm(air_temp_c ~ wind_ew + wind_ns + year + latitude + longitude) %>%
+  impute_lm(humidity ~ wind_ew + wind_ns + year + latitude + longitude)
 
+# Bind the datasets
+bound_models <- bind_rows(cc = ocean_cc,
+                          imp_lm_wind = ocean_imp_lm_wind,
+                          imp_lm_all = ocean_imp_lm_all,
+                          .id = "imp_model")
+
+# Look at the models
+bound_models
 ```
 
 ## 4-15 Evaluating the different parameters in the model
@@ -784,7 +814,21 @@ We will fit this model to each of the datasets we created and then explore the c
 
 The objects from the previous lesson (ocean_cc, ocean_imp_lm_wind, ocean_imp_lm_all, and bound_models) are loaded into the workspace.
 
-```{r}
+---
+# Create the model summary for each dataset
+model_summary <- bound_models %>% 
+  group_by(imp_model) %>%
+  nest() %>%
+  mutate(mod = map(data, ~lm(sea_temp_c ~ air_temp_c + humidity + year, data = .)),
+         res = map(mod, residuals),
+         pred = map(mod, predict),
+         tidy = map(mod, tidy))
 
-```
+# Explore the coefficients in the model
+model_summary %>% 
+    select(imp_model,tidy) %>%
+	unnest()
+best_model <- "imp_lm_all"
+---
+
 
