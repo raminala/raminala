@@ -215,15 +215,50 @@ ilo_plot
 
 In the video you saw how a lot of typing can be saved by replacing code chunks with function calls. You saw how a function is usually defined, now you will apply this knowledge in order to make your previous two theme() calls reusable.
 
-```{r}
-
+```{r message=FALSE, warning=FALSE}
+# For a starter, let's look at what you did before: adding various theme calls to your plot object
+ilo_plot +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "Bookman", color = "gray25"),
+    plot.subtitle = element_text(size = 12),
+    plot.caption = element_text(color = "gray30"),
+    plot.background = element_rect(fill = "gray95"),
+    plot.margin = unit(c(5, 10, 5, 10), units = "mm")
+  )
+      
+# Define your own theme function below
+theme_ilo <- function() {
+  theme_minimal() +
+  theme(
+    text = element_text(family = "Bookman", color = "gray25"),
+    plot.subtitle = element_text(size = 12),
+    plot.caption = element_text(color = "gray30"),
+    plot.background = element_rect(fill = "gray95"),
+    plot.margin = unit(c(5, 10, 5, 10), units = "mm")
+  )
+}
 ```
 
 ## 2-5 Apply the new theme function to the plot
 
 Once you have created your own theme_ilo() function, it is time to apply it to a plot object. In the video you saw that theme() calls can be chained. You're going to make use of this and add another theme() call to adjust some peculiarities of the faceted plot.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
+# Apply your theme function
+ilo_plot <- ilo_plot +
+  theme_ilo()
 
+# Examine ilo_plot
+ilo_plot
+
+ilo_plot +
+   # Add another theme call
+  theme(
+    # Change the background fill and color
+    strip.background = element_rect(fill = "gray60",  color = "gray95"),
+    # Change the color of the text
+    strip.text = element_text(color = "white")
+  )
 ```
 

@@ -793,7 +793,7 @@ ocean_imp_lm_all <- bind_shadow(oceanbuoys) %>%
   impute_lm(sea_temp_c ~ wind_ew + wind_ns + year + latitude + longitude) %>%
   impute_lm(air_temp_c ~ wind_ew + wind_ns + year + latitude + longitude) %>%
   impute_lm(humidity ~ wind_ew + wind_ns + year + latitude + longitude)
-
+str(ocean_imp_lm_all)
 # Bind the datasets
 bound_models <- bind_rows(cc = ocean_cc,
                           imp_lm_wind = ocean_imp_lm_wind,
