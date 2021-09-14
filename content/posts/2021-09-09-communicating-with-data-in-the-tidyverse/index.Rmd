@@ -262,3 +262,20 @@ ilo_plot +
   )
 ```
 
+## 2-7 A basic dot plot
+
+As shown in the video, use only geom_path() to create the basic structure of the dot plot.
+
+```{r}
+# Create the dot plot
+ggplot(ilo_data, aes(working_hours,country))+geom_path()
+```
+
+## 2-8 Add arrows to the lines in the plot
+
+Instead of labeling years, use the arrow argument of the geom_path() call to show the direction of change. The arrows will point from 1996 to 2006, because that's how the data set is ordered. The arrow() function takes two arguments: The first is length, which can be specified with a unit() call, which you might remember from previous exercises. The second is type which defines how the arrow head will look.
+
+```{r}
+
+```
+
