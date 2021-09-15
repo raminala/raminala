@@ -9,6 +9,18 @@ tags:
   - Machine Learning
 ---
 
+```{r}
+library(tidyverse)
+
+#gapminder <- read_csv("gapminder.csv")
+gapminder <- readRDS("gapminder.rds", refhook = NULL)
+
+#attrition <- read_csv("attrition.csv")
+attrition <- readRDS("attrition.rds")
+
+```
+
+
 ## 1-2 Nesting your data
 
 In this course, you will work with a collection of economic and social indicators for 77 countries over a period of 52 years. This data is stored in the gapminder dataframe.
@@ -18,8 +30,6 @@ In this exercise, you will transform your gapminder data into a nested dataframe
 Note: This is a more granular version than the dataset available from the gapminder package. This version is available in the dslabs package.
 
 ```{r}
-library(tidyverse)
-gapminder <- read_csv("gapminder.csv")
 
 # Explore gapminder
 head(gapminder)
@@ -397,6 +407,12 @@ Here you will use the same cross-validation data to build (using train) and eval
 
 Note: We will limit our random forests to contain 100 trees to ensure they finish fitting in a reasonable time. The default number of trees for ranger() is 500.
 
+
+```{r}
+
+```
+
+
 ---
 library(ranger)
 
@@ -501,9 +517,6 @@ You will work with the attrition dataset, which contains 30 features about emplo
 
 You will first prepare the training & testing data sets, then you will further split the training data using cross-validation so that you can search for the best performing model for this task.
 
-```{r, echo=FALSE, message=FALSE}
-attrition <- read_csv("attrition.csv")
-```
 
 
 ```{r}
