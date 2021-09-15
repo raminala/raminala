@@ -409,11 +409,6 @@ Note: We will limit our random forests to contain 100 trees to ensure they finis
 
 
 ```{r}
-
-```
-
-
----
 library(ranger)
 
 # Build a random forest model for each fold
@@ -424,7 +419,8 @@ cv_models_rf <- cv_data %>%
 # Generate predictions using the random forest model
 cv_prep_rf <- cv_models_rf %>% 
   mutate(validate_predicted = map2(.x = model, .y = validate, ~predict(.x, .y)$predictions))
----
+```
+
 
 
 ## 3-10 Evaluate a random forest model
@@ -432,8 +428,6 @@ cv_prep_rf <- cv_models_rf %>%
 Similar to the linear regression model, you will use the MAE metric to evaluate the performance of the random forest model.
 
 ---
-library(ranger)
-
 # Calculate validate MAE for each fold
 cv_eval_rf <- cv_prep_rf %>% 
   mutate(validate_mae = map2_dbl(validate_actual, validate_predicted, ~mae(actual = .x, predicted = .y)))
@@ -444,6 +438,9 @@ cv_eval_rf$validate_mae
 # Calculate the mean of validate_mae column
 mean(cv_eval_rf$validate_mae)
 ---
+
+
+
 
 ## 3-11 Fine tune your model
 
