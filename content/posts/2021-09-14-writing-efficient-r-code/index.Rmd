@@ -50,3 +50,22 @@ system.time(read.csv("movies.csv"))
 system.time(readRDS("movies.rds"))
 ```
 Using the <- operator inside a function call will create a new (or overwrite an existing) object.
+
+## Elapsed time
+
+Using system.time() is convenient, but it does have its drawbacks when comparing multiple function calls. The microbenchmark package solves this problem with the microbenchmark() function.
+
+
+```{r warning=FALSE}
+# Load the microbenchmark package
+library(microbenchmark)
+
+# Compare the two functions
+compare <- microbenchmark(read.csv("movies.csv"), 
+                          readRDS("movies.rds"), 
+                          times = 10)
+
+# Print compare
+compare
+```
+
