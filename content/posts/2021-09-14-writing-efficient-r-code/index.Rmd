@@ -49,4 +49,4 @@ system.time(read.csv("movies.csv"))
 # How long does it take to read movies from RDS?
 system.time(readRDS("movies.rds"))
 ```
-
+Using the <- operator inside a function call will create a new (or overwrite an existing) object.
