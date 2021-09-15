@@ -15,27 +15,38 @@ library(caTools)
 library(Rcpp)
 
 Boston <- read_csv("Boston.csv")
-Sonar <- read_csv("Sonar.csv") %>% mutate(Class=as.factor(Class))
+#Sonar <- read_csv("Sonar.csv") %>% mutate(Class=as.factor(Class))
 #%>% mutate(V1=as.numeric(V1))
 
-wine <- read_csv("wine.csv")
+#wine <- read_csv("wine.csv")
 
-breast_cancer_x <- read_csv("breast_cancer_x.csv")
-breast_cancer_y <- read_csv("breast_cancer_y.csv") %>% mutate(x=as.factor(x))
+#breast_cancer_x <- read_csv("breast_cancer_x.csv")
+#breast_cancer_y <- read_csv("breast_cancer_y.csv") %>% mutate(x=as.factor(x))
 
-bloodbrain_x <- read_csv("bloodbrain_x.csv")
-bloodbrain_y <- read_csv("bloodbrain_y.csv") %>% mutate(x=as.factor(x))
+#bloodbrain_x <- read_csv("bloodbrain_x.csv")
+#bloodbrain_y <- read_csv("bloodbrain_y.csv") %>% mutate(x=as.factor(x))
 
-churn_x <- read_csv("churn_x.csv")
-churn_y <- read_csv("churn_y.csv") %>% mutate(x=as.factor(x))
+#churn_x <- read_csv("churn_x.csv")
+#churn_y <- read_csv("churn_y.csv") %>% mutate(x=as.factor(x))
 
 #breast_cancer <- read_csv("breast_cancer.csv")%>% mutate(y=as.factor(y))
-class(churn_y$x)
+#class(churn_y$x)
 #class(Sonar$V1)
 #class(Sonar$V20)
 #class(breast_cancer_y)
-levels(churn_y$x)
+#levels(churn_y$x)
 ```
+
+
+```{r}
+load("BloodBrain.RData")
+load("Churn.RData")
+load("BreastCancer.RData")
+load("Sonar.RData")
+wine <- readRDS("wine_100.RDS")
+
+```
+
 
 
 ## 1-3 In-sample RMSE for linear regression on diamonds
