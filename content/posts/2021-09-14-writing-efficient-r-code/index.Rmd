@@ -8,7 +8,7 @@ tags:
   - R
 ---
 
-## R version
+## 1-2 R version
 
 One of the relatively easy optimizations available is to use an up-to-date version of R. In general, R is very conservative, so upgrading doesn't break existing code. However, a new version will often provide free speed boosts for key functions.
 
@@ -32,7 +32,7 @@ hh <- write_csv("movies_rds.rds")
 ```
 
 
-## Comparing read times of CSV and RDS files
+## 1-4 Comparing read times of CSV and RDS files
 
 One of the most common tasks we perform is reading in data from CSV files. However, for large CSV files this can be slow. One neat trick is to read in the data and save as an R binary file (rds) using saveRDS(). To read in the rds file, we use readRDS().
 
@@ -51,7 +51,7 @@ system.time(readRDS("movies.rds"))
 ```
 Using the <- operator inside a function call will create a new (or overwrite an existing) object.
 
-## Elapsed time
+##  1-6 Elapsed time
 
 Using system.time() is convenient, but it does have its drawbacks when comparing multiple function calls. The microbenchmark package solves this problem with the microbenchmark() function.
 
@@ -67,5 +67,42 @@ compare <- microbenchmark(read.csv("movies.csv"),
 
 # Print compare
 compare
+```
+
+##  1-9 DataCamp hardware
+
+For many problems your time is the expensive part. If having a faster computer makes you more productive, it can be cost effective to buy one. However, before you splash out on new toys for yourself, your boss/partner may want to see some numbers to justify the expense. Measuring the performance of your computer is called benchmarking, and you can do that with the benchmarkme package.
+
+```{r}
+# Load the benchmarkme package
+library(benchmarkme)
+
+# Assign the variable ram to the amount of RAM on this machine
+ram <- get_ram()
+ram
+
+# Assign the variable cpu to the cpu specs
+cpu <- get_cpu()
+cpu
+```
+
+## 1-10 Benchmark DataCamp's machine
+The benchmarkme package allows you to run a set of standardized benchmarks and compare your results to other users. One set of benchmarks tests is reading and writing speeds.
+
+The function call
+
+res = benchmark_io(runs = 1, size = 5)
+
+records the length of time it takes to read and write a 5MB file.
+
+```{r warning=FALSE}
+# Load the package
+library("benchmarkme")
+
+# Run the benchmark
+res <- benchmark_io(runs = 1, size = 5)
+
+# Plot the results
+plot(res)
 ```
 

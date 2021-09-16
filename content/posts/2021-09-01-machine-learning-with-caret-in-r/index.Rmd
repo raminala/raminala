@@ -15,7 +15,7 @@ library(caTools)
 library(Rcpp)
 
 Boston <- read_csv("Boston.csv")
-#Sonar <- read_csv("Sonar.csv") %>% mutate(Class=as.factor(Class))
+Sonar <- read_csv("Sonar.csv") %>% mutate(Class=as.factor(Class))
 #%>% mutate(V1=as.numeric(V1))
 
 #wine <- read_csv("wine.csv")
@@ -314,16 +314,16 @@ n_obs <- nrow(Sonar)
 permuted_rows <- sample(n_obs)
 
 # Randomly order data: Sonar
-Sonar_shuffled <- Sonar[permuted_rows, ]
+Sonar_shuffled <- Sonar[permuted_rows,]
 
 # Identify row to split on: split
 split <- round(n_obs * 0.6)
 
 # Create train
-train <- Sonar_shuffled[1:split, ]
+train <- Sonar_shuffled[1:split,]
 
 # Create test
-test <- Sonar_shuffled[(split + 1):n_obs, ]
+test <- Sonar_shuffled[(split+1):n_obs,]
 
 ```
 
@@ -494,9 +494,7 @@ Q: What's the primary advantage of random forests over linear models?
 
 A:  random forest is a more flexible model than a linear model, but just as easy to fit.
 
-```
-
-
+```{r}
 # Fit random forest: model
 model <- train(
   quality ~ .,
@@ -513,6 +511,9 @@ model <- train(
 # Print model to console
 model
 ```
+
+
+
 
 ## 3-6 Try a longer tune length
 
