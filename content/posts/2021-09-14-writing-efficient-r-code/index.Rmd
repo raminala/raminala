@@ -26,9 +26,9 @@ minor <- version$minor
 ```
 ```{r}
 library("rio")
-movies_rds <- readRDS("movies.rds")
+#movies_rds <- readRDS("movies.rds")
 #export(movies_rds, "movies_csv.csv")
-hh <- write_csv("movies_rds.rds")
+#hh <- readRDS("movies_rds.rds")
 ```
 
 
@@ -106,3 +106,120 @@ res <- benchmark_io(runs = 1, size = 5)
 plot(res)
 ```
 
+## 2-3 Timings - growing a vector
+
+Growing a vector is one of the deadly sins in R; you should always avoid it.
+
+The growing() function defined below generates n random standard normal numbers, but grows the size of the vector each time an element is added!
+
+Note: Standard normal numbers are numbers drawn from a normal distribution with mean 0 and standard deviation 1.
+```{r}
+#n <- 30000
+# Slow code
+growing <- function(n) {
+    x <- NULL
+    for(i in 1:n)
+        x <- c(x, rnorm(1))
+    x
+}
+```
+
+
+
+```{r}
+# Use <- with system.time() to store the result as res_grow
+system.time(res_grow <- growing(30000))
+```
+
+## 2-4 Timings - pre-allocation
+In the previous exercise, growing the vector took around 2 seconds. How long does it take when we pre-allocate the vector? The pre_allocate() function is defined below.
+
+```{r}
+#n <- 30000
+# Fast code
+pre_allocate <- function(n) {
+    x <- numeric(n) # Pre-allocate
+    for(i in 1:n) 
+        x[i] <- rnorm(1)
+    x
+}
+```
+
+
+
+```{r}
+# Use <- with system.time() to store the result as res_allocate
+n <- 30000
+system.time(res_allocate <- pre_allocate(n))
+```
+
+## 2-6 Vectorized code: multiplication
+
+The following piece of code is written like traditional C or Fortran code. Instead of using the vectorized version of multiplication, it uses a for loop.
+
+```{r}
+x <- rnorm(10)
+x2 <- numeric(length(x))
+for(i in 1:10)
+    x2[i] <- x[i] * x[i]
+
+x
+x2
+```
+
+
+Your job is to make this code more "R-like" by vectorizing it.
+
+```{r}
+# Store your answer as x2_imp
+x2_imp <- x * x
+```
+
+## 2-7 Vectorized code: calculating a log-sum
+
+A common operation in statistics is to calculate the sum of log probabilities. The following code calculates the log-sum (the sum of the logs).
+
+# x is a vector of probabilities
+total <- 0
+for(i in seq_along(x)) 
+    total <- total + log(x[i])
+    
+However this piece of code could be significantly improved using vectorized code.
+
+```{r}
+# Initial code
+n <- 100
+total <- 0
+x <- runif(n)
+for(i in 1:n) 
+    total <- total + log(x[i])
+
+# Rewrite in a single line. Store the result in log_sum
+log_sum <- sum(log(x))
+```
+
+## 2-10 Data frames and matrices - column selection
+
+All values in a matrix must have the same data type, which has efficiency implications when selecting rows and columns.
+
+Suppose we have two objects, mat (a matrix) and df (a data frame).
+
+---
+# Which is faster, mat[, 1] or df[, 1]? 
+microbenchmark(mat[, 1], df[, 1])
+---
+
+Q: What does selecting a row in a data frame return?
+
+A: A data frame
+
+## 2-12 Row timings
+
+Similar to the previous example, the objects mat and df are a matrix and a data frame, respectively. Using microbenchmark(), how long does it take to select the first row from each of these objects?
+
+To make the comparison fair, just use mat[1, ] and df[1, ].
+
+---
+# Which is faster, mat[1, ] or df[1, ]? 
+microbenchmark(mat[1, ], df[1, ])
+---
