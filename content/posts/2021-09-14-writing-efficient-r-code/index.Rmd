@@ -422,6 +422,7 @@ If total is even, reset total to zero.
 If total is greater than 10. The game finishes.
 The game could be simulated using the play() function:
 
+```{r}
 play <- function() {
   total <- no_of_rolls <- 0
   while(total < 10) {
@@ -433,6 +434,9 @@ play <- function() {
   }
   no_of_rolls
 }
+```
+
+
 To simulate the game 100 times, we could use a for loop or sapply():
 
 ```{r, eval=FALSE} res <- sapply(1:100, function(i) play())
@@ -443,14 +447,39 @@ To make functions available on a cluster, you use the [`clusterExport()`](https:
 {r} clusterExport(cl, "some_function") ```
 
 ```{r}
+library("parallel")
+# Create a cluster via makeCluster (2 cores)
+cl <- makeCluster(2)
 
+# Export the play() function to the cluster
+clusterExport(cl,  "play")
+
+# Re-write sapply as parSapply
+res <- parSapply(cl, 1:100, function(i) play())
+
+# Stop the cluster
+stopCluster(cl)
 ```
 
 ## 4-11 Timings parSapply()
 
 Running the dice game is embarrassingly parallel. These types of simulations usually (but not always) produce a good speed-up. As before, we can use microbenchmark() or system.time(). For simplicity, we'll use system.time() in this exercise.
 
-```{r}
+```{r warning=FALSE}
+# Set the number of games to play
+no_of_games <- 1e5
 
+## Time serial version
+system.time(serial <- sapply(1:no_of_games, function(i) play()))
+
+## Set up cluster
+cl <- makeCluster(4)
+clusterExport(cl, "play")
+
+## Time parallel version
+system.time(par <- parSapply(cl, 1:no_of_games, function(i) play()))
+
+## Stop cluster
+stopCluster(cl)
 ```
 
