@@ -360,3 +360,80 @@ improved_move <- function(is_double) {
 microbenchmark(move(is_double), improved_move(is_double), times = 1e5)
 ```
 
+## 4-2 How many cores does this machine have?
+
+The parallel package has a function detectCores() that determines the number of cores in a machine.
+
+How many cores does this machine have?
+
+```{r}
+# Load the parallel package
+library(parallel)
+
+# Store the number of cores in the object no_of_cores
+no_of_cores <- detectCores()
+
+# Print no_of_cores
+no_of_cores
+```
+
+## 4-8 Moving to parApply
+
+To run code in parallel using the parallel package, the basic workflow has three steps.
+
+Create a cluster using makeCluster().
+Do some work.
+Stop the cluster using stopCluster().
+The simplest way to make a cluster is to pass a number to makeCluster(). This creates a cluster of the default type, running the code on that many cores.
+
+The object dd is a data frame with 10 columns and 100 rows. The following code uses apply() to calculate the column medians:
+
+apply(dd, 2, median)
+To run this in parallel, you swap apply() for parApply(). The arguments to this function are the same, except that it takes a cluster argument before the usual apply() arguments.
+
+```{r}
+
+```
+
+## 4-10 Using parSapply()
+
+We previously played the following game:
+
+Initialize: total = 0.
+Roll a single die and add it to total.
+If total is even, reset total to zero.
+If total is greater than 10. The game finishes.
+The game could be simulated using the play() function:
+
+play <- function() {
+  total <- no_of_rolls <- 0
+  while(total < 10) {
+    total <- total + sample(1:6, 1)
+
+    # If even. Reset to 0
+    if(total %% 2 == 0) total <- 0 
+    no_of_rolls <- no_of_rolls + 1
+  }
+  no_of_rolls
+}
+To simulate the game 100 times, we could use a for loop or sapply():
+
+```{r, eval=FALSE} res <- sapply(1:100, function(i) play())
+
+This is perfect for running in parallel!
+
+To make functions available on a cluster, you use the [`clusterExport()`](https://www.rdocumentation.org/packages/parallel/topics/clusterApply) function. This takes a cluster and a string naming the function.
+{r} clusterExport(cl, "some_function") ```
+
+```{r}
+
+```
+
+## 4-11 Timings parSapply()
+
+Running the dice game is embarrassingly parallel. These types of simulations usually (but not always) produce a good speed-up. As before, we can use microbenchmark() or system.time(). For simplicity, we'll use system.time() in this exercise.
+
+```{r}
+
+```
+
