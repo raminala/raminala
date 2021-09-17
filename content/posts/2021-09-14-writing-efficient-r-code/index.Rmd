@@ -8,6 +8,11 @@ tags:
   - R
 ---
 
+```{r}
+dd <- read.csv("dd.csv")
+```
+
+
 ## 1-2 R version
 
 One of the relatively easy optimizations available is to use an up-to-date version of R. In general, R is very conservative, so upgrading doesn't break existing code. However, a new version will often provide free speed boosts for key functions.
@@ -392,7 +397,19 @@ apply(dd, 2, median)
 To run this in parallel, you swap apply() for parApply(). The arguments to this function are the same, except that it takes a cluster argument before the usual apply() arguments.
 
 ```{r}
+library(parallel)
 
+# Determine the number of available cores
+detectCores()
+
+# Create a cluster via makeCluster
+cl <- makeCluster(2)
+
+# Parallelize this code
+parApply(cl, dd, 2, median)
+
+# Stop the cluster
+stopCluster(cl)
 ```
 
 ## 4-10 Using parSapply()
