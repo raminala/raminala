@@ -1,0 +1,768 @@
+---
+title: Writing Efficient R Code
+author: ''
+date: '2021-09-14'
+slug: []
+categories: []
+tags:
+  - R
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+<script src="{{< blogdown/postref >}}index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="{{< blogdown/postref >}}index_files/jquery/jquery.min.js"></script>
+<script src="{{< blogdown/postref >}}index_files/d3/d3.min.js"></script>
+<link href="{{< blogdown/postref >}}index_files/profvis/profvis.css" rel="stylesheet" />
+<script src="{{< blogdown/postref >}}index_files/profvis/profvis.js"></script>
+<script src="{{< blogdown/postref >}}index_files/profvis/scroll.js"></script>
+<link href="{{< blogdown/postref >}}index_files/highlight/textmate.css" rel="stylesheet" />
+<script src="{{< blogdown/postref >}}index_files/highlight/highlight.js"></script>
+<script src="{{< blogdown/postref >}}index_files/profvis-binding/profvis.js"></script>
+
+
+<pre class="r"><code>dd &lt;- read.csv(&quot;dd.csv&quot;)</code></pre>
+<div id="r-version" class="section level2">
+<h2>1-2 R version</h2>
+<p>One of the relatively easy optimizations available is to use an up-to-date version of R. In general, R is very conservative, so upgrading doesn’t break existing code. However, a new version will often provide free speed boosts for key functions.</p>
+<p>The version command returns a list that contains (among other things) the major and minor version of R currently being used.</p>
+<pre class="r"><code># Print the R version details using version
+version</code></pre>
+<pre><code>##                _                           
+## platform       x86_64-w64-mingw32          
+## arch           x86_64                      
+## os             mingw32                     
+## system         x86_64, mingw32             
+## status                                     
+## major          4                           
+## minor          0.5                         
+## year           2021                        
+## month          03                          
+## day            31                          
+## svn rev        80133                       
+## language       R                           
+## version.string R version 4.0.5 (2021-03-31)
+## nickname       Shake and Throw</code></pre>
+<pre class="r"><code># Assign the variable major to the major component
+major &lt;- version$major
+
+# Assign the variable minor to the minor component
+minor &lt;- version$minor</code></pre>
+<pre class="r"><code>library(&quot;rio&quot;)
+#movies_rds &lt;- readRDS(&quot;movies.rds&quot;)
+#export(movies_rds, &quot;movies_csv.csv&quot;)
+#hh &lt;- readRDS(&quot;movies_rds.rds&quot;)</code></pre>
+</div>
+<div id="comparing-read-times-of-csv-and-rds-files" class="section level2">
+<h2>1-4 Comparing read times of CSV and RDS files</h2>
+<p>One of the most common tasks we perform is reading in data from CSV files. However, for large CSV files this can be slow. One neat trick is to read in the data and save as an R binary file (rds) using saveRDS(). To read in the rds file, we use readRDS().</p>
+<p>Note: Since rds is R’s native format for storing single objects, you have not introduced any third-party dependencies that may change in the future.</p>
+<p>To benchmark the two approaches, you can use system.time(). This function returns the time taken to evaluate any R expression. For example, to time how long it takes to calculate the square root of the numbers from one to ten million, you would write the following:</p>
+<p>system.time(sqrt(1:1e7))</p>
+<pre class="r"><code># How long does it take to read movies from CSV?
+system.time(read.csv(&quot;movies.csv&quot;))</code></pre>
+<pre><code>##    user  system elapsed 
+##    0.25    0.02    0.26</code></pre>
+<pre class="r"><code># How long does it take to read movies from RDS?
+system.time(readRDS(&quot;movies.rds&quot;))</code></pre>
+<pre><code>##    user  system elapsed 
+##    0.06    0.00    0.08</code></pre>
+<p>Using the &lt;- operator inside a function call will create a new (or overwrite an existing) object.</p>
+</div>
+<div id="elapsed-time" class="section level2">
+<h2>1-6 Elapsed time</h2>
+<p>Using system.time() is convenient, but it does have its drawbacks when comparing multiple function calls. The microbenchmark package solves this problem with the microbenchmark() function.</p>
+<pre class="r"><code># Load the microbenchmark package
+library(microbenchmark)
+
+# Compare the two functions
+compare &lt;- microbenchmark(read.csv(&quot;movies.csv&quot;), 
+                          readRDS(&quot;movies.rds&quot;), 
+                          times = 10)
+
+# Print compare
+compare</code></pre>
+<pre><code>## Unit: milliseconds
+##                    expr      min       lq      mean    median       uq      max
+##  read.csv(&quot;movies.csv&quot;) 259.6437 260.8446 282.18383 275.67340 298.3114 319.7037
+##   readRDS(&quot;movies.rds&quot;)  41.9542  42.4056  45.32859  42.97045  45.2056  56.2701
+##  neval
+##     10
+##     10</code></pre>
+</div>
+<div id="datacamp-hardware" class="section level2">
+<h2>1-9 DataCamp hardware</h2>
+<p>For many problems your time is the expensive part. If having a faster computer makes you more productive, it can be cost effective to buy one. However, before you splash out on new toys for yourself, your boss/partner may want to see some numbers to justify the expense. Measuring the performance of your computer is called benchmarking, and you can do that with the benchmarkme package.</p>
+<pre class="r"><code># Load the benchmarkme package
+library(benchmarkme)
+
+# Assign the variable ram to the amount of RAM on this machine
+ram &lt;- get_ram()
+ram</code></pre>
+<pre><code>## NA B</code></pre>
+<pre class="r"><code># Assign the variable cpu to the cpu specs
+cpu &lt;- get_cpu()
+cpu</code></pre>
+<pre><code>## $vendor_id
+## [1] &quot;GenuineIntel&quot;
+## 
+## $model_name
+## [1] &quot;Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz&quot;
+## 
+## $no_of_cores
+## [1] 8</code></pre>
+</div>
+<div id="benchmark-datacamps-machine" class="section level2">
+<h2>1-10 Benchmark DataCamp’s machine</h2>
+<p>The benchmarkme package allows you to run a set of standardized benchmarks and compare your results to other users. One set of benchmarks tests is reading and writing speeds.</p>
+<p>The function call</p>
+<p>res = benchmark_io(runs = 1, size = 5)</p>
+<p>records the length of time it takes to read and write a 5MB file.</p>
+<pre class="r"><code># Load the package
+library(&quot;benchmarkme&quot;)
+
+# Run the benchmark
+res &lt;- benchmark_io(runs = 1, size = 5)</code></pre>
+<pre><code>## Preparing read/write io</code></pre>
+<pre><code>## # IO benchmarks (2 tests) for size 5 MB:</code></pre>
+<pre><code>##   Writing a csv with 625000 values: 1.54 (sec).</code></pre>
+<pre><code>##   Reading a csv with 625000 values: 0.27 (sec).</code></pre>
+<pre class="r"><code># Plot the results
+plot(res)</code></pre>
+<pre><code>## You are ranked 86 out of 135 machines.</code></pre>
+<pre><code>## Press return to get next plot</code></pre>
+<pre><code>## You are ranked 65 out of 135 machines.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+</div>
+<div id="timings---growing-a-vector" class="section level2">
+<h2>2-3 Timings - growing a vector</h2>
+<p>Growing a vector is one of the deadly sins in R; you should always avoid it.</p>
+<p>The growing() function defined below generates n random standard normal numbers, but grows the size of the vector each time an element is added!</p>
+<p>Note: Standard normal numbers are numbers drawn from a normal distribution with mean 0 and standard deviation 1.</p>
+<pre class="r"><code>#n &lt;- 30000
+# Slow code
+growing &lt;- function(n) {
+    x &lt;- NULL
+    for(i in 1:n)
+        x &lt;- c(x, rnorm(1))
+    x
+}</code></pre>
+<pre class="r"><code># Use &lt;- with system.time() to store the result as res_grow
+system.time(res_grow &lt;- growing(30000))</code></pre>
+<pre><code>##    user  system elapsed 
+##    1.06    0.00    1.06</code></pre>
+</div>
+<div id="timings---pre-allocation" class="section level2">
+<h2>2-4 Timings - pre-allocation</h2>
+<p>In the previous exercise, growing the vector took around 2 seconds. How long does it take when we pre-allocate the vector? The pre_allocate() function is defined below.</p>
+<pre class="r"><code>#n &lt;- 30000
+# Fast code
+pre_allocate &lt;- function(n) {
+    x &lt;- numeric(n) # Pre-allocate
+    for(i in 1:n) 
+        x[i] &lt;- rnorm(1)
+    x
+}</code></pre>
+<pre class="r"><code># Use &lt;- with system.time() to store the result as res_allocate
+n &lt;- 30000
+system.time(res_allocate &lt;- pre_allocate(n))</code></pre>
+<pre><code>##    user  system elapsed 
+##    0.06    0.00    0.07</code></pre>
+</div>
+<div id="vectorized-code-multiplication" class="section level2">
+<h2>2-6 Vectorized code: multiplication</h2>
+<p>The following piece of code is written like traditional C or Fortran code. Instead of using the vectorized version of multiplication, it uses a for loop.</p>
+<pre class="r"><code>x &lt;- rnorm(10)
+x2 &lt;- numeric(length(x))
+for(i in 1:10)
+    x2[i] &lt;- x[i] * x[i]
+
+x</code></pre>
+<pre><code>##  [1] -0.4247915  0.7481046 -1.8555630  0.8381839 -1.0083907 -0.1159598
+##  [7]  2.1554540 -0.3587782  0.0411473  2.0000922</code></pre>
+<pre class="r"><code>x2</code></pre>
+<pre><code>##  [1] 0.18044786 0.55966052 3.44311401 0.70255220 1.01685185 0.01344668
+##  [7] 4.64598175 0.12872181 0.00169310 4.00036865</code></pre>
+<p>Your job is to make this code more “R-like” by vectorizing it.</p>
+<pre class="r"><code># Store your answer as x2_imp
+x2_imp &lt;- x * x</code></pre>
+</div>
+<div id="vectorized-code-calculating-a-log-sum" class="section level2">
+<h2>2-7 Vectorized code: calculating a log-sum</h2>
+<p>A common operation in statistics is to calculate the sum of log probabilities. The following code calculates the log-sum (the sum of the logs).</p>
+</div>
+<div id="x-is-a-vector-of-probabilities" class="section level1">
+<h1>x is a vector of probabilities</h1>
+<p>total &lt;- 0
+for(i in seq_along(x))
+total &lt;- total + log(x[i])</p>
+<p>However this piece of code could be significantly improved using vectorized code.</p>
+<pre class="r"><code># Initial code
+n &lt;- 100
+total &lt;- 0
+x &lt;- runif(n)
+for(i in 1:n) 
+    total &lt;- total + log(x[i])
+
+# Rewrite in a single line. Store the result in log_sum
+log_sum &lt;- sum(log(x))</code></pre>
+<div id="data-frames-and-matrices---column-selection" class="section level2">
+<h2>2-10 Data frames and matrices - column selection</h2>
+<p>All values in a matrix must have the same data type, which has efficiency implications when selecting rows and columns.</p>
+<p>Suppose we have two objects, mat (a matrix) and df (a data frame).</p>
+<table>
+<tbody>
+<tr class="odd">
+<td># Which is faster, mat[, 1] or df[, 1]?</td>
+</tr>
+<tr class="even">
+<td>microbenchmark(mat[, 1], df[, 1])</td>
+</tr>
+</tbody>
+</table>
+<p>Q: What does selecting a row in a data frame return?</p>
+<p>A: A data frame</p>
+</div>
+<div id="row-timings" class="section level2">
+<h2>2-12 Row timings</h2>
+<p>Similar to the previous example, the objects mat and df are a matrix and a data frame, respectively. Using microbenchmark(), how long does it take to select the first row from each of these objects?</p>
+<p>To make the comparison fair, just use mat[1, ] and df[1, ].</p>
+<table>
+<tbody>
+<tr class="odd">
+<td># Which is faster, mat[1, ] or df[1, ]?</td>
+</tr>
+<tr class="even">
+<td>microbenchmark(mat[1, ], df[1, ])</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="profvis-in-action" class="section level2">
+<h2>3-4 Profvis in action</h2>
+<p>Examine the code on the right that performs a standard data analysis. It loads and selects data, plots the data of interest, and adds in a regression line.</p>
+<pre class="r"><code>library(ggplot2movies)
+# Load the data set
+data(movies, package = &quot;ggplot2movies&quot;) 
+
+# Load the profvis package
+library(profvis)
+
+# Profile the following code with the profvis function
+profvis ({
+  # Load and select data
+  comedies &lt;- movies[movies$Comedy == 1, ]
+
+  # Plot data of interest
+  plot(comedies$year, comedies$rating)
+
+  # Loess regression line
+  model &lt;- loess(rating ~ year, data = comedies)
+  j &lt;- order(comedies$year)
+  
+  # Add fitted line to the plot
+  lines(comedies$year[j], model$fitted[j], col = &quot;red&quot;)
+} )    ## Remember the closing brackets!</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<div id="htmlwidget-1" style="width:100%;height:600px;" class="profvis html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"message":{"prof":{"time":[1,1,1,1,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,14,14,14,14,15,15,15,15,15,15,16,16,16,16,16,16,17,17,17,17,17,17,18,18,18,18,18,18,19,19,19,19,19,19,20,20,20,20,20,20,21,21,21,21,21,21,22,22,22,22,22,22,23,23,23,23,23,23,24,24,24,24,24,24,25,25,25,25,25,25,26,26,26,26,26,26,27,27,27,27,27,27,28,28,28,28,28,28,29,29,29,29,29,29,30,30,30,30,30,30,31,31,31,31,31,31,32,32,32,32,32,32,33,33,33,33,33,33,34,34,34,34,34,34,35,35,35,35,35,35,36,36,36,36,36,36,37,37,37,37,37,37,38,38,38,38,38,38,39,39,39,39,39,39,40,40,40,40,40,40,41,41,41,41,41,41,42,42,42,42,42,42,43,43,43,43,43,43,44,44,45,45,46,46,47,47,48,48,49,49,50,50,51,51,52,52,53,53,54,54,55,55,56,56,57,57,58,58,59,59,60,60,61,61,62,62,63,63,64,64,65,65,66,66,67,67,68,68,69,69,70,70,71,71,72,72,73,73,74,74,75,75,76,76,77,77,78,78,79,79,80,80,81,81,82,82,83,83,84,84,85,85,86,86,87,87,88,88,89,89,90,90,91,91,92,92,93,93,94,94,95,95,96,96,97,97,98,98,99,99,100,100,101,101,102,102,103,103,104,104,105,105,106,106,107,107,108,108,109,109,110,110,111,111,112,112,113,113,114,114,115,115,116,116,117,117,118,118,119,119,120,120,121,121,122,122,123,123,124,124,125,125,126,126,127,127,128,128,129,129,130,130,131,131,132,132,133,133,134,134,135,135,136,136,137,137,138,138,139,139,140,140,141,141,142,142,143,143,144,144,145,145,146,146,147,147,148,148,149,149,150,150,151,151,152,152,153,153,154,154,155,155,156,156,157,157,158,158,159,159,160,160,161,161,162,162,163,163,164,164,165,165,166,166,167,167,168,168,169,169,170,170,171,171,172,172,173,173,174,174,175,175,176,176,177,177,178,178,179,179,180,180,181,181,182,182,183,183,184,184,185,185,186,186,187,187,188,188,189,189,190,190,191,191,192,192,193,193,194,194,195,195,196,196,197,197,198,198,199,199,200,200,201,201,202,202,203,203,204,204,205,205,206,206,207,207,208,208,209,209,210,210,211,211,212,212,213,213,214,214,215,215,216,216,217,217,218,218,219,219,220,220,221,221,222,222,223,223,224,224,225,225,226,226,227,227,228,228,229,229,230,230,231,231,232,232,233,233,234,234,235,235,236,236,237,237,237,237,237,237,238,238,238,238,238,238],"depth":[6,5,4,3,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,6,5,4,3,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,6,5,4,3,2,1,6,5,4,3,2,1],"label":["Rprof","profvis","eval","eval","eval.parent","local","lazyLoadDBfetch","local","lazyLoadDBfetch","local","lazyLoadDBfetch","local","lazyLoadDBfetch","local","lazyLoadDBfetch","local","lazyLoadDBfetch","local","lazyLoadDBfetch","local","lazyLoadDBfetch","local","lazyLoadDBfetch","local","lazyLoadDBfetch","local","lazyLoadDBfetch","local","==","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local","plot.xy","plot.default","eval","eval","eval.parent","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local",".C","local","plot.xy","lines.default","eval","eval","eval.parent","local","plot.xy","lines.default","eval","eval","eval.parent","local"],"filenum":[null,null,null,null,null,null,1,null,1,null,1,null,1,null,1,null,1,null,1,null,1,null,1,null,1,null,1,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"linenum":[null,null,null,null,null,null,12,null,12,null,12,null,12,null,12,null,12,null,12,null,12,null,12,null,12,null,12,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"memalloc":[26.5786895751953,26.5786895751953,26.5786895751953,26.5786895751953,26.5786895751953,26.5786895751953,27.7699279785156,27.7699279785156,27.7699279785156,27.7699279785156,27.7699279785156,27.7699279785156,27.7699279785156,27.7699279785156,27.7699279785156,27.7699279785156,37.0066757202148,37.0066757202148,37.0066757202148,37.0066757202148,37.0066757202148,37.0066757202148,46.9617538452148,46.9617538452148,47.4321594238281,47.4321594238281,49.8298645019531,49.8298645019531,56.1095123291016,56.1095123291016,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,59.8069381713867,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,64.6756439208984,66.0020751953125,66.0020751953125,66.0020751953125,66.0020751953125,66.0020751953125,66.0020751953125,66.0020751953125,66.0020751953125,66.0020751953125,66.0020751953125,66.0020751953125,66.0020751953125],"meminc":[0,0,0,0,0,0,1.19123840332031,0,0,0,0,0,0,0,0,0,9.23674774169922,0,0,0,0,0,9.955078125,0,0.470405578613281,0,2.397705078125,0,6.27964782714844,0,3.69742584228516,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4.86870574951172,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1.32643127441406,0,0,0,0,0,0,0,0,0,0,0],"filename":[null,null,null,null,null,null,"<expr>",null,"<expr>",null,"<expr>",null,"<expr>",null,"<expr>",null,"<expr>",null,"<expr>",null,"<expr>",null,"<expr>",null,"<expr>",null,"<expr>",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},"interval":10,"files":[{"filename":"<expr>","content":"\nlibrary(ggplot2movies)\n# Load the data set\ndata(movies, package = \"ggplot2movies\") \n\n# Load the profvis package\nlibrary(profvis)\n\n# Profile the following code with the profvis function\nprofvis ({\n  # Load and select data\n  comedies <- movies[movies$Comedy == 1, ]\n\n  # Plot data of interest\n  plot(comedies$year, comedies$rating)\n\n  # Loess regression line\n  model <- loess(rating ~ year, data = comedies)\n  j <- order(comedies$year)\n  \n  # Add fitted line to the plot\n  lines(comedies$year[j], model$fitted[j], col = \"red\")\n} )    ## Remember the closing brackets!","normpath":"<expr>"}],"prof_output":"C:\\Users\\rala\\AppData\\Local\\Temp\\Rtmp0UnIXO\\fileccc39a451f2.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="change-the-data-frame-to-a-matrix" class="section level2">
+<h2>3-6 Change the data frame to a matrix</h2>
+<p>One of the parts of the code that profvis highlighted was the line where we generated the possible dice rolls and stored the results in a data frame:</p>
+<p>df &lt;- data.frame(d1 = sample(1:6, 3, replace = TRUE),
+d2 = sample(1:6, 3, replace = TRUE))
+We can optimize this code by making two improvements:</p>
+<p>Switching from a data frame to a matrix
+Generating the 6 dice rolls in a single step
+This gives</p>
+<p>m &lt;- matrix(sample(1:6, 6, replace = TRUE), ncol = 2)</p>
+<pre class="r"><code># Load the microbenchmark package
+library(microbenchmark)
+
+# The previous data frame solution is defined
+# d() Simulates 6 dices rolls
+d &lt;- function() {
+  data.frame(
+    d1 = sample(1:6, 3, replace = TRUE),
+    d2 = sample(1:6, 3, replace = TRUE)
+  )
+}
+
+# Complete the matrix solution
+m &lt;- function() {
+  matrix(sample(1:6, 3, replace = TRUE), ncol=2)
+}
+
+# Use microbenchmark to time m() and d()
+microbenchmark(
+ data.frame_solution = d(),
+ matrix_solution     = m()
+)</code></pre>
+<pre><code>## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]
+
+## Warning in matrix(sample(1:6, 3, replace = TRUE), ncol = 2): data length [3] is
+## not a sub-multiple or multiple of the number of rows [2]</code></pre>
+<pre><code>## Unit: microseconds
+##                 expr   min     lq    mean median     uq    max neval
+##  data.frame_solution 150.8 159.95 191.952 169.85 176.05 2133.4   100
+##      matrix_solution  79.1  87.65 115.262  96.55 100.95 1701.2   100</code></pre>
+</div>
+<div id="calculating-row-sums" class="section level2">
+<h2>3-7 Calculating row sums</h2>
+<p>The second bottleneck identified was calculating the row sums.</p>
+<p>total &lt;- apply(d, 1, sum)
+In the previous exercise you switched the underlying object to a matrix. This makes the above apply operation three times faster. But there’s one further optimization you can use - switch apply() with rowSums().</p>
+<pre class="r"><code># Example data
+s &lt;- c(4,4,6,3,1,5)
+rolls &lt;- matrix(s, nrow = 3, ncol = 2)
+
+# Define the previous solution 
+app &lt;- function(x) {
+    apply(x, 1, sum)
+}
+
+# Define the new solution
+r_sum &lt;- function(x) {
+    rowSums(x)
+}
+
+# Compare the methods
+microbenchmark(
+    app_sol = app(rolls),
+    r_sum_sol = r_sum(rolls)
+)</code></pre>
+<pre><code>## Unit: microseconds
+##       expr  min   lq   mean median    uq    max neval
+##    app_sol 16.8 17.6 35.336  18.20 19.05 1553.3   100
+##  r_sum_sol  3.3  3.9 18.335   4.35  4.80 1356.2   100</code></pre>
+</div>
+<div id="use-instead-of" class="section level2">
+<h2>3-8 Use &amp;&amp; instead of &amp;</h2>
+<p>To determine if both dice are the same, the move_square() function uses if statements.</p>
+<p>if (is_double[1] &amp; is_double[2] &amp; is_double[3]) {
+current &lt;- 11 # Go To Jail - square 11 == Jail
+}</p>
+<p>The &amp; operator will always evaluate both its arguments. That is, if you type x &amp; y, R will always try to work out what x and y are. There are some cases where this is inefficient. For example, if x is FALSE, then x &amp; y will always be FALSE, regardless of the value of y. Thus, you can save a little processing time by not calculating it. The &amp;&amp; operator takes advantage of this trick, and doesn’t bother to calculate y if it doesn’t make a difference to the overall result.</p>
+<p>In this code, if is_double[1] is FALSE we don’t need to evaluate is_double[2] or is_double[3], so we can get a speedup by swapping &amp; for &amp;&amp;.</p>
+<p>One thing to note is that &amp;&amp; only works on single logical values, i.e., logical vectors of length 1 (like you would pass into an if condition), but &amp; also works on vectors of length greater than 1.</p>
+<pre class="r"><code># Example data
+is_double &lt;- c(FALSE, TRUE, TRUE)
+
+# Define the previous solution
+move &lt;- function(is_double) {
+    if (is_double[1] &amp; is_double[2] &amp; is_double[3]) {
+        current &lt;- 11 # Go To Jail
+    }
+}
+
+# Define the improved solution
+improved_move &lt;- function(is_double) {
+    if (is_double[1] &amp;&amp; is_double[2] &amp;&amp; is_double[3]) {
+        current &lt;- 11 # Go To Jail
+    }
+}
+
+# microbenchmark both solutions
+# Very occassionally the improved solution is actually a little slower
+# This is just random chance
+microbenchmark(move(is_double), improved_move(is_double), times = 1e5)</code></pre>
+<pre><code>## Unit: nanoseconds
+##                      expr min  lq    mean median  uq     max neval
+##           move(is_double) 400 500 751.797    500 600 3146400 1e+05
+##  improved_move(is_double) 200 200 393.952    300 300 3037400 1e+05</code></pre>
+</div>
+<div id="how-many-cores-does-this-machine-have" class="section level2">
+<h2>4-2 How many cores does this machine have?</h2>
+<p>The parallel package has a function detectCores() that determines the number of cores in a machine.</p>
+<p>How many cores does this machine have?</p>
+<pre class="r"><code># Load the parallel package
+library(parallel)
+
+# Store the number of cores in the object no_of_cores
+no_of_cores &lt;- detectCores()
+
+# Print no_of_cores
+no_of_cores</code></pre>
+<pre><code>## [1] 8</code></pre>
+</div>
+<div id="moving-to-parapply" class="section level2">
+<h2>4-8 Moving to parApply</h2>
+<p>To run code in parallel using the parallel package, the basic workflow has three steps.</p>
+<p>Create a cluster using makeCluster().
+Do some work.
+Stop the cluster using stopCluster().
+The simplest way to make a cluster is to pass a number to makeCluster(). This creates a cluster of the default type, running the code on that many cores.</p>
+<p>The object dd is a data frame with 10 columns and 100 rows. The following code uses apply() to calculate the column medians:</p>
+<p>apply(dd, 2, median)
+To run this in parallel, you swap apply() for parApply(). The arguments to this function are the same, except that it takes a cluster argument before the usual apply() arguments.</p>
+<pre class="r"><code>library(parallel)
+
+# Determine the number of available cores
+detectCores()</code></pre>
+<pre><code>## [1] 8</code></pre>
+<pre class="r"><code># Create a cluster via makeCluster
+cl &lt;- makeCluster(2)
+
+# Parallelize this code
+parApply(cl, dd, 2, median)</code></pre>
+<pre><code>##          V1          V2          V3          V4          V5          V6 
+## -0.06015816 -0.08688640 -0.05732334 -0.03394854 -0.13510996  0.18075202 
+##          V7          V8          V9         V10 
+## -0.06298744  0.16807071 -0.10099051 -0.01505691</code></pre>
+<pre class="r"><code># Stop the cluster
+stopCluster(cl)</code></pre>
+</div>
+<div id="using-parsapply" class="section level2">
+<h2>4-10 Using parSapply()</h2>
+<p>We previously played the following game:</p>
+<p>Initialize: total = 0.
+Roll a single die and add it to total.
+If total is even, reset total to zero.
+If total is greater than 10. The game finishes.
+The game could be simulated using the play() function:</p>
+<pre class="r"><code>play &lt;- function() {
+  total &lt;- no_of_rolls &lt;- 0
+  while(total &lt; 10) {
+    total &lt;- total + sample(1:6, 1)
+
+    # If even. Reset to 0
+    if(total %% 2 == 0) total &lt;- 0 
+    no_of_rolls &lt;- no_of_rolls + 1
+  }
+  no_of_rolls
+}</code></pre>
+<p>To simulate the game 100 times, we could use a for loop or sapply():</p>
+<p>```{r, eval=FALSE} res &lt;- sapply(1:100, function(i) play())</p>
+<p>This is perfect for running in parallel!</p>
+<p>To make functions available on a cluster, you use the <a href="https://www.rdocumentation.org/packages/parallel/topics/clusterApply"><code>clusterExport()</code></a> function. This takes a cluster and a string naming the function.
+{r} clusterExport(cl, “some_function”) ```</p>
+<pre class="r"><code>library(&quot;parallel&quot;)
+# Create a cluster via makeCluster (2 cores)
+cl &lt;- makeCluster(2)
+
+# Export the play() function to the cluster
+clusterExport(cl,  &quot;play&quot;)
+
+# Re-write sapply as parSapply
+res &lt;- parSapply(cl, 1:100, function(i) play())
+
+# Stop the cluster
+stopCluster(cl)</code></pre>
+</div>
+<div id="timings-parsapply" class="section level2">
+<h2>4-11 Timings parSapply()</h2>
+<p>Running the dice game is embarrassingly parallel. These types of simulations usually (but not always) produce a good speed-up. As before, we can use microbenchmark() or system.time(). For simplicity, we’ll use system.time() in this exercise.</p>
+<pre class="r"><code># Set the number of games to play
+no_of_games &lt;- 1e5
+
+## Time serial version
+system.time(serial &lt;- sapply(1:no_of_games, function(i) play()))</code></pre>
+<pre><code>##    user  system elapsed 
+##    7.69    0.02    7.71</code></pre>
+<pre class="r"><code>## Set up cluster
+cl &lt;- makeCluster(4)
+clusterExport(cl, &quot;play&quot;)
+
+## Time parallel version
+system.time(par &lt;- parSapply(cl, 1:no_of_games, function(i) play()))</code></pre>
+<pre><code>##    user  system elapsed 
+##    0.02    0.00    2.47</code></pre>
+<pre class="r"><code>## Stop cluster
+stopCluster(cl)</code></pre>
+</div>
+</div>
